@@ -1,0 +1,10 @@
+{
+    "shape": "triangle",
+    "color": "#00FF00",
+    "scale": 1.2,
+    "health": 100,
+    "shield": 50,
+    "attackRange": 36.0,
+    "attackInterval": 1.0,
+    "defaultBulletId": "bullet_01"
+}

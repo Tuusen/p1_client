@@ -1,0 +1,69 @@
+{
+    "enemies": [
+        {
+            "id": "enemy_01",
+            "name": "基础方块",
+            "shape": "cube",
+            "color": "#FF0000",
+            "scale": 0.8,
+            "health": 50,
+            "shield": 0,
+            "moveSpeed": 3.0,
+            "damage": 10,
+            "score": 10,
+            "spawnWeight": 1.0
+        },
+        {
+            "id": "enemy_02",
+            "name": "坚固方块",
+            "shape": "cube",
+            "color": "#880000",
+            "scale": 1.0,
+            "health": 100,
+            "shield": 30,
+            "moveSpeed": 2.0,
+            "damage": 15,
+            "score": 25,
+            "spawnWeight": 0.6
+        },
+        {
+            "id": "enemy_03",
+            "name": "快速三角",
+            "shape": "triangle",
+            "color": "#FF00FF",
+            "scale": 0.6,
+            "health": 30,
+            "shield": 0,
+            "moveSpeed": 5.0,
+            "damage": 8,
+            "score": 15,
+            "spawnWeight": 0.8
+        },
+        {
+            "id": "enemy_04",
+            "name": "球形敌人",
+            "shape": "sphere",
+            "color": "#00FF00",
+            "scale": 0.7,
+            "health": 60,
+            "shield": 20,
+            "moveSpeed": 3.5,
+            "damage": 12,
+            "score": 20,
+            "spawnWeight": 0.7
+        },
+        {
+            "id": "enemy_05",
+            "name": "钻石精英",
+            "shape": "diamond",
+            "color": "#FFD700",
+            "scale": 1.2,
+            "health": 150,
+            "shield": 50,
+            "moveSpeed": 1.5,
+            "damage": 25,
+            "score": 50,
+            "spawnWeight": 0.3
+        }
+    ]
+}
