@@ -93,6 +93,8 @@ namespace GeometryTowerDefense
                         int healAmt = Mathf.RoundToInt(lostHp * hotPctPerSec);
                         hp = Mathf.Min(maxHp, hp + healAmt);
                         hpBar?.UpdateHealth(hp, sp);
+                        if (healAmt > 0)
+                            FloatingText.Show(transform.position, $"+{healAmt}", FloatingText.FloatType.Heal);
                     }
                 }
             }
@@ -163,20 +165,38 @@ namespace GeometryTowerDefense
             bool hasTrail, string trailColorHex,
             Vector2 targetPos)
         {
+            // ── 优先使用预制体 ────────────────────────────────────────────────
+            var pref = PrefabRef.Instance;
+            if (pref != null)
+            {
+                GameObject prefabGo = pref.GetBulletPrefab(bulletId);
+                if (prefabGo != null)
+                {
+                    GameObject bullet = Object.Instantiate(prefabGo, transform.position, Quaternion.identity);
+                    bullet.tag  = "Bullet";
+                    bullet.name = "Bullet";
+                    BulletController ctrl = bullet.GetComponent<BulletController>();
+                    if (ctrl == null) ctrl = bullet.AddComponent<BulletController>();
+                    ctrl.Setup(speed, damage, lifetime, targetPos, scale);
+                    return;
+                }
+            }
+
+            // ── 代码生成回退 ──────────────────────────────────────────────────
             Color col = GeometryMeshGenerator.ParseColor(colorHex);
 
-            GameObject bullet = new GameObject("Bullet");
-            bullet.tag = "Bullet";
-            bullet.transform.position = transform.position;
+            GameObject bulletFb = new GameObject("Bullet");
+            bulletFb.tag = "Bullet";
+            bulletFb.transform.position = transform.position;
 
-            SpriteRenderer sr = bullet.AddComponent<SpriteRenderer>();
+            SpriteRenderer sr = bulletFb.AddComponent<SpriteRenderer>();
             sr.sprite       = GeometryMeshGenerator.CreateSprite(shape, scale, col);
             sr.color        = col;
             sr.sortingOrder = 5;
 
             if (hasTrail)
             {
-                TrailRenderer tr = bullet.AddComponent<TrailRenderer>();
+                TrailRenderer tr = bulletFb.AddComponent<TrailRenderer>();
                 tr.time       = 0.12f;
                 tr.startWidth = scale * 0.3f;
                 tr.endWidth   = 0f;
@@ -185,8 +205,8 @@ namespace GeometryTowerDefense
                 tr.sortingOrder = 4;
             }
 
-            BulletController ctrl = bullet.AddComponent<BulletController>();
-            ctrl.Setup(speed, damage, lifetime, targetPos, scale);
+            BulletController ctrlFb = bulletFb.AddComponent<BulletController>();
+            ctrlFb.Setup(speed, damage, lifetime, targetPos, scale);
         }
 
         // ── 受到伤害 ──────────────────────────────────────────────────────────────
@@ -209,11 +229,20 @@ namespace GeometryTowerDefense
                 sp  -= abs;
                 dmg -= abs;
 
+                // 护盾飘字（蓝色）
+                if (abs > 0)
+                    FloatingText.Show(transform.position, $"-{abs}", FloatingText.FloatType.ShieldDamage);
+
                 // 护盾破损时（10级）
                 if (sp <= 0 && shieldBreakBurst)
                     DoShieldBreakBurst();
             }
-            if (dmg > 0) hp = Mathf.Max(0, hp - dmg);
+            if (dmg > 0)
+            {
+                hp = Mathf.Max(0, hp - dmg);
+                // 血量飘字（红色）
+                FloatingText.Show(transform.position, $"-{dmg}", FloatingText.FloatType.Damage);
+            }
 
             hpBar?.UpdateHealth(hp, sp);
             Debug.Log($"[Player] 受伤 HP={hp}/{maxHp}  SP={sp}/{maxSp}");
@@ -233,6 +262,7 @@ namespace GeometryTowerDefense
             if (healAmt <= 0) return;
             hp = Mathf.Min(maxHp, hp + healAmt);
             hpBar?.UpdateHealth(hp, sp);
+            FloatingText.Show(transform.position, $"+{healAmt}", FloatingText.FloatType.Heal);
         }
 
         public void ApplyHoT(float pctPerSec, float duration)

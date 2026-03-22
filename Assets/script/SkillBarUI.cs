@@ -33,6 +33,10 @@ namespace GeometryTowerDefense
         // ── 由 PlayerController 调用 ──────────────────────────────────────────
         public void Build(SkillManager mgr)
         {
+            // 若 slotPrefab 未在 Inspector 拖入，自动从 PrefabRef 获取
+            if (slotPrefab == null)
+                slotPrefab = PrefabRef.Instance?.skillSlotPrefab;
+
             // 反注册旧 mgr
             if (boundMgr != null) boundMgr.OnSkillExpChanged -= OnExpChanged;
             boundMgr = mgr;

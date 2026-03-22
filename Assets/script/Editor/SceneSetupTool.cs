@@ -1,8 +1,10 @@
 ﻿#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using System.IO;
 
 namespace GeometryTowerDefense
@@ -17,6 +19,9 @@ namespace GeometryTowerDefense
         public static void SetupCompleteScene()
         {
             Debug.Log("[SceneSetup] 开始构建 2D 场景...");
+
+            // 先确保所有预制体已生成（若已存在则跳过）
+            PrefabGenerator.GenerateAllPrefabs();
 
             SetupTags();         // 1. 标签
             SetupCamera();       // 2. 相机
@@ -166,6 +171,24 @@ namespace GeometryTowerDefense
             if (Object.FindObjectOfType<GameUIController>() != null)
             { Debug.Log("[SceneSetup] UI 已存在"); return; }
 
+            // ── 优先使用预制体 ─────────────────────────────────────────────
+            string prefabPath = "Assets/prefab/GameUI.prefab";
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab != null)
+            {
+                PrefabUtility.InstantiatePrefab(prefab);
+                // 确保 EventSystem 存在
+                if (Object.FindObjectOfType<EventSystem>() == null)
+                {
+                    GameObject esGo = new GameObject("EventSystem");
+                    esGo.AddComponent<EventSystem>();
+                    esGo.AddComponent<StandaloneInputModule>();
+                }
+                Debug.Log("[SceneSetup] GameUI 预制体实例化完成，可在 Hierarchy 中直接编辑");
+                return;
+            }
+
+            // ── 若预制体不存在，退回代码生成（兼容旧逻辑）────────────────
             // Canvas：基准分辨率改为 1280×720（手机横屏）
             GameObject cGo = new GameObject("GameUI");
             Canvas canvas = cGo.AddComponent<Canvas>();
@@ -208,7 +231,8 @@ namespace GeometryTowerDefense
                      44, Color.red, TextAnchor.MiddleCenter, true);
             MakeText("FinalScoreText", panel.transform, new Vector2(0, 15),  new Vector2(350, 46), "最终分数: 0",
                      28, Color.white, TextAnchor.MiddleCenter, true);
-            MakeButton("RestartButton", panel.transform, new Vector2(0, -60), "重新开始");
+            MakeButton("RestartButton",  panel.transform, new Vector2(0, -55),  "重新开始");
+            MakeButton("MainMenuButton", panel.transform, new Vector2(0, -115), "返回主菜单");
 
             cGo.AddComponent<GameUIController>();
             Debug.Log("[SceneSetup] UI 就绪");
@@ -239,7 +263,7 @@ namespace GeometryTowerDefense
             rootRt.anchorMin        = new Vector2(0.5f, 0f);
             rootRt.anchorMax        = new Vector2(0.5f, 0f);
             rootRt.pivot            = new Vector2(0.5f, 0f);
-            rootRt.sizeDelta        = new Vector2(960f, 220f);  // 技能栏160 + 能量栏60
+            rootRt.sizeDelta        = new Vector2(960f, 200f);  // 技能栏160 + 能量栏40
             rootRt.anchoredPosition = new Vector2(0f, 4f);
 
             // ---- 技能栏（上方）----
@@ -250,24 +274,24 @@ namespace GeometryTowerDefense
             barRt.anchorMax        = new Vector2(0.5f, 0f);
             barRt.pivot            = new Vector2(0.5f, 0f);
             barRt.sizeDelta        = new Vector2(960f, 160f);
-            barRt.anchoredPosition = new Vector2(0f, 60f);  // 坐落在能量栏上方
+            barRt.anchoredPosition = new Vector2(0f, 36f);  // 坐落在能量栏上方（能量栏高约36px）
             bar.AddComponent<SkillBarUI>();
 
             // ---- 能量栏（下方）----
             CreateEnergyBarContainer(root.transform);
         }
 
-        // ── 能量栏容器（技能栏下方，4列火/冰/电/风横排）──────────────────────
+        // ── 能量栏容器（技能栏下方，4列火/冰/电/风横排，紧凑布局）────────────
         private static void CreateEnergyBarContainer(Transform parent)
         {
-            // 尺寸定义：4列横排，每列 = 标签(18px) + 进度条(90px) + 超能数字(28px)
-            const float COL_GAP  = 10f;  // 列间距
-            const float BAR_W    = 80f;  // 每条进度条宽度
-            const float BAR_H    = 14f;  // 进度条高度
-            const float LABEL_W  = 18f;  // 元素标签宽度
-            const float SUPER_W  = 28f;  // 超能数字宽度
-            const float COL_W    = LABEL_W + 4f + BAR_W + 4f + SUPER_W;  // 单列宽度
-            const float PADDING  = 6f;
+            // 尺寸定义：4列横排（紧凑），每列 = 标签(16px) + 进度条(50px) + 超能数字(24px)
+            const float COL_GAP  = 8f;   // 列间距
+            const float BAR_W    = 50f;  // 进度条宽度（缩短）
+            const float BAR_H    = 12f;  // 进度条高度
+            const float LABEL_W  = 16f;  // 元素标签宽度
+            const float SUPER_W  = 24f;  // 超能数字宽度
+            const float COL_W    = LABEL_W + 3f + BAR_W + 3f + SUPER_W;  // 单列宽度
+            const float PADDING  = 5f;
             const float TOTAL_W  = COL_W * 4 + COL_GAP * 3 + PADDING * 2;
             const float TOTAL_H  = BAR_H + PADDING * 2;
         
@@ -339,7 +363,7 @@ namespace GeometryTowerDefense
                 barBgRt.anchorMax        = new Vector2(0f, 0.5f);
                 barBgRt.pivot            = new Vector2(0f, 0.5f);
                 barBgRt.sizeDelta        = new Vector2(BAR_W, BAR_H);
-                barBgRt.anchoredPosition = new Vector2(LABEL_W + 4f, 0f);
+                barBgRt.anchoredPosition = new Vector2(LABEL_W + 3f, 0f);
                 barBg.AddComponent<Image>().color = e.bgCol;
         
                 // 进度条填充
@@ -366,7 +390,7 @@ namespace GeometryTowerDefense
                 superRt.anchorMax        = new Vector2(0f, 0.5f);
                 superRt.pivot            = new Vector2(0f, 0.5f);
                 superRt.sizeDelta        = new Vector2(SUPER_W, BAR_H);
-                superRt.anchoredPosition = new Vector2(LABEL_W + 4f + BAR_W + 4f, 0f);
+                superRt.anchoredPosition = new Vector2(LABEL_W + 3f + BAR_W + 3f, 0f);
                 var superTxt = superGo.AddComponent<Text>();
                 superTxt.font      = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
                 superTxt.fontSize  = 12;
@@ -386,6 +410,17 @@ namespace GeometryTowerDefense
             if (Object.FindObjectOfType<GameManager>() != null)
             { Debug.Log("[SceneSetup] GameManager 已存在"); return; }
 
+            // ── 优先使用预制体 ─────────────────────────────────────────────
+            string prefabPath = "Assets/prefab/GameManager.prefab";
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab != null)
+            {
+                PrefabUtility.InstantiatePrefab(prefab);
+                Debug.Log("[SceneSetup] GameManager 预制体实例化完成");
+                return;
+            }
+
+            // 退回代码生成
             new GameObject("GameManager").AddComponent<GameManager>();
             Debug.Log("[SceneSetup] GameManager 就绪");
         }
@@ -506,6 +541,7 @@ namespace GeometryTowerDefense
 
             string path = dir + "/SkillSlot.prefab";
             bool success;
+            if (Selection.activeGameObject == slot) Selection.activeObject = null;
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(slot, path, out success);
             Object.DestroyImmediate(slot);
 
@@ -706,6 +742,236 @@ namespace GeometryTowerDefense
             t.alignment = TextAnchor.MiddleCenter;
             t.color     = Color.white;
             t.text      = label;
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // ── 9. 创建主菜单场景 ─────────────────────────────────────────────
+        // ════════════════════════════════════════════════════════════════════
+        [MenuItem("Tools/几何塔防/创建主菜单场景", false, 130)]
+        public static void CreateMainMenuScene()
+        {
+            const string MAIN_MENU_SCENE = "MainMenu";
+            const string GAME_SCENE      = "Game";
+
+            // ── 确保 Scenes 目录存在 ───────────────────────────────────────
+            if (!AssetDatabase.IsValidFolder("Assets/Scenes"))
+                AssetDatabase.CreateFolder("Assets", "Scenes");
+
+            string menuPath = "Assets/Scenes/MainMenu.unity";
+
+            // ── 若场景文件不存在，新建并保存 ──────────────────────────────
+            if (!File.Exists(menuPath))
+            {
+                var newScene = EditorSceneManager.NewScene(
+                    NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+
+                // 设置背景色
+                Camera cam = new GameObject("Main Camera").AddComponent<Camera>();
+                cam.gameObject.tag      = "MainCamera";
+                cam.orthographic        = true;
+                cam.orthographicSize    = 5f;
+                cam.backgroundColor     = new Color(0.06f, 0.06f, 0.1f);
+                cam.clearFlags          = CameraClearFlags.SolidColor;
+                cam.gameObject.AddComponent<AudioListener>();
+
+                // EventSystem
+                GameObject esGo = new GameObject("EventSystem");
+                esGo.AddComponent<EventSystem>();
+                esGo.AddComponent<StandaloneInputModule>();
+
+                // 主菜单控制器
+                GameObject ctrl = new GameObject("MainMenuController");
+                ctrl.AddComponent<MainMenuController>();
+
+                EditorSceneManager.SaveScene(newScene, menuPath);
+                EditorSceneManager.CloseScene(newScene, true);
+
+                Debug.Log($"[SceneSetup] 主菜单场景已创建：{menuPath}");
+            }
+            else
+            {
+                Debug.Log($"[SceneSetup] 主菜单场景已存在：{menuPath}，跳过创建");
+            }
+
+            // ── 将两个场景加入 Build Settings ──────────────────────────────
+            AddSceneToBuild(menuPath);
+
+            // 按优先级查找游戏场景：SampleScene > Game（支持两种命名）
+            string gameScenePath = null;
+            foreach (string candidate in new[] { "SampleScene", "Game" })
+            {
+                string[] guids = AssetDatabase.FindAssets($"t:Scene {candidate}");
+                if (guids.Length > 0)
+                {
+                    gameScenePath = AssetDatabase.GUIDToAssetPath(guids[0]);
+                    break;
+                }
+            }
+            if (gameScenePath != null)
+            {
+                AddSceneToBuild(gameScenePath);
+                Debug.Log($"[SceneSetup] 游戏场景已加入 Build Settings：{gameScenePath}");
+            }
+            else
+                Debug.LogWarning("[SceneSetup] 未找到游戏场景（SampleScene/Game），请手动添加到 Build Settings");
+
+            AssetDatabase.Refresh();
+            Debug.Log("[SceneSetup] Build Settings 已更新，MainMenu 为索引 0（启动场景）");
+        }
+
+        private static void AddSceneToBuild(string scenePath)
+        {
+            var scenes = EditorBuildSettings.scenes;
+            foreach (var s in scenes)
+                if (s.path == scenePath) return; // 已存在
+
+            var list = new System.Collections.Generic.List<EditorBuildSettingsScene>(scenes);
+            list.Insert(0, new EditorBuildSettingsScene(scenePath, true));
+            EditorBuildSettings.scenes = list.ToArray();
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // ── 10. 创建 GameUI 预制体 ────────────────────────────────────────
+        // ════════════════════════════════════════════════════════════════════
+        [MenuItem("Tools/几何塔防/创建游戏HUD预制体", false, 131)]
+        public static void CreateGameUIPrefab()
+        {
+            string dir  = "Assets/prefab";
+            string path = dir + "/GameUI.prefab";
+
+            if (!AssetDatabase.IsValidFolder(dir))
+                AssetDatabase.CreateFolder("Assets", "prefab");
+
+            // ── Canvas 根节点 ─────────────────────────────────────────────
+            GameObject cGo = new GameObject("GameUI");
+            var canvas = cGo.AddComponent<Canvas>();
+            canvas.renderMode   = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 20;
+
+            var cs = cGo.AddComponent<CanvasScaler>();
+            cs.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            cs.referenceResolution = new Vector2(1280, 720);
+            cs.screenMatchMode     = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            cs.matchWidthOrHeight  = 0.5f;
+            cGo.AddComponent<GraphicRaycaster>();
+
+            // ── 分数 / 波次 / 时间（左上角）───────────────────────────────
+            MakeText("ScoreText",  cGo.transform, new Vector2(90, -30),  new Vector2(200, 36), "分数: 0",     22);
+            MakeText("WaveText",   cGo.transform, new Vector2(90, -70),  new Vector2(200, 36), "波次: 1",     22);
+            MakeText("TimeText",   cGo.transform, new Vector2(90, -110), new Vector2(200, 36), "时间: 00:00", 22);
+
+            // ── 技能栏 + 能量栏 ────────────────────────────────────────────
+            CreateSkillBarContainerOnParent(cGo.transform);
+
+            // ── 游戏结束面板 ───────────────────────────────────────────────
+            GameObject panel = new GameObject("GameOverPanel");
+            panel.transform.SetParent(cGo.transform, false);
+            var pr = panel.AddComponent<RectTransform>();
+            pr.anchorMin = Vector2.zero; pr.anchorMax = Vector2.one;
+            pr.offsetMin = pr.offsetMax = Vector2.zero;
+            panel.AddComponent<Image>().color = new Color(0, 0, 0, 0.78f);
+            panel.SetActive(false);
+
+            MakeText("GameOverTitle",  panel.transform, new Vector2(0, 80),  new Vector2(400, 60),
+                     "游戏结束",    44, Color.red,   TextAnchor.MiddleCenter, true);
+            MakeText("FinalScoreText", panel.transform, new Vector2(0, 15),  new Vector2(350, 46),
+                     "最终分数: 0", 28, Color.white, TextAnchor.MiddleCenter, true);
+
+            // 重新开始按钮
+            MakeButton("RestartButton",   panel.transform, new Vector2(0, -55),  "重新开始");
+            // 返回主菜单按钮
+            MakeButton("MainMenuButton",  panel.transform, new Vector2(0, -115), "返回主菜单");
+
+            // ── 挂载 GameUIController ──────────────────────────────────────
+            cGo.AddComponent<GameUIController>();
+
+            // ── 保存预制体 ────────────────────────────────────────────────
+            bool success;
+            if (Selection.activeGameObject == cGo) Selection.activeObject = null;
+            var prefab = PrefabUtility.SaveAsPrefabAsset(cGo, path, out success);
+            Object.DestroyImmediate(cGo);
+
+            if (success)
+            {
+                AssetDatabase.Refresh();
+                Selection.activeObject = prefab;
+                EditorGUIUtility.PingObject(prefab);
+                Debug.Log($"[SceneSetup] GameUI 预制体已保存：{path}");
+                Debug.Log("▶ 打开 Game 场景，将 GameUI.prefab 从 Project 拖入 Hierarchy 即可使用。");
+            }
+            else
+                Debug.LogError("[SceneSetup] GameUI 预制体保存失败！");
+        }
+
+        // 独立版技能栏+能量栏容器（给预制体用，和 CreateSkillBarContainer 逻辑一致）
+        private static void CreateSkillBarContainerOnParent(Transform canvasParent)
+        {
+            GameObject root = new GameObject("SkillBarRoot");
+            root.transform.SetParent(canvasParent, false);
+
+            Canvas barCanvas = root.AddComponent<Canvas>();
+            barCanvas.renderMode      = RenderMode.ScreenSpaceOverlay;
+            barCanvas.sortingOrder    = 25;
+            barCanvas.overrideSorting = true;
+
+            CanvasScaler barCs = root.AddComponent<CanvasScaler>();
+            barCs.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            barCs.referenceResolution = new Vector2(1280, 720);
+            barCs.screenMatchMode     = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            barCs.matchWidthOrHeight  = 0.5f;
+            root.AddComponent<GraphicRaycaster>();
+
+            RectTransform rootRt = root.GetComponent<RectTransform>();
+            rootRt.anchorMin        = new Vector2(0.5f, 0f);
+            rootRt.anchorMax        = new Vector2(0.5f, 0f);
+            rootRt.pivot            = new Vector2(0.5f, 0f);
+            rootRt.sizeDelta        = new Vector2(960f, 200f);
+            rootRt.anchoredPosition = new Vector2(0f, 4f);
+
+            // 技能栏
+            GameObject bar = new GameObject("SkillBar");
+            bar.transform.SetParent(root.transform, false);
+            var barRt = bar.AddComponent<RectTransform>();
+            barRt.anchorMin        = new Vector2(0.5f, 0f);
+            barRt.anchorMax        = new Vector2(0.5f, 0f);
+            barRt.pivot            = new Vector2(0.5f, 0f);
+            barRt.sizeDelta        = new Vector2(960f, 160f);
+            barRt.anchoredPosition = new Vector2(0f, 36f);
+            bar.AddComponent<SkillBarUI>();
+
+            // 能量栏
+            CreateEnergyBarContainer(root.transform);
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // ── 11. 创建 GameManager 预制体 ───────────────────────────────────
+        // ════════════════════════════════════════════════════════════════════
+        [MenuItem("Tools/几何塔防/创建GameManager预制体", false, 132)]
+        public static void CreateGameManagerPrefab()
+        {
+            string dir  = "Assets/prefab";
+            string path = dir + "/GameManager.prefab";
+
+            if (!AssetDatabase.IsValidFolder(dir))
+                AssetDatabase.CreateFolder("Assets", "prefab");
+
+            GameObject go = new GameObject("GameManager");
+            go.AddComponent<GameManager>();
+
+            bool success;
+            if (Selection.activeGameObject == go) Selection.activeObject = null;
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, path, out success);
+            Object.DestroyImmediate(go);
+
+            if (success)
+            {
+                AssetDatabase.Refresh();
+                Selection.activeObject = prefab;
+                EditorGUIUtility.PingObject(prefab);
+                Debug.Log($"[SceneSetup] GameManager 预制体已保存：{path}");
+            }
+            else
+                Debug.LogError("[SceneSetup] GameManager 预制体保存失败！");
         }
     }
 }

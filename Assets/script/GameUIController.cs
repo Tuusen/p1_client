@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace GeometryTowerDefense
 {
@@ -8,12 +9,16 @@ namespace GeometryTowerDefense
     /// </summary>
     public class GameUIController : MonoBehaviour
     {
+        [Header("主菜单场景名称（可修改）")]
+        [SerializeField] private string mainMenuSceneName = "MainMenu";
+
         private Text       scoreText;
         private Text       waveText;
         private Text       timeText;
         private GameObject gameOverPanel;
         private Text       finalScoreText;
         private Button     restartButton;
+        private Button     mainMenuButton;
 
         private void Start()
         {
@@ -24,11 +29,15 @@ namespace GeometryTowerDefense
             gameOverPanel  = FindChild("GameOverPanel");
             finalScoreText = FindText("FinalScoreText");
             restartButton  = FindButton("RestartButton");
+            mainMenuButton = FindButton("MainMenuButton");
 
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
             if (restartButton != null)
                 restartButton.onClick.AddListener(OnRestartClicked);
+
+            if (mainMenuButton != null)
+                mainMenuButton.onClick.AddListener(OnMainMenuClicked);
 
             // ── 注册 GameManager 事件 ────────────────────────────────────────────
             if (GameManager.Instance != null)
@@ -78,6 +87,12 @@ namespace GeometryTowerDefense
         {
             if (gameOverPanel) gameOverPanel.SetActive(false);
             GameManager.Instance?.RestartGame();
+        }
+
+        private void OnMainMenuClicked()
+        {
+            Time.timeScale = 1f; // 确保时间缩放恢复正常
+            SceneManager.LoadScene(mainMenuSceneName);
         }
 
         // ── 辅助查找 ─────────────────────────────────────────────────────────────

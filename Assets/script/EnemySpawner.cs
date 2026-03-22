@@ -116,18 +116,35 @@ namespace GeometryTowerDefense
         {
             EnemyConfig cfg = ConfigLoader.GetRandomEnemyConfig();
 
-            // 随机 Y 位置
-            float y = Random.Range(-spawnRangeY, spawnRangeY);
+            float   y   = Random.Range(-spawnRangeY, spawnRangeY);
             Vector3 pos = new Vector3(spawnX, y, 0f);
 
-            GameObject enemy = new GameObject($"Enemy_{cfg.id}");
+            // ── 优先使用预制体，无预制体则代码生成（兼容旧逻辑）────────────
+            var pref = PrefabRef.Instance;
+            GameObject enemy;
+            if (pref != null)
+            {
+                GameObject prefabGo = pref.GetEnemyPrefab(cfg.id);
+                if (prefabGo != null)
+                {
+                    enemy = Object.Instantiate(prefabGo, pos, Quaternion.identity);
+                    enemy.name = $"Enemy_{cfg.id}";
+                    enemy.tag  = "Enemy";
+                    var ec = enemy.GetComponent<EnemyController>();
+                    if (ec == null) ec = enemy.AddComponent<EnemyController>();
+                    ec.Initialize(cfg.id);
+                    Debug.Log($"[Spawner] 生成(预制体) {cfg.name} at ({pos.x:F1},{pos.y:F1})  波{wave}");
+                    return;
+                }
+            }
+
+            // 代码生成回退
+            enemy = new GameObject($"Enemy_{cfg.id}");
             enemy.tag = "Enemy";
             enemy.transform.position = pos;
-
-            EnemyController ec = enemy.AddComponent<EnemyController>();
-            ec.Initialize(cfg.id);
-
-            Debug.Log($"[Spawner] 生成 {cfg.name} at ({pos.x:F1},{pos.y:F1})  波{wave} {spawnedThisWave+1}/{EnemiesThisWave}");
+            var ecFallback = enemy.AddComponent<EnemyController>();
+            ecFallback.Initialize(cfg.id);
+            Debug.Log($"[Spawner] 生成(代码) {cfg.name} at ({pos.x:F1},{pos.y:F1})  波{wave} {spawnedThisWave+1}/{EnemiesThisWave}");
         }
 
         // ── Gizmos ──────────────────────────────────────────────────────────────

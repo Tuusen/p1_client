@@ -96,6 +96,7 @@ namespace GeometryTowerDefense
         public string element   = "none";       // fire/ice/lightning/wind/none
 
         // 子弹基础参数
+        public string bulletPrefabId   = "";       // 指定使用的子弹预制体id（如"bullet_01"），为空则代码生成
         public string bulletShape      = "sphere";
         public string bulletColor      = "#FFFFFF";
         public float  bulletSpeed      = 20f;

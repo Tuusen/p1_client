@@ -48,14 +48,29 @@ namespace GeometryTowerDefense
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) playerTrans = p.transform;
 
-            // 创建 2D 视觉
-            BuildVisual(cfg);
+            // 视觉：若预制体已有 SpriteRenderer 则直接复用，否则代码生成
+            visual = GetComponent<SpriteRenderer>();
+            if (visual == null)
+                BuildVisual(cfg);
+            else
+            {
+                // 预制体模式：用配置覆盖颜色和形状（让编辑预制体的形状/颜色生效以配置为准）
+                Color col = GeometryMeshGenerator.ParseColor(cfg.color);
+                visual.sprite = GeometryMeshGenerator.CreateSprite(cfg.shape, cfg.scale, col);
+                visual.color  = col;
+                visual.enabled = false; // 下一帧再显示
+            }
 
-            // 创建头顶血条
-            BuildHealthBar(cfg);
+            // 头顶血条：若预制体已有 HealthBarController 则复用，否则代码生成
+            hpBar = GetComponentInChildren<HealthBarController>();
+            if (hpBar == null)
+                BuildHealthBar(cfg);
+            else
+                hpBar.Initialize(maxHp, maxSp, false);
 
             // 状态效果控制器
-            statusCtrl = gameObject.AddComponent<StatusEffectController>();
+            statusCtrl = gameObject.GetComponent<StatusEffectController>();
+            if (statusCtrl == null) statusCtrl = gameObject.AddComponent<StatusEffectController>();
             statusCtrl.Init(this, transform);
         }
 
@@ -210,8 +225,16 @@ namespace GeometryTowerDefense
                 int abs = Mathf.Min(sp, dmg);
                 sp  -= abs;
                 dmg -= abs;
+                // 护盾飘字（蓝色）
+                if (abs > 0)
+                    FloatingText.Show(transform.position, $"-{abs}", FloatingText.FloatType.ShieldDamage);
             }
-            if (dmg > 0) hp = Mathf.Max(0, hp - dmg);
+            if (dmg > 0)
+            {
+                hp = Mathf.Max(0, hp - dmg);
+                // 血量飘字（红色）
+                FloatingText.Show(transform.position, $"-{dmg}", FloatingText.FloatType.Damage);
+            }
 
             hpBar?.UpdateHealth(hp, sp);
 

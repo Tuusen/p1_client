@@ -258,20 +258,39 @@ namespace GeometryTowerDefense
         // ── 通用子弹生成 ──────────────────────────────────────────────────────────
         public static BulletController SpawnBullet(SkillConfig cfg, Vector3 origin, Vector2 direction)
         {
+            // ── 优先使用预制体（按 bulletPrefabId 字段，或回退代码生成）────────
+            var pref = PrefabRef.Instance;
+            if (pref != null && !string.IsNullOrEmpty(cfg.bulletPrefabId))
+            {
+                GameObject prefabGo = pref.GetBulletPrefab(cfg.bulletPrefabId);
+                if (prefabGo != null)
+                {
+                    GameObject bullet = Object.Instantiate(prefabGo, origin, Quaternion.identity);
+                    bullet.tag  = "Bullet";
+                    bullet.name = "SkillBullet";
+                    var bc = bullet.GetComponent<BulletController>();
+                    if (bc == null) bc = bullet.AddComponent<BulletController>();
+                    bc.SetupDirection(cfg.bulletSpeed, cfg.bulletDamage, cfg.bulletLifetime,
+                        direction, cfg.bulletScale);
+                    return bc;
+                }
+            }
+
+            // ── 代码生成回退 ──────────────────────────────────────────────────
             Color col = ConfigLoader.ParseColor(cfg.bulletColor);
 
-            GameObject bullet = new GameObject("SkillBullet");
-            bullet.tag = "Bullet";
-            bullet.transform.position = origin;
+            GameObject bulletFb = new GameObject("SkillBullet");
+            bulletFb.tag = "Bullet";
+            bulletFb.transform.position = origin;
 
-            var sr = bullet.AddComponent<SpriteRenderer>();
+            var sr = bulletFb.AddComponent<SpriteRenderer>();
             sr.sprite       = GeometryMeshGenerator.CreateSprite(cfg.bulletShape, cfg.bulletScale, col);
             sr.color        = col;
             sr.sortingOrder = 5;
 
             if (cfg.bulletHasTrail)
             {
-                var tr = bullet.AddComponent<TrailRenderer>();
+                var tr = bulletFb.AddComponent<TrailRenderer>();
                 tr.time        = 0.12f;
                 tr.startWidth  = cfg.bulletScale * 0.3f;
                 tr.endWidth    = 0f;
@@ -280,10 +299,10 @@ namespace GeometryTowerDefense
                 tr.sortingOrder = 4;
             }
 
-            var bc = bullet.AddComponent<BulletController>();
-            bc.SetupDirection(cfg.bulletSpeed, cfg.bulletDamage, cfg.bulletLifetime,
+            var bcFb = bulletFb.AddComponent<BulletController>();
+            bcFb.SetupDirection(cfg.bulletSpeed, cfg.bulletDamage, cfg.bulletLifetime,
                 direction, cfg.bulletScale);
-            return bc;
+            return bcFb;
         }
 
         // ── 工具方法 ──────────────────────────────────────────────────────────────
