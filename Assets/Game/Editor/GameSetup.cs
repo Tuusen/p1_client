@@ -657,26 +657,31 @@ namespace GeometryTD
             canvasObj.AddComponent<GraphicRaycaster>();
             BattleUI battleUI = canvasObj.AddComponent<BattleUI>();
 
-            // --- Background ---
+            // --- Background (世界空间SpriteRenderer，不遮挡游戏元素) ---
             GameObject bgObj = new GameObject("Background");
-            bgObj.transform.SetParent(canvasObj.transform, false);
-            Image bgImage = bgObj.AddComponent<Image>();
-            bgImage.color = new Color(0.03f, 0.03f, 0.1f, 1f);
-            bgImage.raycastTarget = false;
+            SpriteRenderer bgSR = bgObj.AddComponent<SpriteRenderer>();
+            bgSR.sortingOrder = -100;
 
             Sprite bgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
                 "Assets/ui/Space_Exploration_GUI_Kit/Background_Images/large/background-2-large.png");
             if (bgSprite != null)
             {
-                bgImage.sprite = bgSprite;
-                bgImage.color = Color.white;
+                bgSR.sprite = bgSprite;
+                // 缩放背景使其覆盖摄像机可视区域 (orthographicSize=5, aspect~16:9)
+                float spriteW = bgSprite.bounds.size.x;
+                float spriteH = bgSprite.bounds.size.y;
+                float camH = 5f * 2f;
+                float camW = camH * 16f / 9f;
+                float scaleX = camW / spriteW;
+                float scaleY = camH / spriteH;
+                float scale = Mathf.Max(scaleX, scaleY);
+                bgObj.transform.localScale = new Vector3(scale, scale, 1f);
             }
-
-            RectTransform bgRT = bgObj.GetComponent<RectTransform>();
-            bgRT.anchorMin = Vector2.zero;
-            bgRT.anchorMax = Vector2.one;
-            bgRT.offsetMin = Vector2.zero;
-            bgRT.offsetMax = Vector2.zero;
+            else
+            {
+                bgSR.color = new Color(0.03f, 0.03f, 0.1f);
+            }
+            bgObj.transform.position = new Vector3(0, 0, 1f);
 
             // ========== Progress Panel (top) ==========
             GameObject progressPanel = new GameObject("ProgressPanel");
