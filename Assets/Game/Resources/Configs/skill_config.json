@@ -1,0 +1,16 @@
+{
+  "skills": [
+    {
+      "id": 1001,
+      "name": "等离子射击",
+      "damage": 15,
+      "bullet_speed": 10.0
+    },
+    {
+      "id": 2001,
+      "name": "暗影弹",
+      "damage": 30,
+      "bullet_speed": 8.0
+    }
+  ]
+}
