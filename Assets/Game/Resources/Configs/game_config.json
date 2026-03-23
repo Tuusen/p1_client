@@ -1,0 +1,5 @@
+{
+  "kill_count_for_boss": 100,
+  "monster_spawn_interval": 1.5,
+  "boss_monster_id": 100
+}
