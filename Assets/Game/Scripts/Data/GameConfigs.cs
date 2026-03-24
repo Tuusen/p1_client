@@ -124,6 +124,7 @@ namespace GeometryTD
         public float bulletSpeed;
         public int atkCnt;
         public float cd;
+        public int bulletStyleId;
         public SkillEvent[] events;
     }
 
@@ -140,5 +141,41 @@ namespace GeometryTD
         public float monster_spawn_interval;
         public int boss_monster_id;
         public int[] skill_slot_ids;
+    }
+
+    [Serializable]
+    public class BulletStyleConfig
+    {
+        public int id;
+        public string shape;
+        public float size;
+        public float colorR;
+        public float colorG;
+        public float colorB;
+        public float trailR;
+        public float trailG;
+        public float trailB;
+        public float trailWidth;
+        public float trailTime;
+    }
+
+    [Serializable]
+    public class BulletStyleConfigList
+    {
+        public List<BulletStyleConfig> bulletStyles;
+    }
+
+    public enum SkillUseResult
+    {
+        Success,
+        LevelTooLow,
+        OnCooldown,
+        InvalidSlot
+    }
+
+    public struct SkillUseInfo
+    {
+        public SkillUseResult result;
+        public float cooldownRemaining;
     }
 }

@@ -29,6 +29,7 @@ namespace GeometryTD
         private int retaliationBullets;
         private int retaliationPierceCount;
         private bool retaliationActive;
+        private int retaliationBulletStyleId;
 
         // 护盾破裂状态
         private float shieldBreakRadius;
@@ -218,7 +219,7 @@ namespace GeometryTD
             foreach (var target in targets)
             {
                 battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    config.bulletSpeed, mods.Clone());
+                    config.bulletSpeed, mods.Clone(), config.bulletStyleId);
             }
         }
 
@@ -323,7 +324,10 @@ namespace GeometryTD
             }
 
             if (retaliationActive)
+            {
                 retaliationPierceCount = pierceFromEvent;
+                retaliationBulletStyleId = config.bulletStyleId;
+            }
         }
 
         // ===== 全屏AoE技能 (超暴风) =====
@@ -475,7 +479,7 @@ namespace GeometryTD
             {
                 var mods = new BulletModifiers { pierceCount = retaliationPierceCount };
                 battleManager.SpawnSkillBullet(
-                    transform.position, target, retaliationDmg, 15f, mods);
+                    transform.position, target, retaliationDmg, 15f, mods, retaliationBulletStyleId);
             }
         }
 

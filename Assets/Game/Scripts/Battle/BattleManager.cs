@@ -247,13 +247,15 @@ namespace GeometryTD
         }
 
         public void SpawnSkillBullet(Vector3 from, Transform target, float damage,
-                                      float speed, BulletModifiers mods)
+                                      float speed, BulletModifiers mods, int bulletStyleId = 0)
         {
             if (gameEnded) return;
 
             GameObject bulletObj = Instantiate(heroBulletPrefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
             bullet.InitSkillBullet(target, speed, damage, this, mods);
+            if (bulletStyleId > 0)
+                bullet.ApplyStyle(bulletStyleId);
         }
 
         public void SpawnBossBullet(Vector3 from, Transform target, float damage, float speed)

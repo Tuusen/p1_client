@@ -1,0 +1,8 @@
+{"bulletStyles":[
+    {"id":1,"shape":"diamond","size":1.0,"colorR":0,"colorG":1,"colorB":1,"trailR":0,"trailG":1,"trailB":1,"trailWidth":0.15,"trailTime":0.3},
+    {"id":101,"shape":"circle","size":1.2,"colorR":1,"colorG":0.5,"colorB":0,"trailR":1,"trailG":0.6,"trailB":0,"trailWidth":0.2,"trailTime":0.4},
+    {"id":102,"shape":"diamond","size":1.0,"colorR":0.3,"colorG":0.7,"colorB":1,"trailR":0.5,"trailG":0.8,"trailB":1,"trailWidth":0.15,"trailTime":0.3},
+    {"id":103,"shape":"arrow","size":1.0,"colorR":0.6,"colorG":0.3,"colorB":1,"trailR":0.7,"trailG":0.4,"trailB":1,"trailWidth":0.18,"trailTime":0.35},
+    {"id":104,"shape":"circle","size":0.8,"colorR":0.2,"colorG":1,"colorB":0.4,"trailR":0.3,"trailG":1,"trailB":0.5,"trailWidth":0.12,"trailTime":0.25},
+    {"id":201,"shape":"diamond","size":1.0,"colorR":1,"colorG":0.2,"colorB":0.2,"trailR":1,"trailG":0.2,"trailB":0.2,"trailWidth":0.15,"trailTime":0.3}
+]}

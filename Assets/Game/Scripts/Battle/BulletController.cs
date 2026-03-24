@@ -17,6 +17,45 @@ namespace GeometryTD
         private BulletModifiers modifiers;
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
 
+        private SpriteRenderer spriteRenderer;
+        private TrailRenderer trailRenderer;
+
+        private void Awake()
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            trailRenderer = GetComponent<TrailRenderer>();
+        }
+
+        public void ApplyStyle(int bulletStyleId)
+        {
+            if (bulletStyleId <= 0) return;
+            var style = ConfigManager.Instance.GetBulletStyleConfig(bulletStyleId);
+            if (style == null) return;
+
+            transform.localScale = Vector3.one * style.size;
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = new Color(style.colorR, style.colorG, style.colorB);
+
+                if (!string.IsNullOrEmpty(style.shape))
+                {
+                    Sprite shapeSprite = Resources.Load<Sprite>($"Sprites/bullet_{style.shape}");
+                    if (shapeSprite != null)
+                        spriteRenderer.sprite = shapeSprite;
+                }
+            }
+
+            if (trailRenderer != null)
+            {
+                trailRenderer.startWidth = style.trailWidth;
+                trailRenderer.endWidth = style.trailWidth * 0.13f;
+                trailRenderer.time = style.trailTime;
+                trailRenderer.startColor = new Color(style.trailR, style.trailG, style.trailB);
+                trailRenderer.endColor = new Color(style.trailR, style.trailG, style.trailB, 0f);
+            }
+        }
+
         // 普通子弹 / Boss子弹
         public void Init(Transform target, float speed, float damage, bool isEnemyBullet, BattleManager bm)
         {
