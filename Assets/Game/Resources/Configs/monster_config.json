@@ -35,7 +35,7 @@
       "damage": 30,
       "is_boss": true,
       "move_speed": 3.0,
-      "attack_skill_id": 2001,
+      "attack_skill_id": 3001,
       "attack_range": 15.0,
       "attack_interval": 1.0
     }

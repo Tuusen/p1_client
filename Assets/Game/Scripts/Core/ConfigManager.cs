@@ -12,6 +12,8 @@ namespace GeometryTD
         public List<SkillConfig> SkillConfigs { get; private set; }
         public GameConfig GameConfig { get; private set; }
 
+        private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -30,6 +32,19 @@ namespace GeometryTD
             MonsterConfigs = LoadConfig<MonsterConfigList>("Configs/monster_config").monsters;
             SkillConfigs = LoadConfig<SkillConfigList>("Configs/skill_config").skills;
             GameConfig = LoadConfig<GameConfig>("Configs/game_config");
+            BuildSkillLookup();
+        }
+
+        private void BuildSkillLookup()
+        {
+            skillLookup = new Dictionary<int, Dictionary<int, SkillConfig>>();
+            if (SkillConfigs == null) return;
+            foreach (var skill in SkillConfigs)
+            {
+                if (!skillLookup.ContainsKey(skill.id))
+                    skillLookup[skill.id] = new Dictionary<int, SkillConfig>();
+                skillLookup[skill.id][skill.level] = skill;
+            }
         }
 
         private T LoadConfig<T>(string path)
@@ -51,12 +66,18 @@ namespace GeometryTD
 
         public SkillConfig GetSkillConfig(int skillId)
         {
-            for (int i = 0; i < SkillConfigs.Count; i++)
+            return GetSkillConfig(skillId, 1);
+        }
+
+        public SkillConfig GetSkillConfig(int skillId, int level)
+        {
+            if (skillLookup != null &&
+                skillLookup.TryGetValue(skillId, out var levels) &&
+                levels.TryGetValue(level, out var config))
             {
-                if (SkillConfigs[i].id == skillId)
-                    return SkillConfigs[i];
+                return config;
             }
-            Debug.LogError($"[ConfigManager] 未找到技能配置, id: {skillId}");
+            Debug.LogError($"[ConfigManager] 未找到技能配置, id: {skillId}, level: {level}");
             return null;
         }
 
