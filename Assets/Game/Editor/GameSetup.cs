@@ -809,14 +809,16 @@ namespace GeometryTD
             skillBarPanelRT.anchorMin = new Vector2(0.5f, 0f);
             skillBarPanelRT.anchorMax = new Vector2(0.5f, 0f);
             skillBarPanelRT.pivot = new Vector2(0.5f, 0f);
-            skillBarPanelRT.anchoredPosition = new Vector2(0, 10);
-            float slotWidth = 110f;
-            float barWidth = slotCount * slotWidth + 20f;
-            skillBarPanelRT.sizeDelta = new Vector2(barWidth, 130);
+            skillBarPanelRT.anchoredPosition = new Vector2(0, 8);
+            float slotWidth = 120f;
+            float slotSpacing = 6f;
+            float barWidth = slotCount * slotWidth + (slotCount - 1) * slotSpacing + 24f;
+            float barHeight = 155f;
+            skillBarPanelRT.sizeDelta = new Vector2(barWidth, barHeight);
 
             // 技能栏背景
             Image skillBarBg = skillBarPanel.AddComponent<Image>();
-            skillBarBg.color = new Color(0.05f, 0.05f, 0.15f, 0.7f);
+            skillBarBg.color = new Color(0.02f, 0.02f, 0.08f, 0.85f);
             skillBarBg.raycastTarget = false;
 
             SkillBarUI skillBarUI = skillBarPanel.AddComponent<SkillBarUI>();
@@ -836,32 +838,64 @@ namespace GeometryTD
                 GameObject slotObj = new GameObject($"SkillSlot_{s}");
                 slotObj.transform.SetParent(skillBarPanel.transform, false);
                 RectTransform slotRT = slotObj.AddComponent<RectTransform>();
-                float slotX = -barWidth / 2f + 10f + s * slotWidth + slotWidth / 2f;
+                float slotX = -barWidth / 2f + 12f + s * (slotWidth + slotSpacing) + slotWidth / 2f;
                 slotRT.anchorMin = new Vector2(0.5f, 0.5f);
                 slotRT.anchorMax = new Vector2(0.5f, 0.5f);
                 slotRT.anchoredPosition = new Vector2(slotX, 0);
-                slotRT.sizeDelta = new Vector2(slotWidth, 120);
+                slotRT.sizeDelta = new Vector2(slotWidth, barHeight - 16f);
 
                 SkillSlotUI slotUI = slotObj.AddComponent<SkillSlotUI>();
 
-                // 技能槽按钮（整个槽区域可点击）
-                Image slotBtnBg = slotObj.AddComponent<Image>();
-                slotBtnBg.color = new Color(0, 0, 0, 0); // 透明，仅用于接收点击
-                Button slotBtn = slotObj.AddComponent<Button>();
-                slotBtn.transition = Selectable.Transition.None;
+                // 技能槽背景框
+                Image slotBg = slotObj.AddComponent<Image>();
+                slotBg.color = new Color(0.08f, 0.08f, 0.2f, 0.9f);
 
-                // 图标背景
+                // 按钮组件
+                Button slotBtn = slotObj.AddComponent<Button>();
+                ColorBlock btnColors = slotBtn.colors;
+                btnColors.normalColor = Color.white;
+                btnColors.highlightedColor = new Color(0.85f, 0.9f, 1f);
+                btnColors.pressedColor = new Color(0.6f, 0.7f, 1f);
+                btnColors.disabledColor = new Color(0.5f, 0.5f, 0.5f);
+                slotBtn.colors = btnColors;
+                slotBtn.targetGraphic = slotBg;
+
+                // --- 技能名称（顶部） ---
+                Text nameText = CreateUIText(slotObj, "NameText", skillName, 13,
+                    new Color(0.8f, 0.85f, 1f), TextAnchor.MiddleCenter, FontStyle.Normal);
+                nameText.raycastTarget = false;
+                RectTransform nameRT = nameText.GetComponent<RectTransform>();
+                nameRT.anchorMin = new Vector2(0f, 1f);
+                nameRT.anchorMax = new Vector2(1f, 1f);
+                nameRT.pivot = new Vector2(0.5f, 1f);
+                nameRT.anchoredPosition = new Vector2(0, -2);
+                nameRT.sizeDelta = new Vector2(0, 20);
+
+                // --- 图标背景 ---
                 GameObject iconBgObj = new GameObject("IconBg");
                 iconBgObj.transform.SetParent(slotObj.transform, false);
                 Image iconBgImg = iconBgObj.AddComponent<Image>();
-                iconBgImg.color = new Color(0.1f, 0.1f, 0.25f, 0.8f);
+                iconBgImg.color = new Color(0.06f, 0.06f, 0.15f, 1f);
                 iconBgImg.raycastTarget = false;
                 RectTransform iconBgRT = iconBgObj.GetComponent<RectTransform>();
                 iconBgRT.anchorMin = new Vector2(0.5f, 1f);
                 iconBgRT.anchorMax = new Vector2(0.5f, 1f);
                 iconBgRT.pivot = new Vector2(0.5f, 1f);
-                iconBgRT.anchoredPosition = new Vector2(0, 0);
-                iconBgRT.sizeDelta = new Vector2(80, 80);
+                iconBgRT.anchoredPosition = new Vector2(0, -22);
+                iconBgRT.sizeDelta = new Vector2(72, 72);
+
+                // 图标边框
+                GameObject borderObj = new GameObject("Border");
+                borderObj.transform.SetParent(iconBgObj.transform, false);
+                Image borderImg = borderObj.AddComponent<Image>();
+                borderImg.color = new Color(0.3f, 0.4f, 0.7f, 0.8f);
+                borderImg.raycastTarget = false;
+                RectTransform borderRT = borderObj.GetComponent<RectTransform>();
+                borderRT.anchorMin = Vector2.zero;
+                borderRT.anchorMax = Vector2.one;
+                borderRT.offsetMin = new Vector2(-2, -2);
+                borderRT.offsetMax = new Vector2(2, 2);
+                borderObj.transform.SetAsFirstSibling();
 
                 // 图标
                 GameObject iconObj = new GameObject("Icon");
@@ -881,14 +915,14 @@ namespace GeometryTD
                 RectTransform iconRT = iconObj.GetComponent<RectTransform>();
                 iconRT.anchorMin = Vector2.zero;
                 iconRT.anchorMax = Vector2.one;
-                iconRT.offsetMin = new Vector2(8, 8);
-                iconRT.offsetMax = new Vector2(-8, -8);
+                iconRT.offsetMin = new Vector2(6, 6);
+                iconRT.offsetMax = new Vector2(-6, -6);
 
                 // 冷却遮罩
                 GameObject cdObj = new GameObject("CooldownOverlay");
                 cdObj.transform.SetParent(iconBgObj.transform, false);
                 Image cdImg = cdObj.AddComponent<Image>();
-                cdImg.color = new Color(0, 0, 0, 0.6f);
+                cdImg.color = new Color(0, 0, 0, 0.7f);
                 cdImg.type = Image.Type.Filled;
                 cdImg.fillMethod = Image.FillMethod.Radial360;
                 cdImg.fillOrigin = 2; // Top
@@ -902,17 +936,32 @@ namespace GeometryTD
                 cdRT.offsetMax = Vector2.zero;
                 cdObj.SetActive(false);
 
-                // 等级文本
-                Text lvText = CreateUIText(slotObj, "LevelText", "Lv.0", 16, Color.white);
+                // 冷却时间文本（覆盖在图标中央）
+                Text cdTimeText = CreateUIText(iconBgObj, "CooldownText", "", 18,
+                    Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+                cdTimeText.raycastTarget = false;
+                Outline cdOutline = cdTimeText.gameObject.AddComponent<Outline>();
+                cdOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                cdOutline.effectDistance = new Vector2(1, -1);
+                RectTransform cdTimeRT = cdTimeText.GetComponent<RectTransform>();
+                cdTimeRT.anchorMin = Vector2.zero;
+                cdTimeRT.anchorMax = Vector2.one;
+                cdTimeRT.offsetMin = Vector2.zero;
+                cdTimeRT.offsetMax = Vector2.zero;
+                cdTimeText.gameObject.SetActive(false);
+
+                // --- 等级文本 ---
+                Text lvText = CreateUIText(slotObj, "LevelText", "Lv.0", 14,
+                    new Color(0.9f, 0.9f, 0.6f), TextAnchor.MiddleCenter, FontStyle.Normal);
                 lvText.raycastTarget = false;
                 RectTransform lvRT = lvText.GetComponent<RectTransform>();
-                lvRT.anchorMin = new Vector2(0.5f, 0f);
-                lvRT.anchorMax = new Vector2(0.5f, 0f);
+                lvRT.anchorMin = new Vector2(0f, 0f);
+                lvRT.anchorMax = new Vector2(1f, 0f);
                 lvRT.pivot = new Vector2(0.5f, 0f);
                 lvRT.anchoredPosition = new Vector2(0, 16);
-                lvRT.sizeDelta = new Vector2(100, 20);
+                lvRT.sizeDelta = new Vector2(0, 18);
 
-                // 经验条
+                // --- 经验条 ---
                 GameObject xpSliderObj = new GameObject("XpSlider");
                 xpSliderObj.transform.SetParent(slotObj.transform, false);
                 Slider xpSlider = xpSliderObj.AddComponent<Slider>();
@@ -923,11 +972,11 @@ namespace GeometryTD
                 xpSlider.value = 0;
 
                 RectTransform xpSliderRT = xpSliderObj.GetComponent<RectTransform>();
-                xpSliderRT.anchorMin = new Vector2(0.5f, 0f);
-                xpSliderRT.anchorMax = new Vector2(0.5f, 0f);
+                xpSliderRT.anchorMin = new Vector2(0f, 0f);
+                xpSliderRT.anchorMax = new Vector2(1f, 0f);
                 xpSliderRT.pivot = new Vector2(0.5f, 0f);
                 xpSliderRT.anchoredPosition = new Vector2(0, 2);
-                xpSliderRT.sizeDelta = new Vector2(90, 12);
+                xpSliderRT.sizeDelta = new Vector2(-16, 12);
 
                 // XP条背景
                 GameObject xpBgObj = new GameObject("Background");
@@ -935,7 +984,7 @@ namespace GeometryTD
                 Image xpBgImg = xpBgObj.AddComponent<Image>();
                 if (barBgSprite != null) xpBgImg.sprite = barBgSprite;
                 xpBgImg.type = Image.Type.Sliced;
-                xpBgImg.color = new Color(0.15f, 0.15f, 0.2f, 0.8f);
+                xpBgImg.color = new Color(0.1f, 0.1f, 0.18f, 0.9f);
                 RectTransform xpBgRT = xpBgObj.GetComponent<RectTransform>();
                 xpBgRT.anchorMin = Vector2.zero;
                 xpBgRT.anchorMax = Vector2.one;
@@ -956,7 +1005,7 @@ namespace GeometryTD
                 Image xpFillImg = xpFillObj.AddComponent<Image>();
                 if (barFillSprite != null) xpFillImg.sprite = barFillSprite;
                 xpFillImg.type = Image.Type.Sliced;
-                xpFillImg.color = new Color(0.3f, 0.8f, 1f);
+                xpFillImg.color = new Color(0.2f, 0.7f, 1f);
                 RectTransform xpFillRT = xpFillObj.GetComponent<RectTransform>();
                 xpFillRT.anchorMin = Vector2.zero;
                 xpFillRT.anchorMax = new Vector2(0, 1);
@@ -969,6 +1018,8 @@ namespace GeometryTD
                 SerializedObject slotSO = new SerializedObject(slotUI);
                 slotSO.FindProperty("iconImage").objectReferenceValue = iconImg;
                 slotSO.FindProperty("levelText").objectReferenceValue = lvText;
+                slotSO.FindProperty("nameText").objectReferenceValue = nameText;
+                slotSO.FindProperty("cooldownText").objectReferenceValue = cdTimeText;
                 slotSO.FindProperty("xpSlider").objectReferenceValue = xpSlider;
                 slotSO.FindProperty("cooldownOverlay").objectReferenceValue = cdImg;
                 slotSO.FindProperty("slotButton").objectReferenceValue = slotBtn;

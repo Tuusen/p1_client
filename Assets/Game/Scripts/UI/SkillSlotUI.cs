@@ -7,6 +7,8 @@ namespace GeometryTD
     {
         [SerializeField] private Image iconImage;
         [SerializeField] private Text levelText;
+        [SerializeField] private Text nameText;
+        [SerializeField] private Text cooldownText;
         [SerializeField] private Slider xpSlider;
         [SerializeField] private Image cooldownOverlay;
         [SerializeField] private Button slotButton;
@@ -22,6 +24,14 @@ namespace GeometryTD
             if (slotButton != null)
             {
                 slotButton.onClick.AddListener(OnSlotClicked);
+            }
+
+            // 初始化技能名
+            if (nameText != null && skillManager != null)
+            {
+                var state = skillManager.GetSlot(index);
+                if (state != null)
+                    nameText.text = state.skillName;
             }
         }
 
@@ -46,9 +56,11 @@ namespace GeometryTD
                 xpSlider.value = state.level >= 10 ? 10 : state.xp;
             }
 
+            bool inCooldown = state.cooldownRemaining > 0f && state.maxCooldown > 0f;
+
             if (cooldownOverlay != null)
             {
-                if (state.level > 0 && state.cooldownRemaining > 0f && state.maxCooldown > 0f)
+                if (inCooldown)
                 {
                     cooldownOverlay.gameObject.SetActive(true);
                     cooldownOverlay.fillAmount = state.cooldownRemaining / state.maxCooldown;
@@ -56,6 +68,19 @@ namespace GeometryTD
                 else
                 {
                     cooldownOverlay.gameObject.SetActive(false);
+                }
+            }
+
+            if (cooldownText != null)
+            {
+                if (inCooldown)
+                {
+                    cooldownText.gameObject.SetActive(true);
+                    cooldownText.text = $"{state.cooldownRemaining:F1}s";
+                }
+                else
+                {
+                    cooldownText.gameObject.SetActive(false);
                 }
             }
 
