@@ -372,6 +372,7 @@
 "Assets/Game/Scripts/UI/RuneBarUI.cs"
 "Assets/Game/Scripts/UI/SkillBarUI.cs"
 "Assets/Game/Scripts/UI/SkillSlotUI.cs"
+"Assets/Game/Scripts/UI/TabSwitchUI.cs"
 "Assets/ui/Space_Exploration_GUI_Kit/Scripts/Scene_Controller.cs"
 "Assets/ui/Space_Exploration_GUI_Kit/Scripts/Toggle.cs"
 -langversion:9.0
