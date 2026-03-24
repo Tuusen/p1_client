@@ -1,0 +1,6 @@
+{"arcanes":[
+    {"id":4001,"name":"陨石术","desList":["召唤陨石轰击指定区域","持续造成火焰伤害"],"icon":"meteor-128","dmg":20000,"dmgType":1,"radius":3.0,"tickInterval":10.0,"cd":30.0,"runeCost":2,"runeType":1,"events":[]},
+    {"id":4002,"name":"寒冰术","desList":["在指定区域释放寒冰","造成冰霜伤害并冻结敌人2秒"],"icon":"frost-128","dmg":20000,"dmgType":2,"radius":3.0,"tickInterval":10.0,"cd":30.0,"runeCost":2,"runeType":2,"events":[{"type":3,"param":[2.0]}]},
+    {"id":4003,"name":"闪电网","desList":["在指定区域展开闪电网","造成雷电伤害并弹射1次"],"icon":"lightning-net-128","dmg":5000,"dmgType":3,"radius":3.0,"tickInterval":10.0,"cd":30.0,"runeCost":2,"runeType":3,"events":[{"type":6,"param":[1,9000,5000,0]}]},
+    {"id":4004,"name":"风之诗","desList":["唤起全屏风暴","造成风属性伤害并击退敌人"],"icon":"wind-128","dmg":5000,"dmgType":4,"radius":-1.0,"tickInterval":10.0,"cd":30.0,"runeCost":2,"runeType":4,"events":[{"type":15,"param":[3.0]}]}
+]}

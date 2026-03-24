@@ -12,9 +12,11 @@ namespace GeometryTD
         public List<SkillConfig> SkillConfigs { get; private set; }
         public GameConfig GameConfig { get; private set; }
         public List<BulletStyleConfig> BulletStyleConfigs { get; private set; }
+        public List<ArcaneConfig> ArcaneConfigs { get; private set; }
 
         private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
         private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
+        private Dictionary<int, ArcaneConfig> arcaneLookup;
 
         private void Awake()
         {
@@ -35,8 +37,10 @@ namespace GeometryTD
             SkillConfigs = LoadConfig<SkillConfigList>("Configs/skill_config").skills;
             GameConfig = LoadConfig<GameConfig>("Configs/game_config");
             BulletStyleConfigs = LoadConfig<BulletStyleConfigList>("Configs/bullet_config").bulletStyles;
+            ArcaneConfigs = LoadConfig<ArcaneConfigList>("Configs/arcane_config").arcanes;
             BuildSkillLookup();
             BuildBulletStyleLookup();
+            BuildArcaneLookup();
         }
 
         private void BuildSkillLookup()
@@ -119,6 +123,22 @@ namespace GeometryTD
                     return MonsterConfigs[i];
             }
             Debug.LogError("[ConfigManager] 未找到Boss配置");
+            return null;
+        }
+
+        private void BuildArcaneLookup()
+        {
+            arcaneLookup = new Dictionary<int, ArcaneConfig>();
+            if (ArcaneConfigs == null) return;
+            foreach (var arcane in ArcaneConfigs)
+                arcaneLookup[arcane.id] = arcane;
+        }
+
+        public ArcaneConfig GetArcaneConfig(int arcaneId)
+        {
+            if (arcaneLookup != null && arcaneLookup.TryGetValue(arcaneId, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到奥术配置, id: {arcaneId}");
             return null;
         }
 

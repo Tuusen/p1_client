@@ -165,6 +165,29 @@ namespace GeometryTD
         public List<BulletStyleConfig> bulletStyles;
     }
 
+    [Serializable]
+    public class ArcaneConfig
+    {
+        public int id;
+        public string name;
+        public string[] desList;
+        public string icon;
+        public int dmg;
+        public int dmgType;
+        public float radius;
+        public float tickInterval;
+        public float cd;
+        public int runeCost;
+        public int runeType;
+        public SkillEvent[] events;
+    }
+
+    [Serializable]
+    public class ArcaneConfigList
+    {
+        public List<ArcaneConfig> arcanes;
+    }
+
     public enum SkillCategory
     {
         Self,

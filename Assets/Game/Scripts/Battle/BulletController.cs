@@ -17,6 +17,9 @@ namespace GeometryTD
         private BulletModifiers modifiers;
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
 
+        private bool isPiercing;
+        private Vector3 pierceDirection;
+
         private SpriteRenderer spriteRenderer;
         private TrailRenderer trailRenderer;
 
@@ -120,7 +123,30 @@ namespace GeometryTD
             }
 
             Vector3 direction = (lastTargetPos - transform.position).normalized;
+            if (!isPiercing && direction.sqrMagnitude > 0.001f)
+                pierceDirection = direction;
             transform.position += direction * speed * Time.deltaTime;
+
+            // 穿刺模式：沿直线飞行，检测路径上的敌人
+            if (isPiercing && modifiers != null && modifiers.pierceCount > 0 && battleManager != null)
+            {
+                Transform nearby = battleManager.GetNearestEnemyExcluding(
+                    transform.position, 0.5f, hitTargets);
+                if (nearby != null)
+                {
+                    target = nearby;
+                    ApplyDamage();
+                    ApplyStatusEffects();
+                    hitTargets.Add(nearby);
+                    target = null;
+                    modifiers.pierceCount--;
+                    if (modifiers.pierceCount <= 0)
+                    {
+                        Destroy(gameObject);
+                        return;
+                    }
+                }
+            }
 
             float dist = Vector3.Distance(transform.position, lastTargetPos);
             if (dist < 0.3f)
@@ -162,19 +188,13 @@ namespace GeometryTD
                     return;
                 }
             }
-            // 穿刺
+            // 穿刺：进入直线飞行模式，方向不变
             else if (modifiers != null && modifiers.pierceCount > 0 && battleManager != null && !isEnemyBullet)
             {
-                modifiers.pierceCount--;
-                Transform next = battleManager.GetNearestEnemyExcluding(
-                    transform.position, 20f, hitTargets);
-                if (next != null)
-                {
-                    target = next;
-                    lastTargetPos = target.position;
-                    hitTargets.Add(next);
-                    return;
-                }
+                isPiercing = true;
+                target = null;
+                lastTargetPos = transform.position + pierceDirection * 50f;
+                return;
             }
 
             Destroy(gameObject);

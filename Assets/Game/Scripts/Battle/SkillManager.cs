@@ -141,6 +141,14 @@ namespace GeometryTD
 
             hero.UseSkill(config);
 
+            // 技能使用后产生能量
+            if (config.mpType > 0 && config.mp > 0 && battleManager != null)
+            {
+                var arcMgr = battleManager.ArcaneManager;
+                if (arcMgr != null)
+                    arcMgr.AddEnergy(config.mpType, config.mp);
+            }
+
             slot.cooldownRemaining = config.cd;
             slot.maxCooldown = config.cd;
             slot.level = 0;
@@ -205,7 +213,7 @@ namespace GeometryTD
             int candidateCount = 0;
             for (int i = 0; i < slots.Length; i++)
             {
-                if (slots[i].level < 10 && slots[i].cooldownRemaining <= 0f)
+                if (slots[i].level < 10)
                     candidateCount++;
             }
             if (candidateCount == 0) return;
@@ -214,7 +222,7 @@ namespace GeometryTD
             int current = 0;
             for (int i = 0; i < slots.Length; i++)
             {
-                if (slots[i].level < 10 && slots[i].cooldownRemaining <= 0f)
+                if (slots[i].level < 10)
                 {
                     if (current == pick)
                     {
