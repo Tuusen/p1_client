@@ -255,6 +255,7 @@ namespace GeometryTD
             SaveTexture(CreateDiamondTexture(32, Color.white), $"{ResourceSpritePath}/bullet_diamond.png");
             SaveTexture(CreateCircleBulletTexture(32, Color.white), $"{ResourceSpritePath}/bullet_circle.png");
             SaveTexture(CreateArrowBulletTexture(32, Color.white), $"{ResourceSpritePath}/bullet_arrow.png");
+            SaveTexture(CreateCircleBulletTexture(128, Color.white), $"{ResourceSpritePath}/range_circle.png");
 
             AssetDatabase.Refresh();
 
@@ -268,6 +269,7 @@ namespace GeometryTD
             SetTextureAsSprite($"{ResourceSpritePath}/bullet_diamond.png");
             SetTextureAsSprite($"{ResourceSpritePath}/bullet_circle.png");
             SetTextureAsSprite($"{ResourceSpritePath}/bullet_arrow.png");
+            SetTextureAsSprite($"{ResourceSpritePath}/range_circle.png");
         }
 
         private static Sprite LoadSprite(string path)
@@ -681,6 +683,7 @@ namespace GeometryTD
             GameObject bmObj = new GameObject("BattleManager");
             BattleManager bm = bmObj.AddComponent<BattleManager>();
             bmObj.AddComponent<MonsterSpawner>();
+            DragVisualManager dragVisualMgr = bmObj.AddComponent<DragVisualManager>();
 
             // Load prefabs
             GameObject heroPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/Hero.prefab");
@@ -1489,6 +1492,11 @@ namespace GeometryTD
             bmSO.FindProperty("runeBarUI").objectReferenceValue = runeBarUI;
             bmSO.FindProperty("arcaneActiveIconUI").objectReferenceValue = activeIconUI;
             bmSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Wire DragVisualManager
+            SerializedObject dragVisualSO = new SerializedObject(dragVisualMgr);
+            dragVisualSO.FindProperty("battleManager").objectReferenceValue = bm;
+            dragVisualSO.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.SaveScene(scene, $"{ScenePath}/Battle.unity");
         }
