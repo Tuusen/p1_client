@@ -855,7 +855,7 @@ namespace GeometryTD
             skillBarPanelRT.anchorMin = new Vector2(0.5f, 0f);
             skillBarPanelRT.anchorMax = new Vector2(0.5f, 0f);
             skillBarPanelRT.pivot = new Vector2(0.5f, 0f);
-            skillBarPanelRT.anchoredPosition = new Vector2(0, 8);
+            skillBarPanelRT.anchoredPosition = new Vector2(0, 66);
             float slotWidth = 120f;
             float slotSpacing = 6f;
             float barWidth = slotCount * slotWidth + (slotCount - 1) * slotSpacing + 24f;
@@ -908,9 +908,12 @@ namespace GeometryTD
                 slotBtn.targetGraphic = slotBg;
 
                 // --- 技能名称（顶部） ---
-                Text nameText = CreateUIText(slotObj, "NameText", skillName, 13,
+                Text nameText = CreateUIText(slotObj, "NameText", skillName, 15,
                     new Color(0.8f, 0.85f, 1f), TextAnchor.MiddleCenter, FontStyle.Normal);
                 nameText.raycastTarget = false;
+                Outline nameOutline = nameText.gameObject.AddComponent<Outline>();
+                nameOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                nameOutline.effectDistance = new Vector2(1, -1);
                 RectTransform nameRT = nameText.GetComponent<RectTransform>();
                 nameRT.anchorMin = new Vector2(0f, 1f);
                 nameRT.anchorMax = new Vector2(1f, 1f);
@@ -984,7 +987,7 @@ namespace GeometryTD
                 cdObj.SetActive(false);
 
                 // 冷却时间文本（覆盖在图标中央）
-                Text cdTimeText = CreateUIText(iconBgObj, "CooldownText", "", 18,
+                Text cdTimeText = CreateUIText(iconBgObj, "CooldownText", "", 20,
                     Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
                 cdTimeText.raycastTarget = false;
                 Outline cdOutline = cdTimeText.gameObject.AddComponent<Outline>();
@@ -998,9 +1001,12 @@ namespace GeometryTD
                 cdTimeText.gameObject.SetActive(false);
 
                 // --- 等级文本 ---
-                Text lvText = CreateUIText(slotObj, "LevelText", "Lv.0", 14,
+                Text lvText = CreateUIText(slotObj, "LevelText", "Lv.0", 16,
                     new Color(0.9f, 0.9f, 0.6f), TextAnchor.MiddleCenter, FontStyle.Normal);
                 lvText.raycastTarget = false;
+                Outline lvOutline = lvText.gameObject.AddComponent<Outline>();
+                lvOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                lvOutline.effectDistance = new Vector2(1, -1);
                 RectTransform lvRT = lvText.GetComponent<RectTransform>();
                 lvRT.anchorMin = new Vector2(0f, 0f);
                 lvRT.anchorMax = new Vector2(1f, 0f);
@@ -1106,15 +1112,15 @@ namespace GeometryTD
 
             int arcaneSlotCount = gameConfigData.arcane_slot_ids != null ? gameConfigData.arcane_slot_ids.Length : 0;
 
-            // --- Rune Bar Panel (left side, above skill bar) ---
+            // --- Rune Bar Panel (bottom, full width horizontal 4-column) ---
             GameObject runeBarPanel = new GameObject("RuneBarPanel");
             runeBarPanel.transform.SetParent(canvasObj.transform, false);
             RectTransform runeBarRT = runeBarPanel.AddComponent<RectTransform>();
             runeBarRT.anchorMin = new Vector2(0f, 0f);
-            runeBarRT.anchorMax = new Vector2(0f, 0f);
-            runeBarRT.pivot = new Vector2(0f, 0f);
-            runeBarRT.anchoredPosition = new Vector2(10, barHeight + 20);
-            runeBarRT.sizeDelta = new Vector2(200, 100);
+            runeBarRT.anchorMax = new Vector2(1f, 0f);
+            runeBarRT.pivot = new Vector2(0.5f, 0f);
+            runeBarRT.anchoredPosition = new Vector2(0, 8);
+            runeBarRT.sizeDelta = new Vector2(-20, 50);
 
             Image runeBarBg = runeBarPanel.AddComponent<Image>();
             runeBarBg.color = new Color(0.02f, 0.02f, 0.08f, 0.8f);
@@ -1135,27 +1141,36 @@ namespace GeometryTD
 
             for (int r = 0; r < 4; r++)
             {
+                float colLeft = r * 0.25f;
+                float colRight = (r + 1) * 0.25f;
+
                 // Rune type label
-                Text labelText = CreateUIText(runeBarPanel, $"RuneLabel_{r}", runeLabels[r], 13,
-                    runeColors[r], TextAnchor.MiddleLeft);
+                Text labelText = CreateUIText(runeBarPanel, $"RuneLabel_{r}", runeLabels[r], 16,
+                    runeColors[r], TextAnchor.MiddleCenter, FontStyle.Bold);
                 labelText.raycastTarget = false;
+                Outline labelOutline = labelText.gameObject.AddComponent<Outline>();
+                labelOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                labelOutline.effectDistance = new Vector2(1, -1);
                 RectTransform labelRT = labelText.GetComponent<RectTransform>();
-                labelRT.anchorMin = new Vector2(0, 1);
-                labelRT.anchorMax = new Vector2(0, 1);
-                labelRT.pivot = new Vector2(0, 1);
-                labelRT.anchoredPosition = new Vector2(8, -8 - r * 23f);
-                labelRT.sizeDelta = new Vector2(24, 20);
+                labelRT.anchorMin = new Vector2(colLeft, 0);
+                labelRT.anchorMax = new Vector2(colLeft, 1);
+                labelRT.pivot = new Vector2(0, 0.5f);
+                labelRT.anchoredPosition = new Vector2(8, 0);
+                labelRT.sizeDelta = new Vector2(24, 0);
 
                 // Rune count
-                Text countText = CreateUIText(runeBarPanel, $"RuneCount_{r}", "0", 14,
+                Text countText = CreateUIText(runeBarPanel, $"RuneCount_{r}", "0", 16,
                     Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
                 countText.raycastTarget = false;
+                Outline countOutline = countText.gameObject.AddComponent<Outline>();
+                countOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                countOutline.effectDistance = new Vector2(1, -1);
                 RectTransform countRT = countText.GetComponent<RectTransform>();
-                countRT.anchorMin = new Vector2(0, 1);
-                countRT.anchorMax = new Vector2(0, 1);
-                countRT.pivot = new Vector2(0, 1);
-                countRT.anchoredPosition = new Vector2(34, -8 - r * 23f);
-                countRT.sizeDelta = new Vector2(30, 20);
+                countRT.anchorMin = new Vector2(colLeft, 0);
+                countRT.anchorMax = new Vector2(colLeft, 1);
+                countRT.pivot = new Vector2(0, 0.5f);
+                countRT.anchoredPosition = new Vector2(34, 0);
+                countRT.sizeDelta = new Vector2(30, 0);
                 runeCountTexts[r] = countText;
 
                 // Energy slider
@@ -1169,11 +1184,10 @@ namespace GeometryTD
                 eslider.value = 0;
 
                 RectTransform esliderRT = esliderObj.GetComponent<RectTransform>();
-                esliderRT.anchorMin = new Vector2(0, 1);
-                esliderRT.anchorMax = new Vector2(0, 1);
-                esliderRT.pivot = new Vector2(0, 1);
-                esliderRT.anchoredPosition = new Vector2(68, -8 - r * 23f);
-                esliderRT.sizeDelta = new Vector2(120, 16);
+                esliderRT.anchorMin = new Vector2(colLeft, 0.15f);
+                esliderRT.anchorMax = new Vector2(colRight, 0.85f);
+                esliderRT.offsetMin = new Vector2(66, esliderRT.offsetMin.y);
+                esliderRT.offsetMax = new Vector2(-6, esliderRT.offsetMax.y);
 
                 GameObject eslBg = new GameObject("Background");
                 eslBg.transform.SetParent(esliderObj.transform, false);
@@ -1223,7 +1237,7 @@ namespace GeometryTD
                 energySlidersP.GetArrayElementAtIndex(r).objectReferenceValue = energySliders[r];
             runeBarSO.ApplyModifiedPropertiesWithoutUndo();
 
-            // --- Arcane Bar Panel (right side) ---
+            // --- Arcane Bar Panel (same position as skill bar, toggled) ---
             float arcaneSlotWidth = 100f;
             float arcaneSlotSpacing = 6f;
             float arcaneBarWidth = arcaneSlotCount * arcaneSlotWidth + (arcaneSlotCount - 1) * arcaneSlotSpacing + 20f;
@@ -1232,10 +1246,10 @@ namespace GeometryTD
             GameObject arcaneBarPanel = new GameObject("ArcaneBarPanel");
             arcaneBarPanel.transform.SetParent(canvasObj.transform, false);
             RectTransform arcaneBarPanelRT = arcaneBarPanel.AddComponent<RectTransform>();
-            arcaneBarPanelRT.anchorMin = new Vector2(1f, 0f);
-            arcaneBarPanelRT.anchorMax = new Vector2(1f, 0f);
-            arcaneBarPanelRT.pivot = new Vector2(1f, 0f);
-            arcaneBarPanelRT.anchoredPosition = new Vector2(-10, barHeight + 20);
+            arcaneBarPanelRT.anchorMin = new Vector2(0.5f, 0f);
+            arcaneBarPanelRT.anchorMax = new Vector2(0.5f, 0f);
+            arcaneBarPanelRT.pivot = new Vector2(0.5f, 0f);
+            arcaneBarPanelRT.anchoredPosition = new Vector2(0, 66);
             arcaneBarPanelRT.sizeDelta = new Vector2(arcaneBarWidth, arcaneBarHeight);
 
             Image arcaneBarBg = arcaneBarPanel.AddComponent<Image>();
@@ -1272,9 +1286,12 @@ namespace GeometryTD
                 Image aSlotBg = aSlotObj.AddComponent<Image>();
                 aSlotBg.color = new Color(0.06f, 0.04f, 0.15f, 0.9f);
 
-                Text aNameText = CreateUIText(aSlotObj, "NameText", aName, 12,
+                Text aNameText = CreateUIText(aSlotObj, "NameText", aName, 14,
                     new Color(0.85f, 0.7f, 1f), TextAnchor.MiddleCenter);
                 aNameText.raycastTarget = false;
+                Outline aNameOutline = aNameText.gameObject.AddComponent<Outline>();
+                aNameOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                aNameOutline.effectDistance = new Vector2(1, -1);
                 RectTransform aNameRT = aNameText.GetComponent<RectTransform>();
                 aNameRT.anchorMin = new Vector2(0f, 1f);
                 aNameRT.anchorMax = new Vector2(1f, 1f);
@@ -1343,7 +1360,7 @@ namespace GeometryTD
                 aCdRT.offsetMax = Vector2.zero;
                 aCdObj.SetActive(false);
 
-                Text aCdText = CreateUIText(aIconBg, "CooldownText", "", 16,
+                Text aCdText = CreateUIText(aIconBg, "CooldownText", "", 18,
                     Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
                 aCdText.raycastTarget = false;
                 Outline aCdOutline = aCdText.gameObject.AddComponent<Outline>();
@@ -1356,9 +1373,12 @@ namespace GeometryTD
                 aCdTextRT.offsetMax = Vector2.zero;
                 aCdText.gameObject.SetActive(false);
 
-                Text aCostText = CreateUIText(aSlotObj, "CostText", costLabel, 12,
+                Text aCostText = CreateUIText(aSlotObj, "CostText", costLabel, 14,
                     new Color(0.6f, 0.8f, 1f), TextAnchor.MiddleCenter);
                 aCostText.raycastTarget = false;
+                Outline aCostOutline = aCostText.gameObject.AddComponent<Outline>();
+                aCostOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                aCostOutline.effectDistance = new Vector2(1, -1);
                 RectTransform aCostRT = aCostText.GetComponent<RectTransform>();
                 aCostRT.anchorMin = new Vector2(0f, 0f);
                 aCostRT.anchorMax = new Vector2(1f, 0f);
@@ -1385,6 +1405,50 @@ namespace GeometryTD
             for (int a = 0; a < arcaneSlotCount; a++)
                 arcaneSlotsP.GetArrayElementAtIndex(a).objectReferenceValue = arcaneSlotUIs[a];
             arcaneBarSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // --- Tab Switch Button (left of skill/arcane bar) ---
+            float maxBarWidth = Mathf.Max(barWidth, arcaneBarWidth);
+            GameObject tabSwitchObj = new GameObject("TabSwitchButton");
+            tabSwitchObj.transform.SetParent(canvasObj.transform, false);
+            RectTransform tabSwitchRT = tabSwitchObj.AddComponent<RectTransform>();
+            tabSwitchRT.anchorMin = new Vector2(0.5f, 0f);
+            tabSwitchRT.anchorMax = new Vector2(0.5f, 0f);
+            tabSwitchRT.pivot = new Vector2(1f, 0.5f);
+            tabSwitchRT.anchoredPosition = new Vector2(-maxBarWidth / 2f - 4f, 66 + barHeight / 2f);
+            tabSwitchRT.sizeDelta = new Vector2(44, 44);
+
+            Image tabBtnBg = tabSwitchObj.AddComponent<Image>();
+            tabBtnBg.color = new Color(0.15f, 0.12f, 0.3f, 0.9f);
+
+            Button tabBtn = tabSwitchObj.AddComponent<Button>();
+            ColorBlock tabBtnColors = tabBtn.colors;
+            tabBtnColors.normalColor = Color.white;
+            tabBtnColors.highlightedColor = new Color(0.85f, 0.8f, 1f);
+            tabBtnColors.pressedColor = new Color(0.6f, 0.5f, 0.9f);
+            tabBtn.colors = tabBtnColors;
+            tabBtn.targetGraphic = tabBtnBg;
+
+            Text tabBtnText = CreateUIText(tabSwitchObj, "Text", "奥术", 13,
+                Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+            RectTransform tabBtnTextRT = tabBtnText.GetComponent<RectTransform>();
+            tabBtnTextRT.anchorMin = Vector2.zero;
+            tabBtnTextRT.anchorMax = Vector2.one;
+            tabBtnTextRT.offsetMin = Vector2.zero;
+            tabBtnTextRT.offsetMax = Vector2.zero;
+            Outline tabBtnOutline = tabBtnText.gameObject.AddComponent<Outline>();
+            tabBtnOutline.effectColor = new Color(0, 0, 0, 0.8f);
+            tabBtnOutline.effectDistance = new Vector2(1, -1);
+
+            // Wire TabSwitchUI
+            TabSwitchUI tabSwitchUI = tabSwitchObj.AddComponent<TabSwitchUI>();
+            SerializedObject tabSwitchSO = new SerializedObject(tabSwitchUI);
+            tabSwitchSO.FindProperty("skillBarPanel").objectReferenceValue = skillBarPanel;
+            tabSwitchSO.FindProperty("arcaneBarPanel").objectReferenceValue = arcaneBarPanel;
+            tabSwitchSO.FindProperty("tabButton").objectReferenceValue = tabBtn;
+            tabSwitchSO.FindProperty("tabButtonText").objectReferenceValue = tabBtnText;
+            tabSwitchSO.ApplyModifiedPropertiesWithoutUndo();
+
+            arcaneBarPanel.SetActive(false);
 
             // --- Active Arcane Icons (top right) ---
             GameObject activeArcanePanel = new GameObject("ActiveArcanePanel");

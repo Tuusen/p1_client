@@ -69,10 +69,14 @@ namespace GeometryTD
                 textObj.transform.SetParent(iconObj.transform, false);
                 Text timerText = textObj.AddComponent<Text>();
                 timerText.font = font;
-                timerText.fontSize = 12;
+                timerText.fontSize = 15;
                 timerText.alignment = TextAnchor.MiddleCenter;
                 timerText.color = Color.white;
                 timerText.raycastTarget = false;
+
+                Outline timerOutline = textObj.AddComponent<Outline>();
+                timerOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                timerOutline.effectDistance = new Vector2(1, -1);
                 RectTransform textRT = textObj.GetComponent<RectTransform>();
                 textRT.anchorMin = Vector2.zero;
                 textRT.anchorMax = Vector2.one;

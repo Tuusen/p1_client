@@ -310,6 +310,10 @@ namespace GeometryTD
             txt.horizontalOverflow = HorizontalWrapMode.Overflow;
             txt.raycastTarget = false;
 
+            Outline outline = textObj.AddComponent<Outline>();
+            outline.effectColor = new Color(0, 0, 0, 0.8f);
+            outline.effectDistance = new Vector2(1, -1);
+
             RectTransform rt = textObj.GetComponent<RectTransform>();
             rt.anchorMin = new Vector2(0.5f, 0.5f);
             rt.anchorMax = new Vector2(0.5f, 0.5f);

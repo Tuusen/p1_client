@@ -27,7 +27,7 @@ namespace GeometryTD
             textObj.transform.SetParent(go.transform, false);
             Text t = textObj.AddComponent<Text>();
             t.text = text;
-            t.fontSize = 32;
+            t.fontSize = 42;
             t.color = color;
             t.alignment = TextAnchor.MiddleCenter;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -41,6 +41,10 @@ namespace GeometryTD
             trt.anchorMax = Vector2.one;
             trt.offsetMin = Vector2.zero;
             trt.offsetMax = Vector2.zero;
+
+            Outline outline = textObj.AddComponent<Outline>();
+            outline.effectColor = new Color(0, 0, 0, 0.8f);
+            outline.effectDistance = new Vector2(1, -1);
 
             float duration = 1.2f;
             float elapsed = 0f;
