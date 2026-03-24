@@ -59,6 +59,7 @@ namespace GeometryTD
 
             floatingTextUI = Object.FindObjectOfType<FloatingTextUI>();
             dragVisualManager = Object.FindObjectOfType<DragVisualManager>();
+            Debug.Log($"[SkillSlotUI] Init slot={index}, dragVisualManager found={dragVisualManager != null}");
         }
 
         public RectTransform GetIconRect()
