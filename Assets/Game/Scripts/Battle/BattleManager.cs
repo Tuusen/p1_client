@@ -91,6 +91,7 @@ namespace GeometryTD
             }
         }
 
+        // ===== 敌人查询 =====
         public Transform GetNearestEnemy(Vector3 from, float maxRange)
         {
             Transform nearest = null;
@@ -167,6 +168,7 @@ namespace GeometryTD
             return nearest;
         }
 
+        // ===== AoE 伤害 =====
         public void DealAoeDamage(Vector3 center, float radius, float damage)
         {
             for (int i = aliveEnemies.Count - 1; i >= 0; i--)
@@ -188,6 +190,43 @@ namespace GeometryTD
             }
         }
 
+        // 全屏AoE（超暴风）：伤害 + 击退 + 减速 + 易伤
+        public void DealFullScreenAoe(Vector3 heroPos, float damage,
+            float knockbackForce, float slowDuration, float slowRatio,
+            float vulnRatio, float vulnDuration)
+        {
+            for (int i = aliveEnemies.Count - 1; i >= 0; i--)
+            {
+                if (aliveEnemies[i] == null)
+                {
+                    aliveEnemies.RemoveAt(i);
+                    continue;
+                }
+
+                Transform enemy = aliveEnemies[i];
+
+                MonsterController mc = enemy.GetComponent<MonsterController>();
+                if (mc != null)
+                {
+                    mc.TakeDamage(damage);
+                    if (knockbackForce > 0) mc.ApplyKnockback(heroPos, knockbackForce);
+                    if (slowDuration > 0) mc.ApplySlow(slowDuration, slowRatio);
+                    if (vulnDuration > 0) mc.ApplyVulnerability(vulnDuration, vulnRatio);
+                    continue;
+                }
+
+                BossController bc = enemy.GetComponent<BossController>();
+                if (bc != null)
+                {
+                    bc.TakeDamage(damage);
+                    if (knockbackForce > 0) bc.ApplyKnockback(heroPos, knockbackForce);
+                    if (slowDuration > 0) bc.ApplySlow(slowDuration, slowRatio);
+                    if (vulnDuration > 0) bc.ApplyVulnerability(vulnDuration, vulnRatio);
+                }
+            }
+        }
+
+        // ===== 生成 =====
         public void SpawnMonster(MonsterConfig config, Vector3 position)
         {
             if (gameEnded) return;
@@ -207,14 +246,14 @@ namespace GeometryTD
             bullet.Init(target, speed, damage, false, this);
         }
 
-        public void SpawnSkillBullet(Vector3 from, Transform target, float damage, float speed,
-                                      int pierceCount, float explosionRadius, float explosionDmg)
+        public void SpawnSkillBullet(Vector3 from, Transform target, float damage,
+                                      float speed, BulletModifiers mods)
         {
             if (gameEnded) return;
 
             GameObject bulletObj = Instantiate(heroBulletPrefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
-            bullet.Init(target, speed, damage, false, this, pierceCount, explosionRadius, explosionDmg);
+            bullet.InitSkillBullet(target, speed, damage, this, mods);
         }
 
         public void SpawnBossBullet(Vector3 from, Transform target, float damage, float speed)
@@ -226,6 +265,36 @@ namespace GeometryTD
             bullet.Init(target, speed, damage, true, this);
         }
 
+        public void SpawnSummon(Vector3 position, float damage, float atkInterval,
+                                float duration, bool homing)
+        {
+            if (gameEnded) return;
+
+            GameObject summonObj = new GameObject("Summon");
+            summonObj.transform.position = position;
+
+            SummonController summon = summonObj.AddComponent<SummonController>();
+            summon.Init(damage, atkInterval, duration, homing, this);
+        }
+
+        // ===== 技能经验 =====
+        public void OnHeroNormalAttack(Vector3 heroPos)
+        {
+            if (skillManager != null)
+            {
+                skillManager.AddXpToRandomSlot(skillXpMin, skillXpMax);
+            }
+        }
+
+        public void GrantSkillXp(int xpAmount, int slotCount)
+        {
+            if (skillManager != null)
+            {
+                skillManager.GrantXpToSlots(xpAmount, slotCount);
+            }
+        }
+
+        // ===== 事件回调 =====
         public void OnMonsterKilled(MonsterController monster)
         {
             if (gameEnded) return;
@@ -244,14 +313,6 @@ namespace GeometryTD
                 {
                     SpawnBoss();
                 }
-            }
-        }
-
-        public void OnHeroNormalAttack(Vector3 heroPos)
-        {
-            if (skillManager != null)
-            {
-                skillManager.AddXpToRandomSlot(skillXpMin, skillXpMax);
             }
         }
 

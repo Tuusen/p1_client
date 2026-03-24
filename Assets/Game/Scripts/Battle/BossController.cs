@@ -19,6 +19,20 @@ namespace GeometryTD
         private float attackTimer;
         private SkillConfig skillConfig;
 
+        // 状态效果
+        private bool isFrozen;
+        private float freezeTimer;
+        private float burnDmg;
+        private float burnTimer;
+        private float burnTickTimer;
+        private float slowTimer;
+        private float slowRatio;
+        private float vulnerabilityRatio;
+        private float vulnerabilityTimer;
+        private Vector3 knockbackDir;
+        private float knockbackRemaining;
+        private const float KnockbackSpeed = 15f;
+
         [SerializeField] private HealthBarUI hpBar;
 
         private bool isDead;
@@ -58,10 +72,53 @@ namespace GeometryTD
         {
             if (IsDead || heroTarget == null) return;
 
+            // 击退
+            if (knockbackRemaining > 0)
+            {
+                float step = KnockbackSpeed * Time.deltaTime;
+                if (step > knockbackRemaining) step = knockbackRemaining;
+                transform.position += knockbackDir * step;
+                knockbackRemaining -= step;
+                return;
+            }
+
+            // 灼烧 DoT
+            if (burnTimer > 0)
+            {
+                burnTickTimer += Time.deltaTime;
+                if (burnTickTimer >= 1f)
+                {
+                    burnTickTimer -= 1f;
+                    TakeDamage(burnDmg);
+                    if (IsDead) return;
+                }
+                burnTimer -= Time.deltaTime;
+            }
+
+            // 冰冻
+            if (isFrozen)
+            {
+                freezeTimer -= Time.deltaTime;
+                if (freezeTimer <= 0) isFrozen = false;
+                return;
+            }
+
+            // 减速
+            float currentSpeed = moveSpeed;
+            if (slowTimer > 0)
+            {
+                currentSpeed *= (1f - slowRatio / 10000f);
+                slowTimer -= Time.deltaTime;
+            }
+
+            // 易伤计时
+            if (vulnerabilityTimer > 0)
+                vulnerabilityTimer -= Time.deltaTime;
+
             if (!reachedPosition)
             {
                 Vector3 direction = (targetPosition - transform.position).normalized;
-                transform.position += direction * moveSpeed * Time.deltaTime;
+                transform.position += direction * currentSpeed * Time.deltaTime;
 
                 if (Vector3.Distance(transform.position, targetPosition) < 0.2f)
                 {
@@ -91,6 +148,9 @@ namespace GeometryTD
         {
             if (IsDead) return;
 
+            if (vulnerabilityTimer > 0 && vulnerabilityRatio > 0)
+                dmg *= (1f + vulnerabilityRatio / 10000f);
+
             currentHp -= dmg;
             currentHp = Mathf.Max(0, currentHp);
             UpdateBar();
@@ -104,6 +164,37 @@ namespace GeometryTD
             {
                 Die();
             }
+        }
+
+        public void ApplyFreeze(float duration)
+        {
+            isFrozen = true;
+            if (duration > freezeTimer) freezeTimer = duration;
+        }
+
+        public void ApplyBurn(float dmgPerTick, float duration)
+        {
+            burnDmg = dmgPerTick;
+            burnTimer = duration;
+            burnTickTimer = 0f;
+        }
+
+        public void ApplySlow(float duration, float ratio)
+        {
+            slowRatio = ratio;
+            if (duration > slowTimer) slowTimer = duration;
+        }
+
+        public void ApplyVulnerability(float duration, float ratio)
+        {
+            vulnerabilityRatio = ratio;
+            if (duration > vulnerabilityTimer) vulnerabilityTimer = duration;
+        }
+
+        public void ApplyKnockback(Vector3 sourcePos, float force)
+        {
+            knockbackDir = (transform.position - sourcePos).normalized;
+            knockbackRemaining = force;
         }
 
         private void Die()

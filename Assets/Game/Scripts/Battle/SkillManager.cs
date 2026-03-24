@@ -91,6 +91,59 @@ namespace GeometryTD
             return true;
         }
 
+        public void GrantXpToSlots(int xpAmount, int slotCount)
+        {
+            if (slots == null || slots.Length == 0) return;
+
+            if (slotCount < 0)
+            {
+                // 全部槽位
+                for (int i = 0; i < slots.Length; i++)
+                    AddXpToSlot(i, xpAmount);
+            }
+            else
+            {
+                // 随机 slotCount 个不重复的槽位
+                int count = Mathf.Min(slotCount, slots.Length);
+                bool[] picked = new bool[slots.Length];
+                int assigned = 0;
+                int safety = 100;
+                while (assigned < count && safety > 0)
+                {
+                    safety--;
+                    int idx = Random.Range(0, slots.Length);
+                    if (picked[idx]) continue;
+                    picked[idx] = true;
+                    AddXpToSlot(idx, xpAmount);
+                    assigned++;
+                }
+            }
+        }
+
+        private void AddXpToSlot(int index, int amount)
+        {
+            if (index < 0 || index >= slots.Length) return;
+            var slot = slots[index];
+            if (slot.level >= 10) return;
+
+            slot.xp += amount;
+            bool leveledUp = false;
+            while (slot.xp >= 10 && slot.level < 10)
+            {
+                slot.xp -= 10;
+                slot.level++;
+                leveledUp = true;
+            }
+
+            if (leveledUp && floatingText != null && hero != null)
+            {
+                floatingText.Show(
+                    $"{slot.skillName} Lv.{slot.level}!",
+                    hero.transform.position + Vector3.up * 1.8f,
+                    Color.yellow);
+            }
+        }
+
         public void AddXpToRandomSlot(int min, int max)
         {
             if (slots == null || slots.Length == 0) return;
