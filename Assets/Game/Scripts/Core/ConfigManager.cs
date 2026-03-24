@@ -11,8 +11,10 @@ namespace GeometryTD
         public List<MonsterConfig> MonsterConfigs { get; private set; }
         public List<SkillConfig> SkillConfigs { get; private set; }
         public GameConfig GameConfig { get; private set; }
+        public List<BulletStyleConfig> BulletStyleConfigs { get; private set; }
 
         private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
+        private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
 
         private void Awake()
         {
@@ -32,7 +34,9 @@ namespace GeometryTD
             MonsterConfigs = LoadConfig<MonsterConfigList>("Configs/monster_config").monsters;
             SkillConfigs = LoadConfig<SkillConfigList>("Configs/skill_config").skills;
             GameConfig = LoadConfig<GameConfig>("Configs/game_config");
+            BulletStyleConfigs = LoadConfig<BulletStyleConfigList>("Configs/bullet_config").bulletStyles;
             BuildSkillLookup();
+            BuildBulletStyleLookup();
         }
 
         private void BuildSkillLookup()
@@ -45,6 +49,21 @@ namespace GeometryTD
                     skillLookup[skill.id] = new Dictionary<int, SkillConfig>();
                 skillLookup[skill.id][skill.level] = skill;
             }
+        }
+
+        private void BuildBulletStyleLookup()
+        {
+            bulletStyleLookup = new Dictionary<int, BulletStyleConfig>();
+            if (BulletStyleConfigs == null) return;
+            foreach (var style in BulletStyleConfigs)
+                bulletStyleLookup[style.id] = style;
+        }
+
+        public BulletStyleConfig GetBulletStyleConfig(int styleId)
+        {
+            if (bulletStyleLookup != null && bulletStyleLookup.TryGetValue(styleId, out var config))
+                return config;
+            return null;
         }
 
         private T LoadConfig<T>(string path)

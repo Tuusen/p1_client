@@ -356,6 +356,7 @@
 "Assets/Game/Scripts/Battle/MonsterController.cs"
 "Assets/Game/Scripts/Battle/MonsterSpawner.cs"
 "Assets/Game/Scripts/Battle/SkillManager.cs"
+"Assets/Game/Scripts/Battle/SummonController.cs"
 "Assets/Game/Scripts/Core/ConfigManager.cs"
 "Assets/Game/Scripts/Core/GameManager.cs"
 "Assets/Game/Scripts/Data/GameConfigs.cs"

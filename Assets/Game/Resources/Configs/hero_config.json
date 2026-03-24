@@ -7,6 +7,6 @@
   "shield": 200,
   "attack_interval": 1.0,
   "base_attack": 15,
-  "skill_xp_min": 1,
-  "skill_xp_max": 10
+  "skill_xp_min": 10,
+  "skill_xp_max": 50
 }
