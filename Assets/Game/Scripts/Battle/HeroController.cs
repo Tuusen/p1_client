@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GeometryTD
@@ -10,6 +11,7 @@ namespace GeometryTD
         private float attackRange;
         private float attackInterval;
         private int attackSkillId;
+        private float baseAttack;
 
         [Header("运行时状态")]
         private float currentHp;
@@ -21,9 +23,10 @@ namespace GeometryTD
         [SerializeField] private HealthBarUI hpBar;
 
         private BattleManager battleManager;
-        private SkillConfig skillConfig;
+        private SkillConfig normalAttackConfig;
 
         public bool IsDead => currentHp <= 0;
+        public float AttackRange => attackRange;
 
         public void Init(HeroConfig config, BattleManager manager)
         {
@@ -34,12 +37,13 @@ namespace GeometryTD
             attackRange = config.attack_range;
             attackInterval = config.attack_interval;
             attackSkillId = config.attack_skill_id;
+            baseAttack = config.base_attack;
 
             currentHp = maxHp;
             currentShield = maxShield;
             attackTimer = 0f;
 
-            skillConfig = ConfigManager.Instance.GetSkillConfig(attackSkillId);
+            normalAttackConfig = ConfigManager.Instance.GetSkillConfig(attackSkillId);
 
             UpdateBars();
         }
@@ -65,12 +69,49 @@ namespace GeometryTD
 
         private void TryAttack()
         {
-            if (skillConfig == null) return;
+            if (normalAttackConfig == null) return;
 
             Transform target = battleManager.GetNearestEnemy(transform.position, attackRange);
             if (target == null) return;
 
-            battleManager.SpawnHeroBullet(transform.position, target, skillConfig.damage, skillConfig.bullet_speed);
+            float actualDmg = baseAttack * normalAttackConfig.dmg / 10000f;
+            battleManager.SpawnHeroBullet(transform.position, target, actualDmg, normalAttackConfig.bulletSpeed);
+        }
+
+        public void UseSkill(SkillConfig config)
+        {
+            if (IsDead || battleManager == null) return;
+            if (config == null || config.atkCnt <= 0 || config.dmg <= 0) return;
+
+            float actualDmg = baseAttack * config.dmg / 10000f;
+
+            int pierceCount = 0;
+            float explosionRadius = 0f;
+            float explosionDmg = 0f;
+
+            if (config.events != null)
+            {
+                foreach (var evt in config.events)
+                {
+                    if (evt.type == 1 && evt.param != null && evt.param.Length >= 1)
+                        pierceCount = (int)evt.param[0];
+                    else if (evt.type == 2 && evt.param != null && evt.param.Length >= 2)
+                    {
+                        explosionRadius = evt.param[0];
+                        explosionDmg = baseAttack * evt.param[1] / 10000f;
+                    }
+                }
+            }
+
+            List<Transform> targets = battleManager.GetNearestEnemies(
+                transform.position, attackRange, config.atkCnt);
+            if (targets.Count == 0) return;
+
+            foreach (var target in targets)
+            {
+                battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
+                    config.bulletSpeed, pierceCount, explosionRadius, explosionDmg);
+            }
         }
 
         public void TakeDamage(float damage)

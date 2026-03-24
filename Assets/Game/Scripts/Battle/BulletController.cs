@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GeometryTD
@@ -12,16 +13,30 @@ namespace GeometryTD
         private bool hasTarget;
         private float lifeTime = 5f;
 
-        public void Init(Transform target, float speed, float damage, bool isEnemyBullet)
+        private BattleManager battleManager;
+        private int remainingPierceCount;
+        private float explosionRadius;
+        private float explosionDmg;
+        private HashSet<Transform> hitTargets = new HashSet<Transform>();
+
+        public void Init(Transform target, float speed, float damage, bool isEnemyBullet,
+                         BattleManager bm = null, int pierceCount = 0,
+                         float explosionRadius = 0f, float explosionDmg = 0f)
         {
             this.target = target;
             this.speed = speed;
             this.damage = damage;
             this.isEnemyBullet = isEnemyBullet;
             this.hasTarget = target != null;
+            this.battleManager = bm;
+            this.remainingPierceCount = pierceCount;
+            this.explosionRadius = explosionRadius;
+            this.explosionDmg = explosionDmg;
+
             if (hasTarget)
             {
                 lastTargetPos = target.position;
+                hitTargets.Add(target);
             }
         }
 
@@ -48,7 +63,27 @@ namespace GeometryTD
                 if (target != null)
                 {
                     ApplyDamage();
+
+                    if (explosionRadius > 0f && battleManager != null)
+                    {
+                        battleManager.DealAoeDamage(transform.position, explosionRadius, explosionDmg);
+                    }
                 }
+
+                if (remainingPierceCount > 0 && battleManager != null && !isEnemyBullet)
+                {
+                    remainingPierceCount--;
+                    Transform next = battleManager.GetNearestEnemyExcluding(
+                        transform.position, 20f, hitTargets);
+                    if (next != null)
+                    {
+                        target = next;
+                        lastTargetPos = target.position;
+                        hitTargets.Add(next);
+                        return;
+                    }
+                }
+
                 Destroy(gameObject);
             }
         }

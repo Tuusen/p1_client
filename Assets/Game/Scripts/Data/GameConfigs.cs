@@ -13,6 +13,7 @@ namespace GeometryTD
         public float hp;
         public float shield;
         public float attack_interval;
+        public float base_attack;
     }
 
     [Serializable]
@@ -37,12 +38,28 @@ namespace GeometryTD
     }
 
     [Serializable]
+    public class SkillEvent
+    {
+        public int type;
+        public float[] param;
+    }
+
+    [Serializable]
     public class SkillConfig
     {
         public int id;
+        public int level;
         public string name;
-        public float damage;
-        public float bullet_speed;
+        public string[] desList;
+        public string icon;
+        public int dmg;
+        public int dmgType;
+        public int mp;
+        public int mpType;
+        public float bulletSpeed;
+        public int atkCnt;
+        public float cd;
+        public SkillEvent[] events;
     }
 
     [Serializable]
@@ -57,5 +74,6 @@ namespace GeometryTD
         public int kill_count_for_boss;
         public float monster_spawn_interval;
         public int boss_monster_id;
+        public int[] skill_slot_ids;
     }
 }

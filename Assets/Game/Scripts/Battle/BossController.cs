@@ -6,7 +6,7 @@ namespace GeometryTD
     {
         private float maxHp;
         private float currentHp;
-        private float damage;
+        private float baseDamage;
         private float moveSpeed;
         private float attackRange;
         private float attackInterval;
@@ -37,7 +37,7 @@ namespace GeometryTD
 
             maxHp = config.hp;
             currentHp = maxHp;
-            damage = config.damage;
+            baseDamage = config.damage;
             moveSpeed = config.move_speed;
             attackRange = config.attack_range;
             attackInterval = config.attack_interval;
@@ -83,7 +83,8 @@ namespace GeometryTD
         {
             if (skillConfig == null || heroTarget == null) return;
 
-            battleManager.SpawnBossBullet(transform.position, heroTarget, skillConfig.damage, skillConfig.bullet_speed);
+            float actualDmg = baseDamage * skillConfig.dmg / 10000f;
+            battleManager.SpawnBossBullet(transform.position, heroTarget, actualDmg, skillConfig.bulletSpeed);
         }
 
         public void TakeDamage(float dmg)

@@ -779,6 +779,214 @@ namespace GeometryTD
 
             resultPanel.SetActive(false);
 
+            // ========== FloatingTextUI ==========
+            FloatingTextUI floatingTextUI = bmObj.AddComponent<FloatingTextUI>();
+
+            // ========== Skill Bar (bottom) ==========
+            // 读取配置获取技能槽ID和图标
+            string gameConfigJson = File.ReadAllText("Assets/Game/Resources/Configs/game_config.json");
+            GameConfig gameConfigData = JsonUtility.FromJson<GameConfig>(gameConfigJson);
+            string skillConfigJson = File.ReadAllText("Assets/Game/Resources/Configs/skill_config.json");
+            SkillConfigList skillConfigList = JsonUtility.FromJson<SkillConfigList>(skillConfigJson);
+
+            // 构建技能ID->图标名映射 (取level 0的配置)
+            Dictionary<int, string> skillIconMap = new Dictionary<int, string>();
+            Dictionary<int, string> skillNameMap = new Dictionary<int, string>();
+            foreach (var sc in skillConfigList.skills)
+            {
+                if (sc.level == 0 && !string.IsNullOrEmpty(sc.icon))
+                {
+                    skillIconMap[sc.id] = sc.icon;
+                    skillNameMap[sc.id] = sc.name;
+                }
+            }
+
+            int slotCount = gameConfigData.skill_slot_ids != null ? gameConfigData.skill_slot_ids.Length : 0;
+
+            GameObject skillBarPanel = new GameObject("SkillBarPanel");
+            skillBarPanel.transform.SetParent(canvasObj.transform, false);
+            RectTransform skillBarPanelRT = skillBarPanel.AddComponent<RectTransform>();
+            skillBarPanelRT.anchorMin = new Vector2(0.5f, 0f);
+            skillBarPanelRT.anchorMax = new Vector2(0.5f, 0f);
+            skillBarPanelRT.pivot = new Vector2(0.5f, 0f);
+            skillBarPanelRT.anchoredPosition = new Vector2(0, 10);
+            float slotWidth = 110f;
+            float barWidth = slotCount * slotWidth + 20f;
+            skillBarPanelRT.sizeDelta = new Vector2(barWidth, 130);
+
+            // 技能栏背景
+            Image skillBarBg = skillBarPanel.AddComponent<Image>();
+            skillBarBg.color = new Color(0.05f, 0.05f, 0.15f, 0.7f);
+            skillBarBg.raycastTarget = false;
+
+            SkillBarUI skillBarUI = skillBarPanel.AddComponent<SkillBarUI>();
+
+            Sprite barBgSprite = LoadSprite($"{SpritePath}/bar_bg.png");
+            Sprite barFillSprite = LoadSprite($"{SpritePath}/bar_fill.png");
+
+            SkillSlotUI[] skillSlotUIs = new SkillSlotUI[slotCount];
+
+            for (int s = 0; s < slotCount; s++)
+            {
+                int skillId = gameConfigData.skill_slot_ids[s];
+                string iconName = skillIconMap.ContainsKey(skillId) ? skillIconMap[skillId] : "";
+                string skillName = skillNameMap.ContainsKey(skillId) ? skillNameMap[skillId] : "";
+
+                // 技能槽根对象
+                GameObject slotObj = new GameObject($"SkillSlot_{s}");
+                slotObj.transform.SetParent(skillBarPanel.transform, false);
+                RectTransform slotRT = slotObj.AddComponent<RectTransform>();
+                float slotX = -barWidth / 2f + 10f + s * slotWidth + slotWidth / 2f;
+                slotRT.anchorMin = new Vector2(0.5f, 0.5f);
+                slotRT.anchorMax = new Vector2(0.5f, 0.5f);
+                slotRT.anchoredPosition = new Vector2(slotX, 0);
+                slotRT.sizeDelta = new Vector2(slotWidth, 120);
+
+                SkillSlotUI slotUI = slotObj.AddComponent<SkillSlotUI>();
+
+                // 技能槽按钮（整个槽区域可点击）
+                Image slotBtnBg = slotObj.AddComponent<Image>();
+                slotBtnBg.color = new Color(0, 0, 0, 0); // 透明，仅用于接收点击
+                Button slotBtn = slotObj.AddComponent<Button>();
+                slotBtn.transition = Selectable.Transition.None;
+
+                // 图标背景
+                GameObject iconBgObj = new GameObject("IconBg");
+                iconBgObj.transform.SetParent(slotObj.transform, false);
+                Image iconBgImg = iconBgObj.AddComponent<Image>();
+                iconBgImg.color = new Color(0.1f, 0.1f, 0.25f, 0.8f);
+                iconBgImg.raycastTarget = false;
+                RectTransform iconBgRT = iconBgObj.GetComponent<RectTransform>();
+                iconBgRT.anchorMin = new Vector2(0.5f, 1f);
+                iconBgRT.anchorMax = new Vector2(0.5f, 1f);
+                iconBgRT.pivot = new Vector2(0.5f, 1f);
+                iconBgRT.anchoredPosition = new Vector2(0, 0);
+                iconBgRT.sizeDelta = new Vector2(80, 80);
+
+                // 图标
+                GameObject iconObj = new GameObject("Icon");
+                iconObj.transform.SetParent(iconBgObj.transform, false);
+                Image iconImg = iconObj.AddComponent<Image>();
+                iconImg.raycastTarget = false;
+                iconImg.color = Color.white;
+
+                if (!string.IsNullOrEmpty(iconName))
+                {
+                    Sprite iconSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
+                        $"Assets/ui/Space_Exploration_GUI_Kit/Picto_Icons/White/{iconName}.png");
+                    if (iconSprite != null)
+                        iconImg.sprite = iconSprite;
+                }
+
+                RectTransform iconRT = iconObj.GetComponent<RectTransform>();
+                iconRT.anchorMin = Vector2.zero;
+                iconRT.anchorMax = Vector2.one;
+                iconRT.offsetMin = new Vector2(8, 8);
+                iconRT.offsetMax = new Vector2(-8, -8);
+
+                // 冷却遮罩
+                GameObject cdObj = new GameObject("CooldownOverlay");
+                cdObj.transform.SetParent(iconBgObj.transform, false);
+                Image cdImg = cdObj.AddComponent<Image>();
+                cdImg.color = new Color(0, 0, 0, 0.6f);
+                cdImg.type = Image.Type.Filled;
+                cdImg.fillMethod = Image.FillMethod.Radial360;
+                cdImg.fillOrigin = 2; // Top
+                cdImg.fillClockwise = true;
+                cdImg.fillAmount = 0f;
+                cdImg.raycastTarget = false;
+                RectTransform cdRT = cdObj.GetComponent<RectTransform>();
+                cdRT.anchorMin = Vector2.zero;
+                cdRT.anchorMax = Vector2.one;
+                cdRT.offsetMin = Vector2.zero;
+                cdRT.offsetMax = Vector2.zero;
+                cdObj.SetActive(false);
+
+                // 等级文本
+                Text lvText = CreateUIText(slotObj, "LevelText", "Lv.0", 16, Color.white);
+                lvText.raycastTarget = false;
+                RectTransform lvRT = lvText.GetComponent<RectTransform>();
+                lvRT.anchorMin = new Vector2(0.5f, 0f);
+                lvRT.anchorMax = new Vector2(0.5f, 0f);
+                lvRT.pivot = new Vector2(0.5f, 0f);
+                lvRT.anchoredPosition = new Vector2(0, 16);
+                lvRT.sizeDelta = new Vector2(100, 20);
+
+                // 经验条
+                GameObject xpSliderObj = new GameObject("XpSlider");
+                xpSliderObj.transform.SetParent(slotObj.transform, false);
+                Slider xpSlider = xpSliderObj.AddComponent<Slider>();
+                xpSlider.interactable = false;
+                xpSlider.transition = Selectable.Transition.None;
+                xpSlider.minValue = 0;
+                xpSlider.maxValue = 10;
+                xpSlider.value = 0;
+
+                RectTransform xpSliderRT = xpSliderObj.GetComponent<RectTransform>();
+                xpSliderRT.anchorMin = new Vector2(0.5f, 0f);
+                xpSliderRT.anchorMax = new Vector2(0.5f, 0f);
+                xpSliderRT.pivot = new Vector2(0.5f, 0f);
+                xpSliderRT.anchoredPosition = new Vector2(0, 2);
+                xpSliderRT.sizeDelta = new Vector2(90, 12);
+
+                // XP条背景
+                GameObject xpBgObj = new GameObject("Background");
+                xpBgObj.transform.SetParent(xpSliderObj.transform, false);
+                Image xpBgImg = xpBgObj.AddComponent<Image>();
+                if (barBgSprite != null) xpBgImg.sprite = barBgSprite;
+                xpBgImg.type = Image.Type.Sliced;
+                xpBgImg.color = new Color(0.15f, 0.15f, 0.2f, 0.8f);
+                RectTransform xpBgRT = xpBgObj.GetComponent<RectTransform>();
+                xpBgRT.anchorMin = Vector2.zero;
+                xpBgRT.anchorMax = Vector2.one;
+                xpBgRT.offsetMin = Vector2.zero;
+                xpBgRT.offsetMax = Vector2.zero;
+
+                // XP条填充
+                GameObject xpFillArea = new GameObject("Fill Area");
+                xpFillArea.transform.SetParent(xpSliderObj.transform, false);
+                RectTransform xpFillAreaRT = xpFillArea.AddComponent<RectTransform>();
+                xpFillAreaRT.anchorMin = Vector2.zero;
+                xpFillAreaRT.anchorMax = Vector2.one;
+                xpFillAreaRT.offsetMin = Vector2.zero;
+                xpFillAreaRT.offsetMax = Vector2.zero;
+
+                GameObject xpFillObj = new GameObject("Fill");
+                xpFillObj.transform.SetParent(xpFillArea.transform, false);
+                Image xpFillImg = xpFillObj.AddComponent<Image>();
+                if (barFillSprite != null) xpFillImg.sprite = barFillSprite;
+                xpFillImg.type = Image.Type.Sliced;
+                xpFillImg.color = new Color(0.3f, 0.8f, 1f);
+                RectTransform xpFillRT = xpFillObj.GetComponent<RectTransform>();
+                xpFillRT.anchorMin = Vector2.zero;
+                xpFillRT.anchorMax = new Vector2(0, 1);
+                xpFillRT.offsetMin = Vector2.zero;
+                xpFillRT.offsetMax = Vector2.zero;
+
+                xpSlider.fillRect = xpFillRT;
+
+                // Wire SkillSlotUI
+                SerializedObject slotSO = new SerializedObject(slotUI);
+                slotSO.FindProperty("iconImage").objectReferenceValue = iconImg;
+                slotSO.FindProperty("levelText").objectReferenceValue = lvText;
+                slotSO.FindProperty("xpSlider").objectReferenceValue = xpSlider;
+                slotSO.FindProperty("cooldownOverlay").objectReferenceValue = cdImg;
+                slotSO.FindProperty("slotButton").objectReferenceValue = slotBtn;
+                slotSO.ApplyModifiedPropertiesWithoutUndo();
+
+                skillSlotUIs[s] = slotUI;
+            }
+
+            // Wire SkillBarUI
+            SerializedObject skillBarSO = new SerializedObject(skillBarUI);
+            SerializedProperty slotsProperty = skillBarSO.FindProperty("slots");
+            slotsProperty.arraySize = slotCount;
+            for (int s = 0; s < slotCount; s++)
+            {
+                slotsProperty.GetArrayElementAtIndex(s).objectReferenceValue = skillSlotUIs[s];
+            }
+            skillBarSO.ApplyModifiedPropertiesWithoutUndo();
+
             // ========== Wire up BattleUI ==========
             SerializedObject battleUISO = new SerializedObject(battleUI);
             battleUISO.FindProperty("progressSlider").objectReferenceValue = progressSlider;
@@ -796,6 +1004,8 @@ namespace GeometryTD
             bmSO.FindProperty("heroBulletPrefab").objectReferenceValue = heroBulletPrefab;
             bmSO.FindProperty("bossBulletPrefab").objectReferenceValue = bossBulletPrefab;
             bmSO.FindProperty("battleUI").objectReferenceValue = battleUI;
+            bmSO.FindProperty("skillBarUI").objectReferenceValue = skillBarUI;
+            bmSO.FindProperty("floatingTextUI").objectReferenceValue = floatingTextUI;
             bmSO.FindProperty("heroSpawnPoint").objectReferenceValue = heroSpawnPoint.transform;
             bmSO.ApplyModifiedPropertiesWithoutUndo();
 
