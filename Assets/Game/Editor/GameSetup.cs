@@ -844,6 +844,12 @@ namespace GeometryTD
 
                 SkillSlotUI slotUI = slotObj.AddComponent<SkillSlotUI>();
 
+                // 技能槽按钮（整个槽区域可点击）
+                Image slotBtnBg = slotObj.AddComponent<Image>();
+                slotBtnBg.color = new Color(0, 0, 0, 0); // 透明，仅用于接收点击
+                Button slotBtn = slotObj.AddComponent<Button>();
+                slotBtn.transition = Selectable.Transition.None;
+
                 // 图标背景
                 GameObject iconBgObj = new GameObject("IconBg");
                 iconBgObj.transform.SetParent(slotObj.transform, false);
@@ -965,6 +971,7 @@ namespace GeometryTD
                 slotSO.FindProperty("levelText").objectReferenceValue = lvText;
                 slotSO.FindProperty("xpSlider").objectReferenceValue = xpSlider;
                 slotSO.FindProperty("cooldownOverlay").objectReferenceValue = cdImg;
+                slotSO.FindProperty("slotButton").objectReferenceValue = slotBtn;
                 slotSO.ApplyModifiedPropertiesWithoutUndo();
 
                 skillSlotUIs[s] = slotUI;
