@@ -141,6 +141,7 @@ namespace GeometryTD
         public float monster_spawn_interval;
         public int boss_monster_id;
         public int[] skill_slot_ids;
+        public int[] arcane_slot_ids;
     }
 
     [Serializable]
