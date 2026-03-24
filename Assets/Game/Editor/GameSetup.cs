@@ -92,6 +92,43 @@ namespace GeometryTD
             return tex;
         }
 
+        private static Texture2D CreateCircleBulletTexture(int size, Color color)
+        {
+            Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            float radius = size / 2f;
+            Vector2 center = new Vector2(radius, radius);
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    float dist = Vector2.Distance(new Vector2(x, y), center);
+                    tex.SetPixel(x, y, dist <= radius ? color : Color.clear);
+                }
+            }
+            tex.Apply();
+            return tex;
+        }
+
+        private static Texture2D CreateArrowBulletTexture(int size, Color color)
+        {
+            Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            float half = size / 2f;
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    float nx = (float)x / size;
+                    float ny = (float)y / size;
+                    float distFromCenter = Mathf.Abs(ny - 0.5f);
+                    float maxDist = 0.5f * (1f - nx);
+                    bool inArrow = nx < 0.85f && distFromCenter <= maxDist;
+                    tex.SetPixel(x, y, inArrow ? color : Color.clear);
+                }
+            }
+            tex.Apply();
+            return tex;
+        }
+
         private static Texture2D CreateHexagonTexture(int size, Color color)
         {
             Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
@@ -214,6 +251,11 @@ namespace GeometryTD
             SaveTexture(CreateSolidTexture(4, 4, new Color(0.15f, 0.15f, 0.2f, 0.8f)), $"{SpritePath}/bar_bg.png");
             SaveTexture(CreateSolidTexture(4, 4, Color.white), $"{SpritePath}/bar_fill.png");
 
+            // 子弹形状（白色，运行时着色）保存到 Resources 以便运行时加载
+            SaveTexture(CreateDiamondTexture(32, Color.white), $"{ResourceSpritePath}/bullet_diamond.png");
+            SaveTexture(CreateCircleBulletTexture(32, Color.white), $"{ResourceSpritePath}/bullet_circle.png");
+            SaveTexture(CreateArrowBulletTexture(32, Color.white), $"{ResourceSpritePath}/bullet_arrow.png");
+
             AssetDatabase.Refresh();
 
             SetTextureAsSprite($"{SpritePath}/hero_shape.png");
@@ -223,6 +265,9 @@ namespace GeometryTD
             SetTextureAsSprite($"{SpritePath}/boss_bullet.png");
             SetTextureAsSprite($"{SpritePath}/bar_bg.png");
             SetTextureAsSprite($"{SpritePath}/bar_fill.png");
+            SetTextureAsSprite($"{ResourceSpritePath}/bullet_diamond.png");
+            SetTextureAsSprite($"{ResourceSpritePath}/bullet_circle.png");
+            SetTextureAsSprite($"{ResourceSpritePath}/bullet_arrow.png");
         }
 
         private static Sprite LoadSprite(string path)
@@ -846,6 +891,7 @@ namespace GeometryTD
                 slotRT.sizeDelta = new Vector2(slotWidth, barHeight - 16f);
 
                 SkillSlotUI slotUI = slotObj.AddComponent<SkillSlotUI>();
+                CanvasGroup slotCanvasGroup = slotObj.AddComponent<CanvasGroup>();
 
                 // 技能槽背景框
                 Image slotBg = slotObj.AddComponent<Image>();
@@ -1024,6 +1070,7 @@ namespace GeometryTD
                 slotSO.FindProperty("xpSlider").objectReferenceValue = xpSlider;
                 slotSO.FindProperty("cooldownOverlay").objectReferenceValue = cdImg;
                 slotSO.FindProperty("slotButton").objectReferenceValue = slotBtn;
+                slotSO.FindProperty("slotCanvasGroup").objectReferenceValue = slotCanvasGroup;
                 slotSO.ApplyModifiedPropertiesWithoutUndo();
 
                 skillSlotUIs[s] = slotUI;
@@ -1037,6 +1084,7 @@ namespace GeometryTD
             {
                 slotsProperty.GetArrayElementAtIndex(s).objectReferenceValue = skillSlotUIs[s];
             }
+            skillBarSO.FindProperty("floatingTextUI").objectReferenceValue = floatingTextUI;
             skillBarSO.ApplyModifiedPropertiesWithoutUndo();
 
             // ========== Wire up BattleUI ==========
