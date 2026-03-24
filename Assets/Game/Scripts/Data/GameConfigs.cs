@@ -14,6 +14,8 @@ namespace GeometryTD
         public float shield;
         public float attack_interval;
         public float base_attack;
+        public int skill_xp_min;
+        public int skill_xp_max;
     }
 
     [Serializable]

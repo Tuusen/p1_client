@@ -30,6 +30,8 @@ namespace GeometryTD
         private int killCountForBoss;
         private bool bossPhase;
         private bool gameEnded;
+        private int skillXpMin;
+        private int skillXpMax;
 
         private void Start()
         {
@@ -51,6 +53,8 @@ namespace GeometryTD
             killCount = 0;
             bossPhase = false;
             gameEnded = false;
+            skillXpMin = heroConfig.skill_xp_min;
+            skillXpMax = heroConfig.skill_xp_max;
 
             // 生成英雄
             Vector3 heroPos = heroSpawnPoint != null ? heroSpawnPoint.position : new Vector3(-6f, 0f, 0f);
@@ -226,14 +230,8 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            Vector3 deathPos = monster.transform.position;
             aliveEnemies.Remove(monster.transform);
             killCount++;
-
-            if (skillManager != null)
-            {
-                skillManager.AddXpToAll(1, deathPos);
-            }
 
             if (!bossPhase)
             {
@@ -246,6 +244,14 @@ namespace GeometryTD
                 {
                     SpawnBoss();
                 }
+            }
+        }
+
+        public void OnHeroNormalAttack(Vector3 heroPos)
+        {
+            if (skillManager != null)
+            {
+                skillManager.AddXpToRandomSlot(skillXpMin, skillXpMax);
             }
         }
 

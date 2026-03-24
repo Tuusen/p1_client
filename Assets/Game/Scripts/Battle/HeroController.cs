@@ -76,6 +76,7 @@ namespace GeometryTD
 
             float actualDmg = baseAttack * normalAttackConfig.dmg / 10000f;
             battleManager.SpawnHeroBullet(transform.position, target, actualDmg, normalAttackConfig.bulletSpeed);
+            battleManager.OnHeroNormalAttack(transform.position);
         }
 
         public void UseSkill(SkillConfig config)
