@@ -165,6 +165,15 @@ namespace GeometryTD
         public List<BulletStyleConfig> bulletStyles;
     }
 
+    public enum SkillCategory
+    {
+        Self,
+        Projectile,
+        Aoe,
+        Shield,
+        Summon
+    }
+
     public enum SkillUseResult
     {
         Success,

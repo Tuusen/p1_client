@@ -33,6 +33,21 @@ namespace GeometryTD
         private int skillXpMin;
         private int skillXpMax;
 
+        public Transform HeroTransform => heroController != null ? heroController.transform : null;
+
+        public void ShowDamageText(Vector3 worldPos, float amount, bool isHeal)
+        {
+            if (floatingTextUI == null) return;
+            int display = Mathf.RoundToInt(amount);
+            if (display <= 0) return;
+            string text = isHeal ? $"+{display}" : display.ToString();
+            Color color = isHeal
+                ? new Color(0.2f, 0.9f, 0.3f)
+                : new Color(1f, 0.4f, 0.1f);
+            Vector3 offset = new Vector3(Random.Range(-0.3f, 0.3f), 0.3f, 0f);
+            floatingTextUI.Show(text, worldPos + offset, color);
+        }
+
         private void Start()
         {
             InitBattle();

@@ -361,6 +361,7 @@
 "Assets/Game/Scripts/Core/GameManager.cs"
 "Assets/Game/Scripts/Data/GameConfigs.cs"
 "Assets/Game/Scripts/UI/BattleUI.cs"
+"Assets/Game/Scripts/UI/DragVisualManager.cs"
 "Assets/Game/Scripts/UI/FloatingTextUI.cs"
 "Assets/Game/Scripts/UI/HealthBarUI.cs"
 "Assets/Game/Scripts/UI/MainMenuUI.cs"

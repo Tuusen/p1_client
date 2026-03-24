@@ -22,6 +22,37 @@ namespace GeometryTD
 
         public int SlotCount => slots != null ? slots.Length : 0;
 
+        public static SkillCategory ClassifySkill(SkillConfig config)
+        {
+            if (config == null) return SkillCategory.Self;
+
+            bool hasSummon = false, hasShield = false, hasSelfEffect = false;
+            if (config.events != null)
+            {
+                foreach (var evt in config.events)
+                {
+                    switch (evt.type)
+                    {
+                        case SkillEventType.Summon: hasSummon = true; break;
+                        case SkillEventType.Shield: hasShield = true; break;
+                        case SkillEventType.Heal:
+                        case SkillEventType.HealOverTime:
+                        case SkillEventType.DamageReduction:
+                        case SkillEventType.SelfDamage:
+                        case SkillEventType.GrantXp:
+                            hasSelfEffect = true; break;
+                    }
+                }
+            }
+
+            if (hasSummon) return SkillCategory.Summon;
+            if (hasShield) return SkillCategory.Shield;
+            if (hasSelfEffect && config.bulletSpeed <= 0) return SkillCategory.Self;
+            if (config.bulletSpeed > 0 && config.atkCnt > 0) return SkillCategory.Projectile;
+            if (config.dmg > 0) return SkillCategory.Aoe;
+            return SkillCategory.Self;
+        }
+
         public SkillSlotState GetSlot(int index)
         {
             if (slots == null || index < 0 || index >= slots.Length) return null;

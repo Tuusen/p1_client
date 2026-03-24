@@ -123,6 +123,9 @@ namespace GeometryTD
             currentHp = Mathf.Max(0, currentHp);
             UpdateBar();
 
+            if (battleManager != null)
+                battleManager.ShowDamageText(transform.position, dmg, false);
+
             if (currentHp <= 0)
             {
                 Die();

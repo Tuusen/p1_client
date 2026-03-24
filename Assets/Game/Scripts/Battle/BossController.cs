@@ -156,6 +156,9 @@ namespace GeometryTD
             UpdateBar();
 
             if (battleManager != null)
+                battleManager.ShowDamageText(transform.position, dmg, false);
+
+            if (battleManager != null)
             {
                 battleManager.UpdateBossHpUI(currentHp, maxHp);
             }

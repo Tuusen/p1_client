@@ -26,6 +26,8 @@ namespace GeometryTD
         // 拖拽
         private GameObject dragGhost;
         private bool isDragging;
+        private DragVisualManager dragVisualManager;
+        private SkillCategory currentDragCategory;
 
         // Tooltip
         private static GameObject activeTooltip;
@@ -56,6 +58,7 @@ namespace GeometryTD
                 : null;
 
             floatingTextUI = Object.FindObjectOfType<FloatingTextUI>();
+            dragVisualManager = Object.FindObjectOfType<DragVisualManager>();
         }
 
         public RectTransform GetIconRect()
@@ -120,6 +123,13 @@ namespace GeometryTD
             }
 
             isDragging = true;
+
+            // 分类技能并启动视觉效果
+            var config = ConfigManager.Instance.GetSkillConfig(state.skillId, Mathf.Max(state.level, 1));
+            currentDragCategory = SkillManager.ClassifySkill(config);
+            if (dragVisualManager != null)
+                dragVisualManager.BeginDrag(currentDragCategory);
+
             CreateDragGhost(eventData.position);
 
             // 原图标变暗
@@ -131,12 +141,19 @@ namespace GeometryTD
         {
             if (!isDragging || dragGhost == null) return;
             dragGhost.transform.position = eventData.position;
+
+            if (dragVisualManager != null)
+                dragVisualManager.UpdateDrag(currentDragCategory);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
             if (!isDragging) return;
             isDragging = false;
+
+            if (dragVisualManager != null)
+                dragVisualManager.EndDrag();
+
             DestroyDragGhost();
 
             bool insideBar = skillBarRect != null &&
