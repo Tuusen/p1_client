@@ -1087,6 +1087,320 @@ namespace GeometryTD
             skillBarSO.FindProperty("floatingTextUI").objectReferenceValue = floatingTextUI;
             skillBarSO.ApplyModifiedPropertiesWithoutUndo();
 
+            // ========== Arcane Bar (above skill bar) ==========
+            string arcaneConfigJson = File.ReadAllText("Assets/Game/Resources/Configs/arcane_config.json");
+            ArcaneConfigList arcaneConfigList = JsonUtility.FromJson<ArcaneConfigList>(arcaneConfigJson);
+
+            Dictionary<int, string> arcaneIconMap = new Dictionary<int, string>();
+            Dictionary<int, string> arcaneNameMap = new Dictionary<int, string>();
+            Dictionary<int, ArcaneConfig> arcaneConfigMap = new Dictionary<int, ArcaneConfig>();
+            if (arcaneConfigList != null && arcaneConfigList.arcanes != null)
+            {
+                foreach (var ac in arcaneConfigList.arcanes)
+                {
+                    arcaneIconMap[ac.id] = ac.icon;
+                    arcaneNameMap[ac.id] = ac.name;
+                    arcaneConfigMap[ac.id] = ac;
+                }
+            }
+
+            int arcaneSlotCount = gameConfigData.arcane_slot_ids != null ? gameConfigData.arcane_slot_ids.Length : 0;
+
+            // --- Rune Bar Panel (left side, above skill bar) ---
+            GameObject runeBarPanel = new GameObject("RuneBarPanel");
+            runeBarPanel.transform.SetParent(canvasObj.transform, false);
+            RectTransform runeBarRT = runeBarPanel.AddComponent<RectTransform>();
+            runeBarRT.anchorMin = new Vector2(0f, 0f);
+            runeBarRT.anchorMax = new Vector2(0f, 0f);
+            runeBarRT.pivot = new Vector2(0f, 0f);
+            runeBarRT.anchoredPosition = new Vector2(10, barHeight + 20);
+            runeBarRT.sizeDelta = new Vector2(200, 100);
+
+            Image runeBarBg = runeBarPanel.AddComponent<Image>();
+            runeBarBg.color = new Color(0.02f, 0.02f, 0.08f, 0.8f);
+            runeBarBg.raycastTarget = false;
+
+            RuneBarUI runeBarUI = runeBarPanel.AddComponent<RuneBarUI>();
+
+            string[] runeLabels = { "火", "冰", "雷", "风" };
+            Color[] runeColors = {
+                new Color(1f, 0.4f, 0.2f),
+                new Color(0.3f, 0.7f, 1f),
+                new Color(0.8f, 0.8f, 0.2f),
+                new Color(0.3f, 0.9f, 0.5f)
+            };
+
+            Text[] runeCountTexts = new Text[4];
+            Slider[] energySliders = new Slider[4];
+
+            for (int r = 0; r < 4; r++)
+            {
+                // Rune type label
+                Text labelText = CreateUIText(runeBarPanel, $"RuneLabel_{r}", runeLabels[r], 13,
+                    runeColors[r], TextAnchor.MiddleLeft);
+                labelText.raycastTarget = false;
+                RectTransform labelRT = labelText.GetComponent<RectTransform>();
+                labelRT.anchorMin = new Vector2(0, 1);
+                labelRT.anchorMax = new Vector2(0, 1);
+                labelRT.pivot = new Vector2(0, 1);
+                labelRT.anchoredPosition = new Vector2(8, -8 - r * 23f);
+                labelRT.sizeDelta = new Vector2(24, 20);
+
+                // Rune count
+                Text countText = CreateUIText(runeBarPanel, $"RuneCount_{r}", "0", 14,
+                    Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+                countText.raycastTarget = false;
+                RectTransform countRT = countText.GetComponent<RectTransform>();
+                countRT.anchorMin = new Vector2(0, 1);
+                countRT.anchorMax = new Vector2(0, 1);
+                countRT.pivot = new Vector2(0, 1);
+                countRT.anchoredPosition = new Vector2(34, -8 - r * 23f);
+                countRT.sizeDelta = new Vector2(30, 20);
+                runeCountTexts[r] = countText;
+
+                // Energy slider
+                GameObject esliderObj = new GameObject($"EnergySlider_{r}");
+                esliderObj.transform.SetParent(runeBarPanel.transform, false);
+                Slider eslider = esliderObj.AddComponent<Slider>();
+                eslider.interactable = false;
+                eslider.transition = Selectable.Transition.None;
+                eslider.minValue = 0;
+                eslider.maxValue = 10;
+                eslider.value = 0;
+
+                RectTransform esliderRT = esliderObj.GetComponent<RectTransform>();
+                esliderRT.anchorMin = new Vector2(0, 1);
+                esliderRT.anchorMax = new Vector2(0, 1);
+                esliderRT.pivot = new Vector2(0, 1);
+                esliderRT.anchoredPosition = new Vector2(68, -8 - r * 23f);
+                esliderRT.sizeDelta = new Vector2(120, 16);
+
+                GameObject eslBg = new GameObject("Background");
+                eslBg.transform.SetParent(esliderObj.transform, false);
+                Image eslBgImg = eslBg.AddComponent<Image>();
+                if (barBgSprite != null) eslBgImg.sprite = barBgSprite;
+                eslBgImg.type = Image.Type.Sliced;
+                eslBgImg.color = new Color(0.1f, 0.1f, 0.18f, 0.9f);
+                RectTransform eslBgRT = eslBg.GetComponent<RectTransform>();
+                eslBgRT.anchorMin = Vector2.zero;
+                eslBgRT.anchorMax = Vector2.one;
+                eslBgRT.offsetMin = Vector2.zero;
+                eslBgRT.offsetMax = Vector2.zero;
+
+                GameObject eslFillArea = new GameObject("Fill Area");
+                eslFillArea.transform.SetParent(esliderObj.transform, false);
+                RectTransform eslFillAreaRT = eslFillArea.AddComponent<RectTransform>();
+                eslFillAreaRT.anchorMin = Vector2.zero;
+                eslFillAreaRT.anchorMax = Vector2.one;
+                eslFillAreaRT.offsetMin = Vector2.zero;
+                eslFillAreaRT.offsetMax = Vector2.zero;
+
+                GameObject eslFill = new GameObject("Fill");
+                eslFill.transform.SetParent(eslFillArea.transform, false);
+                Image eslFillImg = eslFill.AddComponent<Image>();
+                if (barFillSprite != null) eslFillImg.sprite = barFillSprite;
+                eslFillImg.type = Image.Type.Sliced;
+                eslFillImg.color = runeColors[r];
+                RectTransform eslFillRT = eslFill.GetComponent<RectTransform>();
+                eslFillRT.anchorMin = Vector2.zero;
+                eslFillRT.anchorMax = new Vector2(0, 1);
+                eslFillRT.offsetMin = Vector2.zero;
+                eslFillRT.offsetMax = Vector2.zero;
+
+                eslider.fillRect = eslFillRT;
+                energySliders[r] = eslider;
+            }
+
+            // Wire RuneBarUI
+            SerializedObject runeBarSO = new SerializedObject(runeBarUI);
+            SerializedProperty runeTextsP = runeBarSO.FindProperty("runeCountTexts");
+            runeTextsP.arraySize = 4;
+            for (int r = 0; r < 4; r++)
+                runeTextsP.GetArrayElementAtIndex(r).objectReferenceValue = runeCountTexts[r];
+            SerializedProperty energySlidersP = runeBarSO.FindProperty("energySliders");
+            energySlidersP.arraySize = 4;
+            for (int r = 0; r < 4; r++)
+                energySlidersP.GetArrayElementAtIndex(r).objectReferenceValue = energySliders[r];
+            runeBarSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // --- Arcane Bar Panel (right side) ---
+            float arcaneSlotWidth = 100f;
+            float arcaneSlotSpacing = 6f;
+            float arcaneBarWidth = arcaneSlotCount * arcaneSlotWidth + (arcaneSlotCount - 1) * arcaneSlotSpacing + 20f;
+            float arcaneBarHeight = 120f;
+
+            GameObject arcaneBarPanel = new GameObject("ArcaneBarPanel");
+            arcaneBarPanel.transform.SetParent(canvasObj.transform, false);
+            RectTransform arcaneBarPanelRT = arcaneBarPanel.AddComponent<RectTransform>();
+            arcaneBarPanelRT.anchorMin = new Vector2(1f, 0f);
+            arcaneBarPanelRT.anchorMax = new Vector2(1f, 0f);
+            arcaneBarPanelRT.pivot = new Vector2(1f, 0f);
+            arcaneBarPanelRT.anchoredPosition = new Vector2(-10, barHeight + 20);
+            arcaneBarPanelRT.sizeDelta = new Vector2(arcaneBarWidth, arcaneBarHeight);
+
+            Image arcaneBarBg = arcaneBarPanel.AddComponent<Image>();
+            arcaneBarBg.color = new Color(0.02f, 0.02f, 0.08f, 0.85f);
+            arcaneBarBg.raycastTarget = false;
+
+            ArcaneBarUI arcaneBarUI = arcaneBarPanel.AddComponent<ArcaneBarUI>();
+
+            ArcaneSlotUI[] arcaneSlotUIs = new ArcaneSlotUI[arcaneSlotCount];
+
+            for (int a = 0; a < arcaneSlotCount; a++)
+            {
+                int arcaneId = gameConfigData.arcane_slot_ids[a];
+                string aIconName = arcaneIconMap.ContainsKey(arcaneId) ? arcaneIconMap[arcaneId] : "";
+                string aName = arcaneNameMap.ContainsKey(arcaneId) ? arcaneNameMap[arcaneId] : "";
+                ArcaneConfig aCfg = arcaneConfigMap.ContainsKey(arcaneId) ? arcaneConfigMap[arcaneId] : null;
+
+                int runeCost = aCfg != null ? aCfg.runeCost : 0;
+                int runeType = aCfg != null ? aCfg.runeType : 1;
+                string costLabel = $"{runeCost}{runeLabels[Mathf.Clamp(runeType - 1, 0, 3)]}";
+
+                GameObject aSlotObj = new GameObject($"ArcaneSlot_{a}");
+                aSlotObj.transform.SetParent(arcaneBarPanel.transform, false);
+                RectTransform aSlotRT = aSlotObj.AddComponent<RectTransform>();
+                float aSlotX = -arcaneBarWidth / 2f + 10f + a * (arcaneSlotWidth + arcaneSlotSpacing) + arcaneSlotWidth / 2f;
+                aSlotRT.anchorMin = new Vector2(0.5f, 0.5f);
+                aSlotRT.anchorMax = new Vector2(0.5f, 0.5f);
+                aSlotRT.anchoredPosition = new Vector2(aSlotX, 0);
+                aSlotRT.sizeDelta = new Vector2(arcaneSlotWidth, arcaneBarHeight - 12f);
+
+                ArcaneSlotUI aSlotUI = aSlotObj.AddComponent<ArcaneSlotUI>();
+                CanvasGroup aSlotCG = aSlotObj.AddComponent<CanvasGroup>();
+
+                Image aSlotBg = aSlotObj.AddComponent<Image>();
+                aSlotBg.color = new Color(0.06f, 0.04f, 0.15f, 0.9f);
+
+                Text aNameText = CreateUIText(aSlotObj, "NameText", aName, 12,
+                    new Color(0.85f, 0.7f, 1f), TextAnchor.MiddleCenter);
+                aNameText.raycastTarget = false;
+                RectTransform aNameRT = aNameText.GetComponent<RectTransform>();
+                aNameRT.anchorMin = new Vector2(0f, 1f);
+                aNameRT.anchorMax = new Vector2(1f, 1f);
+                aNameRT.pivot = new Vector2(0.5f, 1f);
+                aNameRT.anchoredPosition = new Vector2(0, -2);
+                aNameRT.sizeDelta = new Vector2(0, 18);
+
+                GameObject aIconBg = new GameObject("IconBg");
+                aIconBg.transform.SetParent(aSlotObj.transform, false);
+                Image aIconBgImg = aIconBg.AddComponent<Image>();
+                aIconBgImg.color = new Color(0.04f, 0.04f, 0.12f, 1f);
+                aIconBgImg.raycastTarget = false;
+                RectTransform aIconBgRT = aIconBg.GetComponent<RectTransform>();
+                aIconBgRT.anchorMin = new Vector2(0.5f, 1f);
+                aIconBgRT.anchorMax = new Vector2(0.5f, 1f);
+                aIconBgRT.pivot = new Vector2(0.5f, 1f);
+                aIconBgRT.anchoredPosition = new Vector2(0, -20);
+                aIconBgRT.sizeDelta = new Vector2(56, 56);
+
+                GameObject aBorder = new GameObject("Border");
+                aBorder.transform.SetParent(aIconBg.transform, false);
+                Image aBorderImg = aBorder.AddComponent<Image>();
+                aBorderImg.color = new Color(0.5f, 0.3f, 0.7f, 0.8f);
+                aBorderImg.raycastTarget = false;
+                RectTransform aBorderRT = aBorder.GetComponent<RectTransform>();
+                aBorderRT.anchorMin = Vector2.zero;
+                aBorderRT.anchorMax = Vector2.one;
+                aBorderRT.offsetMin = new Vector2(-2, -2);
+                aBorderRT.offsetMax = new Vector2(2, 2);
+                aBorder.transform.SetAsFirstSibling();
+
+                GameObject aIconObj = new GameObject("Icon");
+                aIconObj.transform.SetParent(aIconBg.transform, false);
+                Image aIconImg = aIconObj.AddComponent<Image>();
+                aIconImg.raycastTarget = false;
+                aIconImg.color = Color.white;
+
+                if (!string.IsNullOrEmpty(aIconName))
+                {
+                    Sprite aSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
+                        $"Assets/ui/Space_Exploration_GUI_Kit/Picto_Icons/White/{aIconName}.png");
+                    if (aSprite != null)
+                        aIconImg.sprite = aSprite;
+                }
+
+                RectTransform aIconRT = aIconObj.GetComponent<RectTransform>();
+                aIconRT.anchorMin = Vector2.zero;
+                aIconRT.anchorMax = Vector2.one;
+                aIconRT.offsetMin = new Vector2(4, 4);
+                aIconRT.offsetMax = new Vector2(-4, -4);
+
+                GameObject aCdObj = new GameObject("CooldownOverlay");
+                aCdObj.transform.SetParent(aIconBg.transform, false);
+                Image aCdImg = aCdObj.AddComponent<Image>();
+                aCdImg.color = new Color(0, 0, 0, 0.7f);
+                aCdImg.type = Image.Type.Filled;
+                aCdImg.fillMethod = Image.FillMethod.Radial360;
+                aCdImg.fillOrigin = 2;
+                aCdImg.fillClockwise = true;
+                aCdImg.fillAmount = 0f;
+                aCdImg.raycastTarget = false;
+                RectTransform aCdRT = aCdObj.GetComponent<RectTransform>();
+                aCdRT.anchorMin = Vector2.zero;
+                aCdRT.anchorMax = Vector2.one;
+                aCdRT.offsetMin = Vector2.zero;
+                aCdRT.offsetMax = Vector2.zero;
+                aCdObj.SetActive(false);
+
+                Text aCdText = CreateUIText(aIconBg, "CooldownText", "", 16,
+                    Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+                aCdText.raycastTarget = false;
+                Outline aCdOutline = aCdText.gameObject.AddComponent<Outline>();
+                aCdOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                aCdOutline.effectDistance = new Vector2(1, -1);
+                RectTransform aCdTextRT = aCdText.GetComponent<RectTransform>();
+                aCdTextRT.anchorMin = Vector2.zero;
+                aCdTextRT.anchorMax = Vector2.one;
+                aCdTextRT.offsetMin = Vector2.zero;
+                aCdTextRT.offsetMax = Vector2.zero;
+                aCdText.gameObject.SetActive(false);
+
+                Text aCostText = CreateUIText(aSlotObj, "CostText", costLabel, 12,
+                    new Color(0.6f, 0.8f, 1f), TextAnchor.MiddleCenter);
+                aCostText.raycastTarget = false;
+                RectTransform aCostRT = aCostText.GetComponent<RectTransform>();
+                aCostRT.anchorMin = new Vector2(0f, 0f);
+                aCostRT.anchorMax = new Vector2(1f, 0f);
+                aCostRT.pivot = new Vector2(0.5f, 0f);
+                aCostRT.anchoredPosition = new Vector2(0, 2);
+                aCostRT.sizeDelta = new Vector2(0, 18);
+
+                SerializedObject aSlotSO = new SerializedObject(aSlotUI);
+                aSlotSO.FindProperty("iconImage").objectReferenceValue = aIconImg;
+                aSlotSO.FindProperty("nameText").objectReferenceValue = aNameText;
+                aSlotSO.FindProperty("costText").objectReferenceValue = aCostText;
+                aSlotSO.FindProperty("cooldownText").objectReferenceValue = aCdText;
+                aSlotSO.FindProperty("cooldownOverlay").objectReferenceValue = aCdImg;
+                aSlotSO.FindProperty("slotCanvasGroup").objectReferenceValue = aSlotCG;
+                aSlotSO.ApplyModifiedPropertiesWithoutUndo();
+
+                arcaneSlotUIs[a] = aSlotUI;
+            }
+
+            // Wire ArcaneBarUI
+            SerializedObject arcaneBarSO = new SerializedObject(arcaneBarUI);
+            SerializedProperty arcaneSlotsP = arcaneBarSO.FindProperty("slots");
+            arcaneSlotsP.arraySize = arcaneSlotCount;
+            for (int a = 0; a < arcaneSlotCount; a++)
+                arcaneSlotsP.GetArrayElementAtIndex(a).objectReferenceValue = arcaneSlotUIs[a];
+            arcaneBarSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // --- Active Arcane Icons (top right) ---
+            GameObject activeArcanePanel = new GameObject("ActiveArcanePanel");
+            activeArcanePanel.transform.SetParent(canvasObj.transform, false);
+            RectTransform activeArcanePanelRT = activeArcanePanel.AddComponent<RectTransform>();
+            activeArcanePanelRT.anchorMin = new Vector2(1f, 1f);
+            activeArcanePanelRT.anchorMax = new Vector2(1f, 1f);
+            activeArcanePanelRT.pivot = new Vector2(1f, 1f);
+            activeArcanePanelRT.anchoredPosition = new Vector2(-10, -90);
+            activeArcanePanelRT.sizeDelta = new Vector2(220, 48);
+
+            ArcaneActiveIconUI activeIconUI = activeArcanePanel.AddComponent<ArcaneActiveIconUI>();
+            SerializedObject activeIconSO = new SerializedObject(activeIconUI);
+            activeIconSO.FindProperty("container").objectReferenceValue = activeArcanePanelRT;
+            activeIconSO.ApplyModifiedPropertiesWithoutUndo();
+
             // ========== Wire up BattleUI ==========
             SerializedObject battleUISO = new SerializedObject(battleUI);
             battleUISO.FindProperty("progressSlider").objectReferenceValue = progressSlider;
@@ -1107,6 +1421,9 @@ namespace GeometryTD
             bmSO.FindProperty("skillBarUI").objectReferenceValue = skillBarUI;
             bmSO.FindProperty("floatingTextUI").objectReferenceValue = floatingTextUI;
             bmSO.FindProperty("heroSpawnPoint").objectReferenceValue = heroSpawnPoint.transform;
+            bmSO.FindProperty("arcaneBarUI").objectReferenceValue = arcaneBarUI;
+            bmSO.FindProperty("runeBarUI").objectReferenceValue = runeBarUI;
+            bmSO.FindProperty("arcaneActiveIconUI").objectReferenceValue = activeIconUI;
             bmSO.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.SaveScene(scene, $"{ScenePath}/Battle.unity");

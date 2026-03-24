@@ -16,6 +16,9 @@ namespace GeometryTD
         [SerializeField] private BattleUI battleUI;
         [SerializeField] private SkillBarUI skillBarUI;
         [SerializeField] private FloatingTextUI floatingTextUI;
+        [SerializeField] private ArcaneBarUI arcaneBarUI;
+        [SerializeField] private RuneBarUI runeBarUI;
+        [SerializeField] private ArcaneActiveIconUI arcaneActiveIconUI;
 
         [Header("生成点")]
         [SerializeField] private Transform heroSpawnPoint;
@@ -24,6 +27,7 @@ namespace GeometryTD
         private HeroController heroController;
         private BossController bossController;
         private SkillManager skillManager;
+        private ArcaneManager arcaneManager;
 
         private List<Transform> aliveEnemies = new List<Transform>();
         private int killCount;
@@ -34,6 +38,7 @@ namespace GeometryTD
         private int skillXpMax;
 
         public Transform HeroTransform => heroController != null ? heroController.transform : null;
+        public ArcaneManager ArcaneManager => arcaneManager;
 
         public void ShowDamageText(Vector3 worldPos, float amount, bool isHeal)
         {
@@ -103,6 +108,31 @@ namespace GeometryTD
             {
                 battleUI.InitProgressBar(killCountForBoss);
                 battleUI.UpdateKillProgress(killCount, killCountForBoss);
+            }
+
+            // 初始化奥术管理器
+            if (gameConfig.arcane_slot_ids != null && gameConfig.arcane_slot_ids.Length > 0)
+            {
+                arcaneManager = gameObject.AddComponent<ArcaneManager>();
+                arcaneManager.Init(gameConfig.arcane_slot_ids, heroController, this);
+
+                if (arcaneBarUI != null)
+                {
+                    arcaneBarUI.SetArcaneManager(arcaneManager);
+                    var arcaneSlots = arcaneBarUI.GetSlots();
+                    if (arcaneSlots != null)
+                    {
+                        for (int i = 0; i < arcaneSlots.Length && i < arcaneManager.SlotCount; i++)
+                        {
+                            if (arcaneSlots[i] != null)
+                                arcaneSlots[i].Init(i, arcaneManager);
+                        }
+                    }
+                }
+                if (runeBarUI != null)
+                    runeBarUI.SetArcaneManager(arcaneManager);
+                if (arcaneActiveIconUI != null)
+                    arcaneActiveIconUI.SetArcaneManager(arcaneManager);
             }
         }
 
@@ -181,6 +211,23 @@ namespace GeometryTD
             }
 
             return nearest;
+        }
+
+        // ===== 范围查询 =====
+        public List<Transform> GetEnemiesInRadius(Vector3 center, float radius)
+        {
+            List<Transform> result = new List<Transform>();
+            for (int i = aliveEnemies.Count - 1; i >= 0; i--)
+            {
+                if (aliveEnemies[i] == null)
+                {
+                    aliveEnemies.RemoveAt(i);
+                    continue;
+                }
+                if (Vector3.Distance(center, aliveEnemies[i].position) <= radius)
+                    result.Add(aliveEnemies[i]);
+            }
+            return result;
         }
 
         // ===== AoE 伤害 =====
