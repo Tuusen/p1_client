@@ -855,7 +855,7 @@ namespace GeometryTD
             skillBarPanelRT.anchorMin = new Vector2(0.5f, 0f);
             skillBarPanelRT.anchorMax = new Vector2(0.5f, 0f);
             skillBarPanelRT.pivot = new Vector2(0.5f, 0f);
-            skillBarPanelRT.anchoredPosition = new Vector2(0, 66);
+            skillBarPanelRT.anchoredPosition = new Vector2(0, 44);
             float slotWidth = 120f;
             float slotSpacing = 6f;
             float barWidth = slotCount * slotWidth + (slotCount - 1) * slotSpacing + 24f;
@@ -1116,11 +1116,11 @@ namespace GeometryTD
             GameObject runeBarPanel = new GameObject("RuneBarPanel");
             runeBarPanel.transform.SetParent(canvasObj.transform, false);
             RectTransform runeBarRT = runeBarPanel.AddComponent<RectTransform>();
-            runeBarRT.anchorMin = new Vector2(0f, 0f);
-            runeBarRT.anchorMax = new Vector2(1f, 0f);
+            runeBarRT.anchorMin = new Vector2(0.5f, 0f);
+            runeBarRT.anchorMax = new Vector2(0.5f, 0f);
             runeBarRT.pivot = new Vector2(0.5f, 0f);
             runeBarRT.anchoredPosition = new Vector2(0, 8);
-            runeBarRT.sizeDelta = new Vector2(-20, 50);
+            runeBarRT.sizeDelta = new Vector2(barWidth, 30);
 
             Image runeBarBg = runeBarPanel.AddComponent<Image>();
             runeBarBg.color = new Color(0.02f, 0.02f, 0.08f, 0.8f);
@@ -1249,7 +1249,7 @@ namespace GeometryTD
             arcaneBarPanelRT.anchorMin = new Vector2(0.5f, 0f);
             arcaneBarPanelRT.anchorMax = new Vector2(0.5f, 0f);
             arcaneBarPanelRT.pivot = new Vector2(0.5f, 0f);
-            arcaneBarPanelRT.anchoredPosition = new Vector2(0, 66);
+            arcaneBarPanelRT.anchoredPosition = new Vector2(0, 44);
             arcaneBarPanelRT.sizeDelta = new Vector2(arcaneBarWidth, arcaneBarHeight);
 
             Image arcaneBarBg = arcaneBarPanel.AddComponent<Image>();
@@ -1414,8 +1414,8 @@ namespace GeometryTD
             tabSwitchRT.anchorMin = new Vector2(0.5f, 0f);
             tabSwitchRT.anchorMax = new Vector2(0.5f, 0f);
             tabSwitchRT.pivot = new Vector2(1f, 0.5f);
-            tabSwitchRT.anchoredPosition = new Vector2(-maxBarWidth / 2f - 4f, 66 + barHeight / 2f);
-            tabSwitchRT.sizeDelta = new Vector2(44, 44);
+            tabSwitchRT.anchoredPosition = new Vector2(-maxBarWidth / 2f - 12f, 44 + barHeight / 2f);
+            tabSwitchRT.sizeDelta = new Vector2(60, 56);
 
             Image tabBtnBg = tabSwitchObj.AddComponent<Image>();
             tabBtnBg.color = new Color(0.15f, 0.12f, 0.3f, 0.9f);
@@ -1428,7 +1428,7 @@ namespace GeometryTD
             tabBtn.colors = tabBtnColors;
             tabBtn.targetGraphic = tabBtnBg;
 
-            Text tabBtnText = CreateUIText(tabSwitchObj, "Text", "奥术", 13,
+            Text tabBtnText = CreateUIText(tabSwitchObj, "Text", "奥术", 16,
                 Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
             RectTransform tabBtnTextRT = tabBtnText.GetComponent<RectTransform>();
             tabBtnTextRT.anchorMin = Vector2.zero;
