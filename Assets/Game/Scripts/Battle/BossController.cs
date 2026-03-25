@@ -18,6 +18,8 @@ namespace GeometryTD
         private bool reachedPosition;
         private float attackTimer;
         private SkillConfig skillConfig;
+        private Animator animator;
+        private CharacterFacing facing;
 
         // 状态效果
         private bool isFrozen;
@@ -58,6 +60,9 @@ namespace GeometryTD
             attackSkillId = config.attack_skill_id;
 
             skillConfig = ConfigManager.Instance.GetSkillConfig(attackSkillId);
+
+            animator = GetComponent<Animator>();
+            facing = GetComponent<CharacterFacing>();
 
             UpdateBar();
         }
@@ -103,6 +108,7 @@ namespace GeometryTD
             {
                 freezeTimer -= Time.deltaTime;
                 if (freezeTimer <= 0) isFrozen = false;
+                animator?.SetBool("IsMoving", false);
                 return;
             }
 
@@ -122,11 +128,14 @@ namespace GeometryTD
             {
                 Vector3 direction = (targetPosition - transform.position).normalized;
                 transform.position += direction * currentSpeed * Time.deltaTime;
+                facing?.FaceToward(heroTarget.position);
+                animator?.SetBool("IsMoving", true);
 
                 if (Vector3.Distance(transform.position, targetPosition) < 0.2f)
                 {
                     transform.position = targetPosition;
                     reachedPosition = true;
+                    animator?.SetBool("IsMoving", false);
                 }
                 return;
             }
@@ -143,8 +152,12 @@ namespace GeometryTD
         {
             if (skillConfig == null || heroTarget == null) return;
 
+            facing?.FaceToward(heroTarget.position);
+
             float actualDmg = baseDamage * skillConfig.dmg / 10000f;
             battleManager.SpawnBossBullet(transform.position, heroTarget, actualDmg, skillConfig.bulletSpeed);
+
+            animator?.SetTrigger("Attack");
         }
 
         public void TakeDamage(float dmg)

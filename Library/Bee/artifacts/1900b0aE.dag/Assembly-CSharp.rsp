@@ -353,6 +353,9 @@
 "Assets/Game/Scripts/Battle/BattleManager.cs"
 "Assets/Game/Scripts/Battle/BossController.cs"
 "Assets/Game/Scripts/Battle/BulletController.cs"
+"Assets/Game/Scripts/Battle/CharacterFacing.cs"
+"Assets/Game/Scripts/Battle/EffectBurstAnim.cs"
+"Assets/Game/Scripts/Battle/EffectFadeAnim.cs"
 "Assets/Game/Scripts/Battle/EventEffectManager.cs"
 "Assets/Game/Scripts/Battle/HeroController.cs"
 "Assets/Game/Scripts/Battle/MonsterController.cs"
@@ -376,8 +379,11 @@
 "Assets/Game/Scripts/UI/SkillBarUI.cs"
 "Assets/Game/Scripts/UI/SkillSlotUI.cs"
 "Assets/Game/Scripts/UI/TabSwitchUI.cs"
-"Assets/ui/Space_Exploration_GUI_Kit/Scripts/Scene_Controller.cs"
-"Assets/ui/Space_Exploration_GUI_Kit/Scripts/Toggle.cs"
+"Assets/player/Demo/Scripts/CameraController.cs"
+"Assets/player/Demo/Scripts/Demo_GM.cs"
+"Assets/player/Demo/Scripts/GroundSensor.cs"
+"Assets/player/Demo/Scripts/PlayerController.cs"
+"Assets/player/Demo/Scripts/Swordman.cs"
 -langversion:9.0
 /deterministic
 /optimize+
