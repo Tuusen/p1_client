@@ -13,10 +13,12 @@ namespace GeometryTD
         public GameConfig GameConfig { get; private set; }
         public List<BulletStyleConfig> BulletStyleConfigs { get; private set; }
         public List<ArcaneConfig> ArcaneConfigs { get; private set; }
+        public List<EventEffectConfig> EventEffectConfigs { get; private set; }
 
         private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
         private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
         private Dictionary<int, ArcaneConfig> arcaneLookup;
+        private Dictionary<int, EventEffectConfig> eventEffectLookup;
 
         private void Awake()
         {
@@ -38,9 +40,11 @@ namespace GeometryTD
             GameConfig = LoadConfig<GameConfig>("Configs/game_config");
             BulletStyleConfigs = LoadConfig<BulletStyleConfigList>("Configs/bullet_config").bulletStyles;
             ArcaneConfigs = LoadConfig<ArcaneConfigList>("Configs/arcane_config").arcanes;
+            EventEffectConfigs = LoadConfig<EventEffectConfigList>("Configs/event_effect_config").effects;
             BuildSkillLookup();
             BuildBulletStyleLookup();
             BuildArcaneLookup();
+            BuildEventEffectLookup();
         }
 
         private void BuildSkillLookup()
@@ -151,6 +155,21 @@ namespace GeometryTD
                     normals.Add(MonsterConfigs[i]);
             }
             return normals;
+        }
+
+        private void BuildEventEffectLookup()
+        {
+            eventEffectLookup = new Dictionary<int, EventEffectConfig>();
+            if (EventEffectConfigs == null) return;
+            foreach (var effect in EventEffectConfigs)
+                eventEffectLookup[effect.eventType] = effect;
+        }
+
+        public EventEffectConfig GetEventEffectConfig(int eventType)
+        {
+            if (eventEffectLookup != null && eventEffectLookup.TryGetValue(eventType, out var config))
+                return config;
+            return null;
         }
     }
 }

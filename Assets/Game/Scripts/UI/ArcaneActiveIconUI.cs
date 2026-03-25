@@ -43,8 +43,7 @@ namespace GeometryTD
             var actives = arcaneManager.GetActiveArcanes();
             RectTransform parent = container != null ? container : GetComponent<RectTransform>();
 
-            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            Font font = GameHelper.LoadFont();
 
             for (int i = 0; i < actives.Count; i++)
             {

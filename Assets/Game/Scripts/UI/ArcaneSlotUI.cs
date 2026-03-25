@@ -51,6 +51,15 @@ namespace GeometryTD
             if (state == null) return;
 
             var config = ConfigManager.Instance.GetArcaneConfig(state.arcaneId);
+
+            // Load icon from config
+            if (config != null && !string.IsNullOrEmpty(config.icon) && iconImage != null && iconImage.sprite == null)
+            {
+                var sprite = GameHelper.LoadSprite(config.icon);
+                if (sprite != null)
+                    iconImage.sprite = sprite;
+            }
+
             bool canCast = arcaneManager != null && arcaneManager.CanCast(slotIndex);
             bool inCooldown = state.cooldownRemaining > 0f && state.maxCooldown > 0f;
 
@@ -270,8 +279,7 @@ namespace GeometryTD
                 null, out Vector2 localPos);
             tooltipRT.anchoredPosition = localPos;
 
-            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            Font font = GameHelper.LoadFont();
 
             float yOffset = totalHeight / 2f - padding;
 
