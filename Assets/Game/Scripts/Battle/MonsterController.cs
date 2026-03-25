@@ -60,6 +60,7 @@ namespace GeometryTD
                 if (step > knockbackRemaining) step = knockbackRemaining;
                 transform.position += knockbackDir * step;
                 knockbackRemaining -= step;
+                ClampToScreen();
                 return;
             }
 
@@ -159,8 +160,23 @@ namespace GeometryTD
 
         public void ApplyKnockback(Vector3 sourcePos, float force)
         {
-            knockbackDir = (transform.position - sourcePos).normalized;
+            knockbackDir = Vector3.right;
             knockbackRemaining = force;
+        }
+
+        private void ClampToScreen()
+        {
+            Camera cam = Camera.main;
+            if (cam == null) return;
+            float h = cam.orthographicSize;
+            float w = h * cam.aspect;
+            Vector3 cp = cam.transform.position;
+            Vector3 pos = transform.position;
+            if (pos.x > cp.x + w) { pos.x = cp.x + w; knockbackRemaining = 0; }
+            if (pos.x < cp.x - w) { pos.x = cp.x - w; knockbackRemaining = 0; }
+            if (pos.y > cp.y + h) { pos.y = cp.y + h; knockbackRemaining = 0; }
+            if (pos.y < cp.y - h) { pos.y = cp.y - h; knockbackRemaining = 0; }
+            transform.position = pos;
         }
 
         private void Die()

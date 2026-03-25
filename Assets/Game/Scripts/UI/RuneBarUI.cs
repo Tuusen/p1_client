@@ -6,6 +6,7 @@ namespace GeometryTD
     public class RuneBarUI : MonoBehaviour
     {
         [SerializeField] private Text[] runeCountTexts;    // 4 elements: fire, ice, electric, wind
+        [SerializeField] private Text[] runeValueTexts;    // 4 elements: fire, ice, electric, wind
         [SerializeField] private Slider[] energySliders;   // 4 elements
 
         private ArcaneManager arcaneManager;
@@ -43,6 +44,9 @@ namespace GeometryTD
 
                 if (runeCountTexts != null && i < runeCountTexts.Length && runeCountTexts[i] != null)
                     runeCountTexts[i].text = count.ToString();
+
+                if (runeValueTexts != null && i < runeValueTexts.Length && runeValueTexts[i] != null)
+                    runeValueTexts[i].text = energy.ToString() + "/10";
 
                 if (energySliders != null && i < energySliders.Length && energySliders[i] != null)
                     energySliders[i].value = energy;

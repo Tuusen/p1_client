@@ -862,7 +862,7 @@ namespace GeometryTD
             float slotWidth = 120f;
             float slotSpacing = 6f;
             float barWidth = slotCount * slotWidth + (slotCount - 1) * slotSpacing + 24f;
-            float barHeight = 155f;
+            float barHeight = 160f;
             skillBarPanelRT.sizeDelta = new Vector2(barWidth, barHeight);
 
             // 技能栏背景
@@ -890,7 +890,7 @@ namespace GeometryTD
                 float slotX = -barWidth / 2f + 12f + s * (slotWidth + slotSpacing) + slotWidth / 2f;
                 slotRT.anchorMin = new Vector2(0.5f, 0.5f);
                 slotRT.anchorMax = new Vector2(0.5f, 0.5f);
-                slotRT.anchoredPosition = new Vector2(slotX, 0);
+                slotRT.anchoredPosition = new Vector2(slotX, -5);
                 slotRT.sizeDelta = new Vector2(slotWidth, barHeight - 16f);
 
                 SkillSlotUI slotUI = slotObj.AddComponent<SkillSlotUI>();
@@ -911,7 +911,7 @@ namespace GeometryTD
                 slotBtn.targetGraphic = slotBg;
 
                 // --- 技能名称（顶部） ---
-                Text nameText = CreateUIText(slotObj, "NameText", skillName, 15,
+                Text nameText = CreateUIText(slotObj, "NameText", skillName, 18,
                     new Color(0.8f, 0.85f, 1f), TextAnchor.MiddleCenter, FontStyle.Normal);
                 nameText.raycastTarget = false;
                 Outline nameOutline = nameText.gameObject.AddComponent<Outline>();
@@ -921,7 +921,7 @@ namespace GeometryTD
                 nameRT.anchorMin = new Vector2(0f, 1f);
                 nameRT.anchorMax = new Vector2(1f, 1f);
                 nameRT.pivot = new Vector2(0.5f, 1f);
-                nameRT.anchoredPosition = new Vector2(0, -2);
+                nameRT.anchoredPosition = new Vector2(0, 5);
                 nameRT.sizeDelta = new Vector2(0, 20);
 
                 // --- 图标背景 ---
@@ -1004,7 +1004,7 @@ namespace GeometryTD
                 cdTimeText.gameObject.SetActive(false);
 
                 // --- 等级文本 ---
-                Text lvText = CreateUIText(slotObj, "LevelText", "Lv.0", 16,
+                Text lvText = CreateUIText(slotObj, "LevelText", "Lv.0", 24,
                     new Color(0.9f, 0.9f, 0.6f), TextAnchor.MiddleCenter, FontStyle.Normal);
                 lvText.raycastTarget = false;
                 Outline lvOutline = lvText.gameObject.AddComponent<Outline>();
@@ -1140,6 +1140,7 @@ namespace GeometryTD
             };
 
             Text[] runeCountTexts = new Text[4];
+            Text[] runeValueTexts = new Text[4];
             Slider[] energySliders = new Slider[4];
 
             for (int r = 0; r < 4; r++)
@@ -1148,7 +1149,7 @@ namespace GeometryTD
                 float colRight = (r + 1) * 0.25f;
 
                 // Rune type label
-                Text labelText = CreateUIText(runeBarPanel, $"RuneLabel_{r}", runeLabels[r], 16,
+                Text labelText = CreateUIText(runeBarPanel, $"RuneLabel_{r}", runeLabels[r], 24,
                     runeColors[r], TextAnchor.MiddleCenter, FontStyle.Bold);
                 labelText.raycastTarget = false;
                 Outline labelOutline = labelText.gameObject.AddComponent<Outline>();
@@ -1162,8 +1163,8 @@ namespace GeometryTD
                 labelRT.sizeDelta = new Vector2(24, 0);
 
                 // Rune count
-                Text countText = CreateUIText(runeBarPanel, $"RuneCount_{r}", "0", 16,
-                    Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+                Text countText = CreateUIText(runeBarPanel, $"RuneCount_{r}", "0", 24,
+                    runeColors[r], TextAnchor.MiddleCenter, FontStyle.Bold);
                 countText.raycastTarget = false;
                 Outline countOutline = countText.gameObject.AddComponent<Outline>();
                 countOutline.effectColor = new Color(0, 0, 0, 0.8f);
@@ -1189,8 +1190,8 @@ namespace GeometryTD
                 RectTransform esliderRT = esliderObj.GetComponent<RectTransform>();
                 esliderRT.anchorMin = new Vector2(colLeft, 0.15f);
                 esliderRT.anchorMax = new Vector2(colRight, 0.85f);
-                esliderRT.offsetMin = new Vector2(66, esliderRT.offsetMin.y);
-                esliderRT.offsetMax = new Vector2(-6, esliderRT.offsetMax.y);
+                esliderRT.offsetMin = new Vector2(66, 0);
+                esliderRT.offsetMax = new Vector2(-6, 0);
 
                 GameObject eslBg = new GameObject("Background");
                 eslBg.transform.SetParent(esliderObj.transform, false);
@@ -1226,18 +1227,36 @@ namespace GeometryTD
 
                 eslider.fillRect = eslFillRT;
                 energySliders[r] = eslider;
+
+                // Rune count value
+                Text countValueText = CreateUIText(runeBarPanel, $"RuneCountValue_{r}", "0", 16,
+                    Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+                countValueText.raycastTarget = false;
+                Outline countValueOutline = countValueText.gameObject.AddComponent<Outline>();
+                countValueOutline.effectColor = new Color(0, 0, 0, 0.8f);
+                countValueOutline.effectDistance = new Vector2(1, -1);
+                RectTransform countValueRT = countValueText.GetComponent<RectTransform>();
+                countValueRT.anchorMin = new Vector2(colLeft, 0);
+                countValueRT.anchorMax = new Vector2(colLeft, 1);
+                countValueRT.pivot = new Vector2(0, 0.5f);
+                countValueRT.anchoredPosition = new Vector2(150, 0);
+                countValueRT.sizeDelta = new Vector2(30, 0);
+                runeValueTexts[r] = countValueText;
             }
 
             // Wire RuneBarUI
             SerializedObject runeBarSO = new SerializedObject(runeBarUI);
+            SerializedProperty runeValueTextsP = runeBarSO.FindProperty("runeValueTexts");
+            runeValueTextsP.arraySize = 4;
             SerializedProperty runeTextsP = runeBarSO.FindProperty("runeCountTexts");
             runeTextsP.arraySize = 4;
-            for (int r = 0; r < 4; r++)
-                runeTextsP.GetArrayElementAtIndex(r).objectReferenceValue = runeCountTexts[r];
             SerializedProperty energySlidersP = runeBarSO.FindProperty("energySliders");
             energySlidersP.arraySize = 4;
-            for (int r = 0; r < 4; r++)
+            for (int r = 0; r < 4; r++) {
+                runeValueTextsP.GetArrayElementAtIndex(r).objectReferenceValue = runeValueTexts[r];
+                runeTextsP.GetArrayElementAtIndex(r).objectReferenceValue = runeCountTexts[r];
                 energySlidersP.GetArrayElementAtIndex(r).objectReferenceValue = energySliders[r];
+            }
             runeBarSO.ApplyModifiedPropertiesWithoutUndo();
 
             // --- Arcane Bar Panel (same position as skill bar, toggled) ---
@@ -1417,8 +1436,8 @@ namespace GeometryTD
             tabSwitchRT.anchorMin = new Vector2(0.5f, 0f);
             tabSwitchRT.anchorMax = new Vector2(0.5f, 0f);
             tabSwitchRT.pivot = new Vector2(1f, 0.5f);
-            tabSwitchRT.anchoredPosition = new Vector2(-maxBarWidth / 2f - 12f, 44 + barHeight / 2f);
-            tabSwitchRT.sizeDelta = new Vector2(60, 56);
+            tabSwitchRT.anchoredPosition = new Vector2(-maxBarWidth / 2f - 30f, 44 + barHeight / 2f);
+            tabSwitchRT.sizeDelta = new Vector2(120, 112);
 
             Image tabBtnBg = tabSwitchObj.AddComponent<Image>();
             tabBtnBg.color = new Color(0.15f, 0.12f, 0.3f, 0.9f);
@@ -1431,7 +1450,7 @@ namespace GeometryTD
             tabBtn.colors = tabBtnColors;
             tabBtn.targetGraphic = tabBtnBg;
 
-            Text tabBtnText = CreateUIText(tabSwitchObj, "Text", "奥术", 16,
+            Text tabBtnText = CreateUIText(tabSwitchObj, "Text", "奥术", 32,
                 Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
             RectTransform tabBtnTextRT = tabBtnText.GetComponent<RectTransform>();
             tabBtnTextRT.anchorMin = Vector2.zero;
