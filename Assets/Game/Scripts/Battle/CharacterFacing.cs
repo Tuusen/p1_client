@@ -11,7 +11,7 @@ namespace GeometryTD
             if (visualRoot == null) return;
             bool faceLeft = targetPos.x < transform.position.x;
             Vector3 s = visualRoot.localScale;
-            s.x = faceLeft ? -Mathf.Abs(s.x) : Mathf.Abs(s.x);
+            s.x = faceLeft ? Mathf.Abs(s.x) : -Mathf.Abs(s.x);
             visualRoot.localScale = s;
         }
     }
