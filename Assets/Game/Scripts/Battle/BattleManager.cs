@@ -11,6 +11,7 @@ namespace GeometryTD
         [SerializeField] private GameObject bossPrefab;
         [SerializeField] private GameObject heroBulletPrefab;
         [SerializeField] private GameObject bossBulletPrefab;
+        [SerializeField] private GameObject summonPrefab;
 
         [Header("UI引用")]
         [SerializeField] private BattleUI battleUI;
@@ -347,10 +348,19 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            GameObject summonObj = new GameObject("Summon");
-            summonObj.transform.position = position;
+            GameObject summonObj;
+            if (summonPrefab != null)
+            {
+                summonObj = Instantiate(summonPrefab, position, Quaternion.identity);
+            }
+            else
+            {
+                summonObj = new GameObject("Summon");
+                summonObj.transform.position = position;
+                summonObj.AddComponent<SummonController>();
+            }
 
-            SummonController summon = summonObj.AddComponent<SummonController>();
+            SummonController summon = summonObj.GetComponent<SummonController>();
             summon.Init(damage, atkInterval, duration, homing, this);
         }
 

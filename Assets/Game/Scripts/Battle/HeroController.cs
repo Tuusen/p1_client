@@ -42,6 +42,8 @@ namespace GeometryTD
 
         private BattleManager battleManager;
         private SkillConfig normalAttackConfig;
+        private Animator animator;
+        private CharacterFacing facing;
 
         public bool IsDead => currentHp <= 0;
         public float AttackRange => attackRange;
@@ -64,6 +66,9 @@ namespace GeometryTD
             attackTimer = 0f;
 
             normalAttackConfig = ConfigManager.Instance.GetSkillConfig(attackSkillId);
+
+            animator = GetComponent<Animator>();
+            facing = GetComponent<CharacterFacing>();
 
             UpdateBars();
         }
@@ -111,9 +116,13 @@ namespace GeometryTD
             Transform target = battleManager.GetNearestEnemy(transform.position, attackRange);
             if (target == null) return;
 
+            facing?.FaceToward(target.position);
+
             float actualDmg = baseAttack * normalAttackConfig.dmg / 10000f;
             battleManager.SpawnHeroBullet(transform.position, target, actualDmg, normalAttackConfig.bulletSpeed);
             battleManager.OnHeroNormalAttack(transform.position);
+
+            animator?.SetTrigger("Attack");
         }
 
         // ===== 技能路由 =====

@@ -11,6 +11,8 @@ namespace GeometryTD
         private Transform heroTarget;
         private BattleManager battleManager;
         private bool isDead;
+        private Animator animator;
+        private CharacterFacing facing;
 
         // 状态效果
         private bool isFrozen;
@@ -39,6 +41,9 @@ namespace GeometryTD
             currentHp = maxHp;
             damage = config.damage;
             moveSpeed = config.move_speed;
+
+            animator = GetComponent<Animator>();
+            facing = GetComponent<CharacterFacing>();
 
             UpdateBar();
         }
@@ -82,6 +87,7 @@ namespace GeometryTD
             {
                 freezeTimer -= Time.deltaTime;
                 if (freezeTimer <= 0) isFrozen = false;
+                animator?.SetBool("IsMoving", false);
                 return;
             }
 
@@ -100,6 +106,8 @@ namespace GeometryTD
             // 移动
             Vector3 direction = (heroTarget.position - transform.position).normalized;
             transform.position += direction * currentSpeed * Time.deltaTime;
+            facing?.FaceToward(heroTarget.position);
+            animator?.SetBool("IsMoving", true);
 
             float dist = Vector3.Distance(transform.position, heroTarget.position);
             if (dist < 0.5f)

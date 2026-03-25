@@ -17,6 +17,8 @@ namespace GeometryTD
         private static readonly string ResourceSpritePath = "Assets/Game/Resources/Sprites";
         private static readonly string ResourceBulletsPath = "Assets/Game/Resources/Bullets";
         private static readonly string ResourceEffectsPath = "Assets/Game/Resources/Effects";
+        private static readonly string AnimatorPath = "Assets/Game/Animators";
+        private static readonly string AnimationPath = "Assets/Game/Animations";
 
         [MenuItem("Tools/游戏初始化 - 生成场景和Prefab")]
         public static void SetupGame()
@@ -51,7 +53,7 @@ namespace GeometryTD
 
         private static void EnsureDirectories()
         {
-            string[] dirs = { PrefabPath, ScenePath, SpritePath, ResourceSpritePath, ResourceBulletsPath, ResourceEffectsPath };
+            string[] dirs = { PrefabPath, ScenePath, SpritePath, ResourceSpritePath, ResourceBulletsPath, ResourceEffectsPath, AnimatorPath, AnimationPath };
             foreach (string dir in dirs)
             {
                 if (!Directory.Exists(dir))
@@ -248,6 +250,7 @@ namespace GeometryTD
             SaveTexture(CreatePentagonTexture(128, new Color(0.2f, 0.6f, 1f)), $"{SpritePath}/hero_shape.png");
             SaveTexture(CreateTriangleTexture(96, new Color(1f, 0.3f, 0.3f)), $"{SpritePath}/monster_shape.png");
             SaveTexture(CreateHexagonTexture(160, new Color(0.7f, 0.2f, 0.9f)), $"{SpritePath}/boss_shape.png");
+            SaveTexture(CreateDiamondTexture(96, new Color(0.9f, 0.7f, 0.2f)), $"{SpritePath}/summon_shape.png");
             SaveTexture(CreateDiamondTexture(32, new Color(0f, 1f, 1f)), $"{SpritePath}/hero_bullet.png");
             SaveTexture(CreateDiamondTexture(32, new Color(1f, 0.2f, 0.2f)), $"{SpritePath}/boss_bullet.png");
             SaveTexture(CreateSolidTexture(4, 4, new Color(0.15f, 0.15f, 0.2f, 0.8f)), $"{SpritePath}/bar_bg.png");
@@ -264,6 +267,7 @@ namespace GeometryTD
             SetTextureAsSprite($"{SpritePath}/hero_shape.png");
             SetTextureAsSprite($"{SpritePath}/monster_shape.png");
             SetTextureAsSprite($"{SpritePath}/boss_shape.png");
+            SetTextureAsSprite($"{SpritePath}/summon_shape.png");
             SetTextureAsSprite($"{SpritePath}/hero_bullet.png");
             SetTextureAsSprite($"{SpritePath}/boss_bullet.png");
             SetTextureAsSprite($"{SpritePath}/bar_bg.png");
@@ -288,6 +292,7 @@ namespace GeometryTD
             CreateHeroPrefab();
             CreateMonsterPrefab();
             CreateBossPrefab();
+            CreateSummonPrefab();
             CreateBulletPrefab("HeroBullet", $"{SpritePath}/hero_bullet.png", new Color(0f, 1f, 1f));
             CreateBulletPrefab("BossBullet", $"{SpritePath}/boss_bullet.png", new Color(1f, 0.2f, 0.2f));
             CreateStyleBulletPrefabs();
@@ -405,12 +410,30 @@ namespace GeometryTD
             Sprite heroSprite = LoadSprite($"{SpritePath}/hero_shape.png");
 
             GameObject hero = new GameObject("Hero");
-            SpriteRenderer sr = hero.AddComponent<SpriteRenderer>();
+            hero.AddComponent<HeroController>();
+            hero.AddComponent<Animator>();
+            CharacterFacing facing = hero.AddComponent<CharacterFacing>();
+
+            // Visual child (SpriteRenderer lives here for flip via localScale)
+            GameObject visual = new GameObject("Visual");
+            visual.transform.SetParent(hero.transform, false);
+            SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
             sr.sprite = heroSprite;
             sr.sortingOrder = 5;
-            hero.AddComponent<HeroController>();
 
-            // Shield Bar
+            // Wire CharacterFacing.visualRoot
+            SerializedObject facingSO = new SerializedObject(facing);
+            facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+            facingSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Load AnimatorController if it exists
+            RuntimeAnimatorController heroAC = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"{AnimatorPath}/Hero.controller");
+            if (heroAC != null)
+            {
+                hero.GetComponent<Animator>().runtimeAnimatorController = heroAC;
+            }
+
+            // Shield Bar (stays on root to avoid flip)
             GameObject shieldBar = CreateHealthBarObject("ShieldBar", true, new Color(0.3f, 0.7f, 1f), 1.5f, 0.2f);
             shieldBar.transform.SetParent(hero.transform, false);
             shieldBar.transform.localPosition = new Vector3(0f, 1.2f, 0f);
@@ -436,12 +459,30 @@ namespace GeometryTD
             Sprite monsterSprite = LoadSprite($"{SpritePath}/monster_shape.png");
 
             GameObject monster = new GameObject("Monster");
-            SpriteRenderer sr = monster.AddComponent<SpriteRenderer>();
+            monster.AddComponent<MonsterController>();
+            monster.AddComponent<Animator>();
+            CharacterFacing facing = monster.AddComponent<CharacterFacing>();
+
+            // Visual child
+            GameObject visual = new GameObject("Visual");
+            visual.transform.SetParent(monster.transform, false);
+            SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
             sr.sprite = monsterSprite;
             sr.sortingOrder = 5;
-            monster.AddComponent<MonsterController>();
 
-            // HP Bar (no text)
+            // Wire CharacterFacing.visualRoot
+            SerializedObject facingSO = new SerializedObject(facing);
+            facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+            facingSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Load AnimatorController if it exists
+            RuntimeAnimatorController monsterAC = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"{AnimatorPath}/Monster.controller");
+            if (monsterAC != null)
+            {
+                monster.GetComponent<Animator>().runtimeAnimatorController = monsterAC;
+            }
+
+            // HP Bar (no text, stays on root)
             GameObject hpBar = CreateHealthBarObject("HpBar", false, new Color(1f, 0.2f, 0.2f), 1.0f, 0.15f);
             hpBar.transform.SetParent(monster.transform, false);
             hpBar.transform.localPosition = new Vector3(0f, 0.8f, 0f);
@@ -460,13 +501,31 @@ namespace GeometryTD
             Sprite bossSprite = LoadSprite($"{SpritePath}/boss_shape.png");
 
             GameObject boss = new GameObject("Boss");
-            SpriteRenderer sr = boss.AddComponent<SpriteRenderer>();
+            boss.AddComponent<BossController>();
+            boss.AddComponent<Animator>();
+            CharacterFacing facing = boss.AddComponent<CharacterFacing>();
+
+            // Visual child (scale on Visual, not root, so HealthBar stays normal)
+            GameObject visual = new GameObject("Visual");
+            visual.transform.SetParent(boss.transform, false);
+            visual.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+            SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
             sr.sprite = bossSprite;
             sr.sortingOrder = 5;
-            boss.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
-            boss.AddComponent<BossController>();
 
-            // HP Bar (with text)
+            // Wire CharacterFacing.visualRoot
+            SerializedObject facingSO = new SerializedObject(facing);
+            facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+            facingSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Load AnimatorController if it exists
+            RuntimeAnimatorController bossAC = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"{AnimatorPath}/Boss.controller");
+            if (bossAC != null)
+            {
+                boss.GetComponent<Animator>().runtimeAnimatorController = bossAC;
+            }
+
+            // HP Bar (with text, stays on root)
             GameObject hpBar = CreateHealthBarObject("HpBar", true, new Color(0.7f, 0.2f, 0.9f), 2.0f, 0.2f);
             hpBar.transform.SetParent(boss.transform, false);
             hpBar.transform.localPosition = new Vector3(0f, 1.4f, 0f);
@@ -478,6 +537,38 @@ namespace GeometryTD
 
             PrefabUtility.SaveAsPrefabAsset(boss, $"{PrefabPath}/Boss.prefab");
             DestroyImmediate(boss);
+        }
+
+        private static void CreateSummonPrefab()
+        {
+            Sprite summonSprite = LoadSprite($"{SpritePath}/summon_shape.png");
+
+            GameObject summon = new GameObject("Summon");
+            summon.AddComponent<SummonController>();
+            summon.AddComponent<Animator>();
+            CharacterFacing facing = summon.AddComponent<CharacterFacing>();
+
+            // Visual child
+            GameObject visual = new GameObject("Visual");
+            visual.transform.SetParent(summon.transform, false);
+            SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
+            sr.sprite = summonSprite;
+            sr.sortingOrder = 5;
+
+            // Wire CharacterFacing.visualRoot
+            SerializedObject facingSO = new SerializedObject(facing);
+            facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+            facingSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Load AnimatorController if it exists
+            RuntimeAnimatorController summonAC = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"{AnimatorPath}/Summon.controller");
+            if (summonAC != null)
+            {
+                summon.GetComponent<Animator>().runtimeAnimatorController = summonAC;
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(summon, $"{PrefabPath}/Summon.prefab");
+            DestroyImmediate(summon);
         }
 
         private static void CreateBulletPrefab(string name, string spritePath, Color trailColor)
@@ -899,6 +990,7 @@ namespace GeometryTD
             GameObject bossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/Boss.prefab");
             GameObject heroBulletPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/HeroBullet.prefab");
             GameObject bossBulletPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/BossBullet.prefab");
+            GameObject summonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/Summon.prefab");
 
             // --- Canvas ---
             GameObject canvasObj = new GameObject("Canvas");
@@ -1711,6 +1803,7 @@ namespace GeometryTD
             bmSO.FindProperty("bossPrefab").objectReferenceValue = bossPrefab;
             bmSO.FindProperty("heroBulletPrefab").objectReferenceValue = heroBulletPrefab;
             bmSO.FindProperty("bossBulletPrefab").objectReferenceValue = bossBulletPrefab;
+            bmSO.FindProperty("summonPrefab").objectReferenceValue = summonPrefab;
             bmSO.FindProperty("battleUI").objectReferenceValue = battleUI;
             bmSO.FindProperty("skillBarUI").objectReferenceValue = skillBarUI;
             bmSO.FindProperty("floatingTextUI").objectReferenceValue = floatingTextUI;
