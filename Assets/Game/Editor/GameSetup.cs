@@ -17,8 +17,6 @@ namespace GeometryTD
         private static readonly string ResourceSpritePath = "Assets/Game/Resources/Sprites";
         private static readonly string ResourceBulletsPath = "Assets/Game/Resources/Bullets";
         private static readonly string ResourceEffectsPath = "Assets/Game/Resources/Effects";
-        private static readonly string AnimatorPath = "Assets/Game/Animators";
-        private static readonly string AnimationPath = "Assets/Game/Animations";
         private static readonly string CharacterPath = "Assets/Game/Characters";
 
         [MenuItem("Tools/游戏初始化 - 生成场景和Prefab")]
@@ -54,7 +52,7 @@ namespace GeometryTD
 
         private static void EnsureDirectories()
         {
-            string[] dirs = { PrefabPath, ScenePath, SpritePath, ResourceSpritePath, ResourceBulletsPath, ResourceEffectsPath, AnimatorPath, AnimationPath };
+            string[] dirs = { PrefabPath, ScenePath, SpritePath, ResourceSpritePath, ResourceBulletsPath, ResourceEffectsPath };
             foreach (string dir in dirs)
             {
                 if (!Directory.Exists(dir))
