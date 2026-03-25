@@ -415,6 +415,7 @@ namespace GeometryTD
                 GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(heroPrefabSrc);
                 visual.name = "Visual";
                 visual.transform.SetParent(hero.transform, false);
+                visual.transform.position = Vector3.zero;
 
                 // Wire CharacterFacing.visualRoot
                 SerializedObject facingSO = new SerializedObject(facing);

@@ -379,11 +379,6 @@
 "Assets/Game/Scripts/UI/SkillBarUI.cs"
 "Assets/Game/Scripts/UI/SkillSlotUI.cs"
 "Assets/Game/Scripts/UI/TabSwitchUI.cs"
-"Assets/player/Demo/Scripts/CameraController.cs"
-"Assets/player/Demo/Scripts/Demo_GM.cs"
-"Assets/player/Demo/Scripts/GroundSensor.cs"
-"Assets/player/Demo/Scripts/PlayerController.cs"
-"Assets/player/Demo/Scripts/Swordman.cs"
 -langversion:9.0
 /deterministic
 /optimize+
