@@ -19,6 +19,7 @@ namespace GeometryTD
         private static readonly string ResourceEffectsPath = "Assets/Game/Resources/Effects";
         private static readonly string AnimatorPath = "Assets/Game/Animators";
         private static readonly string AnimationPath = "Assets/Game/Animations";
+        private static readonly string CharacterPath = "Assets/Game/Characters";
 
         [MenuItem("Tools/游戏初始化 - 生成场景和Prefab")]
         public static void SetupGame()
@@ -290,6 +291,7 @@ namespace GeometryTD
             CreateHeroPrefab();
             CreateMonsterPrefab();
             CreateBossPrefab();
+            CreateSummonPrefab();
             CreateBulletPrefab("HeroBullet", $"{SpritePath}/hero_bullet.png", new Color(0f, 1f, 1f));
             CreateBulletPrefab("BossBullet", $"{SpritePath}/boss_bullet.png", new Color(1f, 0.2f, 0.2f));
             CreateStyleBulletPrefabs();
@@ -404,30 +406,36 @@ namespace GeometryTD
 
         private static void CreateHeroPrefab()
         {
-            Sprite heroSprite = LoadSprite($"{SpritePath}/hero_shape.png");
-
             GameObject hero = new GameObject("Hero");
             hero.AddComponent<HeroController>();
-            hero.AddComponent<Animator>();
             CharacterFacing facing = hero.AddComponent<CharacterFacing>();
 
-            // Visual child (SpriteRenderer lives here for flip via localScale)
-            GameObject visual = new GameObject("Visual");
-            visual.transform.SetParent(hero.transform, false);
-            SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
-            sr.sprite = heroSprite;
-            sr.sortingOrder = 5;
-
-            // Wire CharacterFacing.visualRoot
-            SerializedObject facingSO = new SerializedObject(facing);
-            facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
-            facingSO.ApplyModifiedPropertiesWithoutUndo();
-
-            // Load AnimatorController if it exists
-            RuntimeAnimatorController heroAC = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"{AnimatorPath}/Hero.controller");
-            if (heroAC != null)
+            // Load artist prefab as Visual child (contains Animator + bone sprites)
+            GameObject heroPrefabSrc = AssetDatabase.LoadAssetAtPath<GameObject>($"{CharacterPath}/Hero/sword_man.prefab");
+            if (heroPrefabSrc != null)
             {
-                hero.GetComponent<Animator>().runtimeAnimatorController = heroAC;
+                GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(heroPrefabSrc);
+                visual.name = "Visual";
+                visual.transform.SetParent(hero.transform, false);
+
+                // Wire CharacterFacing.visualRoot
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                // Fallback: geometric shape
+                Sprite heroSprite = LoadSprite($"{SpritePath}/hero_shape.png");
+                GameObject visual = new GameObject("Visual");
+                visual.transform.SetParent(hero.transform, false);
+                SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
+                sr.sprite = heroSprite;
+                sr.sortingOrder = 5;
+
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
             }
 
             // Shield Bar (stays on root to avoid flip)
@@ -453,30 +461,34 @@ namespace GeometryTD
 
         private static void CreateMonsterPrefab()
         {
-            Sprite monsterSprite = LoadSprite($"{SpritePath}/monster_shape.png");
-
             GameObject monster = new GameObject("Monster");
             monster.AddComponent<MonsterController>();
-            monster.AddComponent<Animator>();
             CharacterFacing facing = monster.AddComponent<CharacterFacing>();
 
-            // Visual child
-            GameObject visual = new GameObject("Visual");
-            visual.transform.SetParent(monster.transform, false);
-            SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
-            sr.sprite = monsterSprite;
-            sr.sortingOrder = 5;
-
-            // Wire CharacterFacing.visualRoot
-            SerializedObject facingSO = new SerializedObject(facing);
-            facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
-            facingSO.ApplyModifiedPropertiesWithoutUndo();
-
-            // Load AnimatorController if it exists
-            RuntimeAnimatorController monsterAC = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"{AnimatorPath}/Monster.controller");
-            if (monsterAC != null)
+            // Load artist prefab as Visual child
+            GameObject monsterPrefabSrc = AssetDatabase.LoadAssetAtPath<GameObject>($"{CharacterPath}/Monster/goblin.prefab");
+            if (monsterPrefabSrc != null)
             {
-                monster.GetComponent<Animator>().runtimeAnimatorController = monsterAC;
+                GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(monsterPrefabSrc);
+                visual.name = "Visual";
+                visual.transform.SetParent(monster.transform, false);
+
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                Sprite monsterSprite = LoadSprite($"{SpritePath}/monster_shape.png");
+                GameObject visual = new GameObject("Visual");
+                visual.transform.SetParent(monster.transform, false);
+                SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
+                sr.sprite = monsterSprite;
+                sr.sortingOrder = 5;
+
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
             }
 
             // HP Bar (no text, stays on root)
@@ -495,16 +507,39 @@ namespace GeometryTD
 
         private static void CreateBossPrefab()
         {
-            Sprite bossSprite = LoadSprite($"{SpritePath}/boss_shape.png");
-
             GameObject boss = new GameObject("Boss");
-            SpriteRenderer sr = boss.AddComponent<SpriteRenderer>();
-            sr.sprite = bossSprite;
-            sr.sortingOrder = 5;
-            boss.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
             boss.AddComponent<BossController>();
+            CharacterFacing facing = boss.AddComponent<CharacterFacing>();
 
-            // HP Bar (with text)
+            // Load artist prefab as Visual child
+            GameObject bossPrefabSrc = AssetDatabase.LoadAssetAtPath<GameObject>($"{CharacterPath}/Boss/skull_warrior.prefab");
+            if (bossPrefabSrc != null)
+            {
+                GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(bossPrefabSrc);
+                visual.name = "Visual";
+                visual.transform.SetParent(boss.transform, false);
+                visual.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                Sprite bossSprite = LoadSprite($"{SpritePath}/boss_shape.png");
+                GameObject visual = new GameObject("Visual");
+                visual.transform.SetParent(boss.transform, false);
+                visual.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+                SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
+                sr.sprite = bossSprite;
+                sr.sortingOrder = 5;
+
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // HP Bar (with text, stays on root)
             GameObject hpBar = CreateHealthBarObject("HpBar", true, new Color(0.7f, 0.2f, 0.9f), 2.0f, 0.2f);
             hpBar.transform.SetParent(boss.transform, false);
             hpBar.transform.localPosition = new Vector3(0f, 1.4f, 0f);
@@ -516,6 +551,42 @@ namespace GeometryTD
 
             PrefabUtility.SaveAsPrefabAsset(boss, $"{PrefabPath}/Boss.prefab");
             DestroyImmediate(boss);
+        }
+
+        private static void CreateSummonPrefab()
+        {
+            GameObject summon = new GameObject("Summon");
+            summon.AddComponent<SummonController>();
+            CharacterFacing facing = summon.AddComponent<CharacterFacing>();
+
+            // Load artist prefab as Visual child
+            GameObject summonPrefabSrc = AssetDatabase.LoadAssetAtPath<GameObject>($"{CharacterPath}/Summon/green_slime.prefab");
+            if (summonPrefabSrc != null)
+            {
+                GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(summonPrefabSrc);
+                visual.name = "Visual";
+                visual.transform.SetParent(summon.transform, false);
+
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                Sprite summonSprite = LoadSprite($"{SpritePath}/summon_shape.png");
+                GameObject visual = new GameObject("Visual");
+                visual.transform.SetParent(summon.transform, false);
+                SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
+                sr.sprite = summonSprite;
+                sr.sortingOrder = 5;
+
+                SerializedObject facingSO = new SerializedObject(facing);
+                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
+                facingSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(summon, $"{PrefabPath}/Summon.prefab");
+            DestroyImmediate(summon);
         }
 
         private static void CreateBulletPrefab(string name, string spritePath, Color trailColor)
@@ -937,6 +1008,7 @@ namespace GeometryTD
             GameObject bossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/Boss.prefab");
             GameObject heroBulletPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/HeroBullet.prefab");
             GameObject bossBulletPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/BossBullet.prefab");
+            GameObject summonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabPath}/Summon.prefab");
 
             // --- Canvas ---
             GameObject canvasObj = new GameObject("Canvas");
@@ -1749,6 +1821,7 @@ namespace GeometryTD
             bmSO.FindProperty("bossPrefab").objectReferenceValue = bossPrefab;
             bmSO.FindProperty("heroBulletPrefab").objectReferenceValue = heroBulletPrefab;
             bmSO.FindProperty("bossBulletPrefab").objectReferenceValue = bossBulletPrefab;
+            bmSO.FindProperty("summonPrefab").objectReferenceValue = summonPrefab;
             bmSO.FindProperty("battleUI").objectReferenceValue = battleUI;
             bmSO.FindProperty("skillBarUI").objectReferenceValue = skillBarUI;
             bmSO.FindProperty("floatingTextUI").objectReferenceValue = floatingTextUI;

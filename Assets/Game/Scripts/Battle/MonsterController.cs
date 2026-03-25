@@ -42,7 +42,7 @@ namespace GeometryTD
             damage = config.damage;
             moveSpeed = config.move_speed;
 
-            animator = GetComponent<Animator>();
+            animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
 
             UpdateBar();

@@ -22,7 +22,7 @@ namespace GeometryTD
             battleManager = bm;
             attackTimer = 0f;
 
-            animator = GetComponent<Animator>();
+            animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
         }
 

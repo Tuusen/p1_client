@@ -67,7 +67,7 @@ namespace GeometryTD
 
             normalAttackConfig = ConfigManager.Instance.GetSkillConfig(attackSkillId);
 
-            animator = GetComponent<Animator>();
+            animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
 
             UpdateBars();
