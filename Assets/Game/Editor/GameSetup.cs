@@ -470,6 +470,7 @@ namespace GeometryTD
             {
                 GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(monsterPrefabSrc);
                 visual.name = "Visual";
+                visual.transform.position = Vector3.zero;
                 visual.transform.SetParent(monster.transform, false);
 
                 SerializedObject facingSO = new SerializedObject(facing);
@@ -517,6 +518,7 @@ namespace GeometryTD
                 GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(bossPrefabSrc);
                 visual.name = "Visual";
                 visual.transform.SetParent(boss.transform, false);
+                visual.transform.position = Vector3.zero;
                 visual.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
 
                 SerializedObject facingSO = new SerializedObject(facing);
@@ -564,6 +566,7 @@ namespace GeometryTD
             {
                 GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(summonPrefabSrc);
                 visual.name = "Visual";
+                visual.transform.position = Vector3.zero;
                 visual.transform.SetParent(summon.transform, false);
 
                 SerializedObject facingSO = new SerializedObject(facing);

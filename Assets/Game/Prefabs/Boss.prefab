@@ -533,7 +533,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1290715225530138, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
       propertyPath: m_Name
-      value: skull_warrior
+      value: Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -553,15 +561,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -574,42 +582,6 @@ PrefabInstance:
     - target: {fileID: 4210157123753652, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212798183564874916, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212798183564874916, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212798183564874916, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 212825760485200248, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212825760485200248, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212825760485200248, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 212874855828977060, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212874855828977060, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212874855828977060, guid: 273f13136d9fd314fbf02020b1161b6b, type: 3}
-      propertyPath: m_Color.r
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
