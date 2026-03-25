@@ -15,6 +15,8 @@ namespace GeometryTD
         private static readonly string ScenePath = "Assets/Game/Scenes";
         private static readonly string SpritePath = "Assets/Game/Sprites";
         private static readonly string ResourceSpritePath = "Assets/Game/Resources/Sprites";
+        private static readonly string ResourceBulletsPath = "Assets/Game/Resources/Bullets";
+        private static readonly string ResourceEffectsPath = "Assets/Game/Resources/Effects";
 
         [MenuItem("Tools/游戏初始化 - 生成场景和Prefab")]
         public static void SetupGame()
@@ -49,7 +51,7 @@ namespace GeometryTD
 
         private static void EnsureDirectories()
         {
-            string[] dirs = { PrefabPath, ScenePath, SpritePath, ResourceSpritePath };
+            string[] dirs = { PrefabPath, ScenePath, SpritePath, ResourceSpritePath, ResourceBulletsPath, ResourceEffectsPath };
             foreach (string dir in dirs)
             {
                 if (!Directory.Exists(dir))
@@ -288,6 +290,8 @@ namespace GeometryTD
             CreateBossPrefab();
             CreateBulletPrefab("HeroBullet", $"{SpritePath}/hero_bullet.png", new Color(0f, 1f, 1f));
             CreateBulletPrefab("BossBullet", $"{SpritePath}/boss_bullet.png", new Color(1f, 0.2f, 0.2f));
+            CreateStyleBulletPrefabs();
+            CreateEffectPrefabs();
         }
 
         private static GameObject CreateHealthBarObject(string name, bool showText, Color fillColor, float width, float height)
@@ -501,6 +505,210 @@ namespace GeometryTD
 
             PrefabUtility.SaveAsPrefabAsset(bullet, $"{PrefabPath}/{name}.prefab");
             DestroyImmediate(bullet);
+        }
+
+        // ===== Bullet Style Prefab Generation =====
+
+        private struct BulletStyleData
+        {
+            public int id;
+            public string shape;
+            public float size;
+            public Color color;
+            public Color trailColor;
+            public float trailWidth;
+            public float trailTime;
+        }
+
+        private static void CreateStyleBulletPrefabs()
+        {
+            BulletStyleData[] styles = new BulletStyleData[]
+            {
+                new BulletStyleData { id = 1,   shape = "diamond", size = 1.0f,
+                    color = new Color(0f, 1f, 1f), trailColor = new Color(0f, 1f, 1f),
+                    trailWidth = 0.15f, trailTime = 0.3f },
+                new BulletStyleData { id = 101, shape = "circle",  size = 1.2f,
+                    color = new Color(1f, 0.5f, 0f), trailColor = new Color(1f, 0.6f, 0f),
+                    trailWidth = 0.2f, trailTime = 0.4f },
+                new BulletStyleData { id = 102, shape = "diamond", size = 1.0f,
+                    color = new Color(0.3f, 0.7f, 1f), trailColor = new Color(0.5f, 0.8f, 1f),
+                    trailWidth = 0.15f, trailTime = 0.3f },
+                new BulletStyleData { id = 103, shape = "arrow",   size = 1.0f,
+                    color = new Color(0.6f, 0.3f, 1f), trailColor = new Color(0.7f, 0.4f, 1f),
+                    trailWidth = 0.18f, trailTime = 0.35f },
+                new BulletStyleData { id = 104, shape = "circle",  size = 0.8f,
+                    color = new Color(0.2f, 1f, 0.4f), trailColor = new Color(0.3f, 1f, 0.5f),
+                    trailWidth = 0.12f, trailTime = 0.25f },
+                new BulletStyleData { id = 201, shape = "diamond", size = 1.0f,
+                    color = new Color(1f, 0.2f, 0.2f), trailColor = new Color(1f, 0.2f, 0.2f),
+                    trailWidth = 0.15f, trailTime = 0.3f },
+            };
+
+            foreach (var style in styles)
+            {
+                CreateStyledBulletPrefab(style);
+            }
+        }
+
+        private static void CreateStyledBulletPrefab(BulletStyleData style)
+        {
+            Sprite bulletSprite = LoadSprite($"{ResourceSpritePath}/bullet_{style.shape}.png");
+
+            GameObject bullet = new GameObject($"Bullet_Style{style.id}");
+            bullet.transform.localScale = Vector3.one * style.size;
+
+            SpriteRenderer sr = bullet.AddComponent<SpriteRenderer>();
+            sr.sprite = bulletSprite;
+            sr.color = style.color;
+            sr.sortingOrder = 8;
+
+            bullet.AddComponent<BulletController>();
+
+            TrailRenderer trail = bullet.AddComponent<TrailRenderer>();
+            trail.time = style.trailTime;
+            trail.startWidth = style.trailWidth;
+            trail.endWidth = style.trailWidth * 0.13f;
+            trail.material = new Material(Shader.Find("Sprites/Default"));
+            trail.startColor = style.trailColor;
+            trail.endColor = new Color(style.trailColor.r, style.trailColor.g, style.trailColor.b, 0f);
+            trail.sortingOrder = 7;
+            trail.numCornerVertices = 0;
+            trail.numCapVertices = 0;
+            trail.minVertexDistance = 0.05f;
+
+            PrefabUtility.SaveAsPrefabAsset(bullet, $"{ResourceBulletsPath}/Bullet_Style{style.id}.prefab");
+            DestroyImmediate(bullet);
+        }
+
+        // ===== Event Effect Prefab Generation =====
+
+        private struct EffectData
+        {
+            public int eventType;
+            public string name;
+            public Color color;
+            public string shape;    // "circle" or "ring"
+            public float size;
+            public float duration;
+            public bool isInstant;  // true = EffectBurstAnim, false = EffectFadeAnim
+        }
+
+        private static void CreateEffectPrefabs()
+        {
+            EffectData[] effects = new EffectData[]
+            {
+                new EffectData { eventType = 1,  name = "Pierce",          color = new Color(1f, 0.9f, 0.3f, 0.6f),   shape = "ring",   size = 0.8f,  duration = 0.3f, isInstant = true },
+                new EffectData { eventType = 2,  name = "Explosion",       color = new Color(1f, 0.5f, 0.1f, 0.7f),   shape = "circle", size = 2.0f,  duration = 0.5f, isInstant = true },
+                new EffectData { eventType = 3,  name = "Freeze",          color = new Color(0.3f, 0.7f, 1f, 0.6f),   shape = "circle", size = 1.0f,  duration = 0.8f, isInstant = false },
+                new EffectData { eventType = 4,  name = "Burn",            color = new Color(1f, 0.4f, 0.1f, 0.5f),   shape = "ring",   size = 0.6f,  duration = 0.6f, isInstant = false },
+                new EffectData { eventType = 7,  name = "Slow",            color = new Color(0.5f, 0.5f, 1f, 0.4f),   shape = "circle", size = 0.8f,  duration = 0.5f, isInstant = false },
+                new EffectData { eventType = 8,  name = "Heal",            color = new Color(0.2f, 0.9f, 0.3f, 0.6f), shape = "circle", size = 1.5f,  duration = 0.5f, isInstant = true },
+                new EffectData { eventType = 9,  name = "HealOverTime",    color = new Color(0.3f, 1f, 0.5f, 0.4f),   shape = "ring",   size = 1.2f,  duration = 1.0f, isInstant = false },
+                new EffectData { eventType = 10, name = "DamageReduction", color = new Color(0.8f, 0.8f, 0.2f, 0.5f), shape = "ring",   size = 1.5f,  duration = 0.6f, isInstant = true },
+                new EffectData { eventType = 13, name = "Shield",          color = new Color(0.3f, 0.7f, 1f, 0.5f),   shape = "ring",   size = 2.0f,  duration = 0.6f, isInstant = true },
+                new EffectData { eventType = 14, name = "Retaliation",     color = new Color(0.9f, 0.9f, 0.2f, 0.6f), shape = "ring",   size = 1.0f,  duration = 0.3f, isInstant = true },
+                new EffectData { eventType = 15, name = "Knockback",       color = new Color(0.6f, 0.9f, 0.6f, 0.5f), shape = "circle", size = 3.0f,  duration = 0.4f, isInstant = true },
+                new EffectData { eventType = 16, name = "Vulnerability",   color = new Color(0.9f, 0.3f, 0.9f, 0.5f), shape = "ring",   size = 0.8f,  duration = 0.8f, isInstant = false },
+                new EffectData { eventType = 17, name = "Summon",          color = new Color(0.9f, 0.7f, 0.2f, 0.5f), shape = "circle", size = 1.5f,  duration = 0.5f, isInstant = true },
+                new EffectData { eventType = 19, name = "ShieldBreak",     color = new Color(1f, 0.3f, 0.3f, 0.7f),   shape = "circle", size = 2.5f,  duration = 0.5f, isInstant = true },
+            };
+
+            // Generate procedural textures for effects
+            Texture2D circleTex = CreateEffectCircleTexture();
+            Texture2D ringTex = CreateEffectRingTexture();
+
+            string circleTexPath = $"{ResourceEffectsPath}/effect_circle_tex.png";
+            string ringTexPath = $"{ResourceEffectsPath}/effect_ring_tex.png";
+
+            SaveTexture(circleTex, circleTexPath);
+            SaveTexture(ringTex, ringTexPath);
+            AssetDatabase.Refresh();
+            SetTextureAsSprite(circleTexPath);
+            SetTextureAsSprite(ringTexPath);
+
+            foreach (var effect in effects)
+            {
+                CreateSingleEffectPrefab(effect, circleTexPath, ringTexPath);
+            }
+        }
+
+        private static readonly int EffectTexSize = 64;
+
+        private static Texture2D CreateEffectCircleTexture()
+        {
+            Texture2D tex = new Texture2D(EffectTexSize, EffectTexSize, TextureFormat.RGBA32, false);
+            float c = EffectTexSize / 2f;
+            float rSq = c * c;
+            for (int x = 0; x < EffectTexSize; x++)
+            {
+                for (int y = 0; y < EffectTexSize; y++)
+                {
+                    float dx = x - c;
+                    float dy = y - c;
+                    tex.SetPixel(x, y, dx * dx + dy * dy <= rSq ? Color.white : Color.clear);
+                }
+            }
+            tex.Apply();
+            return tex;
+        }
+
+        private static Texture2D CreateEffectRingTexture()
+        {
+            Texture2D tex = new Texture2D(EffectTexSize, EffectTexSize, TextureFormat.RGBA32, false);
+            float c = EffectTexSize / 2f;
+            float outerSq = c * c;
+            float inner = c * 0.7f;
+            float innerSq = inner * inner;
+            for (int x = 0; x < EffectTexSize; x++)
+            {
+                for (int y = 0; y < EffectTexSize; y++)
+                {
+                    float dx = x - c;
+                    float dy = y - c;
+                    float dSq = dx * dx + dy * dy;
+                    tex.SetPixel(x, y, dSq <= outerSq && dSq >= innerSq ? Color.white : Color.clear);
+                }
+            }
+            tex.Apply();
+            return tex;
+        }
+
+        private static void CreateSingleEffectPrefab(EffectData effect, string circleTexPath, string ringTexPath)
+        {
+            string texPath = effect.shape == "ring" ? ringTexPath : circleTexPath;
+            Sprite texSprite = AssetDatabase.LoadAssetAtPath<Sprite>(texPath);
+
+            GameObject go = new GameObject($"Effect_{effect.name}");
+
+            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            sr.sortingOrder = 90;
+            sr.color = effect.color;
+            sr.sprite = texSprite;
+
+            // Scale to achieve the desired world-space size
+            // The sprite at 100 PPU with 64px texture = 0.64 world units diameter
+            // We want effect.size diameter, so scale = effect.size / 0.64
+            float spriteWorldSize = EffectTexSize / 100f; // default PPU = 100
+            float scale = effect.size / spriteWorldSize;
+            go.transform.localScale = Vector3.one * scale;
+
+            if (effect.isInstant)
+            {
+                EffectBurstAnim anim = go.AddComponent<EffectBurstAnim>();
+                SerializedObject so = new SerializedObject(anim);
+                so.FindProperty("duration").floatValue = effect.duration;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                EffectFadeAnim anim = go.AddComponent<EffectFadeAnim>();
+                SerializedObject so = new SerializedObject(anim);
+                so.FindProperty("duration").floatValue = effect.duration;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(go, $"{ResourceEffectsPath}/Effect_{effect.name}.prefab");
+            DestroyImmediate(go);
         }
 
         #endregion

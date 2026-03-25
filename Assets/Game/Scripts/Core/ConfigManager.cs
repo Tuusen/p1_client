@@ -20,6 +20,9 @@ namespace GeometryTD
         private Dictionary<int, ArcaneConfig> arcaneLookup;
         private Dictionary<int, EventEffectConfig> eventEffectLookup;
 
+        private Dictionary<int, GameObject> bulletPrefabCache;
+        private Dictionary<int, GameObject> effectPrefabCache;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -45,6 +48,7 @@ namespace GeometryTD
             BuildBulletStyleLookup();
             BuildArcaneLookup();
             BuildEventEffectLookup();
+            PreloadPrefabs();
         }
 
         private void BuildSkillLookup()
@@ -72,6 +76,51 @@ namespace GeometryTD
             if (bulletStyleLookup != null && bulletStyleLookup.TryGetValue(styleId, out var config))
                 return config;
             return null;
+        }
+
+        public GameObject GetBulletPrefab(int styleId)
+        {
+            if (bulletPrefabCache != null && bulletPrefabCache.TryGetValue(styleId, out var prefab))
+                return prefab;
+            return null;
+        }
+
+        public GameObject GetEffectPrefab(int eventType)
+        {
+            if (effectPrefabCache != null && effectPrefabCache.TryGetValue(eventType, out var prefab))
+                return prefab;
+            return null;
+        }
+
+        private void PreloadPrefabs()
+        {
+            bulletPrefabCache = new Dictionary<int, GameObject>();
+            if (BulletStyleConfigs != null)
+            {
+                foreach (var style in BulletStyleConfigs)
+                {
+                    if (string.IsNullOrEmpty(style.prefabPath)) continue;
+                    GameObject prefab = Resources.Load<GameObject>(style.prefabPath);
+                    if (prefab != null)
+                        bulletPrefabCache[style.id] = prefab;
+                    else
+                        Debug.LogWarning($"[ConfigManager] 无法加载子弹Prefab: {style.prefabPath} (id={style.id})");
+                }
+            }
+
+            effectPrefabCache = new Dictionary<int, GameObject>();
+            if (EventEffectConfigs != null)
+            {
+                foreach (var effect in EventEffectConfigs)
+                {
+                    if (string.IsNullOrEmpty(effect.prefabPath)) continue;
+                    GameObject prefab = Resources.Load<GameObject>(effect.prefabPath);
+                    if (prefab != null)
+                        effectPrefabCache[effect.eventType] = prefab;
+                    else
+                        Debug.LogWarning($"[ConfigManager] 无法加载特效Prefab: {effect.prefabPath} (eventType={effect.eventType})");
+                }
+            }
         }
 
         private T LoadConfig<T>(string path)

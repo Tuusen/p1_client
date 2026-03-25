@@ -150,16 +150,7 @@ namespace GeometryTD
     public class BulletStyleConfig
     {
         public int id;
-        public string shape;
-        public float size;
-        public float colorR;
-        public float colorG;
-        public float colorB;
-        public float trailR;
-        public float trailG;
-        public float trailB;
-        public float trailWidth;
-        public float trailTime;
+        public string prefabPath;
     }
 
     [Serializable]
@@ -218,15 +209,9 @@ namespace GeometryTD
     public class EventEffectConfig
     {
         public int eventType;
-        public float colorR;
-        public float colorG;
-        public float colorB;
-        public float colorA;
-        public string shape;
-        public float size;
         public float duration;
-        public bool isInstant;
         public string target;
+        public string prefabPath;
     }
 
     [Serializable]

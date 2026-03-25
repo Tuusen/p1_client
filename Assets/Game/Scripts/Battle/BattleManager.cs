@@ -320,11 +320,17 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            GameObject bulletObj = Instantiate(heroBulletPrefab, from, Quaternion.identity);
+            GameObject prefab = heroBulletPrefab;
+            if (bulletStyleId > 0)
+            {
+                GameObject stylePrefab = ConfigManager.Instance.GetBulletPrefab(bulletStyleId);
+                if (stylePrefab != null)
+                    prefab = stylePrefab;
+            }
+
+            GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
             bullet.InitSkillBullet(target, speed, damage, this, mods);
-            if (bulletStyleId > 0)
-                bullet.ApplyStyle(bulletStyleId);
         }
 
         public void SpawnBossBullet(Vector3 from, Transform target, float damage, float speed)
