@@ -26,6 +26,14 @@ namespace GeometryTD
         {
             if (config == null) return SkillCategory.Self;
 
+            // Priority: read from config category field
+            if (!string.IsNullOrEmpty(config.category) &&
+                System.Enum.TryParse<SkillCategory>(config.category, out var cat))
+            {
+                return cat;
+            }
+
+            // Fallback: infer from events (legacy compatibility)
             bool hasSummon = false, hasShield = false, hasSelfEffect = false;
             if (config.events != null)
             {

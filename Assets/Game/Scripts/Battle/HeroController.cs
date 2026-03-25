@@ -121,37 +121,15 @@ namespace GeometryTD
         {
             if (IsDead || battleManager == null || config == null) return;
 
-            bool hasSummon = false, hasShield = false, hasSelfEffect = false;
-            if (config.events != null)
+            var category = SkillManager.ClassifySkill(config);
+            switch (category)
             {
-                foreach (var evt in config.events)
-                {
-                    switch (evt.type)
-                    {
-                        case SkillEventType.Summon: hasSummon = true; break;
-                        case SkillEventType.Shield: hasShield = true; break;
-                        case SkillEventType.Heal:
-                        case SkillEventType.HealOverTime:
-                        case SkillEventType.DamageReduction:
-                        case SkillEventType.SelfDamage:
-                        case SkillEventType.GrantXp:
-                            hasSelfEffect = true; break;
-                    }
-                }
+                case SkillCategory.Summon:     HandleSummonSkill(config);     break;
+                case SkillCategory.Shield:     HandleShieldSkill(config);     break;
+                case SkillCategory.Self:       HandleSelfSkill(config);       break;
+                case SkillCategory.Projectile: HandleProjectileSkill(config); break;
+                case SkillCategory.Aoe:        HandleAoeSkill(config);        break;
             }
-
-            if (hasSummon)
-                HandleSummonSkill(config);
-            else if (hasShield)
-                HandleShieldSkill(config);
-            else if (hasSelfEffect && config.bulletSpeed <= 0)
-                HandleSelfSkill(config);
-            else if (config.bulletSpeed > 0 && config.atkCnt > 0)
-                HandleProjectileSkill(config);
-            else if (config.dmg > 0)
-                HandleAoeSkill(config);
-            else
-                HandleSelfSkill(config);
         }
 
         // ===== 弹幕技能 (烈焰圣弹, 急冻冰锥, 闪电连锁) =====
@@ -228,6 +206,8 @@ namespace GeometryTD
         {
             if (config.events == null) return;
 
+            var efx = battleManager.EventEffectManager;
+
             foreach (var evt in config.events)
             {
                 if (evt.param == null) continue;
@@ -273,6 +253,8 @@ namespace GeometryTD
                         }
                         break;
                 }
+
+                efx?.TriggerEffect(evt.type, transform.position);
             }
         }
 
@@ -281,6 +263,7 @@ namespace GeometryTD
         {
             if (config.events == null) return;
 
+            var efx = battleManager.EventEffectManager;
             int pierceFromEvent = 0;
 
             foreach (var evt in config.events)
@@ -321,6 +304,8 @@ namespace GeometryTD
                         }
                         break;
                 }
+
+                efx?.TriggerEffect(evt.type, transform.position);
             }
 
             if (retaliationActive)

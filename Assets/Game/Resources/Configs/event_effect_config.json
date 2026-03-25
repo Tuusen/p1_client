@@ -1,0 +1,18 @@
+{
+    "effects": [
+        { "eventType": 1,  "colorR": 1.0, "colorG": 0.9, "colorB": 0.3, "colorA": 0.6, "shape": "ring",   "size": 0.8,  "duration": 0.3, "isInstant": true,  "target": "enemy" },
+        { "eventType": 2,  "colorR": 1.0, "colorG": 0.5, "colorB": 0.1, "colorA": 0.7, "shape": "circle", "size": 2.0,  "duration": 0.5, "isInstant": true,  "target": "area"  },
+        { "eventType": 3,  "colorR": 0.3, "colorG": 0.7, "colorB": 1.0, "colorA": 0.6, "shape": "circle", "size": 1.0,  "duration": 0.8, "isInstant": false, "target": "enemy" },
+        { "eventType": 4,  "colorR": 1.0, "colorG": 0.4, "colorB": 0.1, "colorA": 0.5, "shape": "ring",   "size": 0.6,  "duration": 0.6, "isInstant": false, "target": "enemy" },
+        { "eventType": 7,  "colorR": 0.5, "colorG": 0.5, "colorB": 1.0, "colorA": 0.4, "shape": "circle", "size": 0.8,  "duration": 0.5, "isInstant": false, "target": "enemy" },
+        { "eventType": 8,  "colorR": 0.2, "colorG": 0.9, "colorB": 0.3, "colorA": 0.6, "shape": "circle", "size": 1.5,  "duration": 0.5, "isInstant": true,  "target": "hero"  },
+        { "eventType": 9,  "colorR": 0.3, "colorG": 1.0, "colorB": 0.5, "colorA": 0.4, "shape": "ring",   "size": 1.2,  "duration": 1.0, "isInstant": false, "target": "hero"  },
+        { "eventType": 10, "colorR": 0.8, "colorG": 0.8, "colorB": 0.2, "colorA": 0.5, "shape": "ring",   "size": 1.5,  "duration": 0.6, "isInstant": true,  "target": "hero"  },
+        { "eventType": 13, "colorR": 0.3, "colorG": 0.7, "colorB": 1.0, "colorA": 0.5, "shape": "ring",   "size": 2.0,  "duration": 0.6, "isInstant": true,  "target": "hero"  },
+        { "eventType": 14, "colorR": 0.9, "colorG": 0.9, "colorB": 0.2, "colorA": 0.6, "shape": "ring",   "size": 1.0,  "duration": 0.3, "isInstant": true,  "target": "hero"  },
+        { "eventType": 15, "colorR": 0.6, "colorG": 0.9, "colorB": 0.6, "colorA": 0.5, "shape": "circle", "size": 3.0,  "duration": 0.4, "isInstant": true,  "target": "area"  },
+        { "eventType": 16, "colorR": 0.9, "colorG": 0.3, "colorB": 0.9, "colorA": 0.5, "shape": "ring",   "size": 0.8,  "duration": 0.8, "isInstant": false, "target": "enemy" },
+        { "eventType": 17, "colorR": 0.9, "colorG": 0.7, "colorB": 0.2, "colorA": 0.5, "shape": "circle", "size": 1.5,  "duration": 0.5, "isInstant": true,  "target": "area"  },
+        { "eventType": 19, "colorR": 1.0, "colorG": 0.3, "colorB": 0.3, "colorA": 0.7, "shape": "circle", "size": 2.5,  "duration": 0.5, "isInstant": true,  "target": "area"  }
+    ]
+}

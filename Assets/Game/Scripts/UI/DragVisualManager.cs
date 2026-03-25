@@ -18,6 +18,7 @@ namespace GeometryTD
         private SpriteRenderer heroSR;
         private Color heroOrigColor;
         private bool isDragging;
+        private DragHintUI dragHint;
 
         private void Awake()
         {
@@ -25,7 +26,7 @@ namespace GeometryTD
                 battleManager = GetComponent<BattleManager>();
         }
 
-        public void BeginDrag(SkillCategory category)
+        public void BeginDrag(SkillCategory category, string hintText = "")
         {
             Debug.Log($"[DragVisualManager] BeginDrag called, category={category}");
             if (isDragging) EndDrag();
@@ -33,6 +34,17 @@ namespace GeometryTD
 
             Time.timeScale = 0.3f;
             CreateDimOverlay();
+
+            // Show drag hint
+            if (!string.IsNullOrEmpty(hintText))
+            {
+                Canvas canvas = FindScreenOverlayCanvas();
+                if (canvas != null)
+                {
+                    dragHint = new DragHintUI();
+                    dragHint.Show(hintText, canvas);
+                }
+            }
 
             switch (category)
             {
@@ -94,6 +106,12 @@ namespace GeometryTD
             DestroyObj(ref shieldCircle);
             DestroyObj(ref summonCircle);
             DestroyEdgeGlows();
+
+            if (dragHint != null)
+            {
+                dragHint.Hide();
+                dragHint = null;
+            }
         }
 
         private void OnDisable()
@@ -139,7 +157,7 @@ namespace GeometryTD
             heroGlow = new GameObject("HeroGlow");
             heroGlow.transform.position = heroT.position;
             SpriteRenderer glowSR = heroGlow.AddComponent<SpriteRenderer>();
-            glowSR.sprite = Resources.Load<Sprite>("Sprites/range_circle");
+            glowSR.sprite = GameHelper.LoadSprite("Sprites/range_circle");
             glowSR.color = new Color(1f, 1f, 0.6f, 0.3f);
             glowSR.sortingOrder = 4;
             heroGlow.transform.localScale = Vector3.one * 3f;
@@ -206,7 +224,7 @@ namespace GeometryTD
             circleObj = new GameObject("RangeCircle");
             circleObj.transform.position = heroT.position;
             SpriteRenderer sr = circleObj.AddComponent<SpriteRenderer>();
-            sr.sprite = Resources.Load<Sprite>("Sprites/range_circle");
+            sr.sprite = GameHelper.LoadSprite("Sprites/range_circle");
             sr.color = color;
             sr.sortingOrder = 6;
 
