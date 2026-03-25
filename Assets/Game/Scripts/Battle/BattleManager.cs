@@ -11,6 +11,7 @@ namespace GeometryTD
         [SerializeField] private GameObject bossPrefab;
         [SerializeField] private GameObject heroBulletPrefab;
         [SerializeField] private GameObject bossBulletPrefab;
+        [SerializeField] private GameObject summonPrefab;
 
         [Header("UI引用")]
         [SerializeField] private BattleUI battleUI;
@@ -320,11 +321,17 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            GameObject bulletObj = Instantiate(heroBulletPrefab, from, Quaternion.identity);
+            GameObject prefab = heroBulletPrefab;
+            if (bulletStyleId > 0)
+            {
+                GameObject stylePrefab = ConfigManager.Instance.GetBulletPrefab(bulletStyleId);
+                if (stylePrefab != null)
+                    prefab = stylePrefab;
+            }
+
+            GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
             bullet.InitSkillBullet(target, speed, damage, this, mods);
-            if (bulletStyleId > 0)
-                bullet.ApplyStyle(bulletStyleId);
         }
 
         public void SpawnBossBullet(Vector3 from, Transform target, float damage, float speed)
@@ -341,10 +348,19 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            GameObject summonObj = new GameObject("Summon");
-            summonObj.transform.position = position;
+            GameObject summonObj;
+            if (summonPrefab != null)
+            {
+                summonObj = Instantiate(summonPrefab, position, Quaternion.identity);
+            }
+            else
+            {
+                summonObj = new GameObject("Summon");
+                summonObj.transform.position = position;
+                summonObj.AddComponent<SummonController>();
+            }
 
-            SummonController summon = summonObj.AddComponent<SummonController>();
+            SummonController summon = summonObj.GetComponent<SummonController>();
             summon.Init(damage, atkInterval, duration, homing, this);
         }
 
