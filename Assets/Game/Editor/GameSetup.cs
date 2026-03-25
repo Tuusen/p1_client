@@ -901,7 +901,7 @@ namespace GeometryTD
             bgImage.raycastTarget = false;
 
             Sprite bgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/ui/Space_Exploration_GUI_Kit/Background_Images/large/background-1-large.png");
+                "Assets/ui/bg/large/background-1-large.png");
             if (bgSprite != null)
             {
                 bgImage.sprite = bgSprite;
@@ -1032,7 +1032,7 @@ namespace GeometryTD
             bgSR.sortingOrder = -100;
 
             Sprite bgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/ui/Space_Exploration_GUI_Kit/Background_Images/large/background-2-large.png");
+                "Assets/ui/bg/large/background-2-large.png");
             if (bgSprite != null)
             {
                 bgSR.sprite = bgSprite;
