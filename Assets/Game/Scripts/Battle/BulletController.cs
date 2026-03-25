@@ -43,7 +43,7 @@ namespace GeometryTD
 
                 if (!string.IsNullOrEmpty(style.shape))
                 {
-                    Sprite shapeSprite = Resources.Load<Sprite>($"Sprites/bullet_{style.shape}");
+                    Sprite shapeSprite = GameHelper.LoadSprite($"Sprites/bullet_{style.shape}");
                     if (shapeSprite != null)
                         spriteRenderer.sprite = shapeSprite;
                 }
@@ -166,6 +166,8 @@ namespace GeometryTD
                 if (modifiers != null && modifiers.explosionRadius > 0f && battleManager != null)
                 {
                     battleManager.DealAoeDamage(transform.position, modifiers.explosionRadius, modifiers.explosionDmg);
+                    var efx = battleManager.EventEffectManager;
+                    if (efx != null) efx.TriggerEffect(SkillEventType.Explosion, transform.position);
                 }
             }
 
@@ -231,21 +233,24 @@ namespace GeometryTD
         {
             if (isEnemyBullet || target == null || modifiers == null) return;
 
+            Vector3 pos = target.position;
+            var efx = battleManager != null ? battleManager.EventEffectManager : null;
+
             MonsterController mc = target.GetComponent<MonsterController>();
             if (mc != null)
             {
-                if (modifiers.freezeDuration > 0) mc.ApplyFreeze(modifiers.freezeDuration);
-                if (modifiers.burnDuration > 0) mc.ApplyBurn(modifiers.burnDmg, modifiers.burnDuration);
-                if (modifiers.slowDuration > 0) mc.ApplySlow(modifiers.slowDuration, modifiers.slowRatio);
+                if (modifiers.freezeDuration > 0) { mc.ApplyFreeze(modifiers.freezeDuration); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
+                if (modifiers.burnDuration > 0)   { mc.ApplyBurn(modifiers.burnDmg, modifiers.burnDuration); efx?.TriggerEffect(SkillEventType.Burn, pos); }
+                if (modifiers.slowDuration > 0)    { mc.ApplySlow(modifiers.slowDuration, modifiers.slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
                 return;
             }
 
             BossController bc = target.GetComponent<BossController>();
             if (bc != null)
             {
-                if (modifiers.freezeDuration > 0) bc.ApplyFreeze(modifiers.freezeDuration);
-                if (modifiers.burnDuration > 0) bc.ApplyBurn(modifiers.burnDmg, modifiers.burnDuration);
-                if (modifiers.slowDuration > 0) bc.ApplySlow(modifiers.slowDuration, modifiers.slowRatio);
+                if (modifiers.freezeDuration > 0) { bc.ApplyFreeze(modifiers.freezeDuration); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
+                if (modifiers.burnDuration > 0)   { bc.ApplyBurn(modifiers.burnDmg, modifiers.burnDuration); efx?.TriggerEffect(SkillEventType.Burn, pos); }
+                if (modifiers.slowDuration > 0)    { bc.ApplySlow(modifiers.slowDuration, modifiers.slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
             }
         }
     }

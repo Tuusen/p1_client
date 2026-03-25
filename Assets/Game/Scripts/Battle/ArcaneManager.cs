@@ -269,21 +269,24 @@ namespace GeometryTD
             float vulnRatio, float vulnDur,
             int chainCount, float chainDecay, float chainRange, float chainAoeRadius)
         {
+            var efx = battleManager.EventEffectManager;
+
             // Get all enemies in range and apply damage + effects
             var enemies = battleManager.GetEnemiesInRadius(center, radius);
             foreach (var enemy in enemies)
             {
                 if (enemy == null) continue;
+                Vector3 pos = enemy.position;
 
                 MonsterController mc = enemy.GetComponent<MonsterController>();
                 if (mc != null)
                 {
                     mc.TakeDamage(damage);
-                    if (freezeDur > 0) mc.ApplyFreeze(freezeDur);
-                    if (burnDmg > 0 && burnDur > 0) mc.ApplyBurn(burnDmg, burnDur);
-                    if (slowDur > 0) mc.ApplySlow(slowDur, slowRatio);
-                    if (knockback > 0) mc.ApplyKnockback(center, knockback);
-                    if (vulnDur > 0) mc.ApplyVulnerability(vulnDur, vulnRatio);
+                    if (freezeDur > 0) { mc.ApplyFreeze(freezeDur); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
+                    if (burnDmg > 0 && burnDur > 0) { mc.ApplyBurn(burnDmg, burnDur); efx?.TriggerEffect(SkillEventType.Burn, pos); }
+                    if (slowDur > 0) { mc.ApplySlow(slowDur, slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
+                    if (knockback > 0) { mc.ApplyKnockback(center, knockback); efx?.TriggerEffect(SkillEventType.Knockback, pos); }
+                    if (vulnDur > 0) { mc.ApplyVulnerability(vulnDur, vulnRatio); efx?.TriggerEffect(SkillEventType.Vulnerability, pos); }
                     continue;
                 }
 
@@ -291,11 +294,11 @@ namespace GeometryTD
                 if (bc != null)
                 {
                     bc.TakeDamage(damage);
-                    if (freezeDur > 0) bc.ApplyFreeze(freezeDur);
-                    if (burnDmg > 0 && burnDur > 0) bc.ApplyBurn(burnDmg, burnDur);
-                    if (slowDur > 0) bc.ApplySlow(slowDur, slowRatio);
-                    if (knockback > 0) bc.ApplyKnockback(center, knockback);
-                    if (vulnDur > 0) bc.ApplyVulnerability(vulnDur, vulnRatio);
+                    if (freezeDur > 0) { bc.ApplyFreeze(freezeDur); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
+                    if (burnDmg > 0 && burnDur > 0) { bc.ApplyBurn(burnDmg, burnDur); efx?.TriggerEffect(SkillEventType.Burn, pos); }
+                    if (slowDur > 0) { bc.ApplySlow(slowDur, slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
+                    if (knockback > 0) { bc.ApplyKnockback(center, knockback); efx?.TriggerEffect(SkillEventType.Knockback, pos); }
+                    if (vulnDur > 0) { bc.ApplyVulnerability(vulnDur, vulnRatio); efx?.TriggerEffect(SkillEventType.Vulnerability, pos); }
                 }
             }
         }

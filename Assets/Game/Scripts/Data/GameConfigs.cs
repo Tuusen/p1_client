@@ -117,6 +117,8 @@ namespace GeometryTD
         public string name;
         public string[] desList;
         public string icon;
+        public string category;
+        public string dragHint;
         public int dmg;
         public int dmgType;
         public int mp;
@@ -210,5 +212,26 @@ namespace GeometryTD
     {
         public SkillUseResult result;
         public float cooldownRemaining;
+    }
+
+    [Serializable]
+    public class EventEffectConfig
+    {
+        public int eventType;
+        public float colorR;
+        public float colorG;
+        public float colorB;
+        public float colorA;
+        public string shape;
+        public float size;
+        public float duration;
+        public bool isInstant;
+        public string target;
+    }
+
+    [Serializable]
+    public class EventEffectConfigList
+    {
+        public List<EventEffectConfig> effects;
     }
 }

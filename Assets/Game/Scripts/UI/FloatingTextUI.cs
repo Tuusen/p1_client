@@ -32,9 +32,7 @@ namespace GeometryTD
             t.alignment = TextAnchor.MiddleCenter;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
-            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (t.font == null)
-                t.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            t.font = GameHelper.LoadFont();
 
             RectTransform trt = textObj.GetComponent<RectTransform>();
             trt.anchorMin = Vector2.zero;

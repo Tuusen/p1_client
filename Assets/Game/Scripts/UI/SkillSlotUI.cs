@@ -37,11 +37,23 @@ namespace GeometryTD
             slotIndex = index;
             skillManager = manager;
 
-            if (nameText != null && skillManager != null)
+            if (skillManager != null)
             {
                 var state = skillManager.GetSlot(index);
                 if (state != null)
-                    nameText.text = state.skillName;
+                {
+                    if (nameText != null)
+                        nameText.text = state.skillName;
+
+                    // Load icon from config
+                    var baseConfig = ConfigManager.Instance.GetSkillConfig(state.skillId, 0);
+                    if (baseConfig != null && !string.IsNullOrEmpty(baseConfig.icon) && iconImage != null)
+                    {
+                        var sprite = GameHelper.LoadSprite(baseConfig.icon);
+                        if (sprite != null)
+                            iconImage.sprite = sprite;
+                    }
+                }
             }
 
             // 缓存引用
@@ -128,8 +140,13 @@ namespace GeometryTD
             // 分类技能并启动视觉效果
             var config = ConfigManager.Instance.GetSkillConfig(state.skillId, Mathf.Max(state.level, 1));
             currentDragCategory = SkillManager.ClassifySkill(config);
+
+            // Read dragHint from level=0 config
+            var baseConfig = ConfigManager.Instance.GetSkillConfig(state.skillId, 0);
+            string hintText = baseConfig != null ? baseConfig.dragHint : "";
+
             if (dragVisualManager != null)
-                dragVisualManager.BeginDrag(currentDragCategory);
+                dragVisualManager.BeginDrag(currentDragCategory, hintText);
 
             CreateDragGhost(eventData.position);
 
@@ -267,8 +284,7 @@ namespace GeometryTD
                 null, out Vector2 localPos);
             tooltipRT.anchoredPosition = localPos;
 
-            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            Font font = GameHelper.LoadFont();
 
             float yOffset = totalHeight / 2f - padding;
 

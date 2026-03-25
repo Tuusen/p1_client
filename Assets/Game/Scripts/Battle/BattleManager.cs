@@ -28,6 +28,7 @@ namespace GeometryTD
         private BossController bossController;
         private SkillManager skillManager;
         private ArcaneManager arcaneManager;
+        private EventEffectManager eventEffectManager;
 
         private List<Transform> aliveEnemies = new List<Transform>();
         private int killCount;
@@ -39,6 +40,7 @@ namespace GeometryTD
 
         public Transform HeroTransform => heroController != null ? heroController.transform : null;
         public ArcaneManager ArcaneManager => arcaneManager;
+        public EventEffectManager EventEffectManager => eventEffectManager;
 
         public void ShowDamageText(Vector3 worldPos, float amount, bool isHeal)
         {
@@ -81,6 +83,11 @@ namespace GeometryTD
             GameObject heroObj = Instantiate(heroPrefab, heroPos, Quaternion.identity);
             heroController = heroObj.GetComponent<HeroController>();
             heroController.Init(heroConfig, this);
+
+            // 初始化事件特效管理器
+            eventEffectManager = GetComponent<EventEffectManager>();
+            if (eventEffectManager == null)
+                eventEffectManager = gameObject.AddComponent<EventEffectManager>();
 
             // 初始化怪物生成器
             monsterSpawner = GetComponent<MonsterSpawner>();
