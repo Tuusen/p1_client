@@ -286,12 +286,7 @@ namespace GeometryTD
 
         private static void CreatePrefabs()
         {
-            CreateHeroPrefab();
-            CreateMonsterPrefab();
-            CreateBossPrefab();
             CreateSummonPrefab();
-            CreateBulletPrefab("HeroBullet", $"{SpritePath}/hero_bullet.png", new Color(0f, 1f, 1f));
-            CreateBulletPrefab("BossBullet", $"{SpritePath}/boss_bullet.png", new Color(1f, 0.2f, 0.2f));
             CreateStyleBulletPrefabs();
             CreateEffectPrefabs();
         }
@@ -972,6 +967,47 @@ namespace GeometryTD
             UnityEditor.Events.UnityEventTools.AddPersistentListener(
                 btn.onClick, menuUI.OnStartButtonClicked);
 
+            // ===== 角色/技能/奥术 Button Row =====
+            string[] menuLabels = { "角色", "技能", "奥术" };
+            UnityEngine.Events.UnityAction[] menuActions = {
+                new UnityEngine.Events.UnityAction(menuUI.OnHeroButtonClicked),
+                new UnityEngine.Events.UnityAction(menuUI.OnSkillButtonClicked),
+                new UnityEngine.Events.UnityAction(menuUI.OnArcaneButtonClicked)
+            };
+            float menuBtnWidth = 160f;
+            float menuBtnSpacing = 30f;
+            float menuBtnY = -160f;
+            for (int i = 0; i < 3; i++)
+            {
+                float xOffset = (i - 1) * (menuBtnWidth + menuBtnSpacing);
+                GameObject mBtnObj = new GameObject($"{menuLabels[i]}Button");
+                mBtnObj.transform.SetParent(canvasObj.transform, false);
+                Image mBtnImg = mBtnObj.AddComponent<Image>();
+                mBtnImg.color = new Color(0.15f, 0.3f, 0.5f);
+                Button mBtn = mBtnObj.AddComponent<Button>();
+                ColorBlock mCb = mBtn.colors;
+                mCb.normalColor = Color.white;
+                mCb.highlightedColor = new Color(0.9f, 0.9f, 1f);
+                mCb.pressedColor = new Color(0.7f, 0.7f, 0.9f);
+                mBtn.colors = mCb;
+
+                RectTransform mBtnRT = mBtnObj.GetComponent<RectTransform>();
+                mBtnRT.anchorMin = new Vector2(0.5f, 0.5f);
+                mBtnRT.anchorMax = new Vector2(0.5f, 0.5f);
+                mBtnRT.anchoredPosition = new Vector2(xOffset, menuBtnY);
+                mBtnRT.sizeDelta = new Vector2(menuBtnWidth, 60);
+
+                Text mBtnText = CreateUIText(mBtnObj, "Text", menuLabels[i], 28, Color.white);
+                RectTransform mBtnTextRT = mBtnText.GetComponent<RectTransform>();
+                mBtnTextRT.anchorMin = Vector2.zero;
+                mBtnTextRT.anchorMax = Vector2.one;
+                mBtnTextRT.offsetMin = Vector2.zero;
+                mBtnTextRT.offsetMax = Vector2.zero;
+
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(
+                    mBtn.onClick, menuActions[i]);
+            }
+
             // ===== LevelSelectUI Panel =====
             GameObject levelSelectObj = new GameObject("LevelSelectPanel");
             levelSelectObj.transform.SetParent(canvasObj.transform, false);
@@ -1198,6 +1234,369 @@ namespace GeometryTD
             // Wire MainMenuUI -> LevelSelectUI
             SerializedObject menuSO = new SerializedObject(menuUI);
             menuSO.FindProperty("levelSelectUI").objectReferenceValue = levelSelectUI;
+
+            // ===== HeroSelectUI Panel =====
+            HeroSelectUI heroSelectUI;
+            {
+                GameObject panelObj = new GameObject("HeroSelectPanel");
+                panelObj.transform.SetParent(canvasObj.transform, false);
+                RectTransform panelRT = panelObj.AddComponent<RectTransform>();
+                panelRT.anchorMin = Vector2.zero;
+                panelRT.anchorMax = Vector2.one;
+                panelRT.offsetMin = Vector2.zero;
+                panelRT.offsetMax = Vector2.zero;
+                Image panelBg = panelObj.AddComponent<Image>();
+                panelBg.color = new Color(0.03f, 0.03f, 0.1f, 0.95f);
+                heroSelectUI = panelObj.AddComponent<HeroSelectUI>();
+                panelObj.SetActive(false);
+
+                // 关闭按钮
+                GameObject closeBtnObj = new GameObject("CloseButton");
+                closeBtnObj.transform.SetParent(panelObj.transform, false);
+                Image closeBtnImg = closeBtnObj.AddComponent<Image>();
+                closeBtnImg.color = new Color(0.8f, 0.2f, 0.2f);
+                Button closeBtn = closeBtnObj.AddComponent<Button>();
+                RectTransform closeBtnRT = closeBtnObj.GetComponent<RectTransform>();
+                closeBtnRT.anchorMin = new Vector2(1, 1);
+                closeBtnRT.anchorMax = new Vector2(1, 1);
+                closeBtnRT.anchoredPosition = new Vector2(-40, -40);
+                closeBtnRT.sizeDelta = new Vector2(50, 50);
+                Text closeBtnText = CreateUIText(closeBtnObj, "Text", "X", 24, Color.white);
+                RectTransform closeBtnTextRT = closeBtnText.GetComponent<RectTransform>();
+                closeBtnTextRT.anchorMin = Vector2.zero;
+                closeBtnTextRT.anchorMax = Vector2.one;
+                closeBtnTextRT.offsetMin = Vector2.zero;
+                closeBtnTextRT.offsetMax = Vector2.zero;
+
+                // 标题
+                Text titleT = CreateUIText(panelObj, "Title", "角色选择",
+                    36, new Color(0.98f, 0.9f, 0.62f), TextAnchor.MiddleCenter, FontStyle.Bold);
+                RectTransform titleRT2 = titleT.GetComponent<RectTransform>();
+                titleRT2.anchorMin = new Vector2(0.5f, 1);
+                titleRT2.anchorMax = new Vector2(0.5f, 1);
+                titleRT2.anchoredPosition = new Vector2(0, -50);
+                titleRT2.sizeDelta = new Vector2(400, 60);
+
+                // ScrollView
+                GameObject scrollObj = new GameObject("ScrollView");
+                scrollObj.transform.SetParent(panelObj.transform, false);
+                RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
+                scrollRT.anchorMin = new Vector2(0.15f, 0.15f);
+                scrollRT.anchorMax = new Vector2(0.85f, 0.85f);
+                scrollRT.offsetMin = Vector2.zero;
+                scrollRT.offsetMax = Vector2.zero;
+                Image scrollBgH = scrollObj.AddComponent<Image>();
+                scrollBgH.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
+                ScrollRect scrollRectH = scrollObj.AddComponent<ScrollRect>();
+                scrollRectH.horizontal = false;
+
+                GameObject viewportObj = new GameObject("Viewport");
+                viewportObj.transform.SetParent(scrollObj.transform, false);
+                RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
+                viewportRT.anchorMin = Vector2.zero;
+                viewportRT.anchorMax = Vector2.one;
+                viewportRT.offsetMin = Vector2.zero;
+                viewportRT.offsetMax = Vector2.zero;
+                viewportObj.AddComponent<Image>().color = Color.white;
+                Mask maskH = viewportObj.AddComponent<Mask>();
+                maskH.showMaskGraphic = false;
+                scrollRectH.viewport = viewportRT;
+
+                GameObject contentObj = new GameObject("Content");
+                contentObj.transform.SetParent(viewportObj.transform, false);
+                RectTransform contentRTH = contentObj.AddComponent<RectTransform>();
+                contentRTH.anchorMin = new Vector2(0, 1);
+                contentRTH.anchorMax = new Vector2(1, 1);
+                contentRTH.pivot = new Vector2(0.5f, 1);
+                contentRTH.offsetMin = new Vector2(10, 0);
+                contentRTH.offsetMax = new Vector2(-10, 0);
+                contentRTH.sizeDelta = new Vector2(0, 0);
+
+                VerticalLayoutGroup vlgH = contentObj.AddComponent<VerticalLayoutGroup>();
+                vlgH.spacing = 8;
+                vlgH.padding = new RectOffset(10, 10, 10, 10);
+                vlgH.childForceExpandWidth = true;
+                vlgH.childForceExpandHeight = false;
+                vlgH.childControlWidth = true;
+                vlgH.childControlHeight = false;
+
+                ContentSizeFitter csfH = contentObj.AddComponent<ContentSizeFitter>();
+                csfH.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                scrollRectH.content = contentRTH;
+
+                // add LayoutElement to items created at runtime: handled by HeroSelectUI itself
+                // set preferred height via LayoutElement on each item
+
+                SerializedObject heroSO = new SerializedObject(heroSelectUI);
+                heroSO.FindProperty("heroListContent").objectReferenceValue = contentRTH;
+                heroSO.FindProperty("closeButton").objectReferenceValue = closeBtn;
+                heroSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // ===== SkillSelectUI Panel =====
+            SkillSelectUI skillSelectUI;
+            {
+                GameObject panelObj = new GameObject("SkillSelectPanel");
+                panelObj.transform.SetParent(canvasObj.transform, false);
+                RectTransform panelRT = panelObj.AddComponent<RectTransform>();
+                panelRT.anchorMin = Vector2.zero;
+                panelRT.anchorMax = Vector2.one;
+                panelRT.offsetMin = Vector2.zero;
+                panelRT.offsetMax = Vector2.zero;
+                Image panelBg = panelObj.AddComponent<Image>();
+                panelBg.color = new Color(0.03f, 0.03f, 0.1f, 0.95f);
+                skillSelectUI = panelObj.AddComponent<SkillSelectUI>();
+                panelObj.SetActive(false);
+
+                // 关闭按钮
+                GameObject closeBtnObj = new GameObject("CloseButton");
+                closeBtnObj.transform.SetParent(panelObj.transform, false);
+                Image closeBtnImg = closeBtnObj.AddComponent<Image>();
+                closeBtnImg.color = new Color(0.8f, 0.2f, 0.2f);
+                Button closeBtn = closeBtnObj.AddComponent<Button>();
+                RectTransform closeBtnRT = closeBtnObj.GetComponent<RectTransform>();
+                closeBtnRT.anchorMin = new Vector2(1, 1);
+                closeBtnRT.anchorMax = new Vector2(1, 1);
+                closeBtnRT.anchoredPosition = new Vector2(-40, -40);
+                closeBtnRT.sizeDelta = new Vector2(50, 50);
+                Text closeBtnText = CreateUIText(closeBtnObj, "Text", "X", 24, Color.white);
+                RectTransform closeBtnTextRT = closeBtnText.GetComponent<RectTransform>();
+                closeBtnTextRT.anchorMin = Vector2.zero;
+                closeBtnTextRT.anchorMax = Vector2.one;
+                closeBtnTextRT.offsetMin = Vector2.zero;
+                closeBtnTextRT.offsetMax = Vector2.zero;
+
+                // 标题
+                Text titleT = CreateUIText(panelObj, "Title", "技能选择",
+                    36, new Color(0.98f, 0.9f, 0.62f), TextAnchor.MiddleCenter, FontStyle.Bold);
+                RectTransform titleRT2 = titleT.GetComponent<RectTransform>();
+                titleRT2.anchorMin = new Vector2(0.5f, 1);
+                titleRT2.anchorMax = new Vector2(0.5f, 1);
+                titleRT2.anchoredPosition = new Vector2(0, -50);
+                titleRT2.sizeDelta = new Vector2(400, 60);
+
+                // 计数文本
+                Text cntText = CreateUIText(panelObj, "CountText", "已选 0/8",
+                    24, new Color(0.8f, 0.8f, 0.9f));
+                RectTransform cntRT = cntText.GetComponent<RectTransform>();
+                cntRT.anchorMin = new Vector2(0.5f, 1);
+                cntRT.anchorMax = new Vector2(0.5f, 1);
+                cntRT.anchoredPosition = new Vector2(0, -90);
+                cntRT.sizeDelta = new Vector2(200, 30);
+
+                // ScrollView
+                GameObject scrollObj = new GameObject("ScrollView");
+                scrollObj.transform.SetParent(panelObj.transform, false);
+                RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
+                scrollRT.anchorMin = new Vector2(0.15f, 0.18f);
+                scrollRT.anchorMax = new Vector2(0.85f, 0.82f);
+                scrollRT.offsetMin = Vector2.zero;
+                scrollRT.offsetMax = Vector2.zero;
+                Image scrollBgS = scrollObj.AddComponent<Image>();
+                scrollBgS.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
+                ScrollRect scrollRectS = scrollObj.AddComponent<ScrollRect>();
+                scrollRectS.horizontal = false;
+
+                GameObject viewportObj = new GameObject("Viewport");
+                viewportObj.transform.SetParent(scrollObj.transform, false);
+                RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
+                viewportRT.anchorMin = Vector2.zero;
+                viewportRT.anchorMax = Vector2.one;
+                viewportRT.offsetMin = Vector2.zero;
+                viewportRT.offsetMax = Vector2.zero;
+                viewportObj.AddComponent<Image>().color = Color.white;
+                Mask maskS = viewportObj.AddComponent<Mask>();
+                maskS.showMaskGraphic = false;
+                scrollRectS.viewport = viewportRT;
+
+                GameObject contentObj = new GameObject("Content");
+                contentObj.transform.SetParent(viewportObj.transform, false);
+                RectTransform contentRTS = contentObj.AddComponent<RectTransform>();
+                contentRTS.anchorMin = new Vector2(0, 1);
+                contentRTS.anchorMax = new Vector2(1, 1);
+                contentRTS.pivot = new Vector2(0.5f, 1);
+                contentRTS.offsetMin = new Vector2(10, 0);
+                contentRTS.offsetMax = new Vector2(-10, 0);
+                contentRTS.sizeDelta = new Vector2(0, 0);
+
+                VerticalLayoutGroup vlgS = contentObj.AddComponent<VerticalLayoutGroup>();
+                vlgS.spacing = 8;
+                vlgS.padding = new RectOffset(10, 10, 10, 10);
+                vlgS.childForceExpandWidth = true;
+                vlgS.childForceExpandHeight = false;
+                vlgS.childControlWidth = true;
+                vlgS.childControlHeight = false;
+
+                ContentSizeFitter csfS = contentObj.AddComponent<ContentSizeFitter>();
+                csfS.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                scrollRectS.content = contentRTS;
+
+                // 确认按钮
+                GameObject confirmBtnObj = new GameObject("ConfirmButton");
+                confirmBtnObj.transform.SetParent(panelObj.transform, false);
+                Image confirmBtnImg = confirmBtnObj.AddComponent<Image>();
+                confirmBtnImg.color = new Color(0.2f, 0.6f, 0.2f);
+                Button confirmBtn = confirmBtnObj.AddComponent<Button>();
+                ColorBlock confirmCb = confirmBtn.colors;
+                confirmCb.normalColor = Color.white;
+                confirmCb.highlightedColor = new Color(0.9f, 1f, 0.9f);
+                confirmCb.pressedColor = new Color(0.7f, 0.9f, 0.7f);
+                confirmCb.disabledColor = new Color(0.5f, 0.5f, 0.5f);
+                confirmBtn.colors = confirmCb;
+                RectTransform confirmBtnRT = confirmBtnObj.GetComponent<RectTransform>();
+                confirmBtnRT.anchorMin = new Vector2(0.35f, 0.03f);
+                confirmBtnRT.anchorMax = new Vector2(0.65f, 0.1f);
+                confirmBtnRT.offsetMin = Vector2.zero;
+                confirmBtnRT.offsetMax = Vector2.zero;
+                Text confirmBtnText = CreateUIText(confirmBtnObj, "Text", "确认", 28, Color.white);
+                RectTransform confirmBtnTextRT = confirmBtnText.GetComponent<RectTransform>();
+                confirmBtnTextRT.anchorMin = Vector2.zero;
+                confirmBtnTextRT.anchorMax = Vector2.one;
+                confirmBtnTextRT.offsetMin = Vector2.zero;
+                confirmBtnTextRT.offsetMax = Vector2.zero;
+
+                SerializedObject skillSO = new SerializedObject(skillSelectUI);
+                skillSO.FindProperty("skillListContent").objectReferenceValue = contentRTS;
+                skillSO.FindProperty("confirmButton").objectReferenceValue = confirmBtn;
+                skillSO.FindProperty("closeButton").objectReferenceValue = closeBtn;
+                skillSO.FindProperty("countText").objectReferenceValue = cntText;
+                skillSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // ===== ArcaneSelectUI Panel =====
+            ArcaneSelectUI arcaneSelectUI;
+            {
+                GameObject panelObj = new GameObject("ArcaneSelectPanel");
+                panelObj.transform.SetParent(canvasObj.transform, false);
+                RectTransform panelRT = panelObj.AddComponent<RectTransform>();
+                panelRT.anchorMin = Vector2.zero;
+                panelRT.anchorMax = Vector2.one;
+                panelRT.offsetMin = Vector2.zero;
+                panelRT.offsetMax = Vector2.zero;
+                Image panelBg = panelObj.AddComponent<Image>();
+                panelBg.color = new Color(0.03f, 0.03f, 0.1f, 0.95f);
+                arcaneSelectUI = panelObj.AddComponent<ArcaneSelectUI>();
+                panelObj.SetActive(false);
+
+                // 关闭按钮
+                GameObject closeBtnObj = new GameObject("CloseButton");
+                closeBtnObj.transform.SetParent(panelObj.transform, false);
+                Image closeBtnImg = closeBtnObj.AddComponent<Image>();
+                closeBtnImg.color = new Color(0.8f, 0.2f, 0.2f);
+                Button closeBtn = closeBtnObj.AddComponent<Button>();
+                RectTransform closeBtnRT = closeBtnObj.GetComponent<RectTransform>();
+                closeBtnRT.anchorMin = new Vector2(1, 1);
+                closeBtnRT.anchorMax = new Vector2(1, 1);
+                closeBtnRT.anchoredPosition = new Vector2(-40, -40);
+                closeBtnRT.sizeDelta = new Vector2(50, 50);
+                Text closeBtnText = CreateUIText(closeBtnObj, "Text", "X", 24, Color.white);
+                RectTransform closeBtnTextRT = closeBtnText.GetComponent<RectTransform>();
+                closeBtnTextRT.anchorMin = Vector2.zero;
+                closeBtnTextRT.anchorMax = Vector2.one;
+                closeBtnTextRT.offsetMin = Vector2.zero;
+                closeBtnTextRT.offsetMax = Vector2.zero;
+
+                // 标题
+                Text titleT = CreateUIText(panelObj, "Title", "奥术选择",
+                    36, new Color(0.98f, 0.9f, 0.62f), TextAnchor.MiddleCenter, FontStyle.Bold);
+                RectTransform titleRT2 = titleT.GetComponent<RectTransform>();
+                titleRT2.anchorMin = new Vector2(0.5f, 1);
+                titleRT2.anchorMax = new Vector2(0.5f, 1);
+                titleRT2.anchoredPosition = new Vector2(0, -50);
+                titleRT2.sizeDelta = new Vector2(400, 60);
+
+                // 计数文本
+                Text cntText = CreateUIText(panelObj, "CountText", "已选 0/4",
+                    24, new Color(0.8f, 0.8f, 0.9f));
+                RectTransform cntRT = cntText.GetComponent<RectTransform>();
+                cntRT.anchorMin = new Vector2(0.5f, 1);
+                cntRT.anchorMax = new Vector2(0.5f, 1);
+                cntRT.anchoredPosition = new Vector2(0, -90);
+                cntRT.sizeDelta = new Vector2(200, 30);
+
+                // ScrollView
+                GameObject scrollObj = new GameObject("ScrollView");
+                scrollObj.transform.SetParent(panelObj.transform, false);
+                RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
+                scrollRT.anchorMin = new Vector2(0.15f, 0.18f);
+                scrollRT.anchorMax = new Vector2(0.85f, 0.82f);
+                scrollRT.offsetMin = Vector2.zero;
+                scrollRT.offsetMax = Vector2.zero;
+                Image scrollBgA = scrollObj.AddComponent<Image>();
+                scrollBgA.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
+                ScrollRect scrollRectA = scrollObj.AddComponent<ScrollRect>();
+                scrollRectA.horizontal = false;
+
+                GameObject viewportObj = new GameObject("Viewport");
+                viewportObj.transform.SetParent(scrollObj.transform, false);
+                RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
+                viewportRT.anchorMin = Vector2.zero;
+                viewportRT.anchorMax = Vector2.one;
+                viewportRT.offsetMin = Vector2.zero;
+                viewportRT.offsetMax = Vector2.zero;
+                viewportObj.AddComponent<Image>().color = Color.white;
+                Mask maskA = viewportObj.AddComponent<Mask>();
+                maskA.showMaskGraphic = false;
+                scrollRectA.viewport = viewportRT;
+
+                GameObject contentObj = new GameObject("Content");
+                contentObj.transform.SetParent(viewportObj.transform, false);
+                RectTransform contentRTA = contentObj.AddComponent<RectTransform>();
+                contentRTA.anchorMin = new Vector2(0, 1);
+                contentRTA.anchorMax = new Vector2(1, 1);
+                contentRTA.pivot = new Vector2(0.5f, 1);
+                contentRTA.offsetMin = new Vector2(10, 0);
+                contentRTA.offsetMax = new Vector2(-10, 0);
+                contentRTA.sizeDelta = new Vector2(0, 0);
+
+                VerticalLayoutGroup vlgA = contentObj.AddComponent<VerticalLayoutGroup>();
+                vlgA.spacing = 8;
+                vlgA.padding = new RectOffset(10, 10, 10, 10);
+                vlgA.childForceExpandWidth = true;
+                vlgA.childForceExpandHeight = false;
+                vlgA.childControlWidth = true;
+                vlgA.childControlHeight = false;
+
+                ContentSizeFitter csfA = contentObj.AddComponent<ContentSizeFitter>();
+                csfA.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                scrollRectA.content = contentRTA;
+
+                // 确认按钮
+                GameObject confirmBtnObj = new GameObject("ConfirmButton");
+                confirmBtnObj.transform.SetParent(panelObj.transform, false);
+                Image confirmBtnImg = confirmBtnObj.AddComponent<Image>();
+                confirmBtnImg.color = new Color(0.2f, 0.6f, 0.2f);
+                Button confirmBtn = confirmBtnObj.AddComponent<Button>();
+                ColorBlock confirmCb = confirmBtn.colors;
+                confirmCb.normalColor = Color.white;
+                confirmCb.highlightedColor = new Color(0.9f, 1f, 0.9f);
+                confirmCb.pressedColor = new Color(0.7f, 0.9f, 0.7f);
+                confirmCb.disabledColor = new Color(0.5f, 0.5f, 0.5f);
+                confirmBtn.colors = confirmCb;
+                RectTransform confirmBtnRT = confirmBtnObj.GetComponent<RectTransform>();
+                confirmBtnRT.anchorMin = new Vector2(0.35f, 0.03f);
+                confirmBtnRT.anchorMax = new Vector2(0.65f, 0.1f);
+                confirmBtnRT.offsetMin = Vector2.zero;
+                confirmBtnRT.offsetMax = Vector2.zero;
+                Text confirmBtnText = CreateUIText(confirmBtnObj, "Text", "确认", 28, Color.white);
+                RectTransform confirmBtnTextRT = confirmBtnText.GetComponent<RectTransform>();
+                confirmBtnTextRT.anchorMin = Vector2.zero;
+                confirmBtnTextRT.anchorMax = Vector2.one;
+                confirmBtnTextRT.offsetMin = Vector2.zero;
+                confirmBtnTextRT.offsetMax = Vector2.zero;
+
+                SerializedObject arcaneSO = new SerializedObject(arcaneSelectUI);
+                arcaneSO.FindProperty("arcaneListContent").objectReferenceValue = contentRTA;
+                arcaneSO.FindProperty("confirmButton").objectReferenceValue = confirmBtn;
+                arcaneSO.FindProperty("closeButton").objectReferenceValue = closeBtn;
+                arcaneSO.FindProperty("countText").objectReferenceValue = cntText;
+                arcaneSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // Wire MainMenuUI -> all panels
+            menuSO.FindProperty("heroSelectUI").objectReferenceValue = heroSelectUI;
+            menuSO.FindProperty("skillSelectUI").objectReferenceValue = skillSelectUI;
+            menuSO.FindProperty("arcaneSelectUI").objectReferenceValue = arcaneSelectUI;
             menuSO.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.SaveScene(scene, $"{ScenePath}/MainMenu.unity");
@@ -1260,7 +1659,7 @@ namespace GeometryTD
             bgSR.sortingOrder = -100;
 
             Sprite bgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/Resources/Bg/large/background-2-large.png");
+                "游戏场景");
             if (bgSprite != null)
             {
                 bgSR.sprite = bgSprite;

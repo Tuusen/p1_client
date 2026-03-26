@@ -85,6 +85,9 @@ namespace GeometryTD
             bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
             itemBgMap[config.id] = bg;
 
+            LayoutElement le = itemObj.AddComponent<LayoutElement>();
+            le.preferredHeight = 70;
+
             Button btn = itemObj.AddComponent<Button>();
             int skillId = config.id;
             btn.onClick.AddListener(() => OnSkillClicked(skillId));

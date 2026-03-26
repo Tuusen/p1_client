@@ -303,7 +303,7 @@ namespace GeometryTD
             foreach (var role in RoleConfigs)
             {
                 if (string.IsNullOrEmpty(role.prefabPath)) continue;
-                GameObject prefab = Resources.Load<GameObject>(role.prefabPath);
+                GameObject prefab = GameHelper.LoadPrefab(role.prefabPath);
                 if (prefab != null)
                     rolePrefabCache[role.id] = prefab;
                 else

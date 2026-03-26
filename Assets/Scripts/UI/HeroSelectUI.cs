@@ -69,6 +69,9 @@ namespace GeometryTD
             bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
             itemBgMap[config.id] = bg;
 
+            LayoutElement le = itemObj.AddComponent<LayoutElement>();
+            le.preferredHeight = 80;
+
             Button btn = itemObj.AddComponent<Button>();
             int heroId = config.id;
             btn.onClick.AddListener(() => OnHeroItemClicked(heroId));
