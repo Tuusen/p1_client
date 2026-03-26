@@ -1,0 +1,43 @@
+{
+  "monsters": [
+    {
+      "id": 1,
+      "name": "小型异形",
+      "hp": 30,
+      "level": 1,
+      "damage": 20,
+      "is_boss": false,
+      "move_speed": 2.5
+    },
+    {
+      "id": 2,
+      "name": "中型异形",
+      "hp": 60,
+      "level": 2,
+      "damage": 35,
+      "is_boss": false,
+      "move_speed": 2.0
+    },
+    {
+      "id": 3,
+      "name": "大型异形",
+      "hp": 100,
+      "level": 3,
+      "damage": 50,
+      "is_boss": false,
+      "move_speed": 1.5
+    },
+    {
+      "id": 100,
+      "name": "虚空领主",
+      "hp": 1000,
+      "level": 10,
+      "damage": 30,
+      "is_boss": true,
+      "move_speed": 3.0,
+      "attack_skill_id": 3001,
+      "attack_range": 15.0,
+      "attack_interval": 1.0
+    }
+  ]
+}

@@ -1,7 +1,0 @@
-{
-  "kill_count_for_boss": 100,
-  "monster_spawn_interval": 1.5,
-  "boss_monster_id": 100,
-  "skill_slot_ids": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008],
-  "arcane_slot_ids": [4001, 4002, 4003, 4004]
-}

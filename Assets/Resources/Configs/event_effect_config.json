@@ -1,0 +1,18 @@
+{
+    "effects": [
+        {"eventType":1,  "duration":0.3, "target":"enemy", "prefabPath":"Effects/Effect_Pierce"},
+        {"eventType":2,  "duration":0.5, "target":"area",  "prefabPath":"Effects/Effect_Explosion"},
+        {"eventType":3,  "duration":0.8, "target":"enemy", "prefabPath":"Effects/Effect_Freeze"},
+        {"eventType":4,  "duration":0.6, "target":"enemy", "prefabPath":"Effects/Effect_Burn"},
+        {"eventType":7,  "duration":0.5, "target":"enemy", "prefabPath":"Effects/Effect_Slow"},
+        {"eventType":8,  "duration":0.5, "target":"hero",  "prefabPath":"Effects/Effect_Heal"},
+        {"eventType":9,  "duration":1.0, "target":"hero",  "prefabPath":"Effects/Effect_HealOverTime"},
+        {"eventType":10, "duration":0.6, "target":"hero",  "prefabPath":"Effects/Effect_DamageReduction"},
+        {"eventType":13, "duration":0.6, "target":"hero",  "prefabPath":"Effects/Effect_Shield"},
+        {"eventType":14, "duration":0.3, "target":"hero",  "prefabPath":"Effects/Effect_Retaliation"},
+        {"eventType":15, "duration":0.4, "target":"area",  "prefabPath":"Effects/Effect_Knockback"},
+        {"eventType":16, "duration":0.8, "target":"enemy", "prefabPath":"Effects/Effect_Vulnerability"},
+        {"eventType":17, "duration":0.5, "target":"area",  "prefabPath":"Effects/Effect_Summon"},
+        {"eventType":19, "duration":0.5, "target":"area",  "prefabPath":"Effects/Effect_ShieldBreak"}
+    ]
+}
