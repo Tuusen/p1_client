@@ -9,9 +9,16 @@ namespace GeometryTD
         public static GameManager Instance { get; private set; }
 
         private const string SaveKeyCompletedLevels = "CompletedLevels";
+        private const string SaveKeySelectedHero = "SelectedHeroId";
+        private const string SaveKeyEquippedSkills = "EquippedSkillIds";
+        private const string SaveKeyEquippedArcanes = "EquippedArcaneIds";
 
         private int selectedLevelId;
         private HashSet<int> completedLevels = new HashSet<int>();
+
+        private int selectedHeroId;
+        private int[] equippedSkillIds;
+        private int[] equippedArcaneIds;
 
         private void Awake()
         {
@@ -23,6 +30,7 @@ namespace GeometryTD
             Instance = this;
             DontDestroyOnLoad(gameObject);
             LoadCompletedLevels();
+            LoadPlayerSelections();
         }
 
         public void SelectLevel(int levelId)
@@ -89,6 +97,120 @@ namespace GeometryTD
 
             return true;
         }
+
+        // ===== 英雄选择 =====
+
+        public void SelectHero(int heroId)
+        {
+            selectedHeroId = heroId;
+            SavePlayerSelections();
+        }
+
+        public int GetSelectedHeroId()
+        {
+            if (selectedHeroId > 0) return selectedHeroId;
+            if (ConfigManager.Instance != null && ConfigManager.Instance.GameConfig != null)
+                return ConfigManager.Instance.GameConfig.default_hero_id;
+            return 1;
+        }
+
+        // ===== 技能装备 =====
+
+        public void SetEquippedSkills(int[] ids)
+        {
+            equippedSkillIds = ids;
+            SavePlayerSelections();
+        }
+
+        public int[] GetEquippedSkills()
+        {
+            if (equippedSkillIds != null && equippedSkillIds.Length > 0)
+                return equippedSkillIds;
+            if (ConfigManager.Instance != null && ConfigManager.Instance.GameConfig != null)
+                return ConfigManager.Instance.GameConfig.skill_slot_ids;
+            return new int[0];
+        }
+
+        public bool HasValidSkillLoadout()
+        {
+            int[] skills = GetEquippedSkills();
+            return skills != null && skills.Length == 8;
+        }
+
+        // ===== 奥术装备 =====
+
+        public void SetEquippedArcanes(int[] ids)
+        {
+            equippedArcaneIds = ids;
+            SavePlayerSelections();
+        }
+
+        public int[] GetEquippedArcanes()
+        {
+            if (equippedArcaneIds != null && equippedArcaneIds.Length > 0)
+                return equippedArcaneIds;
+            if (ConfigManager.Instance != null && ConfigManager.Instance.GameConfig != null)
+                return ConfigManager.Instance.GameConfig.arcane_slot_ids;
+            return new int[0];
+        }
+
+        // ===== 持久化：玩家选择 =====
+
+        private void LoadPlayerSelections()
+        {
+            selectedHeroId = PlayerPrefs.GetInt(SaveKeySelectedHero, 0);
+
+            string skillData = PlayerPrefs.GetString(SaveKeyEquippedSkills, "");
+            if (!string.IsNullOrEmpty(skillData))
+            {
+                string[] parts = skillData.Split(',');
+                List<int> ids = new List<int>();
+                foreach (string part in parts)
+                {
+                    if (int.TryParse(part.Trim(), out int id) && id > 0)
+                        ids.Add(id);
+                }
+                if (ids.Count > 0)
+                    equippedSkillIds = ids.ToArray();
+            }
+
+            string arcaneData = PlayerPrefs.GetString(SaveKeyEquippedArcanes, "");
+            if (!string.IsNullOrEmpty(arcaneData))
+            {
+                string[] parts = arcaneData.Split(',');
+                List<int> ids = new List<int>();
+                foreach (string part in parts)
+                {
+                    if (int.TryParse(part.Trim(), out int id) && id > 0)
+                        ids.Add(id);
+                }
+                if (ids.Count > 0)
+                    equippedArcaneIds = ids.ToArray();
+            }
+        }
+
+        private void SavePlayerSelections()
+        {
+            PlayerPrefs.SetInt(SaveKeySelectedHero, selectedHeroId);
+
+            if (equippedSkillIds != null && equippedSkillIds.Length > 0)
+            {
+                List<string> parts = new List<string>();
+                foreach (int id in equippedSkillIds) parts.Add(id.ToString());
+                PlayerPrefs.SetString(SaveKeyEquippedSkills, string.Join(",", parts));
+            }
+
+            if (equippedArcaneIds != null && equippedArcaneIds.Length > 0)
+            {
+                List<string> parts = new List<string>();
+                foreach (int id in equippedArcaneIds) parts.Add(id.ToString());
+                PlayerPrefs.SetString(SaveKeyEquippedArcanes, string.Join(",", parts));
+            }
+
+            PlayerPrefs.Save();
+        }
+
+        // ===== 持久化：关卡完成 =====
 
         private void LoadCompletedLevels()
         {

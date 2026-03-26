@@ -6,6 +6,60 @@ namespace GeometryTD
     // dmgType: 0=无属性, 1=火, 2=冰, 3=电, 4=风
     // mpType:  0=不产生能量, 1=火, 2=冰, 3=电, 4=风, 99=所有
 
+    // ===== 属性系统 =====
+
+    [Serializable]
+    public class AttrEntry
+    {
+        public int id;
+        public float value;
+    }
+
+    public static class AttributeIds
+    {
+        public const int HP = 1;
+        public const int Shield = 2;
+        public const int Attack = 3;
+        public const int AttackRange = 4;
+        public const int AttackInterval = 5;
+        public const int MoveSpeed = 6;
+        public const int Damage = 7;
+    }
+
+    // ===== 角色配置 =====
+
+    [Serializable]
+    public class RoleConfig
+    {
+        public int id;
+        public string name;
+        public string prefabPath;
+    }
+
+    [Serializable]
+    public class RoleConfigList
+    {
+        public List<RoleConfig> roles;
+    }
+
+    // ===== 属性元数据 =====
+
+    [Serializable]
+    public class AttributeConfig
+    {
+        public int id;
+        public string name;
+        public string description;
+    }
+
+    [Serializable]
+    public class AttributeConfigList
+    {
+        public List<AttributeConfig> attributes;
+    }
+
+    // ===== 技能事件类型 =====
+
     public static class SkillEventType
     {
         public const int Pierce = 1;
@@ -32,16 +86,20 @@ namespace GeometryTD
     [Serializable]
     public class HeroConfig
     {
+        public int id;
         public string name;
         public string description;
+        public int role;
         public int attack_skill_id;
-        public float attack_range;
-        public float hp;
-        public float shield;
-        public float attack_interval;
-        public float base_attack;
         public int skill_xp_min;
         public int skill_xp_max;
+        public AttrEntry[] attrs;
+    }
+
+    [Serializable]
+    public class HeroConfigList
+    {
+        public List<HeroConfig> heroes;
     }
 
     [Serializable]
@@ -49,15 +107,14 @@ namespace GeometryTD
     {
         public int id;
         public string name;
-        public float hp;
+        public int role;
         public int level;
-        public float damage;
         public bool is_boss;
         public bool is_elite;
-        public float move_speed;
         public int attack_skill_id;
         public float attack_range;
         public float attack_interval;
+        public AttrEntry[] attrs;
     }
 
     [Serializable]
@@ -143,6 +200,7 @@ namespace GeometryTD
         public int kill_count_for_boss;
         public float monster_spawn_interval;
         public int boss_monster_id;
+        public int default_hero_id;
         public int[] skill_slot_ids;
         public int[] arcane_slot_ids;
     }
@@ -251,6 +309,7 @@ namespace GeometryTD
         public int id;
         public string name;
         public string des;
+        public string bg;
         public int[] conditions;
         public int hard;
         public float spawn_interval;

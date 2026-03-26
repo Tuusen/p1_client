@@ -51,10 +51,10 @@ namespace GeometryTD
             reachedPosition = false;
             attackTimer = 0f;
 
-            maxHp = config.hp * hardMultiplier;
+            maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
             currentHp = maxHp;
-            baseDamage = config.damage * hardMultiplier;
-            moveSpeed = config.move_speed;
+            baseDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * hardMultiplier;
+            moveSpeed = ConfigManager.GetAttrValue(config.attrs, AttributeIds.MoveSpeed);
             attackRange = config.attack_range;
             attackInterval = config.attack_interval;
             attackSkillId = config.attack_skill_id;

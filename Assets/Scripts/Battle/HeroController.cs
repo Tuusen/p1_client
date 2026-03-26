@@ -54,12 +54,12 @@ namespace GeometryTD
         {
             battleManager = manager;
 
-            maxHp = config.hp;
-            maxShield = config.shield;
-            attackRange = config.attack_range;
-            attackInterval = config.attack_interval;
+            maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP);
+            maxShield = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Shield);
+            attackRange = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackRange);
+            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
             attackSkillId = config.attack_skill_id;
-            baseAttack = config.base_attack;
+            baseAttack = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack);
 
             currentHp = maxHp;
             currentShield = maxShield;
