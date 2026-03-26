@@ -43,7 +43,7 @@ namespace GeometryTD
         public float CurrentHp => currentHp;
         public float MaxHp => maxHp;
 
-        public void Init(MonsterConfig config, Transform hero, BattleManager manager, Vector3 bossPosition)
+        public void Init(MonsterConfig config, Transform hero, BattleManager manager, Vector3 bossPosition, float hardMultiplier = 1f)
         {
             battleManager = manager;
             heroTarget = hero;
@@ -51,9 +51,9 @@ namespace GeometryTD
             reachedPosition = false;
             attackTimer = 0f;
 
-            maxHp = config.hp;
+            maxHp = config.hp * hardMultiplier;
             currentHp = maxHp;
-            baseDamage = config.damage;
+            baseDamage = config.damage * hardMultiplier;
             moveSpeed = config.move_speed;
             attackRange = config.attack_range;
             attackInterval = config.attack_interval;
