@@ -2,15 +2,17 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public class MonsterController : MonoBehaviour
+    public class SummonMonsterController : MonoBehaviour
     {
         private float maxHp;
         private float currentHp;
-        private float damage;
-        private float moveSpeed;
-        private Transform heroTarget;
+        private float attackDamage;
+        private float attackInterval;
+        private float attackRange;
+        private float attackTimer;
+        private float duration;
+        private bool homing;
         private BattleManager battleManager;
-        private bool isDead;
         private Animator animator;
         private CharacterFacing facing;
 
@@ -28,35 +30,39 @@ namespace GeometryTD
         private float knockbackRemaining;
         private const float KnockbackSpeed = 20f;
 
-        [SerializeField] private HealthBarUI hpBar;
-
-        public bool IsDead => isDead;
-
-        public void Init(MonsterConfig config, Transform hero, BattleManager manager, float hardMultiplier = 1f)
+        public void Init(MonsterConfig config, float attrRatio, float dur, bool isHoming, BattleManager bm)
         {
-            battleManager = manager;
-            heroTarget = hero;
+            battleManager = bm;
+            duration = dur;
+            homing = isHoming;
 
-            maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
+            float ratio = attrRatio / 10000f;
+
+            maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * ratio;
+            if (maxHp <= 0f) maxHp = 1f;
             currentHp = maxHp;
-            damage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * hardMultiplier;
-            moveSpeed = ConfigManager.GetAttrValue(config.attrs, AttributeIds.MoveSpeed);
+
+            attackDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * ratio;
+            if (attackDamage <= 0f)
+                attackDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack) * ratio;
+
+            attackInterval = config.attack_interval > 0 ? config.attack_interval : 1f;
+            attackRange = config.attack_range > 0 ? config.attack_range : 50f;
+            attackTimer = 0f;
 
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
-
-            UpdateBar();
-        }
-
-        public void SetBar(HealthBarUI bar)
-        {
-            hpBar = bar;
-            UpdateBar();
         }
 
         private void Update()
         {
-            if (IsDead || heroTarget == null) return;
+            // 存活倒计时
+            duration -= Time.deltaTime;
+            if (duration <= 0f)
+            {
+                Die();
+                return;
+            }
 
             // 击退
             if (knockbackRemaining > 0)
@@ -76,8 +82,12 @@ namespace GeometryTD
                 if (burnTickTimer >= 1f)
                 {
                     burnTickTimer -= 1f;
-                    TakeDamage(burnDmg);
-                    if (IsDead) return;
+                    currentHp -= burnDmg;
+                    if (currentHp <= 0f)
+                    {
+                        Die();
+                        return;
+                    }
                 }
                 burnTimer -= Time.deltaTime;
             }
@@ -91,55 +101,39 @@ namespace GeometryTD
                 return;
             }
 
-            // 减速
-            float currentSpeed = moveSpeed;
+            // 减速计时
             if (slowTimer > 0)
-            {
-                currentSpeed *= (1f - slowRatio / 10000f);
                 slowTimer -= Time.deltaTime;
-            }
 
             // 易伤计时
             if (vulnerabilityTimer > 0)
                 vulnerabilityTimer -= Time.deltaTime;
 
-            // 移动
-            Vector3 direction = (heroTarget.position - transform.position).normalized;
-            transform.position += direction * currentSpeed * Time.deltaTime;
-            facing?.FaceToward(heroTarget.position);
-            animator?.SetBool("IsMoving", true);
-
-            float dist = Vector3.Distance(transform.position, heroTarget.position);
-            if (dist < 0.5f)
+            // 攻击计时
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackInterval)
             {
-                HeroController hero = heroTarget.GetComponent<HeroController>();
-                if (hero != null)
-                {
-                    hero.TakeDamage(damage);
-                }
-                Die();
+                attackTimer = 0f;
+                Attack();
             }
         }
 
-        public void TakeDamage(float dmg)
+        private void Attack()
         {
-            if (IsDead) return;
+            if (battleManager == null) return;
 
-            if (vulnerabilityTimer > 0 && vulnerabilityRatio > 0)
-                dmg *= (1f + vulnerabilityRatio / 10000f);
+            Transform target = battleManager.GetNearestEnemy(transform.position, attackRange);
+            if (target == null) return;
 
-            currentHp -= dmg;
-            currentHp = Mathf.Max(0, currentHp);
-            UpdateBar();
+            facing?.FaceToward(target.position);
 
-            if (battleManager != null)
-                battleManager.ShowDamageText(transform.position, dmg, false);
+            var mods = new BulletModifiers { homing = this.homing };
+            battleManager.SpawnSkillBullet(transform.position, target, attackDamage, 8f, mods);
 
-            if (currentHp <= 0)
-            {
-                Die();
-            }
+            animator?.SetTrigger("Attack");
         }
+
+        // ===== 状态效果 =====
 
         public void ApplyFreeze(float duration)
         {
@@ -189,22 +183,7 @@ namespace GeometryTD
 
         private void Die()
         {
-            if (isDead) return;
-            isDead = true;
-
-            if (battleManager != null)
-            {
-                battleManager.OnMonsterKilled(this);
-            }
             Destroy(gameObject);
-        }
-
-        private void UpdateBar()
-        {
-            if (hpBar != null)
-            {
-                hpBar.SetValue(currentHp, maxHp);
-            }
         }
     }
 }

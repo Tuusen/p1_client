@@ -7,7 +7,7 @@ namespace GeometryTD
     {
         public static ConfigManager Instance { get; private set; }
 
-        public HeroConfig HeroConfig { get; private set; }
+        public List<HeroConfig> HeroConfigs { get; private set; }
         public List<MonsterConfig> MonsterConfigs { get; private set; }
         public List<SkillConfig> SkillConfigs { get; private set; }
         public GameConfig GameConfig { get; private set; }
@@ -16,6 +16,8 @@ namespace GeometryTD
         public List<EventEffectConfig> EventEffectConfigs { get; private set; }
         public List<LevelConfig> LevelConfigs { get; private set; }
         public List<ConditionConfig> ConditionConfigs { get; private set; }
+        public List<RoleConfig> RoleConfigs { get; private set; }
+        public List<AttributeConfig> AttributeConfigs { get; private set; }
 
         private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
         private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
@@ -23,9 +25,12 @@ namespace GeometryTD
         private Dictionary<int, EventEffectConfig> eventEffectLookup;
         private Dictionary<int, LevelConfig> levelLookup;
         private Dictionary<int, ConditionConfig> conditionLookup;
+        private Dictionary<int, RoleConfig> roleLookup;
+        private Dictionary<int, HeroConfig> heroLookup;
 
         private Dictionary<int, GameObject> bulletPrefabCache;
         private Dictionary<int, GameObject> effectPrefabCache;
+        private Dictionary<int, GameObject> rolePrefabCache;
 
         private void Awake()
         {
@@ -41,7 +46,7 @@ namespace GeometryTD
 
         private void LoadAllConfigs()
         {
-            HeroConfig = LoadConfig<HeroConfig>("Configs/hero_config");
+            HeroConfigs = LoadConfig<HeroConfigList>("Configs/hero_config").heroes;
             MonsterConfigs = LoadConfig<MonsterConfigList>("Configs/monster_config").monsters;
             SkillConfigs = LoadConfig<SkillConfigList>("Configs/skill_config").skills;
             GameConfig = LoadConfig<GameConfig>("Configs/game_config");
@@ -50,13 +55,18 @@ namespace GeometryTD
             EventEffectConfigs = LoadConfig<EventEffectConfigList>("Configs/event_effect_config").effects;
             LevelConfigs = LoadConfig<LevelConfigList>("Configs/level_config").levels;
             ConditionConfigs = LoadConfig<ConditionConfigList>("Configs/condition_config").conditions;
+            RoleConfigs = LoadConfig<RoleConfigList>("Configs/role_config").roles;
+            AttributeConfigs = LoadConfig<AttributeConfigList>("Configs/attribute_config").attributes;
             BuildSkillLookup();
             BuildBulletStyleLookup();
             BuildArcaneLookup();
             BuildEventEffectLookup();
             BuildLevelLookup();
             BuildConditionLookup();
+            BuildRoleLookup();
+            BuildHeroLookup();
             PreloadPrefabs();
+            PreloadRolePrefabs();
         }
 
         private void BuildSkillLookup()
@@ -259,6 +269,77 @@ namespace GeometryTD
                 return config;
             Debug.LogError($"[ConfigManager] 未找到条件配置, id: {conditionId}");
             return null;
+        }
+
+        // ===== 角色配置 =====
+
+        private void BuildRoleLookup()
+        {
+            roleLookup = new Dictionary<int, RoleConfig>();
+            if (RoleConfigs == null) return;
+            foreach (var role in RoleConfigs)
+                roleLookup[role.id] = role;
+        }
+
+        public RoleConfig GetRoleConfig(int roleId)
+        {
+            if (roleLookup != null && roleLookup.TryGetValue(roleId, out var config))
+                return config;
+            Debug.LogWarning($"[ConfigManager] 未找到角色配置, id: {roleId}");
+            return null;
+        }
+
+        public GameObject GetRolePrefab(int roleId)
+        {
+            if (rolePrefabCache != null && rolePrefabCache.TryGetValue(roleId, out var prefab))
+                return prefab;
+            return null;
+        }
+
+        private void PreloadRolePrefabs()
+        {
+            rolePrefabCache = new Dictionary<int, GameObject>();
+            if (RoleConfigs == null) return;
+            foreach (var role in RoleConfigs)
+            {
+                if (string.IsNullOrEmpty(role.prefabPath)) continue;
+                GameObject prefab = GameHelper.LoadPrefab(role.prefabPath);
+                if (prefab != null)
+                    rolePrefabCache[role.id] = prefab;
+                else
+                    Debug.LogWarning($"[ConfigManager] 无法加载角色Prefab: {role.prefabPath} (id={role.id})");
+            }
+        }
+
+        // ===== 英雄配置 =====
+
+        private void BuildHeroLookup()
+        {
+            heroLookup = new Dictionary<int, HeroConfig>();
+            if (HeroConfigs == null) return;
+            foreach (var hero in HeroConfigs)
+                heroLookup[hero.id] = hero;
+        }
+
+        public HeroConfig GetHeroConfig(int heroId)
+        {
+            if (heroLookup != null && heroLookup.TryGetValue(heroId, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到英雄配置, id: {heroId}");
+            return null;
+        }
+
+        // ===== 属性辅助方法 =====
+
+        public static float GetAttrValue(AttrEntry[] attrs, int attrId, float defaultValue = 0f)
+        {
+            if (attrs == null) return defaultValue;
+            for (int i = 0; i < attrs.Length; i++)
+            {
+                if (attrs[i].id == attrId)
+                    return attrs[i].value;
+            }
+            return defaultValue;
         }
     }
 }

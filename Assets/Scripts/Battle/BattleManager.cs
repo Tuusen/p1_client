@@ -71,7 +71,17 @@ namespace GeometryTD
             }
 
             GameConfig gameConfig = ConfigManager.Instance.GameConfig;
-            HeroConfig heroConfig = ConfigManager.Instance.HeroConfig;
+
+            // 获取玩家选择的英雄
+            int heroId = GameManager.Instance != null
+                ? GameManager.Instance.GetSelectedHeroId()
+                : gameConfig.default_hero_id;
+            HeroConfig heroConfig = ConfigManager.Instance.GetHeroConfig(heroId);
+            if (heroConfig == null)
+            {
+                Debug.LogError($"[BattleManager] 未找到英雄配置, id: {heroId}");
+                return;
+            }
 
             // 获取关卡配置
             currentLevelId = GameManager.Instance != null ? GameManager.Instance.GetSelectedLevelId() : 1;
@@ -88,9 +98,29 @@ namespace GeometryTD
             skillXpMin = heroConfig.skill_xp_min;
             skillXpMax = heroConfig.skill_xp_max;
 
-            // 生成英雄
+            // 预制体 fallback：通过配置加载子弹预制体
+            if (heroBulletPrefab == null)
+                heroBulletPrefab = GameHelper.LoadPrefab("Prefabs/HeroBullet");
+            if (heroBulletPrefab == null)
+                heroBulletPrefab = ConfigManager.Instance.GetBulletPrefab(1);
+            if (bossBulletPrefab == null)
+                bossBulletPrefab = GameHelper.LoadPrefab("Prefabs/BossBullet");
+            if (bossBulletPrefab == null)
+                bossBulletPrefab = ConfigManager.Instance.GetBulletPrefab(201);
+
+            // 加载关卡背景
+            if (!string.IsNullOrEmpty(currentLevelConfig.bg))
+            {
+                GameObject bgPrefab = GameHelper.LoadPrefab(currentLevelConfig.bg);
+                if (bgPrefab != null)
+                    Instantiate(bgPrefab, Vector3.zero, Quaternion.identity);
+            }
+
+            // 生成英雄（通过role查找prefab）
             Vector3 heroPos = heroSpawnPoint != null ? heroSpawnPoint.position : new Vector3(-6f, 0f, 0f);
-            GameObject heroObj = Instantiate(heroPrefab, heroPos, Quaternion.identity);
+            GameObject heroPrefabToUse = ConfigManager.Instance.GetRolePrefab(heroConfig.role);
+            if (heroPrefabToUse == null) heroPrefabToUse = heroPrefab;
+            GameObject heroObj = Instantiate(heroPrefabToUse, heroPos, Quaternion.identity);
             heroController = heroObj.GetComponent<HeroController>();
             heroController.Init(heroConfig, this);
 
@@ -105,11 +135,14 @@ namespace GeometryTD
                 monsterSpawner = gameObject.AddComponent<MonsterSpawner>();
             monsterSpawner.Init(this, currentLevelConfig, hardMultiplier);
 
-            // 初始化技能管理器
-            if (gameConfig.skill_slot_ids != null && gameConfig.skill_slot_ids.Length > 0)
+            // 初始化技能管理器（使用玩家装备的技能）
+            int[] equippedSkills = GameManager.Instance != null
+                ? GameManager.Instance.GetEquippedSkills()
+                : gameConfig.skill_slot_ids;
+            if (equippedSkills != null && equippedSkills.Length > 0)
             {
                 skillManager = gameObject.AddComponent<SkillManager>();
-                skillManager.Init(gameConfig.skill_slot_ids, heroController, this, floatingTextUI);
+                skillManager.Init(equippedSkills, heroController, this, floatingTextUI);
 
                 if (skillBarUI != null)
                 {
@@ -125,11 +158,14 @@ namespace GeometryTD
                 battleUI.UpdateKillProgress(0, firstBossThreshold);
             }
 
-            // 初始化奥术管理器
-            if (gameConfig.arcane_slot_ids != null && gameConfig.arcane_slot_ids.Length > 0)
+            // 初始化奥术管理器（使用玩家装备的奥术）
+            int[] equippedArcanes = GameManager.Instance != null
+                ? GameManager.Instance.GetEquippedArcanes()
+                : gameConfig.arcane_slot_ids;
+            if (equippedArcanes != null && equippedArcanes.Length > 0)
             {
                 arcaneManager = gameObject.AddComponent<ArcaneManager>();
-                arcaneManager.Init(gameConfig.arcane_slot_ids, heroController, this);
+                arcaneManager.Init(equippedArcanes, heroController, this);
 
                 if (arcaneBarUI != null)
                 {
@@ -137,10 +173,18 @@ namespace GeometryTD
                     var arcaneSlots = arcaneBarUI.GetSlots();
                     if (arcaneSlots != null)
                     {
-                        for (int i = 0; i < arcaneSlots.Length && i < arcaneManager.SlotCount; i++)
+                        for (int i = 0; i < arcaneSlots.Length; i++)
                         {
-                            if (arcaneSlots[i] != null)
+                            if (arcaneSlots[i] == null) continue;
+                            if (i < arcaneManager.SlotCount)
+                            {
+                                arcaneSlots[i].gameObject.SetActive(true);
                                 arcaneSlots[i].Init(i, arcaneManager);
+                            }
+                            else
+                            {
+                                arcaneSlots[i].gameObject.SetActive(false);
+                            }
                         }
                     }
                 }
@@ -199,6 +243,32 @@ namespace GeometryTD
 
             for (int i = 0; i < count; i++)
                 result.Add(inRange[i % inRange.Count].t);
+
+            return result;
+        }
+
+        public List<Transform> GetNearestEnemiesUnique(Vector3 from, float maxRange, int count)
+        {
+            List<(Transform t, float d)> inRange = new List<(Transform, float)>();
+
+            for (int i = aliveEnemies.Count - 1; i >= 0; i--)
+            {
+                if (aliveEnemies[i] == null)
+                {
+                    aliveEnemies.RemoveAt(i);
+                    continue;
+                }
+                float dist = Vector3.Distance(from, aliveEnemies[i].position);
+                if (dist <= maxRange)
+                    inRange.Add((aliveEnemies[i], dist));
+            }
+
+            inRange.Sort((a, b) => a.d.CompareTo(b.d));
+
+            List<Transform> result = new List<Transform>();
+            int max = Mathf.Min(count, inRange.Count);
+            for (int i = 0; i < max; i++)
+                result.Add(inRange[i].t);
 
             return result;
         }
@@ -308,7 +378,9 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            GameObject monsterObj = Instantiate(monsterPrefab, position, Quaternion.identity);
+            GameObject prefabToUse = ConfigManager.Instance.GetRolePrefab(config.role);
+            if (prefabToUse == null) prefabToUse = monsterPrefab;
+            GameObject monsterObj = Instantiate(prefabToUse, position, Quaternion.identity);
             MonsterController monster = monsterObj.GetComponent<MonsterController>();
             monster.Init(config, heroController.transform, this, hardMult);
             aliveEnemies.Add(monsterObj.transform);
@@ -328,7 +400,9 @@ namespace GeometryTD
             float bossTargetX = -heroX;
             Vector3 bossTargetPos = new Vector3(bossTargetX, 0f, 0f);
 
-            GameObject bossObj = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+            GameObject prefabToUse = ConfigManager.Instance.GetRolePrefab(bossConfig.role);
+            if (prefabToUse == null) prefabToUse = bossPrefab;
+            GameObject bossObj = Instantiate(prefabToUse, spawnPos, Quaternion.identity);
             bossController = bossObj.GetComponent<BossController>();
             bossController.Init(bossConfig, heroController.transform, this, bossTargetPos, hardMult);
             aliveEnemies.Add(bossObj.transform);
@@ -375,25 +449,33 @@ namespace GeometryTD
             bullet.Init(target, speed, damage, true, this);
         }
 
-        public void SpawnSummon(Vector3 position, float damage, float atkInterval,
-                                float duration, bool homing)
+        public void SpawnSummon(Vector3 position, float duration, float attrRatio, int monsterId, bool homing)
         {
             if (gameEnded) return;
 
-            GameObject summonObj;
-            if (summonPrefab != null)
+            MonsterConfig monsterConfig = ConfigManager.Instance.GetMonsterConfig(monsterId);
+            if (monsterConfig == null)
             {
-                summonObj = Instantiate(summonPrefab, position, Quaternion.identity);
+                Debug.LogWarning($"[BattleManager] 召唤物找不到怪物配置, monsterId: {monsterId}");
+                return;
+            }
+
+            GameObject prefab = ConfigManager.Instance.GetRolePrefab(monsterConfig.role);
+            GameObject summonObj;
+            if (prefab != null)
+            {
+                summonObj = Instantiate(prefab, position, Quaternion.identity);
             }
             else
             {
-                summonObj = new GameObject("Summon");
+                summonObj = new GameObject($"Summon_{monsterId}");
                 summonObj.transform.position = position;
-                summonObj.AddComponent<SummonController>();
             }
 
-            SummonController summon = summonObj.GetComponent<SummonController>();
-            summon.Init(damage, atkInterval, duration, homing, this);
+            SummonMonsterController controller = summonObj.GetComponent<SummonMonsterController>();
+            if (controller == null)
+                controller = summonObj.AddComponent<SummonMonsterController>();
+            controller.Init(monsterConfig, attrRatio, duration, homing, this);
         }
 
         // ===== 技能经验 =====

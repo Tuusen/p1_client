@@ -27,6 +27,24 @@ namespace GeometryTD
             return null;
         }
 
+        public static GameObject LoadPrefab(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+
+            // Try Resources.Load first
+            GameObject prefab = Resources.Load<GameObject>(path);
+            if (prefab != null) return prefab;
+
+#if UNITY_EDITOR
+            // Fallback: load by asset path for assets outside Resources/
+            prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/{path}.prefab");
+            if (prefab != null) return prefab;
+#endif
+
+            Debug.LogWarning($"[GameHelper] Prefab not found: {path}");
+            return null;
+        }
+
         public static Font LoadFont()
         {
             if (cachedFont != null) return cachedFont;
