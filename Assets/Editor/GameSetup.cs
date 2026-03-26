@@ -286,7 +286,6 @@ namespace GeometryTD
 
         private static void CreatePrefabs()
         {
-            CreateSummonPrefab();
             CreateStyleBulletPrefabs();
             CreateEffectPrefabs();
         }
@@ -545,43 +544,6 @@ namespace GeometryTD
 
             PrefabUtility.SaveAsPrefabAsset(boss, $"{PrefabPath}/Boss.prefab");
             DestroyImmediate(boss);
-        }
-
-        private static void CreateSummonPrefab()
-        {
-            GameObject summon = new GameObject("Summon");
-            summon.AddComponent<SummonController>();
-            CharacterFacing facing = summon.AddComponent<CharacterFacing>();
-
-            // Load artist prefab as Visual child
-            GameObject summonPrefabSrc = AssetDatabase.LoadAssetAtPath<GameObject>($"{CharacterPath}/Summon/green_slime.prefab");
-            if (summonPrefabSrc != null)
-            {
-                GameObject visual = (GameObject)PrefabUtility.InstantiatePrefab(summonPrefabSrc);
-                visual.name = "Visual";
-                visual.transform.position = Vector3.zero;
-                visual.transform.SetParent(summon.transform, false);
-
-                SerializedObject facingSO = new SerializedObject(facing);
-                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
-                facingSO.ApplyModifiedPropertiesWithoutUndo();
-            }
-            else
-            {
-                Sprite summonSprite = LoadSprite($"{SpritePath}/summon_shape.png");
-                GameObject visual = new GameObject("Visual");
-                visual.transform.SetParent(summon.transform, false);
-                SpriteRenderer sr = visual.AddComponent<SpriteRenderer>();
-                sr.sprite = summonSprite;
-                sr.sortingOrder = 5;
-
-                SerializedObject facingSO = new SerializedObject(facing);
-                facingSO.FindProperty("visualRoot").objectReferenceValue = visual.transform;
-                facingSO.ApplyModifiedPropertiesWithoutUndo();
-            }
-
-            PrefabUtility.SaveAsPrefabAsset(summon, $"{PrefabPath}/Summon.prefab");
-            DestroyImmediate(summon);
         }
 
         private static void CreateBulletPrefab(string name, string spritePath, Color trailColor)

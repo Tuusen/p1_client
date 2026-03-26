@@ -109,7 +109,7 @@ namespace GeometryTD
             {
                 GameObject bgPrefab = GameHelper.LoadPrefab(currentLevelConfig.bg);
                 if (bgPrefab != null)
-                    Instantiate(bgPrefab, new Vector3(0,0,0), Quaternion.identity);
+                    Instantiate(bgPrefab, new Vector3(0,0,100), Quaternion.identity);
             }
 
             // 生成英雄（通过role查找prefab）
