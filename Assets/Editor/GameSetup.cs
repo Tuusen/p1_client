@@ -380,9 +380,7 @@ namespace GeometryTD
                 valueText.alignment = TextAnchor.MiddleCenter;
                 valueText.horizontalOverflow = HorizontalWrapMode.Overflow;
                 valueText.verticalOverflow = VerticalWrapMode.Overflow;
-                valueText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                if (valueText.font == null)
-                    valueText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                valueText.font = GetDefaultFont();
 
                 RectTransform textRT = textObj.GetComponent<RectTransform>();
                 textRT.anchorMin = Vector2.zero;
@@ -828,7 +826,9 @@ namespace GeometryTD
 
         private static Font GetDefaultFont()
         {
-            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            Font font = AssetDatabase.LoadAssetAtPath<Font>("Assets/AnFont.ttf");
+            if (font == null)
+                font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (font == null)
                 font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             return font;
@@ -1036,7 +1036,7 @@ namespace GeometryTD
             viewportRT.anchorMax = Vector2.one;
             viewportRT.offsetMin = Vector2.zero;
             viewportRT.offsetMax = Vector2.zero;
-            viewportObj.AddComponent<Image>().color = Color.clear;
+            viewportObj.AddComponent<Image>().color = Color.white;
             Mask mask = viewportObj.AddComponent<Mask>();
             mask.showMaskGraphic = false;
             scrollRect.viewport = viewportRT;
@@ -1052,13 +1052,13 @@ namespace GeometryTD
             contentRT.offsetMax = new Vector2(-10, 0);
             contentRT.sizeDelta = new Vector2(0, 0);
 
-            VerticalLayoutGroup vlg = contentObj.AddComponent<VerticalLayoutGroup>();
-            vlg.spacing = 8;
-            vlg.padding = new RectOffset(5, 5, 5, 5);
-            vlg.childForceExpandWidth = true;
-            vlg.childForceExpandHeight = false;
-            vlg.childControlWidth = true;
-            vlg.childControlHeight = false;
+            GridLayoutGroup glg = contentObj.AddComponent<GridLayoutGroup>();
+            glg.cellSize = new Vector2(120, 120);
+            glg.spacing = new Vector2(15, 15);
+            glg.padding = new RectOffset(15, 15, 15, 15);
+            glg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            glg.constraintCount = 4;
+            glg.childAlignment = TextAnchor.UpperLeft;
 
             ContentSizeFitter csf = contentObj.AddComponent<ContentSizeFitter>();
             csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;

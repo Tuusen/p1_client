@@ -74,70 +74,40 @@ namespace GeometryTD
             GameObject itemObj = new GameObject($"LevelItem_{config.id}");
             itemObj.transform.SetParent(levelListContent, false);
 
-            RectTransform rt = itemObj.AddComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(0, 60);
-
             Image bg = itemObj.AddComponent<Image>();
-            bg.color = unlocked
-                ? new Color(0.15f, 0.15f, 0.25f, 0.9f)
-                : new Color(0.1f, 0.1f, 0.1f, 0.7f);
+            if (completed)
+                bg.color = new Color(0.15f, 0.3f, 0.15f, 0.9f);
+            else if (unlocked)
+                bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
+            else
+                bg.color = new Color(0.1f, 0.1f, 0.1f, 0.7f);
 
             Button btn = itemObj.AddComponent<Button>();
             int levelId = config.id;
             btn.onClick.AddListener(() => OnLevelItemClicked(levelId));
-            btn.interactable = true;
 
             ColorBlock cb = btn.colors;
-            cb.normalColor = bg.color;
-            cb.highlightedColor = unlocked ? new Color(0.2f, 0.2f, 0.35f, 0.9f) : bg.color;
-            cb.pressedColor = unlocked ? new Color(0.25f, 0.25f, 0.4f, 0.9f) : bg.color;
-            cb.disabledColor = bg.color;
+            cb.normalColor = Color.white;
+            cb.highlightedColor = unlocked ? new Color(0.9f, 0.9f, 1f) : Color.white;
+            cb.pressedColor = unlocked ? new Color(0.7f, 0.7f, 0.9f) : Color.white;
+            cb.disabledColor = new Color(0.5f, 0.5f, 0.5f);
             btn.colors = cb;
 
-            // 关卡名
-            GameObject nameObj = new GameObject("Name");
-            nameObj.transform.SetParent(itemObj.transform, false);
-            RectTransform nameRt = nameObj.AddComponent<RectTransform>();
-            nameRt.anchorMin = new Vector2(0, 0);
-            nameRt.anchorMax = new Vector2(0.7f, 1);
-            nameRt.offsetMin = new Vector2(15, 5);
-            nameRt.offsetMax = new Vector2(0, -5);
+            // 关卡编号
+            GameObject numObj = new GameObject("Number");
+            numObj.transform.SetParent(itemObj.transform, false);
+            RectTransform numRt = numObj.AddComponent<RectTransform>();
+            numRt.anchorMin = Vector2.zero;
+            numRt.anchorMax = Vector2.one;
+            numRt.offsetMin = Vector2.zero;
+            numRt.offsetMax = Vector2.zero;
 
-            Text nameText = nameObj.AddComponent<Text>();
-            nameText.font = font;
-            nameText.fontSize = 18;
-            nameText.alignment = TextAnchor.MiddleLeft;
-            nameText.text = $"第{config.id}关  {config.name}";
-            nameText.color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f);
-
-            // 状态标记
-            GameObject statusObj = new GameObject("Status");
-            statusObj.transform.SetParent(itemObj.transform, false);
-            RectTransform statusRt = statusObj.AddComponent<RectTransform>();
-            statusRt.anchorMin = new Vector2(0.7f, 0);
-            statusRt.anchorMax = new Vector2(1, 1);
-            statusRt.offsetMin = new Vector2(0, 5);
-            statusRt.offsetMax = new Vector2(-10, -5);
-
-            Text statusText = statusObj.AddComponent<Text>();
-            statusText.font = font;
-            statusText.fontSize = 14;
-            statusText.alignment = TextAnchor.MiddleRight;
-            if (completed)
-            {
-                statusText.text = "已通关";
-                statusText.color = new Color(0.3f, 0.9f, 0.3f);
-            }
-            else if (unlocked)
-            {
-                statusText.text = "可挑战";
-                statusText.color = new Color(0.9f, 0.9f, 0.3f);
-            }
-            else
-            {
-                statusText.text = "未解锁";
-                statusText.color = new Color(0.5f, 0.5f, 0.5f);
-            }
+            Text numText = numObj.AddComponent<Text>();
+            numText.font = font;
+            numText.fontSize = 36;
+            numText.alignment = TextAnchor.MiddleCenter;
+            numText.text = config.id.ToString();
+            numText.color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f);
 
             return itemObj;
         }

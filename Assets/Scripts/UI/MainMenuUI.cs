@@ -6,6 +6,12 @@ namespace GeometryTD
     {
         [SerializeField] private LevelSelectUI levelSelectUI;
 
+        private void Start()
+        {
+            if (levelSelectUI != null)
+                levelSelectUI.Show();
+        }
+
         public void OnStartButtonClicked()
         {
             if (levelSelectUI != null)
