@@ -11,8 +11,6 @@ namespace GeometryTD
 
         private void Start()
         {
-            if (levelSelectUI != null)
-                levelSelectUI.Show();
         }
 
         public void OnStartButtonClicked()
