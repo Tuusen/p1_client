@@ -374,6 +374,7 @@
 "Assets/Scripts/UI/DragVisualManager.cs"
 "Assets/Scripts/UI/FloatingTextUI.cs"
 "Assets/Scripts/UI/HealthBarUI.cs"
+"Assets/Scripts/UI/LevelSelectUI.cs"
 "Assets/Scripts/UI/MainMenuUI.cs"
 "Assets/Scripts/UI/RuneBarUI.cs"
 "Assets/Scripts/UI/SkillBarUI.cs"

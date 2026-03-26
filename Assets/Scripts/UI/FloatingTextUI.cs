@@ -40,10 +40,6 @@ namespace GeometryTD
             trt.offsetMin = Vector2.zero;
             trt.offsetMax = Vector2.zero;
 
-            Outline outline = textObj.AddComponent<Outline>();
-            outline.effectColor = new Color(0, 0, 0, 0.8f);
-            outline.effectDistance = new Vector2(1, -1);
-
             float duration = 1.2f;
             float elapsed = 0f;
             Vector3 startPos = worldPos;

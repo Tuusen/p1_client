@@ -32,12 +32,13 @@ namespace GeometryTD
         private EventEffectManager eventEffectManager;
 
         private List<Transform> aliveEnemies = new List<Transform>();
-        private int killCount;
-        private int killCountForBoss;
-        private bool bossPhase;
         private bool gameEnded;
         private int skillXpMin;
         private int skillXpMax;
+
+        private LevelConfig currentLevelConfig;
+        private float hardMultiplier;
+        private int currentLevelId;
 
         public Transform HeroTransform => heroController != null ? heroController.transform : null;
         public ArcaneManager ArcaneManager => arcaneManager;
@@ -72,9 +73,17 @@ namespace GeometryTD
             GameConfig gameConfig = ConfigManager.Instance.GameConfig;
             HeroConfig heroConfig = ConfigManager.Instance.HeroConfig;
 
-            killCountForBoss = gameConfig.kill_count_for_boss;
-            killCount = 0;
-            bossPhase = false;
+            // 获取关卡配置
+            currentLevelId = GameManager.Instance != null ? GameManager.Instance.GetSelectedLevelId() : 1;
+            if (currentLevelId <= 0) currentLevelId = 1;
+            currentLevelConfig = ConfigManager.Instance.GetLevelConfig(currentLevelId);
+            if (currentLevelConfig == null)
+            {
+                Debug.LogError($"[BattleManager] 未找到关卡配置, id: {currentLevelId}");
+                return;
+            }
+
+            hardMultiplier = currentLevelConfig.hard / 10000f;
             gameEnded = false;
             skillXpMin = heroConfig.skill_xp_min;
             skillXpMax = heroConfig.skill_xp_max;
@@ -90,14 +99,11 @@ namespace GeometryTD
             if (eventEffectManager == null)
                 eventEffectManager = gameObject.AddComponent<EventEffectManager>();
 
-            // 初始化怪物生成器
+            // 初始化怪物生成器（使用关卡配置）
             monsterSpawner = GetComponent<MonsterSpawner>();
             if (monsterSpawner == null)
-            {
                 monsterSpawner = gameObject.AddComponent<MonsterSpawner>();
-            }
-            List<MonsterConfig> normalConfigs = ConfigManager.Instance.GetNormalMonsterConfigs();
-            monsterSpawner.Init(this, gameConfig.monster_spawn_interval, normalConfigs);
+            monsterSpawner.Init(this, currentLevelConfig, hardMultiplier);
 
             // 初始化技能管理器
             if (gameConfig.skill_slot_ids != null && gameConfig.skill_slot_ids.Length > 0)
@@ -111,11 +117,12 @@ namespace GeometryTD
                 }
             }
 
-            // 初始化UI
+            // 初始化UI（使用第一个Boss的击杀阈值）
             if (battleUI != null)
             {
-                battleUI.InitProgressBar(killCountForBoss);
-                battleUI.UpdateKillProgress(killCount, killCountForBoss);
+                int firstBossThreshold = monsterSpawner.GetNextBossKillThreshold();
+                battleUI.InitProgressBar(firstBossThreshold);
+                battleUI.UpdateKillProgress(0, firstBossThreshold);
             }
 
             // 初始化奥术管理器
@@ -297,14 +304,39 @@ namespace GeometryTD
         }
 
         // ===== 生成 =====
-        public void SpawnMonster(MonsterConfig config, Vector3 position)
+        public void SpawnMonster(MonsterConfig config, Vector3 position, float hardMult)
         {
             if (gameEnded) return;
 
             GameObject monsterObj = Instantiate(monsterPrefab, position, Quaternion.identity);
             MonsterController monster = monsterObj.GetComponent<MonsterController>();
-            monster.Init(config, heroController.transform, this);
+            monster.Init(config, heroController.transform, this, hardMult);
             aliveEnemies.Add(monsterObj.transform);
+        }
+
+        public void SpawnLevelBoss(int bossId, float hardMult)
+        {
+            if (gameEnded) return;
+
+            MonsterConfig bossConfig = ConfigManager.Instance.GetMonsterConfig(bossId);
+            if (bossConfig == null) return;
+
+            float spawnX = 12f;
+            Vector3 spawnPos = new Vector3(spawnX, 0f, 0f);
+
+            float heroX = heroController.transform.position.x;
+            float bossTargetX = -heroX;
+            Vector3 bossTargetPos = new Vector3(bossTargetX, 0f, 0f);
+
+            GameObject bossObj = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+            bossController = bossObj.GetComponent<BossController>();
+            bossController.Init(bossConfig, heroController.transform, this, bossTargetPos, hardMult);
+            aliveEnemies.Add(bossObj.transform);
+
+            if (battleUI != null)
+            {
+                battleUI.SwitchToBossHpMode(bossController.CurrentHp, bossController.MaxHp);
+            }
         }
 
         public void SpawnHeroBullet(Vector3 from, Transform target, float damage, float speed)
@@ -387,45 +419,15 @@ namespace GeometryTD
             if (gameEnded) return;
 
             aliveEnemies.Remove(monster.transform);
-            killCount++;
+            monsterSpawner.OnMonsterKilled();
 
-            if (!bossPhase)
+            if (!monsterSpawner.IsBossActive())
             {
-                if (battleUI != null)
+                int nextThreshold = monsterSpawner.GetNextBossKillThreshold();
+                if (battleUI != null && nextThreshold > 0)
                 {
-                    battleUI.UpdateKillProgress(killCount, killCountForBoss);
+                    battleUI.UpdateKillProgress(monsterSpawner.KillCount, nextThreshold);
                 }
-
-                if (killCount >= killCountForBoss)
-                {
-                    SpawnBoss();
-                }
-            }
-        }
-
-        private void SpawnBoss()
-        {
-            bossPhase = true;
-            monsterSpawner.StopSpawning();
-
-            MonsterConfig bossConfig = ConfigManager.Instance.GetBossConfig();
-            if (bossConfig == null) return;
-
-            float spawnX = 12f;
-            Vector3 spawnPos = new Vector3(spawnX, 0f, 0f);
-
-            float heroX = heroController.transform.position.x;
-            float bossTargetX = -heroX;
-            Vector3 bossTargetPos = new Vector3(bossTargetX, 0f, 0f);
-
-            GameObject bossObj = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
-            bossController = bossObj.GetComponent<BossController>();
-            bossController.Init(bossConfig, heroController.transform, this, bossTargetPos);
-            aliveEnemies.Add(bossObj.transform);
-
-            if (battleUI != null)
-            {
-                battleUI.SwitchToBossHpMode(bossConfig.hp, bossConfig.hp);
             }
         }
 
@@ -440,13 +442,33 @@ namespace GeometryTD
         public void OnBossKilled()
         {
             if (gameEnded) return;
-            gameEnded = true;
 
             if (bossController != null)
             {
                 aliveEnemies.Remove(bossController.transform);
             }
             bossController = null;
+
+            monsterSpawner.OnBossKilled();
+        }
+
+        public void OnBossDefeatedContinue(int nextBossThreshold)
+        {
+            if (battleUI != null)
+            {
+                battleUI.SwitchToKillMode(monsterSpawner.KillCount, nextBossThreshold);
+            }
+        }
+
+        public void OnLevelComplete()
+        {
+            if (gameEnded) return;
+            gameEnded = true;
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.MarkLevelCompleted(currentLevelId);
+            }
 
             Time.timeScale = 0f;
             if (battleUI != null)

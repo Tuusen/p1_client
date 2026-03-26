@@ -5,20 +5,41 @@ namespace GeometryTD
 {
     public class MonsterSpawner : MonoBehaviour
     {
+        private BattleManager battleManager;
+        private LevelConfig levelConfig;
+        private float hardMultiplier;
+
         private float spawnInterval;
         private float spawnTimer;
         private bool isSpawning;
 
-        private List<MonsterConfig> normalMonsterConfigs;
-        private BattleManager battleManager;
+        private int spawnCount;
+        private int killCount;
+        private int currentBossIndex;
+        private bool bossActive;
 
-        public void Init(BattleManager manager, float interval, List<MonsterConfig> configs)
+        private int[] eliteLastTrigger;
+
+        public int KillCount => killCount;
+
+        public void Init(BattleManager manager, LevelConfig config, float hard)
         {
             battleManager = manager;
-            spawnInterval = interval;
-            normalMonsterConfigs = configs;
+            levelConfig = config;
+            hardMultiplier = hard;
+
+            spawnInterval = config.spawn_interval;
             spawnTimer = 0f;
+            spawnCount = 0;
+            killCount = 0;
+            currentBossIndex = 0;
+            bossActive = false;
             isSpawning = true;
+
+            if (config.superMList != null)
+                eliteLastTrigger = new int[config.superMList.Length];
+            else
+                eliteLastTrigger = new int[0];
         }
 
         public void StopSpawning()
@@ -33,27 +54,113 @@ namespace GeometryTD
 
         private void Update()
         {
-            if (!isSpawning || normalMonsterConfigs == null || normalMonsterConfigs.Count == 0)
-                return;
+            if (!isSpawning || bossActive || levelConfig == null) return;
+            if (levelConfig.monsterList == null || levelConfig.monsterList.Length == 0) return;
 
             spawnTimer += Time.deltaTime;
             if (spawnTimer >= spawnInterval)
             {
-                SpawnMonster();
+                SpawnWave();
                 spawnTimer = 0f;
             }
         }
 
-        private void SpawnMonster()
+        private void SpawnWave()
         {
-            int index = Random.Range(0, normalMonsterConfigs.Count);
-            MonsterConfig config = normalMonsterConfigs[index];
+            int index = Random.Range(0, levelConfig.monsterList.Length);
+            LevelMonsterEntry entry = levelConfig.monsterList[index];
+            MonsterConfig monsterConfig = ConfigManager.Instance.GetMonsterConfig(entry.id);
+            if (monsterConfig == null) return;
 
+            for (int i = 0; i < entry.generate; i++)
+            {
+                Vector3 spawnPos = GetRandomSpawnPos();
+                battleManager.SpawnMonster(monsterConfig, spawnPos, hardMultiplier);
+            }
+
+            spawnCount += entry.generate;
+            CheckEliteSpawn();
+        }
+
+        private void CheckEliteSpawn()
+        {
+            if (levelConfig.superMList == null) return;
+
+            for (int i = 0; i < levelConfig.superMList.Length; i++)
+            {
+                LevelEliteEntry elite = levelConfig.superMList[i];
+                if (elite.num <= 0) continue;
+
+                int triggerCount = spawnCount / elite.num;
+                if (triggerCount > eliteLastTrigger[i])
+                {
+                    eliteLastTrigger[i] = triggerCount;
+
+                    MonsterConfig eliteConfig = ConfigManager.Instance.GetMonsterConfig(elite.id);
+                    if (eliteConfig == null) continue;
+
+                    for (int j = 0; j < elite.generate; j++)
+                    {
+                        Vector3 spawnPos = GetRandomSpawnPos();
+                        battleManager.SpawnMonster(eliteConfig, spawnPos, hardMultiplier);
+                    }
+                }
+            }
+        }
+
+        public void OnMonsterKilled()
+        {
+            killCount++;
+            CheckBossSpawn();
+        }
+
+        private void CheckBossSpawn()
+        {
+            if (bossActive) return;
+            if (levelConfig.bossList == null || levelConfig.bossList.Length == 0) return;
+            if (currentBossIndex >= levelConfig.bossList.Length) return;
+
+            LevelBossEntry bossEntry = levelConfig.bossList[currentBossIndex];
+            if (killCount >= bossEntry.num)
+            {
+                bossActive = true;
+                battleManager.SpawnLevelBoss(bossEntry.id, hardMultiplier);
+            }
+        }
+
+        public void OnBossKilled()
+        {
+            bossActive = false;
+            currentBossIndex++;
+
+            if (currentBossIndex >= levelConfig.bossList.Length)
+            {
+                isSpawning = false;
+                battleManager.OnLevelComplete();
+            }
+            else
+            {
+                battleManager.OnBossDefeatedContinue(GetNextBossKillThreshold());
+            }
+        }
+
+        public int GetNextBossKillThreshold()
+        {
+            if (levelConfig.bossList == null || levelConfig.bossList.Length == 0) return 0;
+            if (currentBossIndex >= levelConfig.bossList.Length) return 0;
+            return levelConfig.bossList[currentBossIndex].num;
+        }
+
+        public bool IsBossActive()
+        {
+            return bossActive;
+        }
+
+        private Vector3 GetRandomSpawnPos()
+        {
             float spawnX = 12f;
             float spawnY = Random.Range(-3.5f, 3.5f);
-            Vector3 spawnPos = new Vector3(spawnX, spawnY, 0f);
-
-            battleManager.SpawnMonster(config, spawnPos);
+            return new Vector3(spawnX, spawnY, 0f);
         }
     }
 }

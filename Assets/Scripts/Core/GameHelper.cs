@@ -30,7 +30,9 @@ namespace GeometryTD
         public static Font LoadFont()
         {
             if (cachedFont != null) return cachedFont;
-            cachedFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            cachedFont = Resources.Load<Font>("AnFont");
+            if (cachedFont == null)
+                cachedFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (cachedFont == null)
                 cachedFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
             return cachedFont;

@@ -14,11 +14,15 @@ namespace GeometryTD
         public List<BulletStyleConfig> BulletStyleConfigs { get; private set; }
         public List<ArcaneConfig> ArcaneConfigs { get; private set; }
         public List<EventEffectConfig> EventEffectConfigs { get; private set; }
+        public List<LevelConfig> LevelConfigs { get; private set; }
+        public List<ConditionConfig> ConditionConfigs { get; private set; }
 
         private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
         private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
         private Dictionary<int, ArcaneConfig> arcaneLookup;
         private Dictionary<int, EventEffectConfig> eventEffectLookup;
+        private Dictionary<int, LevelConfig> levelLookup;
+        private Dictionary<int, ConditionConfig> conditionLookup;
 
         private Dictionary<int, GameObject> bulletPrefabCache;
         private Dictionary<int, GameObject> effectPrefabCache;
@@ -44,10 +48,14 @@ namespace GeometryTD
             BulletStyleConfigs = LoadConfig<BulletStyleConfigList>("Configs/bullet_config").bulletStyles;
             ArcaneConfigs = LoadConfig<ArcaneConfigList>("Configs/arcane_config").arcanes;
             EventEffectConfigs = LoadConfig<EventEffectConfigList>("Configs/event_effect_config").effects;
+            LevelConfigs = LoadConfig<LevelConfigList>("Configs/level_config").levels;
+            ConditionConfigs = LoadConfig<ConditionConfigList>("Configs/condition_config").conditions;
             BuildSkillLookup();
             BuildBulletStyleLookup();
             BuildArcaneLookup();
             BuildEventEffectLookup();
+            BuildLevelLookup();
+            BuildConditionLookup();
             PreloadPrefabs();
         }
 
@@ -218,6 +226,38 @@ namespace GeometryTD
         {
             if (eventEffectLookup != null && eventEffectLookup.TryGetValue(eventType, out var config))
                 return config;
+            return null;
+        }
+
+        private void BuildLevelLookup()
+        {
+            levelLookup = new Dictionary<int, LevelConfig>();
+            if (LevelConfigs == null) return;
+            foreach (var level in LevelConfigs)
+                levelLookup[level.id] = level;
+        }
+
+        private void BuildConditionLookup()
+        {
+            conditionLookup = new Dictionary<int, ConditionConfig>();
+            if (ConditionConfigs == null) return;
+            foreach (var cond in ConditionConfigs)
+                conditionLookup[cond.id] = cond;
+        }
+
+        public LevelConfig GetLevelConfig(int levelId)
+        {
+            if (levelLookup != null && levelLookup.TryGetValue(levelId, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到关卡配置, id: {levelId}");
+            return null;
+        }
+
+        public ConditionConfig GetConditionConfig(int conditionId)
+        {
+            if (conditionLookup != null && conditionLookup.TryGetValue(conditionId, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到条件配置, id: {conditionId}");
             return null;
         }
     }

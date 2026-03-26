@@ -38,6 +38,10 @@ namespace GeometryTD
                 progressSlider.maxValue = maxKillCount;
                 progressSlider.value = 0;
             }
+            if (progressText != null)
+            {
+                progressText.text = $"击杀进度: 0/{maxKillCount}";
+            }
         }
 
         public void UpdateKillProgress(int currentKills, int maxKills)
@@ -81,6 +85,21 @@ namespace GeometryTD
             if (progressText != null)
             {
                 progressText.text = $"Boss血量: {Mathf.CeilToInt(currentHp)}/{Mathf.CeilToInt(maxHp)}";
+            }
+        }
+
+        public void SwitchToKillMode(int currentKills, int nextBossThreshold)
+        {
+            isBossMode = false;
+            if (progressSlider != null)
+            {
+                progressSlider.minValue = 0;
+                progressSlider.maxValue = nextBossThreshold;
+                progressSlider.value = currentKills;
+            }
+            if (progressText != null)
+            {
+                progressText.text = $"击杀进度: {currentKills}/{nextBossThreshold}";
             }
         }
 

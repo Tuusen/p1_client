@@ -380,9 +380,7 @@ namespace GeometryTD
                 valueText.alignment = TextAnchor.MiddleCenter;
                 valueText.horizontalOverflow = HorizontalWrapMode.Overflow;
                 valueText.verticalOverflow = VerticalWrapMode.Overflow;
-                valueText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                if (valueText.font == null)
-                    valueText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                valueText.font = GetDefaultFont();
 
                 RectTransform textRT = textObj.GetComponent<RectTransform>();
                 textRT.anchorMin = Vector2.zero;
@@ -828,7 +826,9 @@ namespace GeometryTD
 
         private static Font GetDefaultFont()
         {
-            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            Font font = AssetDatabase.LoadAssetAtPath<Font>("Assets/AnFont.ttf");
+            if (font == null)
+                font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (font == null)
                 font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             return font;
@@ -971,6 +971,234 @@ namespace GeometryTD
             // Wire up button click
             UnityEditor.Events.UnityEventTools.AddPersistentListener(
                 btn.onClick, menuUI.OnStartButtonClicked);
+
+            // ===== LevelSelectUI Panel =====
+            GameObject levelSelectObj = new GameObject("LevelSelectPanel");
+            levelSelectObj.transform.SetParent(canvasObj.transform, false);
+            RectTransform lsRT = levelSelectObj.AddComponent<RectTransform>();
+            lsRT.anchorMin = Vector2.zero;
+            lsRT.anchorMax = Vector2.one;
+            lsRT.offsetMin = Vector2.zero;
+            lsRT.offsetMax = Vector2.zero;
+
+            Image lsBg = levelSelectObj.AddComponent<Image>();
+            lsBg.color = new Color(0.03f, 0.03f, 0.1f, 0.95f);
+
+            LevelSelectUI levelSelectUI = levelSelectObj.AddComponent<LevelSelectUI>();
+            levelSelectObj.SetActive(false);
+
+            // 关闭按钮(右上角)
+            GameObject lsCloseBtnObj = new GameObject("CloseButton");
+            lsCloseBtnObj.transform.SetParent(levelSelectObj.transform, false);
+            Image lsCloseBtnImg = lsCloseBtnObj.AddComponent<Image>();
+            lsCloseBtnImg.color = new Color(0.8f, 0.2f, 0.2f);
+            Button lsCloseBtn = lsCloseBtnObj.AddComponent<Button>();
+            RectTransform lsCloseBtnRT = lsCloseBtnObj.GetComponent<RectTransform>();
+            lsCloseBtnRT.anchorMin = new Vector2(1, 1);
+            lsCloseBtnRT.anchorMax = new Vector2(1, 1);
+            lsCloseBtnRT.anchoredPosition = new Vector2(-40, -40);
+            lsCloseBtnRT.sizeDelta = new Vector2(50, 50);
+            Text lsCloseBtnText = CreateUIText(lsCloseBtnObj, "Text", "X", 24, Color.white);
+            RectTransform lsCloseBtnTextRT = lsCloseBtnText.GetComponent<RectTransform>();
+            lsCloseBtnTextRT.anchorMin = Vector2.zero;
+            lsCloseBtnTextRT.anchorMax = Vector2.one;
+            lsCloseBtnTextRT.offsetMin = Vector2.zero;
+            lsCloseBtnTextRT.offsetMax = Vector2.zero;
+
+            // 标题
+            Text lsTitleText = CreateUIText(levelSelectObj, "Title", "关卡选择",
+                36, new Color(0.98f, 0.9f, 0.62f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            RectTransform lsTitleRT = lsTitleText.GetComponent<RectTransform>();
+            lsTitleRT.anchorMin = new Vector2(0.5f, 1);
+            lsTitleRT.anchorMax = new Vector2(0.5f, 1);
+            lsTitleRT.anchoredPosition = new Vector2(0, -50);
+            lsTitleRT.sizeDelta = new Vector2(400, 60);
+
+            // ScrollView 关卡列表
+            GameObject scrollObj = new GameObject("ScrollView");
+            scrollObj.transform.SetParent(levelSelectObj.transform, false);
+            RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
+            scrollRT.anchorMin = new Vector2(0.1f, 0.15f);
+            scrollRT.anchorMax = new Vector2(0.9f, 0.85f);
+            scrollRT.offsetMin = Vector2.zero;
+            scrollRT.offsetMax = Vector2.zero;
+
+            Image scrollBg = scrollObj.AddComponent<Image>();
+            scrollBg.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
+            ScrollRect scrollRect = scrollObj.AddComponent<ScrollRect>();
+            scrollRect.horizontal = false;
+
+            // Viewport
+            GameObject viewportObj = new GameObject("Viewport");
+            viewportObj.transform.SetParent(scrollObj.transform, false);
+            RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
+            viewportRT.anchorMin = Vector2.zero;
+            viewportRT.anchorMax = Vector2.one;
+            viewportRT.offsetMin = Vector2.zero;
+            viewportRT.offsetMax = Vector2.zero;
+            viewportObj.AddComponent<Image>().color = Color.white;
+            Mask mask = viewportObj.AddComponent<Mask>();
+            mask.showMaskGraphic = false;
+            scrollRect.viewport = viewportRT;
+
+            // Content
+            GameObject contentObj = new GameObject("Content");
+            contentObj.transform.SetParent(viewportObj.transform, false);
+            RectTransform contentRT = contentObj.AddComponent<RectTransform>();
+            contentRT.anchorMin = new Vector2(0, 1);
+            contentRT.anchorMax = new Vector2(1, 1);
+            contentRT.pivot = new Vector2(0.5f, 1);
+            contentRT.offsetMin = new Vector2(10, 0);
+            contentRT.offsetMax = new Vector2(-10, 0);
+            contentRT.sizeDelta = new Vector2(0, 0);
+
+            GridLayoutGroup glg = contentObj.AddComponent<GridLayoutGroup>();
+            glg.cellSize = new Vector2(120, 120);
+            glg.spacing = new Vector2(15, 15);
+            glg.padding = new RectOffset(15, 15, 15, 15);
+            glg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            glg.constraintCount = 4;
+            glg.childAlignment = TextAnchor.UpperLeft;
+
+            ContentSizeFitter csf = contentObj.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            scrollRect.content = contentRT;
+
+            // ===== Detail Panel =====
+            GameObject detailObj = new GameObject("DetailPanel");
+            detailObj.transform.SetParent(levelSelectObj.transform, false);
+            RectTransform detailRT = detailObj.AddComponent<RectTransform>();
+            detailRT.anchorMin = new Vector2(0.15f, 0.1f);
+            detailRT.anchorMax = new Vector2(0.85f, 0.9f);
+            detailRT.offsetMin = Vector2.zero;
+            detailRT.offsetMax = Vector2.zero;
+
+            Image detailBg = detailObj.AddComponent<Image>();
+            detailBg.color = new Color(0.08f, 0.08f, 0.2f, 0.97f);
+            detailObj.SetActive(false);
+
+            // Detail: 关卡名
+            Text detailNameText = CreateUIText(detailObj, "NameText", "",
+                28, new Color(0.98f, 0.9f, 0.62f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            RectTransform dnRT = detailNameText.GetComponent<RectTransform>();
+            dnRT.anchorMin = new Vector2(0.05f, 0.85f);
+            dnRT.anchorMax = new Vector2(0.95f, 0.95f);
+            dnRT.offsetMin = Vector2.zero;
+            dnRT.offsetMax = Vector2.zero;
+
+            // Detail: 描述
+            Text detailDescText = CreateUIText(detailObj, "DescText", "",
+                18, new Color(0.8f, 0.8f, 0.9f), TextAnchor.UpperLeft);
+            RectTransform ddRT = detailDescText.GetComponent<RectTransform>();
+            ddRT.anchorMin = new Vector2(0.05f, 0.72f);
+            ddRT.anchorMax = new Vector2(0.95f, 0.84f);
+            ddRT.offsetMin = Vector2.zero;
+            ddRT.offsetMax = Vector2.zero;
+
+            // Detail: 精英标签
+            Text eliteLabelText = CreateUIText(detailObj, "EliteLabel", "精英怪物:",
+                18, new Color(0.9f, 0.6f, 0.2f), TextAnchor.UpperLeft, FontStyle.Bold);
+            RectTransform elRT = eliteLabelText.GetComponent<RectTransform>();
+            elRT.anchorMin = new Vector2(0.05f, 0.62f);
+            elRT.anchorMax = new Vector2(0.95f, 0.72f);
+            elRT.offsetMin = Vector2.zero;
+            elRT.offsetMax = Vector2.zero;
+
+            Text detailEliteText = CreateUIText(detailObj, "EliteText", "",
+                16, new Color(0.7f, 0.7f, 0.8f), TextAnchor.UpperLeft);
+            RectTransform deRT = detailEliteText.GetComponent<RectTransform>();
+            deRT.anchorMin = new Vector2(0.05f, 0.48f);
+            deRT.anchorMax = new Vector2(0.95f, 0.62f);
+            deRT.offsetMin = Vector2.zero;
+            deRT.offsetMax = Vector2.zero;
+
+            // Detail: Boss标签
+            Text bossLabelText = CreateUIText(detailObj, "BossLabel", "Boss:",
+                18, new Color(0.9f, 0.2f, 0.2f), TextAnchor.UpperLeft, FontStyle.Bold);
+            RectTransform blRT = bossLabelText.GetComponent<RectTransform>();
+            blRT.anchorMin = new Vector2(0.05f, 0.38f);
+            blRT.anchorMax = new Vector2(0.95f, 0.48f);
+            blRT.offsetMin = Vector2.zero;
+            blRT.offsetMax = Vector2.zero;
+
+            Text detailBossText = CreateUIText(detailObj, "BossText", "",
+                16, new Color(0.7f, 0.7f, 0.8f), TextAnchor.UpperLeft);
+            RectTransform dbRT = detailBossText.GetComponent<RectTransform>();
+            dbRT.anchorMin = new Vector2(0.05f, 0.24f);
+            dbRT.anchorMax = new Vector2(0.95f, 0.38f);
+            dbRT.offsetMin = Vector2.zero;
+            dbRT.offsetMax = Vector2.zero;
+
+            // Detail: 条件
+            Text detailCondText = CreateUIText(detailObj, "ConditionText", "",
+                16, new Color(0.7f, 0.7f, 0.8f), TextAnchor.UpperLeft);
+            RectTransform dcRT = detailCondText.GetComponent<RectTransform>();
+            dcRT.anchorMin = new Vector2(0.05f, 0.14f);
+            dcRT.anchorMax = new Vector2(0.95f, 0.24f);
+            dcRT.offsetMin = Vector2.zero;
+            dcRT.offsetMax = Vector2.zero;
+
+            // Detail: 挑战按钮
+            GameObject challengeBtnObj = new GameObject("ChallengeButton");
+            challengeBtnObj.transform.SetParent(detailObj.transform, false);
+            Image chBtnImg = challengeBtnObj.AddComponent<Image>();
+            chBtnImg.color = new Color(0.2f, 0.6f, 0.2f);
+            Button challengeBtn = challengeBtnObj.AddComponent<Button>();
+            ColorBlock chCb = challengeBtn.colors;
+            chCb.normalColor = Color.white;
+            chCb.highlightedColor = new Color(0.9f, 1f, 0.9f);
+            chCb.pressedColor = new Color(0.7f, 0.9f, 0.7f);
+            chCb.disabledColor = new Color(0.5f, 0.5f, 0.5f);
+            challengeBtn.colors = chCb;
+            RectTransform chBtnRT = challengeBtnObj.GetComponent<RectTransform>();
+            chBtnRT.anchorMin = new Vector2(0.3f, 0.02f);
+            chBtnRT.anchorMax = new Vector2(0.7f, 0.12f);
+            chBtnRT.offsetMin = Vector2.zero;
+            chBtnRT.offsetMax = Vector2.zero;
+            Text chBtnText = CreateUIText(challengeBtnObj, "Text", "挑战", 24, Color.white);
+            RectTransform chBtnTextRT = chBtnText.GetComponent<RectTransform>();
+            chBtnTextRT.anchorMin = Vector2.zero;
+            chBtnTextRT.anchorMax = Vector2.one;
+            chBtnTextRT.offsetMin = Vector2.zero;
+            chBtnTextRT.offsetMax = Vector2.zero;
+
+            // Detail: 关闭按钮
+            GameObject detailCloseBtnObj = new GameObject("CloseDetailButton");
+            detailCloseBtnObj.transform.SetParent(detailObj.transform, false);
+            Image dcBtnImg = detailCloseBtnObj.AddComponent<Image>();
+            dcBtnImg.color = new Color(0.8f, 0.2f, 0.2f);
+            Button detailCloseBtn = detailCloseBtnObj.AddComponent<Button>();
+            RectTransform dcBtnRT = detailCloseBtnObj.GetComponent<RectTransform>();
+            dcBtnRT.anchorMin = new Vector2(1, 1);
+            dcBtnRT.anchorMax = new Vector2(1, 1);
+            dcBtnRT.anchoredPosition = new Vector2(-25, -25);
+            dcBtnRT.sizeDelta = new Vector2(40, 40);
+            Text dcBtnText = CreateUIText(detailCloseBtnObj, "Text", "X", 20, Color.white);
+            RectTransform dcBtnTextRT = dcBtnText.GetComponent<RectTransform>();
+            dcBtnTextRT.anchorMin = Vector2.zero;
+            dcBtnTextRT.anchorMax = Vector2.one;
+            dcBtnTextRT.offsetMin = Vector2.zero;
+            dcBtnTextRT.offsetMax = Vector2.zero;
+
+            // Wire LevelSelectUI serialized fields
+            SerializedObject lsSO = new SerializedObject(levelSelectUI);
+            lsSO.FindProperty("levelListContent").objectReferenceValue = contentRT;
+            lsSO.FindProperty("detailPanel").objectReferenceValue = detailObj;
+            lsSO.FindProperty("detailNameText").objectReferenceValue = detailNameText;
+            lsSO.FindProperty("detailDescText").objectReferenceValue = detailDescText;
+            lsSO.FindProperty("detailEliteText").objectReferenceValue = detailEliteText;
+            lsSO.FindProperty("detailBossText").objectReferenceValue = detailBossText;
+            lsSO.FindProperty("detailConditionText").objectReferenceValue = detailCondText;
+            lsSO.FindProperty("challengeButton").objectReferenceValue = challengeBtn;
+            lsSO.FindProperty("closeDetailButton").objectReferenceValue = detailCloseBtn;
+            lsSO.FindProperty("closePanelButton").objectReferenceValue = lsCloseBtn;
+            lsSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Wire MainMenuUI -> LevelSelectUI
+            SerializedObject menuSO = new SerializedObject(menuUI);
+            menuSO.FindProperty("levelSelectUI").objectReferenceValue = levelSelectUI;
+            menuSO.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.SaveScene(scene, $"{ScenePath}/MainMenu.unity");
         }
