@@ -1,0 +1,9 @@
+{"attributes":[
+    {"id":1,"name":"生命值","description":"最大生命值"},
+    {"id":2,"name":"护盾值","description":"最大护盾值"},
+    {"id":3,"name":"攻击力","description":"基础攻击力"},
+    {"id":4,"name":"攻击范围","description":"攻击射程"},
+    {"id":5,"name":"攻击间隔","description":"攻击冷却秒数"},
+    {"id":6,"name":"移动速度","description":"移动速度"},
+    {"id":7,"name":"伤害值","description":"碰撞/攻击伤害"}
+]}

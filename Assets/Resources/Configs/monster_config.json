@@ -3,91 +3,130 @@
     {
       "id": 1,
       "name": "小型异形",
-      "hp": 30,
+      "role": 101,
       "level": 1,
-      "damage": 20,
       "is_boss": false,
       "is_elite": false,
-      "move_speed": 2.5
+      "attack_skill_id": 0,
+      "attack_range": 0,
+      "attack_interval": 0,
+      "attrs": [
+        {"id": 1, "value": 30},
+        {"id": 6, "value": 2.5},
+        {"id": 7, "value": 20}
+      ]
     },
     {
       "id": 2,
       "name": "中型异形",
-      "hp": 60,
+      "role": 102,
       "level": 2,
-      "damage": 35,
       "is_boss": false,
       "is_elite": false,
-      "move_speed": 2.0
+      "attack_skill_id": 0,
+      "attack_range": 0,
+      "attack_interval": 0,
+      "attrs": [
+        {"id": 1, "value": 60},
+        {"id": 6, "value": 2.0},
+        {"id": 7, "value": 35}
+      ]
     },
     {
       "id": 3,
       "name": "大型异形",
-      "hp": 100,
+      "role": 103,
       "level": 3,
-      "damage": 50,
       "is_boss": false,
       "is_elite": false,
-      "move_speed": 1.5
+      "attack_skill_id": 0,
+      "attack_range": 0,
+      "attack_interval": 0,
+      "attrs": [
+        {"id": 1, "value": 100},
+        {"id": 6, "value": 1.5},
+        {"id": 7, "value": 50}
+      ]
     },
     {
       "id": 10,
       "name": "异形精锐",
-      "hp": 200,
+      "role": 110,
       "level": 4,
-      "damage": 60,
       "is_boss": false,
       "is_elite": true,
-      "move_speed": 2.2
+      "attack_skill_id": 0,
+      "attack_range": 0,
+      "attack_interval": 0,
+      "attrs": [
+        {"id": 1, "value": 200},
+        {"id": 6, "value": 2.2},
+        {"id": 7, "value": 60}
+      ]
     },
     {
       "id": 11,
       "name": "虚空侍卫",
-      "hp": 350,
+      "role": 111,
       "level": 5,
-      "damage": 80,
       "is_boss": false,
       "is_elite": true,
-      "move_speed": 1.8
+      "attack_skill_id": 0,
+      "attack_range": 0,
+      "attack_interval": 0,
+      "attrs": [
+        {"id": 1, "value": 350},
+        {"id": 6, "value": 1.8},
+        {"id": 7, "value": 80}
+      ]
     },
     {
       "id": 100,
       "name": "虚空领主",
-      "hp": 1000,
+      "role": 200,
       "level": 10,
-      "damage": 30,
       "is_boss": true,
       "is_elite": false,
-      "move_speed": 3.0,
       "attack_skill_id": 3001,
       "attack_range": 15.0,
-      "attack_interval": 1.0
+      "attack_interval": 1.0,
+      "attrs": [
+        {"id": 1, "value": 1000},
+        {"id": 6, "value": 3.0},
+        {"id": 7, "value": 30}
+      ]
     },
     {
       "id": 101,
       "name": "深渊守卫",
-      "hp": 1500,
+      "role": 201,
       "level": 12,
-      "damage": 40,
       "is_boss": true,
       "is_elite": false,
-      "move_speed": 2.5,
       "attack_skill_id": 3001,
       "attack_range": 15.0,
-      "attack_interval": 0.9
+      "attack_interval": 0.9,
+      "attrs": [
+        {"id": 1, "value": 1500},
+        {"id": 6, "value": 2.5},
+        {"id": 7, "value": 40}
+      ]
     },
     {
       "id": 102,
       "name": "虚空暴君",
-      "hp": 2500,
+      "role": 202,
       "level": 15,
-      "damage": 50,
       "is_boss": true,
       "is_elite": false,
-      "move_speed": 2.0,
       "attack_skill_id": 3001,
       "attack_range": 15.0,
-      "attack_interval": 0.8
+      "attack_interval": 0.8,
+      "attrs": [
+        {"id": 1, "value": 2500},
+        {"id": 6, "value": 2.0},
+        {"id": 7, "value": 50}
+      ]
     }
   ]
 }

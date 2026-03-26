@@ -37,10 +37,10 @@ namespace GeometryTD
             battleManager = manager;
             heroTarget = hero;
 
-            maxHp = config.hp * hardMultiplier;
+            maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
             currentHp = maxHp;
-            damage = config.damage * hardMultiplier;
-            moveSpeed = config.move_speed;
+            damage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * hardMultiplier;
+            moveSpeed = ConfigManager.GetAttrValue(config.attrs, AttributeIds.MoveSpeed);
 
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
