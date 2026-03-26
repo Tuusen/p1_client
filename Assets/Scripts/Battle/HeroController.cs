@@ -12,6 +12,7 @@ namespace GeometryTD
         private float attackInterval;
         private int attackSkillId;
         private float baseAttack;
+        private int attackCount;
 
         [Header("运行时状态")]
         private float currentHp;
@@ -60,6 +61,8 @@ namespace GeometryTD
             attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
             attackSkillId = config.attack_skill_id;
             baseAttack = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack);
+            attackCount = (int)ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackCount, 1f);
+            if (attackCount < 1) attackCount = 1;
 
             currentHp = maxHp;
             currentShield = maxShield;
@@ -113,15 +116,19 @@ namespace GeometryTD
         {
             if (normalAttackConfig == null) return;
 
-            Transform target = battleManager.GetNearestEnemy(transform.position, attackRange);
-            if (target == null) return;
+            List<Transform> targets = battleManager.GetNearestEnemiesUnique(
+                transform.position, attackRange, attackCount);
+            if (targets.Count == 0) return;
 
-            facing?.FaceToward(target.position);
+            facing?.FaceToward(targets[0].position);
 
             float actualDmg = baseAttack * normalAttackConfig.dmg / 10000f;
-            battleManager.SpawnHeroBullet(transform.position, target, actualDmg, normalAttackConfig.bulletSpeed);
-            battleManager.OnHeroNormalAttack(transform.position);
+            var mods = new BulletModifiers();
+            foreach (var target in targets)
+                battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
+                    normalAttackConfig.bulletSpeed, mods.Clone(), normalAttackConfig.bulletStyleId);
 
+            battleManager.OnHeroNormalAttack(transform.position);
             animator?.SetTrigger("Attack");
         }
 
@@ -370,8 +377,8 @@ namespace GeometryTD
         {
             if (config.events == null) return;
 
-            float duration = 0f, atkInterval = 0f, dmgRatio = 0f;
-            int extraCount = 0;
+            float duration = 0f, attrRatio = 0f;
+            int extraCount = 0, monsterId = 0;
             bool homing = false;
 
             foreach (var evt in config.events)
@@ -382,9 +389,9 @@ namespace GeometryTD
                         if (evt.param != null && evt.param.Length >= 4)
                         {
                             duration = evt.param[0];
-                            atkInterval = evt.param[1];
-                            dmgRatio = evt.param[2];
-                            extraCount = (int)evt.param[3];
+                            attrRatio = evt.param[1];
+                            extraCount = (int)evt.param[2];
+                            monsterId = (int)evt.param[3];
                         }
                         break;
                     case SkillEventType.Homing:
@@ -393,7 +400,8 @@ namespace GeometryTD
                 }
             }
 
-            float summonDmg = baseAttack * dmgRatio / 10000f;
+            if (monsterId <= 0) return;
+
             int totalSummons = 1 + extraCount;
 
             for (int i = 0; i < totalSummons; i++)
@@ -401,7 +409,7 @@ namespace GeometryTD
                 Vector3 offset = new Vector3(
                     Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 0f);
                 battleManager.SpawnSummon(
-                    transform.position + offset, summonDmg, atkInterval, duration, homing);
+                    transform.position + offset, duration, attrRatio, monsterId, homing);
             }
         }
 

@@ -107,8 +107,6 @@ namespace GeometryTD
                 bossBulletPrefab = GameHelper.LoadPrefab("Prefabs/BossBullet");
             if (bossBulletPrefab == null)
                 bossBulletPrefab = ConfigManager.Instance.GetBulletPrefab(201);
-            if (summonPrefab == null)
-                summonPrefab = GameHelper.LoadPrefab("Prefabs/Summon");
 
             // 加载关卡背景
             if (!string.IsNullOrEmpty(currentLevelConfig.bg))
@@ -245,6 +243,32 @@ namespace GeometryTD
 
             for (int i = 0; i < count; i++)
                 result.Add(inRange[i % inRange.Count].t);
+
+            return result;
+        }
+
+        public List<Transform> GetNearestEnemiesUnique(Vector3 from, float maxRange, int count)
+        {
+            List<(Transform t, float d)> inRange = new List<(Transform, float)>();
+
+            for (int i = aliveEnemies.Count - 1; i >= 0; i--)
+            {
+                if (aliveEnemies[i] == null)
+                {
+                    aliveEnemies.RemoveAt(i);
+                    continue;
+                }
+                float dist = Vector3.Distance(from, aliveEnemies[i].position);
+                if (dist <= maxRange)
+                    inRange.Add((aliveEnemies[i], dist));
+            }
+
+            inRange.Sort((a, b) => a.d.CompareTo(b.d));
+
+            List<Transform> result = new List<Transform>();
+            int max = Mathf.Min(count, inRange.Count);
+            for (int i = 0; i < max; i++)
+                result.Add(inRange[i].t);
 
             return result;
         }
@@ -425,25 +449,33 @@ namespace GeometryTD
             bullet.Init(target, speed, damage, true, this);
         }
 
-        public void SpawnSummon(Vector3 position, float damage, float atkInterval,
-                                float duration, bool homing)
+        public void SpawnSummon(Vector3 position, float duration, float attrRatio, int monsterId, bool homing)
         {
             if (gameEnded) return;
 
-            GameObject summonObj;
-            if (summonPrefab != null)
+            MonsterConfig monsterConfig = ConfigManager.Instance.GetMonsterConfig(monsterId);
+            if (monsterConfig == null)
             {
-                summonObj = Instantiate(summonPrefab, position, Quaternion.identity);
+                Debug.LogWarning($"[BattleManager] 召唤物找不到怪物配置, monsterId: {monsterId}");
+                return;
+            }
+
+            GameObject prefab = ConfigManager.Instance.GetRolePrefab(monsterConfig.role);
+            GameObject summonObj;
+            if (prefab != null)
+            {
+                summonObj = Instantiate(prefab, position, Quaternion.identity);
             }
             else
             {
-                summonObj = new GameObject("Summon");
+                summonObj = new GameObject($"Summon_{monsterId}");
                 summonObj.transform.position = position;
-                summonObj.AddComponent<SummonController>();
             }
 
-            SummonController summon = summonObj.GetComponent<SummonController>();
-            summon.Init(damage, atkInterval, duration, homing, this);
+            SummonMonsterController controller = summonObj.GetComponent<SummonMonsterController>();
+            if (controller == null)
+                controller = summonObj.AddComponent<SummonMonsterController>();
+            controller.Init(monsterConfig, attrRatio, duration, homing, this);
         }
 
         // ===== 技能经验 =====
