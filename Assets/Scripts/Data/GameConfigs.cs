@@ -24,6 +24,7 @@ namespace GeometryTD
         public const int AttackInterval = 5;
         public const int MoveSpeed = 6;
         public const int Damage = 7;
+        public const int AttackCount = 8;
     }
 
     // ===== 角色配置 =====

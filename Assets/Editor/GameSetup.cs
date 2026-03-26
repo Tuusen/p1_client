@@ -1051,36 +1051,36 @@ namespace GeometryTD
             lsTitleRT.sizeDelta = new Vector2(400, 60);
 
             // ScrollView 关卡列表
-            GameObject scrollObj = new GameObject("ScrollView");
-            scrollObj.transform.SetParent(levelSelectObj.transform, false);
-            RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
-            scrollRT.anchorMin = new Vector2(0.1f, 0.15f);
-            scrollRT.anchorMax = new Vector2(0.9f, 0.85f);
-            scrollRT.offsetMin = Vector2.zero;
-            scrollRT.offsetMax = Vector2.zero;
+            GameObject scrollObj2 = new GameObject("ScrollView");
+            scrollObj2.transform.SetParent(levelSelectObj.transform, false);
+            RectTransform scrollRT4 = scrollObj2.AddComponent<RectTransform>();
+            scrollRT4.anchorMin = new Vector2(0.1f, 0.15f);
+            scrollRT4.anchorMax = new Vector2(0.9f, 0.85f);
+            scrollRT4.offsetMin = Vector2.zero;
+            scrollRT4.offsetMax = Vector2.zero;
 
-            Image scrollBg = scrollObj.AddComponent<Image>();
+            Image scrollBg = scrollObj2.AddComponent<Image>();
             scrollBg.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
-            ScrollRect scrollRect = scrollObj.AddComponent<ScrollRect>();
+            ScrollRect scrollRect = scrollObj2.AddComponent<ScrollRect>();
             scrollRect.horizontal = false;
 
             // Viewport
-            GameObject viewportObj = new GameObject("Viewport");
-            viewportObj.transform.SetParent(scrollObj.transform, false);
-            RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
-            viewportRT.anchorMin = Vector2.zero;
-            viewportRT.anchorMax = Vector2.one;
-            viewportRT.offsetMin = Vector2.zero;
-            viewportRT.offsetMax = Vector2.zero;
-            viewportObj.AddComponent<Image>().color = Color.white;
-            Mask mask = viewportObj.AddComponent<Mask>();
+            GameObject viewportObj4 = new GameObject("Viewport");
+            viewportObj4.transform.SetParent(scrollObj2.transform, false);
+            RectTransform viewportRT2 = viewportObj4.AddComponent<RectTransform>();
+            viewportRT2.anchorMin = Vector2.zero;
+            viewportRT2.anchorMax = Vector2.one;
+            viewportRT2.offsetMin = Vector2.zero;
+            viewportRT2.offsetMax = Vector2.zero;
+            viewportObj4.AddComponent<Image>().color = Color.white;
+            Mask mask = viewportObj4.AddComponent<Mask>();
             mask.showMaskGraphic = false;
-            scrollRect.viewport = viewportRT;
+            scrollRect.viewport = viewportRT2;
 
             // Content
-            GameObject contentObj = new GameObject("Content");
-            contentObj.transform.SetParent(viewportObj.transform, false);
-            RectTransform contentRT = contentObj.AddComponent<RectTransform>();
+            GameObject contentObj1 = new GameObject("Content");
+            contentObj1.transform.SetParent(viewportObj4.transform, false);
+            RectTransform contentRT = contentObj1.AddComponent<RectTransform>();
             contentRT.anchorMin = new Vector2(0, 1);
             contentRT.anchorMax = new Vector2(1, 1);
             contentRT.pivot = new Vector2(0.5f, 1);
@@ -1088,7 +1088,7 @@ namespace GeometryTD
             contentRT.offsetMax = new Vector2(-10, 0);
             contentRT.sizeDelta = new Vector2(0, 0);
 
-            GridLayoutGroup glg = contentObj.AddComponent<GridLayoutGroup>();
+            GridLayoutGroup glg = contentObj1.AddComponent<GridLayoutGroup>();
             glg.cellSize = new Vector2(120, 120);
             glg.spacing = new Vector2(15, 15);
             glg.padding = new RectOffset(15, 15, 15, 15);
@@ -1096,7 +1096,7 @@ namespace GeometryTD
             glg.constraintCount = 4;
             glg.childAlignment = TextAnchor.UpperLeft;
 
-            ContentSizeFitter csf = contentObj.AddComponent<ContentSizeFitter>();
+            ContentSizeFitter csf = contentObj1.AddComponent<ContentSizeFitter>();
             csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             scrollRect.content = contentRT;
@@ -1278,33 +1278,33 @@ namespace GeometryTD
                 titleRT2.sizeDelta = new Vector2(400, 60);
 
                 // ScrollView
-                GameObject scrollObj = new GameObject("ScrollView");
-                scrollObj.transform.SetParent(panelObj.transform, false);
-                RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
-                scrollRT.anchorMin = new Vector2(0.15f, 0.15f);
-                scrollRT.anchorMax = new Vector2(0.85f, 0.85f);
-                scrollRT.offsetMin = Vector2.zero;
-                scrollRT.offsetMax = Vector2.zero;
-                Image scrollBgH = scrollObj.AddComponent<Image>();
+                GameObject scrollObj3 = new GameObject("ScrollView");
+                scrollObj3.transform.SetParent(panelObj.transform, false);
+                RectTransform scrollRT1 = scrollObj3.AddComponent<RectTransform>();
+                scrollRT1.anchorMin = new Vector2(0.15f, 0.15f);
+                scrollRT1.anchorMax = new Vector2(0.85f, 0.85f);
+                scrollRT1.offsetMin = Vector2.zero;
+                scrollRT1.offsetMax = Vector2.zero;
+                Image scrollBgH = scrollObj3.AddComponent<Image>();
                 scrollBgH.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
-                ScrollRect scrollRectH = scrollObj.AddComponent<ScrollRect>();
+                ScrollRect scrollRectH = scrollObj3.AddComponent<ScrollRect>();
                 scrollRectH.horizontal = false;
 
-                GameObject viewportObj = new GameObject("Viewport");
-                viewportObj.transform.SetParent(scrollObj.transform, false);
-                RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
-                viewportRT.anchorMin = Vector2.zero;
-                viewportRT.anchorMax = Vector2.one;
-                viewportRT.offsetMin = Vector2.zero;
-                viewportRT.offsetMax = Vector2.zero;
-                viewportObj.AddComponent<Image>().color = Color.white;
-                Mask maskH = viewportObj.AddComponent<Mask>();
+                GameObject viewportObj1 = new GameObject("Viewport");
+                viewportObj1.transform.SetParent(scrollObj3.transform, false);
+                RectTransform viewportRT3 = viewportObj1.AddComponent<RectTransform>();
+                viewportRT3.anchorMin = Vector2.zero;
+                viewportRT3.anchorMax = Vector2.one;
+                viewportRT3.offsetMin = Vector2.zero;
+                viewportRT3.offsetMax = Vector2.zero;
+                viewportObj1.AddComponent<Image>().color = Color.white;
+                Mask maskH = viewportObj1.AddComponent<Mask>();
                 maskH.showMaskGraphic = false;
-                scrollRectH.viewport = viewportRT;
+                scrollRectH.viewport = viewportRT3;
 
-                GameObject contentObj = new GameObject("Content");
-                contentObj.transform.SetParent(viewportObj.transform, false);
-                RectTransform contentRTH = contentObj.AddComponent<RectTransform>();
+                GameObject contentObj2 = new GameObject("Content");
+                contentObj2.transform.SetParent(viewportObj1.transform, false);
+                RectTransform contentRTH = contentObj2.AddComponent<RectTransform>();
                 contentRTH.anchorMin = new Vector2(0, 1);
                 contentRTH.anchorMax = new Vector2(1, 1);
                 contentRTH.pivot = new Vector2(0.5f, 1);
@@ -1312,7 +1312,7 @@ namespace GeometryTD
                 contentRTH.offsetMax = new Vector2(-10, 0);
                 contentRTH.sizeDelta = new Vector2(0, 0);
 
-                VerticalLayoutGroup vlgH = contentObj.AddComponent<VerticalLayoutGroup>();
+                VerticalLayoutGroup vlgH = contentObj2.AddComponent<VerticalLayoutGroup>();
                 vlgH.spacing = 8;
                 vlgH.padding = new RectOffset(10, 10, 10, 10);
                 vlgH.childForceExpandWidth = true;
@@ -1320,7 +1320,7 @@ namespace GeometryTD
                 vlgH.childControlWidth = true;
                 vlgH.childControlHeight = false;
 
-                ContentSizeFitter csfH = contentObj.AddComponent<ContentSizeFitter>();
+                ContentSizeFitter csfH = contentObj2.AddComponent<ContentSizeFitter>();
                 csfH.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 scrollRectH.content = contentRTH;
 
@@ -1385,33 +1385,33 @@ namespace GeometryTD
                 cntRT.sizeDelta = new Vector2(200, 30);
 
                 // ScrollView
-                GameObject scrollObj = new GameObject("ScrollView");
-                scrollObj.transform.SetParent(panelObj.transform, false);
-                RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
-                scrollRT.anchorMin = new Vector2(0.15f, 0.18f);
-                scrollRT.anchorMax = new Vector2(0.85f, 0.82f);
-                scrollRT.offsetMin = Vector2.zero;
-                scrollRT.offsetMax = Vector2.zero;
-                Image scrollBgS = scrollObj.AddComponent<Image>();
+                GameObject scrollObj4 = new GameObject("ScrollView");
+                scrollObj4.transform.SetParent(panelObj.transform, false);
+                RectTransform scrollRT2 = scrollObj4.AddComponent<RectTransform>();
+                scrollRT2.anchorMin = new Vector2(0.15f, 0.18f);
+                scrollRT2.anchorMax = new Vector2(0.85f, 0.82f);
+                scrollRT2.offsetMin = Vector2.zero;
+                scrollRT2.offsetMax = Vector2.zero;
+                Image scrollBgS = scrollObj4.AddComponent<Image>();
                 scrollBgS.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
-                ScrollRect scrollRectS = scrollObj.AddComponent<ScrollRect>();
+                ScrollRect scrollRectS = scrollObj4.AddComponent<ScrollRect>();
                 scrollRectS.horizontal = false;
 
-                GameObject viewportObj = new GameObject("Viewport");
-                viewportObj.transform.SetParent(scrollObj.transform, false);
-                RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
-                viewportRT.anchorMin = Vector2.zero;
-                viewportRT.anchorMax = Vector2.one;
-                viewportRT.offsetMin = Vector2.zero;
-                viewportRT.offsetMax = Vector2.zero;
-                viewportObj.AddComponent<Image>().color = Color.white;
-                Mask maskS = viewportObj.AddComponent<Mask>();
+                GameObject viewportObj2 = new GameObject("Viewport");
+                viewportObj2.transform.SetParent(scrollObj4.transform, false);
+                RectTransform viewportRT4 = viewportObj2.AddComponent<RectTransform>();
+                viewportRT4.anchorMin = Vector2.zero;
+                viewportRT4.anchorMax = Vector2.one;
+                viewportRT4.offsetMin = Vector2.zero;
+                viewportRT4.offsetMax = Vector2.zero;
+                viewportObj2.AddComponent<Image>().color = Color.white;
+                Mask maskS = viewportObj2.AddComponent<Mask>();
                 maskS.showMaskGraphic = false;
-                scrollRectS.viewport = viewportRT;
+                scrollRectS.viewport = viewportRT4;
 
-                GameObject contentObj = new GameObject("Content");
-                contentObj.transform.SetParent(viewportObj.transform, false);
-                RectTransform contentRTS = contentObj.AddComponent<RectTransform>();
+                GameObject contentObj3 = new GameObject("Content");
+                contentObj3.transform.SetParent(viewportObj2.transform, false);
+                RectTransform contentRTS = contentObj3.AddComponent<RectTransform>();
                 contentRTS.anchorMin = new Vector2(0, 1);
                 contentRTS.anchorMax = new Vector2(1, 1);
                 contentRTS.pivot = new Vector2(0.5f, 1);
@@ -1419,7 +1419,7 @@ namespace GeometryTD
                 contentRTS.offsetMax = new Vector2(-10, 0);
                 contentRTS.sizeDelta = new Vector2(0, 0);
 
-                VerticalLayoutGroup vlgS = contentObj.AddComponent<VerticalLayoutGroup>();
+                VerticalLayoutGroup vlgS = contentObj3.AddComponent<VerticalLayoutGroup>();
                 vlgS.spacing = 8;
                 vlgS.padding = new RectOffset(10, 10, 10, 10);
                 vlgS.childForceExpandWidth = true;
@@ -1427,7 +1427,7 @@ namespace GeometryTD
                 vlgS.childControlWidth = true;
                 vlgS.childControlHeight = false;
 
-                ContentSizeFitter csfS = contentObj.AddComponent<ContentSizeFitter>();
+                ContentSizeFitter csfS = contentObj3.AddComponent<ContentSizeFitter>();
                 csfS.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 scrollRectS.content = contentRTS;
 
@@ -1515,33 +1515,33 @@ namespace GeometryTD
                 cntRT.sizeDelta = new Vector2(200, 30);
 
                 // ScrollView
-                GameObject scrollObj = new GameObject("ScrollView");
-                scrollObj.transform.SetParent(panelObj.transform, false);
-                RectTransform scrollRT = scrollObj.AddComponent<RectTransform>();
-                scrollRT.anchorMin = new Vector2(0.15f, 0.18f);
-                scrollRT.anchorMax = new Vector2(0.85f, 0.82f);
-                scrollRT.offsetMin = Vector2.zero;
-                scrollRT.offsetMax = Vector2.zero;
-                Image scrollBgA = scrollObj.AddComponent<Image>();
+                GameObject scrollObj1 = new GameObject("ScrollView");
+                scrollObj1.transform.SetParent(panelObj.transform, false);
+                RectTransform scrollRT3 = scrollObj1.AddComponent<RectTransform>();
+                scrollRT3.anchorMin = new Vector2(0.15f, 0.18f);
+                scrollRT3.anchorMax = new Vector2(0.85f, 0.82f);
+                scrollRT3.offsetMin = Vector2.zero;
+                scrollRT3.offsetMax = Vector2.zero;
+                Image scrollBgA = scrollObj1.AddComponent<Image>();
                 scrollBgA.color = new Color(0.08f, 0.08f, 0.18f, 0.8f);
-                ScrollRect scrollRectA = scrollObj.AddComponent<ScrollRect>();
+                ScrollRect scrollRectA = scrollObj1.AddComponent<ScrollRect>();
                 scrollRectA.horizontal = false;
 
-                GameObject viewportObj = new GameObject("Viewport");
-                viewportObj.transform.SetParent(scrollObj.transform, false);
-                RectTransform viewportRT = viewportObj.AddComponent<RectTransform>();
-                viewportRT.anchorMin = Vector2.zero;
-                viewportRT.anchorMax = Vector2.one;
-                viewportRT.offsetMin = Vector2.zero;
-                viewportRT.offsetMax = Vector2.zero;
-                viewportObj.AddComponent<Image>().color = Color.white;
-                Mask maskA = viewportObj.AddComponent<Mask>();
+                GameObject viewportObj3 = new GameObject("Viewport");
+                viewportObj3.transform.SetParent(scrollObj1.transform, false);
+                RectTransform viewportRT1 = viewportObj3.AddComponent<RectTransform>();
+                viewportRT1.anchorMin = Vector2.zero;
+                viewportRT1.anchorMax = Vector2.one;
+                viewportRT1.offsetMin = Vector2.zero;
+                viewportRT1.offsetMax = Vector2.zero;
+                viewportObj3.AddComponent<Image>().color = Color.white;
+                Mask maskA = viewportObj3.AddComponent<Mask>();
                 maskA.showMaskGraphic = false;
-                scrollRectA.viewport = viewportRT;
+                scrollRectA.viewport = viewportRT1;
 
-                GameObject contentObj = new GameObject("Content");
-                contentObj.transform.SetParent(viewportObj.transform, false);
-                RectTransform contentRTA = contentObj.AddComponent<RectTransform>();
+                GameObject contentObj4 = new GameObject("Content");
+                contentObj4.transform.SetParent(viewportObj3.transform, false);
+                RectTransform contentRTA = contentObj4.AddComponent<RectTransform>();
                 contentRTA.anchorMin = new Vector2(0, 1);
                 contentRTA.anchorMax = new Vector2(1, 1);
                 contentRTA.pivot = new Vector2(0.5f, 1);
@@ -1549,7 +1549,7 @@ namespace GeometryTD
                 contentRTA.offsetMax = new Vector2(-10, 0);
                 contentRTA.sizeDelta = new Vector2(0, 0);
 
-                VerticalLayoutGroup vlgA = contentObj.AddComponent<VerticalLayoutGroup>();
+                VerticalLayoutGroup vlgA = contentObj4.AddComponent<VerticalLayoutGroup>();
                 vlgA.spacing = 8;
                 vlgA.padding = new RectOffset(10, 10, 10, 10);
                 vlgA.childForceExpandWidth = true;
@@ -1557,7 +1557,7 @@ namespace GeometryTD
                 vlgA.childControlWidth = true;
                 vlgA.childControlHeight = false;
 
-                ContentSizeFitter csfA = contentObj.AddComponent<ContentSizeFitter>();
+                ContentSizeFitter csfA = contentObj4.AddComponent<ContentSizeFitter>();
                 csfA.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
                 scrollRectA.content = contentRTA;
 
@@ -1652,32 +1652,6 @@ namespace GeometryTD
 
             canvasObj.AddComponent<GraphicRaycaster>();
             BattleUI battleUI = canvasObj.AddComponent<BattleUI>();
-
-            // --- Background (世界空间SpriteRenderer，不遮挡游戏元素) ---
-            GameObject bgObj = new GameObject("Background");
-            SpriteRenderer bgSR = bgObj.AddComponent<SpriteRenderer>();
-            bgSR.sortingOrder = -100;
-
-            Sprite bgSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "游戏场景");
-            if (bgSprite != null)
-            {
-                bgSR.sprite = bgSprite;
-                // 缩放背景使其覆盖摄像机可视区域 (orthographicSize=5, aspect~16:9)
-                float spriteW = bgSprite.bounds.size.x;
-                float spriteH = bgSprite.bounds.size.y;
-                float camH = 5f * 2f;
-                float camW = camH * 16f / 9f;
-                float scaleX = camW / spriteW;
-                float scaleY = camH / spriteH;
-                float scale = Mathf.Max(scaleX, scaleY);
-                bgObj.transform.localScale = new Vector3(scale, scale, 1f);
-            }
-            else
-            {
-                bgSR.color = new Color(0.03f, 0.03f, 0.1f);
-            }
-            bgObj.transform.position = new Vector3(0, 0, 1f);
 
             // ========== Progress Panel (top) ==========
             GameObject progressPanel = new GameObject("ProgressPanel");
