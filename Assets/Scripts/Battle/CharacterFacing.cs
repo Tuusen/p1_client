@@ -4,7 +4,16 @@ namespace GeometryTD
 {
     public class CharacterFacing : MonoBehaviour
     {
+        private const int CharacterSortOrder = 5;
+
         [SerializeField] private Transform visualRoot;
+
+        private void Awake()
+        {
+            if (visualRoot == null) return;
+            foreach (var sr in visualRoot.GetComponentsInChildren<SpriteRenderer>())
+                sr.sortingOrder = CharacterSortOrder;
+        }
 
         public void FaceToward(Vector3 targetPos)
         {
