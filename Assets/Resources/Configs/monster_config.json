@@ -7,6 +7,7 @@
       "level": 1,
       "damage": 20,
       "is_boss": false,
+      "is_elite": false,
       "move_speed": 2.5
     },
     {
@@ -16,6 +17,7 @@
       "level": 2,
       "damage": 35,
       "is_boss": false,
+      "is_elite": false,
       "move_speed": 2.0
     },
     {
@@ -25,7 +27,28 @@
       "level": 3,
       "damage": 50,
       "is_boss": false,
+      "is_elite": false,
       "move_speed": 1.5
+    },
+    {
+      "id": 10,
+      "name": "异形精锐",
+      "hp": 200,
+      "level": 4,
+      "damage": 60,
+      "is_boss": false,
+      "is_elite": true,
+      "move_speed": 2.2
+    },
+    {
+      "id": 11,
+      "name": "虚空侍卫",
+      "hp": 350,
+      "level": 5,
+      "damage": 80,
+      "is_boss": false,
+      "is_elite": true,
+      "move_speed": 1.8
     },
     {
       "id": 100,
@@ -34,10 +57,37 @@
       "level": 10,
       "damage": 30,
       "is_boss": true,
+      "is_elite": false,
       "move_speed": 3.0,
       "attack_skill_id": 3001,
       "attack_range": 15.0,
       "attack_interval": 1.0
+    },
+    {
+      "id": 101,
+      "name": "深渊守卫",
+      "hp": 1500,
+      "level": 12,
+      "damage": 40,
+      "is_boss": true,
+      "is_elite": false,
+      "move_speed": 2.5,
+      "attack_skill_id": 3001,
+      "attack_range": 15.0,
+      "attack_interval": 0.9
+    },
+    {
+      "id": 102,
+      "name": "虚空暴君",
+      "hp": 2500,
+      "level": 15,
+      "damage": 50,
+      "is_boss": true,
+      "is_elite": false,
+      "move_speed": 2.0,
+      "attack_skill_id": 3001,
+      "attack_range": 15.0,
+      "attack_interval": 0.8
     }
   ]
 }

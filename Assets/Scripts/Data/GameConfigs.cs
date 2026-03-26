@@ -53,6 +53,7 @@ namespace GeometryTD
         public int level;
         public float damage;
         public bool is_boss;
+        public bool is_elite;
         public float move_speed;
         public int attack_skill_id;
         public float attack_range;
@@ -218,5 +219,65 @@ namespace GeometryTD
     public class EventEffectConfigList
     {
         public List<EventEffectConfig> effects;
+    }
+
+    // ===== 关卡系统 =====
+
+    [Serializable]
+    public class LevelMonsterEntry
+    {
+        public int id;
+        public int generate;
+    }
+
+    [Serializable]
+    public class LevelEliteEntry
+    {
+        public int id;
+        public int num;
+        public int generate;
+    }
+
+    [Serializable]
+    public class LevelBossEntry
+    {
+        public int id;
+        public int num;
+    }
+
+    [Serializable]
+    public class LevelConfig
+    {
+        public int id;
+        public string name;
+        public string des;
+        public int[] conditions;
+        public int hard;
+        public float spawn_interval;
+        public LevelMonsterEntry[] monsterList;
+        public LevelEliteEntry[] superMList;
+        public LevelBossEntry[] bossList;
+    }
+
+    [Serializable]
+    public class LevelConfigList
+    {
+        public List<LevelConfig> levels;
+    }
+
+    [Serializable]
+    public class ConditionConfig
+    {
+        public int id;
+        public string desc;
+        public int type;
+        public int p1;
+        public int p2;
+    }
+
+    [Serializable]
+    public class ConditionConfigList
+    {
+        public List<ConditionConfig> conditions;
     }
 }

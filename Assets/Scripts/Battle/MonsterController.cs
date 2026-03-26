@@ -32,14 +32,14 @@ namespace GeometryTD
 
         public bool IsDead => isDead;
 
-        public void Init(MonsterConfig config, Transform hero, BattleManager manager)
+        public void Init(MonsterConfig config, Transform hero, BattleManager manager, float hardMultiplier = 1f)
         {
             battleManager = manager;
             heroTarget = hero;
 
-            maxHp = config.hp;
+            maxHp = config.hp * hardMultiplier;
             currentHp = maxHp;
-            damage = config.damage;
+            damage = config.damage * hardMultiplier;
             moveSpeed = config.move_speed;
 
             animator = GetComponentInChildren<Animator>();
