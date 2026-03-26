@@ -915,7 +915,7 @@ namespace GeometryTD
             bgRT.offsetMax = Vector2.zero;
 
             // Title Text
-            Text titleText = CreateUIText(canvasObj, "TitleText", "几何塔防",
+            Text titleText = CreateUIText(canvasObj, "TitleText", "小小塔防",
                 72, new Color(0.98f, 0.9f, 0.62f), TextAnchor.MiddleCenter, FontStyle.Bold);
             RectTransform titleRT = titleText.GetComponent<RectTransform>();
             titleRT.anchorMin = new Vector2(0.5f, 0.5f);
@@ -924,7 +924,7 @@ namespace GeometryTD
             titleRT.sizeDelta = new Vector2(600, 100);
 
             // Subtitle
-            Text subtitleText = CreateUIText(canvasObj, "SubtitleText", "守卫星际家园",
+            Text subtitleText = CreateUIText(canvasObj, "SubtitleText", "你是一个勇敢的探险家",
                 28, new Color(0.7f, 0.7f, 0.85f));
             RectTransform subtitleRT = subtitleText.GetComponent<RectTransform>();
             subtitleRT.anchorMin = new Vector2(0.5f, 0.5f);
@@ -939,7 +939,7 @@ namespace GeometryTD
             btnImage.color = new Color(0.2f, 0.5f, 1f);
 
             Sprite btnSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/ui/Space_Exploration_GUI_Kit/Button_Images/Source_Image_Sprites/large/large-blue-large.png");
+                "按钮路径");
             if (btnSprite != null)
             {
                 btnImage.sprite = btnSprite;
@@ -1092,7 +1092,7 @@ namespace GeometryTD
             resultBg.color = new Color(0.1f, 0.1f, 0.2f, 0.95f);
 
             Sprite containerSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/ui/Space_Exploration_GUI_Kit/Containers/Large/victory-defeat-container-large.png");
+                "按钮路径");
             if (containerSprite != null)
             {
                 resultBg.sprite = containerSprite;
@@ -1116,7 +1116,7 @@ namespace GeometryTD
             backBtnImg.color = new Color(0.2f, 0.5f, 1f);
 
             Sprite backBtnSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/ui/Space_Exploration_GUI_Kit/Button_Images/Source_Image_Sprites/large/large-blue-large.png");
+                "返回按钮路径");
             if (backBtnSprite != null)
             {
                 backBtnImg.sprite = backBtnSprite;
@@ -1276,14 +1276,6 @@ namespace GeometryTD
                 Image iconImg = iconObj.AddComponent<Image>();
                 iconImg.raycastTarget = false;
                 iconImg.color = Color.white;
-
-                if (!string.IsNullOrEmpty(iconName))
-                {
-                    Sprite iconSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                        $"Assets/ui/Space_Exploration_GUI_Kit/Picto_Icons/White/{iconName}.png");
-                    if (iconSprite != null)
-                        iconImg.sprite = iconSprite;
-                }
 
                 RectTransform iconRT = iconObj.GetComponent<RectTransform>();
                 iconRT.anchorMin = Vector2.zero;
@@ -1670,14 +1662,6 @@ namespace GeometryTD
                 Image aIconImg = aIconObj.AddComponent<Image>();
                 aIconImg.raycastTarget = false;
                 aIconImg.color = Color.white;
-
-                if (!string.IsNullOrEmpty(aIconName))
-                {
-                    Sprite aSprite = AssetDatabase.LoadAssetAtPath<Sprite>(
-                        $"Assets/ui/Space_Exploration_GUI_Kit/Picto_Icons/White/{aIconName}.png");
-                    if (aSprite != null)
-                        aIconImg.sprite = aSprite;
-                }
 
                 RectTransform aIconRT = aIconObj.GetComponent<RectTransform>();
                 aIconRT.anchorMin = Vector2.zero;
