@@ -98,10 +98,22 @@ namespace GeometryTD
             skillXpMin = heroConfig.skill_xp_min;
             skillXpMax = heroConfig.skill_xp_max;
 
+            // 预制体 fallback：通过配置加载子弹预制体
+            if (heroBulletPrefab == null)
+                heroBulletPrefab = GameHelper.LoadPrefab("Prefabs/HeroBullet");
+            if (heroBulletPrefab == null)
+                heroBulletPrefab = ConfigManager.Instance.GetBulletPrefab(1);
+            if (bossBulletPrefab == null)
+                bossBulletPrefab = GameHelper.LoadPrefab("Prefabs/BossBullet");
+            if (bossBulletPrefab == null)
+                bossBulletPrefab = ConfigManager.Instance.GetBulletPrefab(201);
+            if (summonPrefab == null)
+                summonPrefab = GameHelper.LoadPrefab("Prefabs/Summon");
+
             // 加载关卡背景
             if (!string.IsNullOrEmpty(currentLevelConfig.bg))
             {
-                GameObject bgPrefab = Resources.Load<GameObject>(currentLevelConfig.bg);
+                GameObject bgPrefab = GameHelper.LoadPrefab(currentLevelConfig.bg);
                 if (bgPrefab != null)
                     Instantiate(bgPrefab, Vector3.zero, Quaternion.identity);
             }
@@ -163,10 +175,18 @@ namespace GeometryTD
                     var arcaneSlots = arcaneBarUI.GetSlots();
                     if (arcaneSlots != null)
                     {
-                        for (int i = 0; i < arcaneSlots.Length && i < arcaneManager.SlotCount; i++)
+                        for (int i = 0; i < arcaneSlots.Length; i++)
                         {
-                            if (arcaneSlots[i] != null)
+                            if (arcaneSlots[i] == null) continue;
+                            if (i < arcaneManager.SlotCount)
+                            {
+                                arcaneSlots[i].gameObject.SetActive(true);
                                 arcaneSlots[i].Init(i, arcaneManager);
+                            }
+                            else
+                            {
+                                arcaneSlots[i].gameObject.SetActive(false);
+                            }
                         }
                     }
                 }
