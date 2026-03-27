@@ -127,6 +127,32 @@
         {"id": 6, "value": 2.0},
         {"id": 7, "value": 50}
       ]
+    },
+    {
+      "id": 1001,
+      "name": "风影守卫",
+      "role": 1001,
+      "level": 1,
+      "is_boss": false,
+      "is_elite": false,
+      "attack_skill_id": 1001,
+      "attack_range": 15.0,
+      "attack_interval": 0.8,
+      "attrs": [
+      ]
+    },
+    {
+      "id": 1002,
+      "name": "熔岩守卫",
+      "role": 1002,
+      "level": 1,
+      "is_boss": false,
+      "is_elite": false,
+      "attack_skill_id": 1001,
+      "attack_range": 15.0,
+      "attack_interval": 0.8,
+      "attrs": [
+      ]
     }
   ]
 }

@@ -407,7 +407,7 @@ namespace GeometryTD
             for (int i = 0; i < totalSummons; i++)
             {
                 Vector3 offset = new Vector3(
-                    Random.Range(-1.5f, 1.5f), Random.Range(-1.5f, 1.5f), 0f);
+                    Random.Range(-1.5f, 1.5f), Random.Range(-2f, -0.5f), 0f);
                 battleManager.SpawnSummon(
                     transform.position + offset, duration, attrRatio, monsterId, homing);
             }

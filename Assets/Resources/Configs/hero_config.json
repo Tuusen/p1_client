@@ -3,34 +3,34 @@
     {
       "id": 1,
       "name": "小小士兵",
-      "description": "基础属性较高，擅长于攻击多个目标",
+      "description": "基础属性较高，擅长于高频率攻击多个目标，伤害较低，攻击距离较短",
       "role": 1,
       "attack_skill_id": 1001,
-      "skill_xp_min": 3,
-      "skill_xp_max": 15,
+      "skill_xp_min": 1,
+      "skill_xp_max": 10,
       "attrs": [
-        {"id": 1, "value": 1000},
-        {"id": 2, "value": 200},
-        {"id": 3, "value": 50},
-        {"id": 4, "value": 50},
-        {"id": 5, "value": 0.4},
-        {"id": 8, "value": 10}
+        {"id": 1, "value": 5000},
+        {"id": 2, "value": 1000},
+        {"id": 3, "value": 10},
+        {"id": 4, "value": 5},
+        {"id": 5, "value": 0.3},
+        {"id": 8, "value": 5}
       ]
     },
     {
-      "id": 1,
+      "id": 2,
       "name": "小小法师",
-      "description": "擅长于恢复能量，单次大量伤害",
+      "description": "擅长于恢复能量，单次大量伤害，攻击距离很长",
       "role": 1,
       "attack_skill_id": 1001,
-      "skill_xp_min": 20,
-      "skill_xp_max": 50,
+      "skill_xp_min": 60,
+      "skill_xp_max": 100,
       "attrs": [
         {"id": 1, "value": 500},
         {"id": 2, "value": 0},
         {"id": 3, "value": 200},
         {"id": 4, "value": 50},
-        {"id": 5, "value": 1},
+        {"id": 5, "value": 2.5},
         {"id": 8, "value": 1}
       ]
     }

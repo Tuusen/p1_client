@@ -113,7 +113,7 @@ namespace GeometryTD
             }
 
             // 生成英雄（通过role查找prefab）
-            Vector3 heroPos = heroSpawnPoint != null ? heroSpawnPoint.position : new Vector3(-6f, 0f, 0f);
+            Vector3 heroPos = heroSpawnPoint != null ? heroSpawnPoint.position : new Vector3(-8f, 0f, 0f);
             GameObject heroPrefabToUse = ConfigManager.Instance.GetRolePrefab(heroConfig.role);
             if (heroPrefabToUse == null) heroPrefabToUse = heroPrefab;
             GameObject heroObj = Instantiate(heroPrefabToUse, heroPos, Quaternion.identity);

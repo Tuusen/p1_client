@@ -1585,7 +1585,7 @@ namespace GeometryTD
 
             // Hero Spawn Point
             GameObject heroSpawnPoint = new GameObject("HeroSpawnPoint");
-            heroSpawnPoint.transform.position = new Vector3(-6f, 0f, 0f);
+            heroSpawnPoint.transform.position = new Vector3(-8f, 0f, 0f);
 
             // BattleManager
             GameObject bmObj = new GameObject("BattleManager");

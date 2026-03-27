@@ -7,5 +7,7 @@
     {"id":111,"name":"虚空侍卫","prefabPath":"Prefabs/actors/Monster"},
     {"id":200,"name":"虚空领主","prefabPath":"Prefabs/actors/Boss"},
     {"id":201,"name":"深渊守卫","prefabPath":"Prefabs/actors/Boss"},
-    {"id":202,"name":"虚空暴君","prefabPath":"Prefabs/actors/Boss"}
+    {"id":202,"name":"虚空暴君","prefabPath":"Prefabs/actors/Boss"},
+    {"id":1001,"name":"风影守卫","prefabPath":"Prefabs/actors/Summon"},
+    {"id":1002,"name":"熔岩守卫","prefabPath":"Prefabs/actors/Summon1"}
 ]}
