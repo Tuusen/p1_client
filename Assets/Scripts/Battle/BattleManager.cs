@@ -72,6 +72,17 @@ namespace GeometryTD
 
             skillXpTimer -= Time.deltaTime;
 
+            // 每帧检查预选槽位是否仍然有效（可能被GrantXpToSlots升至满级或被其他逻辑改变）
+            if (pendingXpSlotIndex >= 0)
+            {
+                var pendingSlot = skillManager.GetSlot(pendingXpSlotIndex);
+                if (pendingSlot == null || pendingSlot.level >= 10)
+                {
+                    pendingXpSlotIndex = skillManager.PickRandomEligibleSlot();
+                    UpdatePendingSlotUI();
+                }
+            }
+
             if (skillXpTimerUI != null)
                 skillXpTimerUI.UpdateTimer(skillXpTimer, skillXpInterval);
 
@@ -104,28 +115,30 @@ namespace GeometryTD
 
             // 预选下次获得经验的技能槽
             pendingXpSlotIndex = skillManager.PickRandomEligibleSlot();
+            UpdatePendingSlotUI();
+        }
 
-            // 更新UI显示预选的技能信息
-            if (skillXpTimerUI != null)
+        private void UpdatePendingSlotUI()
+        {
+            if (skillXpTimerUI == null) return;
+
+            if (pendingXpSlotIndex >= 0)
             {
-                if (pendingXpSlotIndex >= 0)
+                var slot = skillManager.GetSlot(pendingXpSlotIndex);
+                if (slot != null)
                 {
-                    var slot = skillManager.GetSlot(pendingXpSlotIndex);
-                    if (slot != null)
-                    {
-                        var config = ConfigManager.Instance.GetSkillConfig(slot.skillId, 0);
-                        string iconPath = config != null ? config.icon : null;
-                        skillXpTimerUI.SetTargetSkill(slot.skillName, iconPath);
-                    }
-                    else
-                    {
-                        skillXpTimerUI.SetTargetSkill(null, null);
-                    }
+                    var config = ConfigManager.Instance.GetSkillConfig(slot.skillId, 0);
+                    string iconPath = config != null ? config.icon : null;
+                    skillXpTimerUI.SetTargetSkill(slot.skillName, iconPath);
                 }
                 else
                 {
                     skillXpTimerUI.SetTargetSkill(null, null);
                 }
+            }
+            else
+            {
+                skillXpTimerUI.SetTargetSkill(null, null);
             }
         }
 
