@@ -61,6 +61,11 @@ namespace GeometryTD
             return WinManager.Instance.OpenWin<T>();
         }
 
+        public static T OpenWin<T>(string prefabPath) where T : BaseWin
+        {
+            return WinManager.Instance.OpenWin<T>(prefabPath);
+        }
+
         public static void CloseWin<T>() where T : BaseWin
         {
             WinManager.Instance.CloseWin<T>();
