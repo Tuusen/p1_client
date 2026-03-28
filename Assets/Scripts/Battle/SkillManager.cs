@@ -212,6 +212,11 @@ namespace GeometryTD
                 OnSlotLevelUp?.Invoke(index, slot.level);
         }
 
+        public void AddSkillXP(int amount)
+        {
+            AddXpToRandomSlot(amount, amount);
+        }
+
         public void AddXpToRandomSlot(int min, int max)
         {
             if (slots == null || slots.Length == 0) return;

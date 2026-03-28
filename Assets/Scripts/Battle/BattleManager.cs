@@ -20,6 +20,7 @@ namespace GeometryTD
         [SerializeField] private ArcaneBarUI arcaneBarUI;
         [SerializeField] private RuneBarUI runeBarUI;
         [SerializeField] private ArcaneActiveIconUI arcaneActiveIconUI;
+        [SerializeField] private SkillXpTimerUI skillXpTimerUI;
 
         [Header("生成点")]
         [SerializeField] private Transform heroSpawnPoint;
@@ -35,6 +36,8 @@ namespace GeometryTD
         private bool gameEnded;
         private int skillXpMin;
         private int skillXpMax;
+        private float skillXpTimer;
+        private float skillXpInterval;
 
         private LevelConfig currentLevelConfig;
         private float hardMultiplier;
@@ -60,6 +63,28 @@ namespace GeometryTD
         private void Start()
         {
             InitBattle();
+        }
+
+        private void Update()
+        {
+            if (gameEnded || skillManager == null) return;
+
+            skillXpTimer -= Time.deltaTime;
+
+            if (skillXpTimerUI != null)
+                skillXpTimerUI.UpdateTimer(skillXpTimer, skillXpInterval);
+
+            if (skillXpTimer <= 0f)
+            {
+                skillManager.AddSkillXP(1);
+                ResetSkillXpTimer();
+            }
+        }
+
+        private void ResetSkillXpTimer()
+        {
+            skillXpInterval = Random.Range(skillXpMin, skillXpMax + 1);
+            skillXpTimer = skillXpInterval;
         }
 
         private void InitBattle()
@@ -144,6 +169,8 @@ namespace GeometryTD
                 {
                     skillBarUI.SetSkillManager(skillManager);
                 }
+
+                ResetSkillXpTimer();
             }
 
             // 初始化UI（使用第一个Boss的击杀阈值）
@@ -477,10 +504,7 @@ namespace GeometryTD
         // ===== 技能经验 =====
         public void OnHeroNormalAttack(Vector3 heroPos)
         {
-            if (skillManager != null)
-            {
-                skillManager.AddXpToRandomSlot(skillXpMin, skillXpMax);
-            }
+            // 经验值现在通过计时器自动获取，不再通过普通攻击
         }
 
         public void GrantSkillXp(int xpAmount, int slotCount)
