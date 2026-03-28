@@ -5,8 +5,6 @@ namespace GeometryTD
     public class MainMenuUI : MonoBehaviour
     {
         [SerializeField] private LevelSelectUI levelSelectUI;
-        [SerializeField] private HeroSelectUI heroSelectUI;
-        [SerializeField] private SkillSelectUI skillSelectUI;
         [SerializeField] private ArcaneSelectUI arcaneSelectUI;
 
         private void Start()
@@ -27,14 +25,12 @@ namespace GeometryTD
 
         public void OnHeroButtonClicked()
         {
-            if (heroSelectUI != null)
-                heroSelectUI.Show();
+            GameHelper.OpenWin<HeroSelectWin>();
         }
 
         public void OnSkillButtonClicked()
         {
-            if (skillSelectUI != null)
-                skillSelectUI.Show();
+            GameHelper.OpenWin<SkillSelectWin>();
         }
 
         public void OnArcaneButtonClicked()

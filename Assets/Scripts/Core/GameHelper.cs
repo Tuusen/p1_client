@@ -55,5 +55,15 @@ namespace GeometryTD
                 cachedFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
             return cachedFont;
         }
+
+        public static T OpenWin<T>() where T : BaseWin
+        {
+            return WinManager.Instance.OpenWin<T>();
+        }
+
+        public static void CloseWin<T>() where T : BaseWin
+        {
+            WinManager.Instance.CloseWin<T>();
+        }
     }
 }
