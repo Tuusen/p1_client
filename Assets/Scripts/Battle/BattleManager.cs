@@ -38,6 +38,7 @@ namespace GeometryTD
         private int skillXpMax;
         private float skillXpTimer;
         private float skillXpInterval;
+        private int pendingXpSlotIndex = -1;
 
         private LevelConfig currentLevelConfig;
         private float hardMultiplier;
@@ -76,7 +77,22 @@ namespace GeometryTD
 
             if (skillXpTimer <= 0f)
             {
-                skillManager.AddSkillXP(1);
+                if (pendingXpSlotIndex >= 0)
+                {
+                    skillManager.AddXpToSlotPublic(pendingXpSlotIndex, 1);
+
+                    // 获取目标技能槽UI位置，播放粒子特效
+                    if (skillXpTimerUI != null && skillBarUI != null)
+                    {
+                        var targetSlotUI = skillBarUI.GetSlotUI(pendingXpSlotIndex);
+                        if (targetSlotUI != null)
+                        {
+                            RectTransform targetRect = targetSlotUI.GetIconRect();
+                            if (targetRect != null)
+                                skillXpTimerUI.PlayXpParticle(targetRect);
+                        }
+                    }
+                }
                 ResetSkillXpTimer();
             }
         }
@@ -85,6 +101,32 @@ namespace GeometryTD
         {
             skillXpInterval = Random.Range(skillXpMin, skillXpMax + 1);
             skillXpTimer = skillXpInterval;
+
+            // 预选下次获得经验的技能槽
+            pendingXpSlotIndex = skillManager.PickRandomEligibleSlot();
+
+            // 更新UI显示预选的技能信息
+            if (skillXpTimerUI != null)
+            {
+                if (pendingXpSlotIndex >= 0)
+                {
+                    var slot = skillManager.GetSlot(pendingXpSlotIndex);
+                    if (slot != null)
+                    {
+                        var config = ConfigManager.Instance.GetSkillConfig(slot.skillId, 0);
+                        string iconPath = config != null ? config.icon : null;
+                        skillXpTimerUI.SetTargetSkill(slot.skillName, iconPath);
+                    }
+                    else
+                    {
+                        skillXpTimerUI.SetTargetSkill(null, null);
+                    }
+                }
+                else
+                {
+                    skillXpTimerUI.SetTargetSkill(null, null);
+                }
+            }
         }
 
         private void InitBattle()

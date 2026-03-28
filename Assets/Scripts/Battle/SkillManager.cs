@@ -217,6 +217,36 @@ namespace GeometryTD
             AddXpToRandomSlot(amount, amount);
         }
 
+        public int PickRandomEligibleSlot()
+        {
+            if (slots == null || slots.Length == 0) return -1;
+
+            int candidateCount = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].level < 10)
+                    candidateCount++;
+            }
+            if (candidateCount == 0) return -1;
+
+            int pick = Random.Range(0, candidateCount);
+            int current = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].level < 10)
+                {
+                    if (current == pick) return i;
+                    current++;
+                }
+            }
+            return -1;
+        }
+
+        public void AddXpToSlotPublic(int index, int amount)
+        {
+            AddXpToSlot(index, amount);
+        }
+
         public void AddXpToRandomSlot(int min, int max)
         {
             if (slots == null || slots.Length == 0) return;
