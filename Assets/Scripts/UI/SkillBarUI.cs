@@ -25,6 +25,12 @@ namespace GeometryTD
             }
         }
 
+        public SkillSlotUI GetSlotUI(int index)
+        {
+            if (slots == null || index < 0 || index >= slots.Length) return null;
+            return slots[index];
+        }
+
         private void OnDestroy()
         {
             if (skillManager != null)
