@@ -366,6 +366,7 @@
 "Assets/Scripts/Core/ConfigManager.cs"
 "Assets/Scripts/Core/GameHelper.cs"
 "Assets/Scripts/Core/GameManager.cs"
+"Assets/Scripts/Core/ViewPathManager.cs"
 "Assets/Scripts/Data/GameConfigs.cs"
 "Assets/Scripts/UI/ArcaneActiveIconUI.cs"
 "Assets/Scripts/UI/ArcaneBarUI.cs"

@@ -53,3 +53,36 @@ Thumbs.db
 *.mdb
 *.opendb
 *.VC.db
+
+# Unity additional temp/cache
+/[Aa]ssets/AssetStoreTools*
+/[Aa]ssets/Plugins/Editor/JetBrains*
+
+# Gradle (Android builds)
+[Ee]xport[Ee]d[Oo]bj/
+.gradle/
+launchpad-hierarchies/
+
+# Unity Package Manager
+/[Pp]ackages/packages-lock.json
+
+# Plastic SCM
+*.ignore
+*.orig
+
+# Visual Studio cache/options
+*.DotSettings.user
+
+# TextMeshPro
+/[Aa]ssets/TextMesh Pro/
+
+# Unity profiler data
+*.data
+*.stackdump
+
+# Code Coverage
+/[Cc]ode[Cc]overage/
+
+# Annotation
+/[Aa]ssets/StreamingAssets/aa.meta
+/[Aa]ssets/StreamingAssets/aa/

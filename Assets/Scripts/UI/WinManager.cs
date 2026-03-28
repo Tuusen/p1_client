@@ -57,6 +57,11 @@ namespace GeometryTD
 
         public T OpenWin<T>() where T : BaseWin
         {
+            return OpenWin<T>(ViewPathManager.GetPath(typeof(T).Name));
+        }
+
+        public T OpenWin<T>(string prefabPath) where T : BaseWin
+        {
             Type type = typeof(T);
 
             if (winCache.TryGetValue(type, out BaseWin cached))
@@ -66,22 +71,22 @@ namespace GeometryTD
                 return (T)cached;
             }
 
-            string prefabName = type.Name;
-            GameObject prefab = GameHelper.LoadPrefab($"Prefab/{prefabName}");
+            GameObject prefab = GameHelper.LoadPrefab(prefabPath);
             if (prefab == null)
             {
-                Debug.LogError($"[WinManager] \u627e\u4e0d\u5230\u7a97\u53e3\u9884\u5236\u4f53: Prefab/{prefabName}");
+                Debug.LogError($"[WinManager] 找不到窗口预制体: {prefabPath}");
                 return null;
             }
 
             EnsureWinRoot();
+            string prefabName = type.Name;
             GameObject winObj = Instantiate(prefab, winRoot);
             winObj.name = prefabName;
 
             T win = winObj.GetComponent<T>();
             if (win == null)
             {
-                Debug.LogError($"[WinManager] \u9884\u5236\u4f53\u7f3a\u5c11\u7ec4\u4ef6: {prefabName} \u4e0a\u627e\u4e0d\u5230 {type.Name}");
+                Debug.LogError($"[WinManager] 预制体缺少组件: {prefabName} 上找不到 {type.Name}");
                 Destroy(winObj);
                 return null;
             }
