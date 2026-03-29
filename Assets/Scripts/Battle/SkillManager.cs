@@ -212,7 +212,32 @@ namespace GeometryTD
                 OnSlotLevelUp?.Invoke(index, slot.level);
         }
 
-        public void AddXpToRandomSlot(int min, int max)
+        public int PickRandomEligibleSlot()
+        {
+            if (slots == null || slots.Length == 0) return -1;
+
+            int candidateCount = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].level < 10)
+                    candidateCount++;
+            }
+            if (candidateCount == 0) return -1;
+
+            int pick = Random.Range(0, candidateCount);
+            int current = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].level < 10)
+                {
+                    if (current == pick) return i;
+                    current++;
+                }
+            }
+            return -1;
+        }
+
+        public void AddXpToRandomSlot(int _pick,int min, int max)
         {
             if (slots == null || slots.Length == 0) return;
             if (min < 0) min = 0;
@@ -226,7 +251,7 @@ namespace GeometryTD
             }
             if (candidateCount == 0) return;
 
-            int pick = Random.Range(0, candidateCount);
+            int pick = _pick < 0?Random.Range(0, candidateCount):_pick;
             int current = 0;
             for (int i = 0; i < slots.Length; i++)
             {

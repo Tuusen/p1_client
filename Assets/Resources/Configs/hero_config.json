@@ -6,6 +6,7 @@
       "description": "基础属性较高，擅长于高频率攻击多个目标，伤害较低，攻击距离较短",
       "role": 1,
       "attack_skill_id": 1001,
+      "skill_xp_interval": 1,
       "skill_xp_min": 1,
       "skill_xp_max": 10,
       "attrs": [
@@ -23,6 +24,7 @@
       "description": "擅长于恢复能量，单次大量伤害，攻击距离很长",
       "role": 1,
       "attack_skill_id": 1001,
+      "skill_xp_interval": 5,
       "skill_xp_min": 60,
       "skill_xp_max": 100,
       "attrs": [

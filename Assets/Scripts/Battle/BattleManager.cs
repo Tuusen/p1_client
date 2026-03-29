@@ -20,6 +20,7 @@ namespace GeometryTD
         [SerializeField] private ArcaneBarUI arcaneBarUI;
         [SerializeField] private RuneBarUI runeBarUI;
         [SerializeField] private ArcaneActiveIconUI arcaneActiveIconUI;
+        [SerializeField] private SkillXpTimerUI skillXpTimerUI;
 
         [Header("生成点")]
         [SerializeField] private Transform heroSpawnPoint;
@@ -35,6 +36,9 @@ namespace GeometryTD
         private bool gameEnded;
         private int skillXpMin;
         private int skillXpMax;
+        private float skillXpTimer;
+        private float skillXpInterval;
+        private int pendingXpSlotIndex = -1;
 
         private LevelConfig currentLevelConfig;
         private float hardMultiplier;
@@ -60,6 +64,81 @@ namespace GeometryTD
         private void Start()
         {
             InitBattle();
+        }
+
+        private void Update()
+        {
+            if (gameEnded || skillManager == null) return;
+
+            skillXpTimer -= Time.deltaTime;
+
+            // 每帧检查预选槽位是否仍然有效（可能被GrantXpToSlots升至满级或被其他逻辑改变）
+            if (pendingXpSlotIndex >= 0)
+            {
+                var pendingSlot = skillManager.GetSlot(pendingXpSlotIndex);
+                if (pendingSlot == null || pendingSlot.level >= 10)
+                {
+                    pendingXpSlotIndex = skillManager.PickRandomEligibleSlot();
+                    UpdatePendingSlotUI();
+                }
+            }
+
+            if (skillXpTimerUI != null)
+                skillXpTimerUI.UpdateTimer(skillXpTimer, skillXpInterval);
+
+            if (skillXpTimer <= 0f)
+            {
+                if (pendingXpSlotIndex >= 0)
+                {
+                    skillManager.AddXpToRandomSlot(pendingXpSlotIndex, skillXpMin, skillXpMax);
+
+                    // 获取目标技能槽UI位置，播放粒子特效
+                    if (skillXpTimerUI != null && skillBarUI != null)
+                    {
+                        var targetSlotUI = skillBarUI.GetSlotUI(pendingXpSlotIndex);
+                        if (targetSlotUI != null)
+                        {
+                            RectTransform targetRect = targetSlotUI.GetIconRect();
+                            if (targetRect != null)
+                                skillXpTimerUI.PlayXpParticle(targetRect);
+                        }
+                    }
+                }
+                ResetSkillXpTimer();
+            }
+        }
+
+        private void ResetSkillXpTimer()
+        {
+            skillXpTimer = skillXpInterval;
+
+            // 预选下次获得经验的技能槽
+            pendingXpSlotIndex = skillManager.PickRandomEligibleSlot();
+            UpdatePendingSlotUI();
+        }
+
+        private void UpdatePendingSlotUI()
+        {
+            if (skillXpTimerUI == null) return;
+
+            if (pendingXpSlotIndex >= 0)
+            {
+                var slot = skillManager.GetSlot(pendingXpSlotIndex);
+                if (slot != null)
+                {
+                    var config = ConfigManager.Instance.GetSkillConfig(slot.skillId, 0);
+                    string iconPath = config != null ? config.icon : null;
+                    skillXpTimerUI.SetTargetSkill(slot.skillName, iconPath);
+                }
+                else
+                {
+                    skillXpTimerUI.SetTargetSkill(null, null);
+                }
+            }
+            else
+            {
+                skillXpTimerUI.SetTargetSkill(null, null);
+            }
         }
 
         private void InitBattle()
@@ -97,6 +176,7 @@ namespace GeometryTD
             gameEnded = false;
             skillXpMin = heroConfig.skill_xp_min;
             skillXpMax = heroConfig.skill_xp_max;
+            skillXpInterval = heroConfig.skill_xp_interval;
 
             // 预制体 fallback：通过配置加载子弹预制体
             if (heroBulletPrefab == null)
@@ -144,6 +224,8 @@ namespace GeometryTD
                 {
                     skillBarUI.SetSkillManager(skillManager);
                 }
+
+                ResetSkillXpTimer();
             }
 
             // 初始化UI（使用第一个Boss的击杀阈值）
@@ -477,10 +559,7 @@ namespace GeometryTD
         // ===== 技能经验 =====
         public void OnHeroNormalAttack(Vector3 heroPos)
         {
-            if (skillManager != null)
-            {
-                skillManager.AddXpToRandomSlot(skillXpMin, skillXpMax);
-            }
+            // 经验值现在通过计时器自动获取，不再通过普通攻击
         }
 
         public void GrantSkillXp(int xpAmount, int slotCount)

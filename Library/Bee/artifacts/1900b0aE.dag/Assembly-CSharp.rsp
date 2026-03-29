@@ -385,6 +385,7 @@
 "Assets/Scripts/UI/SkillBarUI.cs"
 "Assets/Scripts/UI/SkillSelectWin.cs"
 "Assets/Scripts/UI/SkillSlotUI.cs"
+"Assets/Scripts/UI/SkillXpTimerUI.cs"
 "Assets/Scripts/UI/TabSwitchUI.cs"
 "Assets/Scripts/UI/WinManager.cs"
 -langversion:9.0

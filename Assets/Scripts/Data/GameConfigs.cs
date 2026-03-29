@@ -92,6 +92,7 @@ namespace GeometryTD
         public string description;
         public int role;
         public int attack_skill_id;
+        public float skill_xp_interval;
         public int skill_xp_min;
         public int skill_xp_max;
         public AttrEntry[] attrs;
