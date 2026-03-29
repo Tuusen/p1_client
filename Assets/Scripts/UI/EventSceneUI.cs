@@ -455,14 +455,14 @@ namespace GeometryTD
                 retryButton = CreateTextButton(panelRt, "RetryButton",
                     new Vector2(0.5f, buttonY), new Vector2(0.5f, buttonY),
                     new Vector2(-170f, 0f), new Vector2(-20f, 50f),
-                    new Color(0.5f, 0.4f, 0.15f, 0.95f), 24, "Retry");
+                    new Color(0.5f, 0.4f, 0.15f, 0.95f), 24, "回到失败之前");
                 retryButton.onClick.AddListener(OnRetryClicked);
 
                 // Return button (right)
                 Button returnBtn = CreateTextButton(panelRt, "ReturnButton",
                     new Vector2(0.5f, buttonY), new Vector2(0.5f, buttonY),
                     new Vector2(20f, 0f), new Vector2(170f, 50f),
-                    new Color(0.4f, 0.2f, 0.2f, 0.95f), 24, "Return");
+                    new Color(0.4f, 0.2f, 0.2f, 0.95f), 24, "退出");
                 returnBtn.onClick.AddListener(OnReturnClicked);
             }
             else
@@ -471,7 +471,7 @@ namespace GeometryTD
                 Button returnBtn = CreateTextButton(panelRt, "ReturnButton",
                     new Vector2(0.5f, buttonY), new Vector2(0.5f, buttonY),
                     new Vector2(-80f, 0f), new Vector2(80f, 50f),
-                    new Color(0.2f, 0.3f, 0.5f, 0.95f), 24, "Return");
+                    new Color(0.2f, 0.3f, 0.5f, 0.95f), 24, "退出");
                 returnBtn.onClick.AddListener(OnReturnClicked);
             }
         }

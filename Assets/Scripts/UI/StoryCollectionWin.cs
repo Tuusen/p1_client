@@ -125,11 +125,6 @@ namespace GeometryTD
             scrollRect.vertical = true;
             scrollRect.movementType = ScrollRect.MovementType.Clamped;
 
-            Image scrollMask = scrollObj.AddComponent<Image>();
-            scrollMask.color = Color.clear;
-            Mask mask = scrollObj.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
-
             // Content
             GameObject contentObj = new GameObject("Content");
             contentObj.transform.SetParent(scrollObj.transform, false);
