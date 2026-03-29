@@ -71,6 +71,15 @@ namespace GeometryTD
         /// <summary>战斗失败前的节点ID（用于"重试"功能）</summary>
         private int failedAtNodeId;
 
+        /// <summary>是否需要播放节点过渡动画（瞬态，不序列化）</summary>
+        private bool shouldPlayTransition;
+        public bool ShouldPlayTransition => shouldPlayTransition;
+
+        public void ClearTransitionFlag()
+        {
+            shouldPlayTransition = false;
+        }
+
         private void Awake()
         {
             if (_instance != null && _instance != this)
@@ -239,6 +248,7 @@ namespace GeometryTD
             currentBossEventIndex = 0;
 
             StorySaveManager.Instance.SaveRuntime(Runtime);
+            shouldPlayTransition = true;
             OnNodeChanged?.Invoke(oldNodeId, nodeId);
         }
 

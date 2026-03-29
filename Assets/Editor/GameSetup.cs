@@ -37,6 +37,8 @@ namespace GeometryTD
 
             CreateMainMenuScene();
             CreateBattleScene();
+            CreateStoryScene();
+            CreateEventScene();
             SetupBuildSettings();
 
             AssetDatabase.SaveAssets();
@@ -774,7 +776,7 @@ namespace GeometryTD
 
             // Wire up button click
             UnityEditor.Events.UnityEventTools.AddPersistentListener(
-                btn.onClick, menuUI.OnStartButtonClicked);
+                btn.onClick, menuUI.OnStoryCollectionButtonClicked);
 
             // ===== 角色/技能/奥术 Button Row =====
             string[] menuLabels = { "角色", "技能", "奥术" };
@@ -1644,6 +1646,58 @@ namespace GeometryTD
             EditorSceneManager.SaveScene(scene, $"{ScenePath}/Battle.unity");
         }
 
+        private static void CreateStoryScene()
+        {
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            // Camera
+            GameObject camObj = new GameObject("Main Camera");
+            Camera cam = camObj.AddComponent<Camera>();
+            cam.orthographic = true;
+            cam.orthographicSize = 5;
+            cam.backgroundColor = new Color(0.05f, 0.05f, 0.1f);
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            camObj.transform.position = new Vector3(0, 0, -10);
+            camObj.tag = "MainCamera";
+
+            // EventSystem
+            GameObject eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+
+            // StorySceneUI - UI is built dynamically in Start()
+            GameObject uiObj = new GameObject("StorySceneUI");
+            uiObj.AddComponent<StorySceneUI>();
+
+            EditorSceneManager.SaveScene(scene, $"{ScenePath}/Story.unity");
+        }
+
+        private static void CreateEventScene()
+        {
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            // Camera
+            GameObject camObj = new GameObject("Main Camera");
+            Camera cam = camObj.AddComponent<Camera>();
+            cam.orthographic = true;
+            cam.orthographicSize = 5;
+            cam.backgroundColor = new Color(0.02f, 0.02f, 0.05f);
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            camObj.transform.position = new Vector3(0, 0, -10);
+            camObj.tag = "MainCamera";
+
+            // EventSystem
+            GameObject eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+
+            // EventSceneUI - UI is built dynamically in Start()
+            GameObject uiObj = new GameObject("EventSceneUI");
+            uiObj.AddComponent<EventSceneUI>();
+
+            EditorSceneManager.SaveScene(scene, $"{ScenePath}/Event.unity");
+        }
+
         private static void CreateUISlider(GameObject parent, string name,
             Color bgColor, Color fillColor, out Slider slider)
         {
@@ -1714,6 +1768,8 @@ namespace GeometryTD
             List<EditorBuildSettingsScene> scenes = new List<EditorBuildSettingsScene>();
             scenes.Add(new EditorBuildSettingsScene($"{ScenePath}/MainMenu.unity", true));
             scenes.Add(new EditorBuildSettingsScene($"{ScenePath}/Battle.unity", true));
+            scenes.Add(new EditorBuildSettingsScene($"{ScenePath}/Story.unity", true));
+            scenes.Add(new EditorBuildSettingsScene($"{ScenePath}/Event.unity", true));
             EditorBuildSettings.scenes = scenes.ToArray();
         }
 

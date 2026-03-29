@@ -12,11 +12,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Battle.unity
     guid: a866077ff91c2294a946fbb9762e6af5
   - enabled: 1
-    path: Assets/Scenes/Story.scene
-    guid: 6367bb7eff2ec6f4c9613d179fe65a4d
+    path: Assets/Scenes/Story.unity
+    guid: f4039197594cb6d4099fdbef0b23fc84
   - enabled: 1
-    path: Assets/Scenes/Event.scene
-    guid: 18e44a95cb61ceb4f94afaf614c1e10c
+    path: Assets/Scenes/Event.unity
+    guid: 7638d5666f74d44489629840b1c04689
   m_BuildProfiles: []
   m_configObjects: {}
   m_SlimFeaturesWeixinMiniGame:

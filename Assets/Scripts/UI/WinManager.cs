@@ -23,7 +23,7 @@ namespace GeometryTD
 
         private readonly Dictionary<Type, BaseWin> winCache = new Dictionary<Type, BaseWin>();
         private Transform winRoot;
-        private int baseSortOrder = 100;
+        private int baseSortOrder = 200;
 
         private void Awake()
         {
@@ -49,7 +49,10 @@ namespace GeometryTD
                 canvas = canvasObj.AddComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 canvas.sortingOrder = baseSortOrder;
-                canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+                UnityEngine.UI.CanvasScaler scaler = canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+                scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920, 1080);
+                scaler.matchWidthOrHeight = 0.5f;
                 canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             }
             winRoot = canvas.transform;
@@ -162,6 +165,24 @@ namespace GeometryTD
                     win.gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             }
             winCanvas.sortingOrder = baseSortOrder + win.SortOrder;
+
+            // Ensure full-screen RectTransform to block click-through
+            RectTransform rt = win.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.offsetMin = Vector2.zero;
+                rt.offsetMax = Vector2.zero;
+            }
+
+            // Ensure a background Image exists for raycast blocking
+            if (win.GetComponent<UnityEngine.UI.Image>() == null)
+            {
+                UnityEngine.UI.Image blocker = win.gameObject.AddComponent<UnityEngine.UI.Image>();
+                blocker.color = new Color(0f, 0f, 0f, 0f);
+                blocker.raycastTarget = true;
+            }
         }
 
         private void OnDestroy()

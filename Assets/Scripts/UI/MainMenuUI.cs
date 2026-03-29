@@ -8,11 +8,6 @@ namespace GeometryTD
         {
         }
 
-        public void OnStartButtonClicked()
-        {
-            GameHelper.OpenWin<LevelSelectWin>();
-        }
-
         public void OnHeroButtonClicked()
         {
             GameHelper.OpenWin<HeroSelectWin>();

@@ -232,7 +232,9 @@ namespace GeometryTD
             root.offsetMax = Vector2.zero;
 
             // Dim background
-            Image dimBg = gameObject.AddComponent<Image>();
+            Image dimBg = gameObject.GetComponent<Image>();
+            if (dimBg == null)
+                dimBg = gameObject.AddComponent<Image>();
             dimBg.color = new Color(0f, 0f, 0f, 0.5f);
 
             // Center panel

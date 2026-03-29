@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,8 +22,17 @@ namespace GeometryTD
 
         // Bottom
         private Text effectsCountText;
-        private Button executeButton;
-        private GameObject executeButtonObj;
+
+        // Animation
+        private CanvasGroup interactionBlocker;
+        private CanvasGroup nodePanelGroup;
+        private RectTransform centerRt;
+        private GameObject nodePanel;
+        private bool isAnimating;
+
+        private const float FADE_OUT_DURATION = 0.3f;
+        private const float SLIDE_DURATION = 0.5f;
+        private const float FADE_IN_DURATION = 0.3f;
 
         private Font cachedFont;
 
@@ -41,7 +51,18 @@ namespace GeometryTD
             StoryManager.Instance.OnGoldChanged += HandleGoldChanged;
             StoryManager.Instance.OnEffectAcquired += HandleEffectAcquired;
 
-            RefreshNodeDisplay();
+            if (StoryManager.Instance.ShouldPlayTransition &&
+                StoryManager.Instance.Runtime.previousNodeId > 0 &&
+                StoryManager.Instance.Runtime.previousNodeId != StoryManager.Instance.Runtime.currentNodeId)
+            {
+                StoryManager.Instance.ClearTransitionFlag();
+                StartCoroutine(PlayNodeTransition());
+            }
+            else
+            {
+                StoryManager.Instance.ClearTransitionFlag();
+                RefreshNodeDisplay();
+            }
         }
 
         private void OnDestroy()
@@ -76,8 +97,6 @@ namespace GeometryTD
 
         private void RefreshNodeDisplay()
         {
-            CancelInvoke(nameof(AutoExecute));
-
             if (StoryManager.Instance == null || !StoryManager.Instance.IsInAdventure)
                 return;
 
@@ -91,7 +110,17 @@ namespace GeometryTD
             if (goldText != null)
                 goldText.text = $"Gold: {StoryManager.Instance.GetGold()}";
 
-            // Node info
+            // Node info + branches
+            DisplayNodeData(node);
+
+            // Effects count
+            UpdateEffectsCount();
+        }
+
+        private void DisplayNodeData(StoryNodeConfig node)
+        {
+            if (node == null) return;
+
             if (nodeNameText != null)
                 nodeNameText.text = node.name ?? "";
             if (nodeTypeText != null)
@@ -117,22 +146,7 @@ namespace GeometryTD
                 }
             }
 
-            // Branch lines
             RebuildBranchLines(node);
-
-            // Effects count
-            UpdateEffectsCount();
-
-            // Execute button visibility
-            bool showExecute = node.type == StoryNodeType.Battle || node.type == StoryNodeType.Shop;
-            if (executeButtonObj != null)
-                executeButtonObj.SetActive(showExecute);
-
-            // Auto-execute for Event/Ending nodes
-            if (node.type == StoryNodeType.Event || node.type == StoryNodeType.Ending)
-            {
-                Invoke(nameof(AutoExecute), 0.3f);
-            }
         }
 
         private void AutoExecute()
@@ -214,16 +228,182 @@ namespace GeometryTD
 
         // ===== Button Handlers =====
 
-        private void OnExecuteClicked()
+        private void OnNodePanelClicked()
         {
-            if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
+            if (isAnimating) return;
+            if (StoryManager.Instance == null || !StoryManager.Instance.IsInAdventure) return;
+
+            StoryNodeConfig node = StoryManager.Instance.CurrentNode;
+            if (node == null) return;
+
+            if (node.type == StoryNodeType.Battle)
+            {
+                LevelSelectWin win = GameHelper.OpenWin<LevelSelectWin>();
+                if (win != null)
+                    win.ShowForStoryNode(node.levelId);
+            }
+            else
+            {
                 StoryManager.Instance.ExecuteCurrentNode();
+            }
         }
 
         private void OnBackClicked()
         {
             if (StoryManager.Instance != null)
                 StoryManager.Instance.BackToMainMenu();
+        }
+
+        // ===== Transition Animation =====
+
+        private IEnumerator PlayNodeTransition()
+        {
+            isAnimating = true;
+            interactionBlocker.interactable = false;
+            interactionBlocker.blocksRaycasts = true;
+
+            StoryRuntime runtime = StoryManager.Instance.Runtime;
+            StoryNodeConfig oldNode = ConfigManager.Instance.GetStoryNodeConfig(runtime.previousNodeId);
+            StoryNodeConfig newNode = StoryManager.Instance.CurrentNode;
+
+            if (oldNode == null || newNode == null)
+            {
+                RefreshNodeDisplay();
+                isAnimating = false;
+                interactionBlocker.interactable = true;
+                yield break;
+            }
+
+            // Show old node state first
+            DisplayNodeData(oldNode);
+
+            // Update header with current data
+            StoryCollectionConfig collection = StoryManager.Instance.CurrentCollection;
+            if (collectionNameText != null && collection != null)
+                collectionNameText.text = collection.name ?? "";
+            if (goldText != null)
+                goldText.text = $"Gold: {StoryManager.Instance.GetGold()}";
+            UpdateEffectsCount();
+
+            yield return new WaitForSeconds(0.2f);
+
+            // Find which branch was taken
+            int takenBranchIndex = FindTakenBranch(oldNode, runtime.currentNodeId);
+
+            // Phase 1: Fade out node panel + non-taken branches
+            float elapsed = 0f;
+            while (elapsed < FADE_OUT_DURATION)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / FADE_OUT_DURATION);
+                nodePanelGroup.alpha = 1f - t;
+
+                for (int i = 0; i < branchLines.Count; i++)
+                {
+                    if (i == takenBranchIndex) continue;
+                    Image lineImg = branchLines[i] != null ? branchLines[i].GetComponent<Image>() : null;
+                    if (lineImg != null)
+                    {
+                        Color c = lineImg.color;
+                        c.a = Mathf.Lerp(0.7f, 0f, t);
+                        lineImg.color = c;
+                    }
+                }
+                yield return null;
+            }
+            nodePanelGroup.alpha = 0f;
+
+            // Phase 2: Slide along taken branch
+            elapsed = 0f;
+            Image takenLineImg = (takenBranchIndex >= 0 && takenBranchIndex < branchLines.Count && branchLines[takenBranchIndex] != null)
+                ? branchLines[takenBranchIndex].GetComponent<Image>() : null;
+
+            while (elapsed < SLIDE_DURATION)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / SLIDE_DURATION);
+                float easedT = EaseInOutQuad(t);
+
+                centerRt.anchoredPosition = new Vector2(Mathf.Lerp(0f, -400f, easedT), 0f);
+
+                if (takenLineImg != null)
+                {
+                    Color c = takenLineImg.color;
+                    c.a = Mathf.Lerp(0.7f, 0f, t);
+                    takenLineImg.color = c;
+                }
+                yield return null;
+            }
+
+            // Reset position, switch to new node
+            centerRt.anchoredPosition = Vector2.zero;
+            DisplayNodeData(newNode);
+
+            // Prepare fade-in: set everything invisible
+            nodePanelGroup.alpha = 0f;
+            for (int i = 0; i < branchLines.Count; i++)
+            {
+                Image lineImg = branchLines[i] != null ? branchLines[i].GetComponent<Image>() : null;
+                if (lineImg != null)
+                {
+                    Color c = lineImg.color;
+                    c.a = 0f;
+                    lineImg.color = c;
+                }
+            }
+
+            // Phase 3: Fade in new node + branches
+            elapsed = 0f;
+            // Cache target colors before animating
+            Color[] targetColors = new Color[branchLines.Count];
+            for (int i = 0; i < branchLines.Count; i++)
+            {
+                Image lineImg = branchLines[i] != null ? branchLines[i].GetComponent<Image>() : null;
+                if (lineImg != null)
+                    targetColors[i] = GetBranchLineColor(i, branchLines.Count);
+            }
+
+            while (elapsed < FADE_IN_DURATION)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / FADE_IN_DURATION);
+                nodePanelGroup.alpha = t;
+
+                for (int i = 0; i < branchLines.Count; i++)
+                {
+                    Image lineImg = branchLines[i] != null ? branchLines[i].GetComponent<Image>() : null;
+                    if (lineImg != null)
+                    {
+                        Color c = targetColors[i];
+                        c.a = Mathf.Lerp(0f, targetColors[i].a, t);
+                        lineImg.color = c;
+                    }
+                }
+                yield return null;
+            }
+            nodePanelGroup.alpha = 1f;
+
+            // Restore interaction
+            isAnimating = false;
+            interactionBlocker.interactable = true;
+        }
+
+        private int FindTakenBranch(StoryNodeConfig prevNode, int currentNodeId)
+        {
+            if (prevNode.nextNodes != null)
+            {
+                for (int i = 0; i < prevNode.nextNodes.Length; i++)
+                {
+                    if (prevNode.nextNodes[i].nodeId == currentNodeId)
+                        return i;
+                }
+            }
+            return 0;
+        }
+
+        private float EaseInOutQuad(float t)
+        {
+            return t < 0.5f ? 2f * t * t : 1f - Mathf.Pow(-2f * t + 2f, 2f) / 2f;
         }
 
         // ===== Utilities =====
@@ -273,6 +453,8 @@ namespace GeometryTD
             if (GetComponent<GraphicRaycaster>() == null)
                 gameObject.AddComponent<GraphicRaycaster>();
 
+            interactionBlocker = gameObject.AddComponent<CanvasGroup>();
+
             RectTransform rootRt = GetComponent<RectTransform>();
 
             // Background
@@ -310,18 +492,20 @@ namespace GeometryTD
                 new Vector2(0f, 0.15f), new Vector2(1f, 0.85f),
                 Vector2.zero, Vector2.zero,
                 Color.clear);
-            RectTransform centerRt = centerObj.GetComponent<RectTransform>();
+            centerRt = centerObj.GetComponent<RectTransform>();
             // Remove Image to make transparent
             Destroy(centerObj.GetComponent<Image>());
 
             // Node panel (centered, fixed size)
-            GameObject nodePanel = CreatePanel(centerRt, "NodePanel",
+            nodePanel = CreatePanel(centerRt, "NodePanel",
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
                 Vector2.zero, Vector2.zero,
                 new Color(0.1f, 0.1f, 0.2f, 0.9f));
             nodePanelRt = nodePanel.GetComponent<RectTransform>();
             nodePanelRt.sizeDelta = new Vector2(280f, 200f);
             nodePanelRt.anchoredPosition = new Vector2(-80f, 0f);
+            nodePanelGroup = nodePanel.AddComponent<CanvasGroup>();
+            nodePanel.AddComponent<Button>().onClick.AddListener(OnNodePanelClicked);
 
             // Node icon (top part of panel)
             GameObject iconObj = new GameObject("NodeIcon");
@@ -354,14 +538,6 @@ namespace GeometryTD
                 new Vector2(0f, 0.08f), new Vector2(1f, 0.14f),
                 new Vector2(20f, 0f), new Vector2(-20f, 0f),
                 20, new Color(0.7f, 0.85f, 1f), TextAnchor.MiddleCenter);
-
-            // Execute button
-            executeButton = CreateTextButton(rootRt, "ExecuteButton",
-                new Vector2(0.5f, 0.02f), new Vector2(0.5f, 0.02f),
-                new Vector2(-80f, 0f), new Vector2(80f, 50f),
-                new Color(0.2f, 0.5f, 0.2f, 0.95f), 26, "Enter");
-            executeButton.onClick.AddListener(OnExecuteClicked);
-            executeButtonObj = executeButton.gameObject;
         }
 
         private GameObject CreatePanel(RectTransform parent, string name,

@@ -2,7 +2,15 @@
   "collections": [
     {
       "id": 1,
-      "name": "虚空纪元",
+      "name": "虚空纪元·一",
+      "description": "探索虚空的起源，揭开被遗忘的真相",
+      "icon": "Icon/story_void",
+      "startNodeId": 1001,
+      "endingNodeIds": [1020, 1021, 1022, 9001]
+    },
+    {
+      "id": 2,
+      "name": "虚空纪元·二",
       "description": "探索虚空的起源，揭开被遗忘的真相",
       "icon": "Icon/story_void",
       "startNodeId": 1001,
