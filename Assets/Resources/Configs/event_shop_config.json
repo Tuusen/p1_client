@@ -1,0 +1,29 @@
+{
+  "shops": [
+    {
+      "id": 1,
+      "name": "虚空商人",
+      "refreshCount": 8,
+      "items": [
+        { "effectId": 1, "price": 100, "weight": 80 },
+        { "effectId": 2, "price": 120, "weight": 70 },
+        { "effectId": 3, "price": 50, "weight": 100 },
+        { "effectId": 4, "price": 60, "weight": 95 },
+        { "effectId": 6, "price": 80, "weight": 85 },
+        { "effectId": 7, "price": 90, "weight": 80 },
+        { "effectId": 8, "price": 200, "weight": 30 },
+        { "effectId": 9, "price": 40, "weight": 100 },
+        { "effectId": 12, "price": 250, "weight": 20 },
+        { "effectId": 13, "price": 180, "weight": 40 },
+        { "effectId": 14, "price": 80, "weight": 90 },
+        { "effectId": 15, "price": 200, "weight": 35 },
+        { "effectId": 16, "price": 100, "weight": 75 },
+        { "effectId": 17, "price": 220, "weight": 25 },
+        { "effectId": 18, "price": 120, "weight": 65 },
+        { "effectId": 19, "price": 130, "weight": 60 },
+        { "effectId": 20, "price": 180, "weight": 40 },
+        { "effectId": 21, "price": 200, "weight": 35 }
+      ]
+    }
+  ]
+}

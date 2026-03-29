@@ -1,13 +1,13 @@
 {"roles":[
-    {"id":1,"name":"星际守卫","prefabPath":"Prefabs/actors/Hero"},
-    {"id":101,"name":"小型异形","prefabPath":"Prefabs/actors/Monster"},
-    {"id":102,"name":"中型异形","prefabPath":"Prefabs/actors/Monster"},
-    {"id":103,"name":"大型异形","prefabPath":"Prefabs/actors/Monster"},
-    {"id":110,"name":"异形精锐","prefabPath":"Prefabs/actors/Monster"},
-    {"id":111,"name":"虚空侍卫","prefabPath":"Prefabs/actors/Monster"},
-    {"id":200,"name":"虚空领主","prefabPath":"Prefabs/actors/Boss"},
-    {"id":201,"name":"深渊守卫","prefabPath":"Prefabs/actors/Boss"},
-    {"id":202,"name":"虚空暴君","prefabPath":"Prefabs/actors/Boss"},
-    {"id":1001,"name":"风影守卫","prefabPath":"Prefabs/actors/Summon"},
-    {"id":1002,"name":"熔岩守卫","prefabPath":"Prefabs/actors/Summon1"}
+    {"id":1,"name":"星际守卫","prefabPath":"Prefabs/actors/Hero","portraitPath":""},
+    {"id":101,"name":"小型异形","prefabPath":"Prefabs/actors/Monster","portraitPath":""},
+    {"id":102,"name":"中型异形","prefabPath":"Prefabs/actors/Monster","portraitPath":""},
+    {"id":103,"name":"大型异形","prefabPath":"Prefabs/actors/Monster","portraitPath":""},
+    {"id":110,"name":"异形精锐","prefabPath":"Prefabs/actors/Monster","portraitPath":""},
+    {"id":111,"name":"虚空侍卫","prefabPath":"Prefabs/actors/Monster","portraitPath":""},
+    {"id":200,"name":"虚空领主","prefabPath":"Prefabs/actors/Boss","portraitPath":"Portrait/void_lord"},
+    {"id":201,"name":"深渊守卫","prefabPath":"Prefabs/actors/Boss","portraitPath":"Portrait/abyss_guard"},
+    {"id":202,"name":"虚空暴君","prefabPath":"Prefabs/actors/Boss","portraitPath":"Portrait/void_tyrant"},
+    {"id":1001,"name":"风影守卫","prefabPath":"Prefabs/actors/Summon","portraitPath":""},
+    {"id":1002,"name":"熔岩守卫","prefabPath":"Prefabs/actors/Summon1","portraitPath":""}
 ]}

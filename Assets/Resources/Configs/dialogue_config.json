@@ -1,0 +1,145 @@
+{
+  "dialogues": [
+    {
+      "id": 1,
+      "lines": [
+        { "speaker": "虚空领主", "roleId": 200, "portraitSide": 0, "text": "你终于踏入了虚空的领域......" },
+        { "speaker": "虚空领主", "roleId": 200, "portraitSide": 0, "text": "在这里，每一个选择都将决定你的命运。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "（虚空领主消散在黑暗中，留下两条截然不同的道路）" }
+      ]
+    },
+    {
+      "id": 2,
+      "lines": [
+        { "speaker": "深渊守卫", "roleId": 201, "portraitSide": 0, "text": "你竟然走到了这里......" },
+        { "speaker": "深渊守卫", "roleId": 201, "portraitSide": 0, "text": "不过，真正的考验才刚刚开始。" }
+      ]
+    },
+    {
+      "id": 3,
+      "lines": [
+        { "speaker": "虚空暴君", "roleId": 202, "portraitSide": 0, "text": "渺小的入侵者，你不配踏入虚空的核心！" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "（虚空暴君倒下了，裂隙中透出两道不同的光芒）" }
+      ]
+    },
+    {
+      "id": 4,
+      "lines": [
+        { "speaker": "深渊守卫", "roleId": 201, "portraitSide": 0, "text": "暗影通道的守护者......这就是你的对手。" }
+      ]
+    },
+    {
+      "id": 5,
+      "lines": [
+        { "speaker": "虚空暴君", "roleId": 202, "portraitSide": 0, "text": "暗影的力量并非你能驾驭的！" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "（暗影中浮现出两条不同的路径）" }
+      ]
+    },
+    {
+      "id": 6,
+      "lines": [
+        { "speaker": "虚空领主", "roleId": 200, "portraitSide": 0, "text": "裂隙深处的第一道防线已经被你攻破。" }
+      ]
+    },
+    {
+      "id": 7,
+      "lines": [
+        { "speaker": "深渊守卫", "roleId": 201, "portraitSide": 0, "text": "继续前进吧，虚空的核心正在等待着你。" }
+      ]
+    },
+    {
+      "id": 8,
+      "lines": [
+        { "speaker": "虚空暴君", "roleId": 202, "portraitSide": 0, "text": "不可能......你怎么能击败我们三个？！" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "（虚空的最后一道屏障消失了）" }
+      ]
+    },
+    {
+      "id": 10,
+      "lines": [
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "这是一条沉默的道路，没有任何声音，只有无尽的黑暗。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "但在黑暗的尽头，你看到了微弱的光芒......" }
+      ]
+    },
+    {
+      "id": 11,
+      "lines": [
+        { "speaker": "旅者", "roleId": 0, "portraitSide": 0, "text": "欢迎来到营地，冒险者。在这里你可以稍作休息。" },
+        { "speaker": "旅者", "roleId": 0, "portraitSide": 0, "text": "不过，前方的路不止一条......你需要做出选择。" }
+      ]
+    },
+    {
+      "id": 12,
+      "lines": [
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "暗影密室中回荡着低沉的耳语，似乎有什么东西在注视着你。" }
+      ]
+    },
+    {
+      "id": 20,
+      "lines": [
+        { "speaker": "虚空领主", "roleId": 200, "portraitSide": 0, "text": "虚空风暴......这就是最终的试炼。" }
+      ]
+    },
+    {
+      "id": 21,
+      "lines": [
+        { "speaker": "深渊守卫", "roleId": 201, "portraitSide": 0, "text": "你的力量已经超出了我的预期。" }
+      ]
+    },
+    {
+      "id": 22,
+      "lines": [
+        { "speaker": "虚空暴君", "roleId": 202, "portraitSide": 0, "text": "这不是结束......虚空永远不会终结！" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "（最终的选择摆在了你的面前）" }
+      ]
+    },
+    {
+      "id": 23,
+      "lines": [
+        { "speaker": "虚空领主", "roleId": 200, "portraitSide": 0, "text": "歧路上的旅人，你选择了更艰难的道路。" }
+      ]
+    },
+    {
+      "id": 24,
+      "lines": [
+        { "speaker": "深渊守卫", "roleId": 201, "portraitSide": 0, "text": "你比我想象的更加顽强。" }
+      ]
+    },
+    {
+      "id": 25,
+      "lines": [
+        { "speaker": "虚空暴君", "roleId": 202, "portraitSide": 0, "text": "终结虚空......还是被虚空终结？" }
+      ]
+    },
+    {
+      "id": 50,
+      "lines": [
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "虚空的核心终于沉寂了。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "你揭开了被遗忘的真相——虚空并非毁灭的力量，而是创造的源头。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "新的纪元，从此刻开始。" }
+      ]
+    },
+    {
+      "id": 51,
+      "lines": [
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "虚空的风暴平息了，但黑暗并未完全消散。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "你成功守护了世界，但虚空的秘密仍然深埋在黑暗之中。" }
+      ]
+    },
+    {
+      "id": 52,
+      "lines": [
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "你找到了虚空之外的世界。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "在那里，时间没有意义，空间没有尽头。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "你成为了虚空的一部分，也成为了超越虚空的存在。" }
+      ]
+    },
+    {
+      "id": 60,
+      "lines": [
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "虚空的黑暗吞噬了你。" },
+        { "speaker": "", "roleId": 0, "portraitSide": 0, "text": "冒险者的旅途，在此终结。" }
+      ]
+    }
+  ]
+}

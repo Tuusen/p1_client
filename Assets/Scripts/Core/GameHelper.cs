@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -69,6 +70,14 @@ namespace GeometryTD
         public static void CloseWin<T>() where T : BaseWin
         {
             WinManager.Instance.CloseWin<T>();
+        }
+
+        // ===== 场景管理 =====
+
+        public static void LoadScene(string sceneName)
+        {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(sceneName);
         }
     }
 }
