@@ -27,5 +27,10 @@ namespace GeometryTD
         {
             GameHelper.OpenWin<ArcaneSelectWin>();
         }
+
+        public void OnStoryCollectionButtonClicked()
+        {
+            GameHelper.OpenWin<StoryCollectionWin>();
+        }
     }
 }
