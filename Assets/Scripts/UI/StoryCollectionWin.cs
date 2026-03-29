@@ -82,7 +82,7 @@ namespace GeometryTD
                 Vector2.zero, Vector2.one,
                 new Vector2(15f, 0f), new Vector2(-60f, 0f),
                 28, Color.white, TextAnchor.MiddleLeft);
-            titleText.text = "Story Collection";
+            titleText.text = "故事集";
 
             // Content area (below header)
             GameObject contentArea = new GameObject("ContentArea");
@@ -207,7 +207,7 @@ namespace GeometryTD
             startButton = CreateTextButton(detailRt, "StartButton",
                 new Vector2(0.5f, 0.06f), new Vector2(0.5f, 0.06f),
                 new Vector2(-170f, 0f), new Vector2(-15f, 45f),
-                new Color(0.2f, 0.35f, 0.55f, 0.95f), 22, "New Adventure",
+                new Color(0.2f, 0.35f, 0.55f, 0.95f), 22, "新冒险",
                 OnStartNewClicked);
 
             // Continue button
@@ -222,7 +222,7 @@ namespace GeometryTD
             continueButton = CreateTextButton(contWrapRt, "ContinueButton",
                 Vector2.zero, Vector2.one,
                 Vector2.zero, Vector2.zero,
-                new Color(0.2f, 0.5f, 0.25f, 0.95f), 22, "Continue",
+                new Color(0.2f, 0.5f, 0.25f, 0.95f), 22, "继续",
                 OnContinueClicked);
         }
 
@@ -255,20 +255,20 @@ namespace GeometryTD
                 new Vector2(0f, 0.45f), Vector2.one,
                 new Vector2(15f, 0f), new Vector2(-15f, -10f),
                 22, Color.white, TextAnchor.MiddleCenter);
-            msgText.text = "Existing save will be overwritten.\nStart a new adventure?";
+            msgText.text = "现有存档将被覆盖。\n确定开始新冒险吗？";
 
             // Yes button
             CreateTextButton(panelRt, "YesButton",
                 new Vector2(0.5f, 0.1f), new Vector2(0.5f, 0.1f),
                 new Vector2(-130f, 0f), new Vector2(-10f, 40f),
-                new Color(0.5f, 0.25f, 0.2f, 0.95f), 22, "Yes",
+                new Color(0.5f, 0.25f, 0.2f, 0.95f), 22, "确定",
                 OnConfirmOverwrite);
 
             // No button
             CreateTextButton(panelRt, "NoButton",
                 new Vector2(0.5f, 0.1f), new Vector2(0.5f, 0.1f),
                 new Vector2(10f, 0f), new Vector2(130f, 40f),
-                new Color(0.3f, 0.3f, 0.4f, 0.95f), 22, "No",
+                new Color(0.3f, 0.3f, 0.4f, 0.95f), 22, "取消",
                 OnCancelOverwrite);
 
             confirmOverlay.SetActive(false);
@@ -373,7 +373,7 @@ namespace GeometryTD
                 && StoryManager.Instance.HasSave(config.id);
 
             string statusLine = $"{Mathf.RoundToInt(completionRate * 100)}%";
-            if (hasSave) statusLine += "  [Save]";
+            if (hasSave) statusLine += "  [存档]";
 
             Text statusText = CreateText(itemRt, "Status",
                 new Vector2(0f, 0f), new Vector2(1f, 0.5f),
@@ -463,7 +463,7 @@ namespace GeometryTD
                 int total = config.endingNodeIds != null ? config.endingNodeIds.Length : 0;
                 float rate = StoryManager.Instance != null
                     ? StoryManager.Instance.GetCompletionRate(config.id) : 0f;
-                detailProgress.text = $"Endings: {unlocked}/{total}  ({Mathf.RoundToInt(rate * 100)}%)";
+                detailProgress.text = $"结局: {unlocked}/{total}  ({Mathf.RoundToInt(rate * 100)}%)";
             }
 
             // Save status
@@ -471,7 +471,7 @@ namespace GeometryTD
                 && StoryManager.Instance.HasSave(config.id);
             if (detailSaveStatus != null)
             {
-                detailSaveStatus.text = hasSave ? "Save data exists" : "";
+                detailSaveStatus.text = hasSave ? "存档已存在" : "";
                 detailSaveStatus.color = hasSave
                     ? new Color(0.5f, 0.8f, 0.5f)
                     : Color.clear;
