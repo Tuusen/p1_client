@@ -188,7 +188,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 72
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -290,11 +290,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1608624792}
         m_TargetAssemblyTypeName: GeometryTD.MainMenuUI, Assembly-CSharp
-        m_MethodName: OnStartButtonClicked
-        m_Mode: 0
+        m_MethodName: OnStoryCollectionButtonClicked
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

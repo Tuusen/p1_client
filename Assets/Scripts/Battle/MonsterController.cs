@@ -28,14 +28,18 @@ namespace GeometryTD
         private float knockbackRemaining;
         private const float KnockbackSpeed = 20f;
 
+        private bool isElite;
+
         [SerializeField] private HealthBarUI hpBar;
 
         public bool IsDead => isDead;
+        public bool IsElite => isElite;
 
         public void Init(MonsterConfig config, Transform hero, BattleManager manager, float hardMultiplier = 1f)
         {
             battleManager = manager;
             heroTarget = hero;
+            isElite = config.is_elite;
 
             maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
             currentHp = maxHp;

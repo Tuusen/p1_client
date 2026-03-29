@@ -19,6 +19,14 @@ namespace GeometryTD
         public List<RoleConfig> RoleConfigs { get; private set; }
         public List<AttributeConfig> AttributeConfigs { get; private set; }
 
+        // Story Collection 相关配置
+        public List<StoryCollectionConfig> StoryCollectionConfigs { get; private set; }
+        public List<StoryNodeConfig> StoryNodeConfigs { get; private set; }
+        public List<DialogueConfig> DialogueConfigs { get; private set; }
+        public List<ChoiceGroupConfig> ChoiceGroupConfigs { get; private set; }
+        public List<PassiveEffectConfig> PassiveEffectConfigs { get; private set; }
+        public List<EventShopConfig> EventShopConfigs { get; private set; }
+
         private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
         private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
         private Dictionary<int, ArcaneConfig> arcaneLookup;
@@ -27,6 +35,14 @@ namespace GeometryTD
         private Dictionary<int, ConditionConfig> conditionLookup;
         private Dictionary<int, RoleConfig> roleLookup;
         private Dictionary<int, HeroConfig> heroLookup;
+
+        // Story Collection 查询索引
+        private Dictionary<int, StoryCollectionConfig> storyCollectionLookup;
+        private Dictionary<int, StoryNodeConfig> storyNodeLookup;
+        private Dictionary<int, DialogueConfig> dialogueLookup;
+        private Dictionary<int, ChoiceGroupConfig> choiceGroupLookup;
+        private Dictionary<int, PassiveEffectConfig> passiveEffectLookup;
+        private Dictionary<int, EventShopConfig> eventShopLookup;
 
         private Dictionary<int, GameObject> bulletPrefabCache;
         private Dictionary<int, GameObject> effectPrefabCache;
@@ -57,6 +73,12 @@ namespace GeometryTD
             ConditionConfigs = LoadConfig<ConditionConfigList>("Configs/condition_config").conditions;
             RoleConfigs = LoadConfig<RoleConfigList>("Configs/role_config").roles;
             AttributeConfigs = LoadConfig<AttributeConfigList>("Configs/attribute_config").attributes;
+            StoryCollectionConfigs = LoadConfig<StoryCollectionConfigList>("Configs/story_collection_config").collections;
+            StoryNodeConfigs = LoadConfig<StoryNodeConfigList>("Configs/story_node_config").nodes;
+            DialogueConfigs = LoadConfig<DialogueConfigList>("Configs/dialogue_config").dialogues;
+            ChoiceGroupConfigs = LoadConfig<ChoiceGroupConfigList>("Configs/choice_option_config").choiceGroups;
+            PassiveEffectConfigs = LoadConfig<PassiveEffectConfigList>("Configs/passive_effect_config").effects;
+            EventShopConfigs = LoadConfig<EventShopConfigList>("Configs/event_shop_config").shops;
             BuildSkillLookup();
             BuildBulletStyleLookup();
             BuildArcaneLookup();
@@ -65,6 +87,12 @@ namespace GeometryTD
             BuildConditionLookup();
             BuildRoleLookup();
             BuildHeroLookup();
+            BuildStoryCollectionLookup();
+            BuildStoryNodeLookup();
+            BuildDialogueLookup();
+            BuildChoiceGroupLookup();
+            BuildPassiveEffectLookup();
+            BuildEventShopLookup();
             PreloadPrefabs();
             PreloadRolePrefabs();
         }
@@ -340,6 +368,126 @@ namespace GeometryTD
                     return attrs[i].value;
             }
             return defaultValue;
+        }
+
+        // ===== 故事集配置 =====
+
+        private void BuildStoryCollectionLookup()
+        {
+            storyCollectionLookup = new Dictionary<int, StoryCollectionConfig>();
+            if (StoryCollectionConfigs == null) return;
+            foreach (var config in StoryCollectionConfigs)
+                storyCollectionLookup[config.id] = config;
+        }
+
+        public StoryCollectionConfig GetStoryCollectionConfig(int id)
+        {
+            if (storyCollectionLookup != null && storyCollectionLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到故事集配置, id: {id}");
+            return null;
+        }
+
+        // ===== 节点配置 =====
+
+        private void BuildStoryNodeLookup()
+        {
+            storyNodeLookup = new Dictionary<int, StoryNodeConfig>();
+            if (StoryNodeConfigs == null) return;
+            foreach (var config in StoryNodeConfigs)
+                storyNodeLookup[config.id] = config;
+        }
+
+        public StoryNodeConfig GetStoryNodeConfig(int id)
+        {
+            if (storyNodeLookup != null && storyNodeLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到故事节点配置, id: {id}");
+            return null;
+        }
+
+        public List<StoryNodeConfig> GetNodesByCollection(int collectionId)
+        {
+            List<StoryNodeConfig> result = new List<StoryNodeConfig>();
+            if (StoryNodeConfigs == null) return result;
+            foreach (var node in StoryNodeConfigs)
+            {
+                if (node.collectionId == collectionId)
+                    result.Add(node);
+            }
+            return result;
+        }
+
+        // ===== 对话配置 =====
+
+        private void BuildDialogueLookup()
+        {
+            dialogueLookup = new Dictionary<int, DialogueConfig>();
+            if (DialogueConfigs == null) return;
+            foreach (var config in DialogueConfigs)
+                dialogueLookup[config.id] = config;
+        }
+
+        public DialogueConfig GetDialogueConfig(int id)
+        {
+            if (dialogueLookup != null && dialogueLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到对话配置, id: {id}");
+            return null;
+        }
+
+        // ===== 选项组配置 =====
+
+        private void BuildChoiceGroupLookup()
+        {
+            choiceGroupLookup = new Dictionary<int, ChoiceGroupConfig>();
+            if (ChoiceGroupConfigs == null) return;
+            foreach (var config in ChoiceGroupConfigs)
+                choiceGroupLookup[config.id] = config;
+        }
+
+        public ChoiceGroupConfig GetChoiceGroupConfig(int id)
+        {
+            if (choiceGroupLookup != null && choiceGroupLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到选项组配置, id: {id}");
+            return null;
+        }
+
+        // ===== 藏品效果配置 =====
+
+        private void BuildPassiveEffectLookup()
+        {
+            passiveEffectLookup = new Dictionary<int, PassiveEffectConfig>();
+            if (PassiveEffectConfigs == null) return;
+            foreach (var config in PassiveEffectConfigs)
+                passiveEffectLookup[config.id] = config;
+        }
+
+        public PassiveEffectConfig GetPassiveEffectConfig(int id)
+        {
+            if (passiveEffectLookup != null && passiveEffectLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到藏品效果配置, id: {id}");
+            return null;
+        }
+
+        // ===== 商店配置 =====
+
+        private void BuildEventShopLookup()
+        {
+            eventShopLookup = new Dictionary<int, EventShopConfig>();
+            if (EventShopConfigs == null) return;
+            foreach (var config in EventShopConfigs)
+                eventShopLookup[config.id] = config;
+        }
+
+        public EventShopConfig GetEventShopConfig(int id)
+        {
+            if (eventShopLookup != null && eventShopLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogError($"[ConfigManager] 未找到商店配置, id: {id}");
+            return null;
         }
     }
 }

@@ -15,6 +15,7 @@ namespace GeometryTD
         [SerializeField] private Button backButton;
 
         private bool isBossMode;
+        private bool lastResultIsVictory;
 
         private void Start()
         {
@@ -105,6 +106,7 @@ namespace GeometryTD
 
         public void ShowResult(bool isVictory)
         {
+            lastResultIsVictory = isVictory;
             if (resultPanel != null)
             {
                 resultPanel.SetActive(true);
@@ -118,6 +120,22 @@ namespace GeometryTD
 
         private void OnBackButtonClicked()
         {
+            // Story mode: navigate to story/event scene
+            if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
+            {
+                if (lastResultIsVictory)
+                {
+                    StoryManager.Instance.AdvanceToNextNode();
+                    StoryManager.Instance.EnterStoryScene();
+                }
+                else
+                {
+                    StoryManager.Instance.EnterEventScene();
+                }
+                return;
+            }
+
+            // Normal mode: back to main menu
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.BackToMainMenu();

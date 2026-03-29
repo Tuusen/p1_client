@@ -1,3 +1,4 @@
+// using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -586,6 +587,16 @@ namespace GeometryTD
                     battleUI.UpdateKillProgress(monsterSpawner.KillCount, nextThreshold);
                 }
             }
+
+            // Story: grant kill gold
+            if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
+            {
+                int coin = monster.IsElite
+                    ? currentLevelConfig.coinEliteKill
+                    : currentLevelConfig.coinNormalKill;
+                if (coin > 0)
+                    StoryManager.Instance.AddBattleGold(coin);
+            }
         }
 
         public void UpdateBossHpUI(float currentHp, float maxHp)
@@ -605,6 +616,81 @@ namespace GeometryTD
                 aliveEnemies.Remove(bossController.transform);
             }
             bossController = null;
+
+            // Story: grant boss kill gold
+            if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure
+                && currentLevelConfig.coinBossKill > 0)
+            {
+                StoryManager.Instance.AddBattleGold(currentLevelConfig.coinBossKill);
+            }
+
+            // Story: check boss death event (dialogue/choices overlay)
+            if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
+            {
+                BossEventEntry bossEvent = StoryManager.Instance.GetCurrentBossEvent();
+                if (bossEvent != null)
+                {
+                    HandleBossEvent(bossEvent);
+                    return;
+                }
+            }
+
+            monsterSpawner.OnBossKilled();
+        }
+
+        // ===== Boss Death Event Chain =====
+
+        private void HandleBossEvent(BossEventEntry bossEvent)
+        {
+            if (bossEvent.dialogueId > 0)
+            {
+                DialogueConfig config = ConfigManager.Instance.GetDialogueConfig(bossEvent.dialogueId);
+                if (config != null && config.lines != null && config.lines.Length > 0)
+                {
+                    DialogueWin win = GameHelper.OpenWin<DialogueWin>();
+                    win.ShowDialogue(config, () => OnBossDialogueComplete(bossEvent));
+                    return;
+                }
+            }
+
+            if (bossEvent.choiceGroupId > 0)
+            {
+                ShowBossChoices(bossEvent.choiceGroupId);
+                return;
+            }
+
+            monsterSpawner.OnBossKilled();
+        }
+
+        private void OnBossDialogueComplete(BossEventEntry bossEvent)
+        {
+            if (bossEvent.choiceGroupId > 0)
+            {
+                ShowBossChoices(bossEvent.choiceGroupId);
+            }
+            else
+            {
+                monsterSpawner.OnBossKilled();
+            }
+        }
+
+        private void ShowBossChoices(int choiceGroupId)
+        {
+            ChoiceGroupConfig config = ConfigManager.Instance.GetChoiceGroupConfig(choiceGroupId);
+            if (config != null && config.options != null && config.options.Length > 0)
+            {
+                ChoiceWin win = GameHelper.OpenWin<ChoiceWin>();
+                win.ShowChoices(config, OnBossChoiceSelected);
+                return;
+            }
+
+            monsterSpawner.OnBossKilled();
+        }
+
+        private void OnBossChoiceSelected(int index, ChoiceOption option)
+        {
+            if (option != null && StoryManager.Instance != null)
+                StoryManager.Instance.ProcessChoice(index, option);
 
             monsterSpawner.OnBossKilled();
         }
@@ -638,6 +724,10 @@ namespace GeometryTD
         {
             if (gameEnded) return;
             gameEnded = true;
+
+            // Story: handle battle failure before showing UI
+            if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
+                StoryManager.Instance.HandleBattleFailed();
 
             Time.timeScale = 0f;
             if (battleUI != null)
