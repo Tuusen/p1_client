@@ -11,7 +11,19 @@ namespace GeometryTD
     /// </summary>
     public class StoryManager : MonoBehaviour
     {
-        public static StoryManager Instance { get; private set; }
+        private static StoryManager _instance;
+        public static StoryManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    GameObject obj = new GameObject("StoryManager");
+                    _instance = obj.AddComponent<StoryManager>();
+                }
+                return _instance;
+            }
+        }
 
         /// <summary>当前冒险的运行时状态，null表示未在冒险中</summary>
         public StoryRuntime Runtime { get; private set; }
@@ -61,12 +73,12 @@ namespace GeometryTD
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
+            if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
-            Instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
         }
 
