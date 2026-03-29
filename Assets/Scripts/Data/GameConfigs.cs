@@ -35,6 +35,7 @@ namespace GeometryTD
         public int id;
         public string name;
         public string prefabPath;
+        public string portraitPath;
     }
 
     [Serializable]
@@ -315,6 +316,10 @@ namespace GeometryTD
         public int[] conditions;
         public int hard;
         public float spawn_interval;
+        public int coinNormalKill;
+        public int coinEliteKill;
+        public int coinBossKill;
+        public float coinSelfDestructRate;
         public LevelMonsterEntry[] monsterList;
         public LevelEliteEntry[] superMList;
         public LevelBossEntry[] bossList;
@@ -340,5 +345,223 @@ namespace GeometryTD
     public class ConditionConfigList
     {
         public List<ConditionConfig> conditions;
+    }
+
+    // ===== 故事集系统 =====
+
+    // -- 节点类型 --
+    public static class StoryNodeType
+    {
+        public const int Battle = 1;
+        public const int Event = 2;
+        public const int Shop = 3;
+        public const int Ending = 4;
+    }
+
+    // -- 结局类型 --
+    public static class EndingType
+    {
+        public const int None = 0;
+        public const int Normal = 1;
+        public const int True = 2;
+        public const int Hidden = 3;
+        public const int Fail = 4;
+    }
+
+    // -- 藏品效果类型 --
+    public static class PassiveEffectType
+    {
+        public const int AttributeBoost = 1;   // 属性加成
+        public const int SkillEnhance = 2;     // 技能增强
+        public const int Special = 3;          // 特殊效果
+    }
+
+    // -- 技能增强子类型 (effectType=2 时的 targetAttrId) --
+    public static class SkillEnhanceType
+    {
+        public const int CdReduce = 1;         // 技能CD减少
+        public const int DamageBoost = 2;      // 技能伤害加成
+        public const int CostReduce = 3;       // 能量消耗减少
+        public const int ExtraShot = 4;        // 额外射击次数
+    }
+
+    // -- 特殊效果子类型 (effectType=3 时的 targetAttrId) --
+    public static class SpecialEffectType
+    {
+        public const int KillHeal = 1;         // 击杀回血
+        public const int GoldBonus = 2;        // 金币加成
+        public const int StartShield = 3;      // 开局护盾
+        public const int MonsterSlow = 4;      // 怪物减速
+        public const int CritChance = 5;       // 暴击概率
+        public const int CritDamage = 6;       // 暴击伤害
+    }
+
+    // -- 藏品效果数值类型 --
+    public static class ValueType
+    {
+        public const int Percentage = 1;       // 百分比
+        public const int Flat = 2;             // 固定值
+    }
+
+    // -- 故事集主表 --
+
+    [Serializable]
+    public class StoryCollectionConfig
+    {
+        public int id;
+        public string name;
+        public string description;
+        public string icon;
+        public int startNodeId;
+        public int[] endingNodeIds;
+    }
+
+    [Serializable]
+    public class StoryCollectionConfigList
+    {
+        public List<StoryCollectionConfig> collections;
+    }
+
+    // -- 节点配置表 --
+
+    [Serializable]
+    public class BossEventEntry
+    {
+        public int dialogueId;
+        public int choiceGroupId;
+    }
+
+    [Serializable]
+    public class NextNodeEntry
+    {
+        public int nodeId;
+        public int[] conditions;
+    }
+
+    [Serializable]
+    public class StoryNodeConfig
+    {
+        public int id;
+        public int collectionId;
+        public string name;
+        public string icon;
+        public int type;
+        public int levelId;
+        public BossEventEntry[] bossEvents;
+        public int dialogueId;
+        public int choiceGroupId;
+        public int shopId;
+        public int defaultNextNodeId;
+        public int failNodeId;
+        public int endingType;
+        public string endingCg;
+        public int branchLineCount;
+        public NextNodeEntry[] nextNodes;
+    }
+
+    [Serializable]
+    public class StoryNodeConfigList
+    {
+        public List<StoryNodeConfig> nodes;
+    }
+
+    // -- 对话配置表 --
+
+    [Serializable]
+    public class DialogueLine
+    {
+        public string speaker;
+        public int roleId;
+        public int portraitSide;
+        public string text;
+    }
+
+    [Serializable]
+    public class DialogueConfig
+    {
+        public int id;
+        public DialogueLine[] lines;
+    }
+
+    [Serializable]
+    public class DialogueConfigList
+    {
+        public List<DialogueConfig> dialogues;
+    }
+
+    // -- 选项配置表 --
+
+    [Serializable]
+    public class ChoiceOption
+    {
+        public int id;
+        public string text;
+        public string description;
+        public int effectId;
+        public bool triggerBattle;
+        public int goldReward;
+    }
+
+    [Serializable]
+    public class ChoiceGroupConfig
+    {
+        public int id;
+        public string title;
+        public ChoiceOption[] options;
+    }
+
+    [Serializable]
+    public class ChoiceGroupConfigList
+    {
+        public List<ChoiceGroupConfig> choiceGroups;
+    }
+
+    // -- 藏品效果配置表 --
+
+    [Serializable]
+    public class PassiveEffectConfig
+    {
+        public int id;
+        public string name;
+        public string description;
+        public string icon;
+        public int rarity;
+        public int effectType;
+        public int targetAttrId;
+        public int valueType;
+        public float value;
+        public bool stackable;
+        public int maxStack;
+    }
+
+    [Serializable]
+    public class PassiveEffectConfigList
+    {
+        public List<PassiveEffectConfig> effects;
+    }
+
+    // -- 商店配置表 --
+
+    [Serializable]
+    public class ShopItem
+    {
+        public int effectId;
+        public int price;
+        public int weight;
+    }
+
+    [Serializable]
+    public class EventShopConfig
+    {
+        public int id;
+        public string name;
+        public int refreshCount;
+        public ShopItem[] items;
+    }
+
+    [Serializable]
+    public class EventShopConfigList
+    {
+        public List<EventShopConfig> shops;
     }
 }

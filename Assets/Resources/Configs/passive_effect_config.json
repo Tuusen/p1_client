@@ -1,0 +1,130 @@
+{
+  "effects": [
+    {
+      "id": 1, "name": "虚空之心", "description": "生命值提升20%",
+      "icon": "Icon/void_heart", "rarity": 2,
+      "effectType": 1, "targetAttrId": 1, "valueType": 1, "value": 20,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 2, "name": "暗影斗篷", "description": "攻击力提升15%",
+      "icon": "Icon/shadow_cloak", "rarity": 2,
+      "effectType": 1, "targetAttrId": 3, "valueType": 1, "value": 15,
+      "stackable": true, "maxStack": 2
+    },
+    {
+      "id": 3, "name": "旅者的干粮", "description": "护盾值增加500",
+      "icon": "Icon/traveler_food", "rarity": 1,
+      "effectType": 1, "targetAttrId": 2, "valueType": 2, "value": 500,
+      "stackable": false, "maxStack": 1
+    },
+    {
+      "id": 4, "name": "鹰眼透镜", "description": "攻击范围提升10%",
+      "icon": "Icon/eagle_lens", "rarity": 1,
+      "effectType": 1, "targetAttrId": 4, "valueType": 1, "value": 10,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 5, "name": "狂暴药剂", "description": "攻击力提升30%，生命值降低10%",
+      "icon": "Icon/rage_potion", "rarity": 3,
+      "effectType": 1, "targetAttrId": 3, "valueType": 1, "value": 30,
+      "stackable": false, "maxStack": 1
+    },
+    {
+      "id": 6, "name": "疾风之刃", "description": "攻击间隔缩短15%",
+      "icon": "Icon/swift_blade", "rarity": 2,
+      "effectType": 1, "targetAttrId": 5, "valueType": 1, "value": 15,
+      "stackable": true, "maxStack": 2
+    },
+    {
+      "id": 7, "name": "暗影护符", "description": "伤害提升10%",
+      "icon": "Icon/shadow_amulet", "rarity": 2,
+      "effectType": 1, "targetAttrId": 7, "valueType": 1, "value": 10,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 8, "name": "暗影之眼", "description": "攻击目标数+1",
+      "icon": "Icon/shadow_eye", "rarity": 3,
+      "effectType": 1, "targetAttrId": 8, "valueType": 2, "value": 1,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 9, "name": "旅者的祝福", "description": "生命值提升10%",
+      "icon": "Icon/traveler_bless", "rarity": 1,
+      "effectType": 1, "targetAttrId": 1, "valueType": 1, "value": 10,
+      "stackable": true, "maxStack": 5
+    },
+    {
+      "id": 10, "name": "虚空壁垒", "description": "护盾值增加1000",
+      "icon": "Icon/void_barrier", "rarity": 2,
+      "effectType": 1, "targetAttrId": 2, "valueType": 2, "value": 1000,
+      "stackable": false, "maxStack": 1
+    },
+    {
+      "id": 11, "name": "裂隙之力", "description": "攻击力提升25%",
+      "icon": "Icon/rift_power", "rarity": 2,
+      "effectType": 1, "targetAttrId": 3, "valueType": 1, "value": 25,
+      "stackable": true, "maxStack": 2
+    },
+    {
+      "id": 12, "name": "嗜血符文", "description": "击杀敌人回复1%最大生命值",
+      "icon": "Icon/blood_rune", "rarity": 3,
+      "effectType": 3, "targetAttrId": 1, "valueType": 1, "value": 1,
+      "stackable": true, "maxStack": 5
+    },
+    {
+      "id": 13, "name": "时间扭曲", "description": "所有技能CD减少15%",
+      "icon": "Icon/time_warp", "rarity": 3,
+      "effectType": 2, "targetAttrId": 1, "valueType": 1, "value": 15,
+      "stackable": true, "maxStack": 2
+    },
+    {
+      "id": 14, "name": "幸运金币", "description": "金币获取额外+25%",
+      "icon": "Icon/lucky_coin", "rarity": 2,
+      "effectType": 3, "targetAttrId": 2, "valueType": 1, "value": 25,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 15, "name": "虚空灌注", "description": "技能伤害提升20%",
+      "icon": "Icon/void_infusion", "rarity": 3,
+      "effectType": 2, "targetAttrId": 2, "valueType": 1, "value": 20,
+      "stackable": true, "maxStack": 2
+    },
+    {
+      "id": 16, "name": "节能晶石", "description": "技能能量消耗减少10%",
+      "icon": "Icon/energy_crystal", "rarity": 2,
+      "effectType": 2, "targetAttrId": 3, "valueType": 1, "value": 10,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 17, "name": "弹幕宝珠", "description": "技能额外发射+1",
+      "icon": "Icon/barrage_orb", "rarity": 3,
+      "effectType": 2, "targetAttrId": 4, "valueType": 2, "value": 1,
+      "stackable": true, "maxStack": 2
+    },
+    {
+      "id": 18, "name": "虚空之盾", "description": "进入关卡时额外获得800护盾",
+      "icon": "Icon/void_shield", "rarity": 2,
+      "effectType": 3, "targetAttrId": 3, "valueType": 2, "value": 800,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 19, "name": "减速领域", "description": "所有怪物减速15%",
+      "icon": "Icon/slow_field", "rarity": 2,
+      "effectType": 3, "targetAttrId": 4, "valueType": 1, "value": 15,
+      "stackable": true, "maxStack": 2
+    },
+    {
+      "id": 20, "name": "致命直觉", "description": "10%概率造成暴击",
+      "icon": "Icon/critical_instinct", "rarity": 3,
+      "effectType": 3, "targetAttrId": 5, "valueType": 1, "value": 10,
+      "stackable": true, "maxStack": 3
+    },
+    {
+      "id": 21, "name": "毁灭之力", "description": "暴击时额外伤害+50%",
+      "icon": "Icon/destruction_power", "rarity": 3,
+      "effectType": 3, "targetAttrId": 6, "valueType": 1, "value": 50,
+      "stackable": true, "maxStack": 2
+    }
+  ]
+}
