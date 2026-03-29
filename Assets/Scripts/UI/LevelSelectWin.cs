@@ -18,6 +18,7 @@ namespace GeometryTD
         [SerializeField] private Button closePanelButton;
 
         private int selectedLevelId;
+        private bool isStoryMode;
         private List<GameObject> levelItems = new List<GameObject>();
 
         public override void Init()
@@ -25,7 +26,10 @@ namespace GeometryTD
             base.Init();
             if (closeDetailButton != null)
                 closeDetailButton.onClick.AddListener(() => {
-                    detailPanel.SetActive(false);
+                    if (isStoryMode)
+                        WinManager.Instance.CloseWin<LevelSelectWin>();
+                    else
+                        detailPanel.SetActive(false);
                 });
             if (closePanelButton != null)
                 closePanelButton.onClick.AddListener(() => {
@@ -46,6 +50,7 @@ namespace GeometryTD
 
         public override void OnClose()
         {
+            isStoryMode = false;
             base.OnClose();
         }
 
@@ -112,6 +117,15 @@ namespace GeometryTD
             numText.color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f);
 
             return itemObj;
+        }
+
+        public void ShowForStoryNode(int levelId)
+        {
+            isStoryMode = true;
+            selectedLevelId = levelId;
+            ShowDetail(levelId);
+            if (challengeButton != null)
+                challengeButton.interactable = true;
         }
 
         private void OnLevelItemClicked(int levelId)
@@ -214,6 +228,14 @@ namespace GeometryTD
 
         private void OnChallengeClicked()
         {
+            if (isStoryMode)
+            {
+                WinManager.Instance.CloseWin<LevelSelectWin>();
+                if (StoryManager.Instance != null)
+                    StoryManager.Instance.ExecuteCurrentNode();
+                return;
+            }
+
             if (GameManager.Instance == null) return;
             if (!GameManager.Instance.IsLevelUnlocked(selectedLevelId)) return;
 
