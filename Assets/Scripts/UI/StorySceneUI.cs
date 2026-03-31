@@ -149,12 +149,6 @@ namespace GeometryTD
             RebuildBranchLines(node);
         }
 
-        private void AutoExecute()
-        {
-            if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
-                StoryManager.Instance.ExecuteCurrentNode();
-        }
-
         private void UpdateEffectsCount()
         {
             if (effectsCountText == null || StoryManager.Instance == null || StoryManager.Instance.Runtime == null)
