@@ -10,14 +10,16 @@ namespace GeometryTD
         private float maxShield;
         private float attackRange;
         private float attackInterval;
-        private int attackSkillId;
+        private int[] attackSkillIds;
+        private float[] attackSkillCds;
+        private float[] attackSkillTimers;
+        private SkillConfig[] attackSkillConfigs;
         private float baseAttack;
         private int attackCount;
 
         [Header("运行时状态")]
         private float currentHp;
         private float currentShield;
-        private float attackTimer;
 
         // Buff状态
         private float hotHealPerSec;
@@ -57,18 +59,43 @@ namespace GeometryTD
 
             maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP);
             maxShield = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Shield);
-            attackRange = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackRange);
-            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
-            attackSkillId = config.attack_skill_id;
             baseAttack = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack);
             attackCount = (int)ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackCount, 1f);
             if (attackCount < 1) attackCount = 1;
 
             currentHp = maxHp;
             currentShield = maxShield;
-            attackTimer = 0f;
 
-            normalAttackConfig = ConfigManager.Instance.GetSkillConfig(attackSkillId);
+            // 初始化攻击技能
+            if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
+            {
+                attackSkillIds = new int[config.attack_skill_ids.Length];
+                attackSkillCds = new float[config.attack_skill_ids.Length];
+                attackSkillTimers = new float[config.attack_skill_ids.Length];
+                attackSkillConfigs = new SkillConfig[config.attack_skill_ids.Length];
+
+                for (int i = 0; i < config.attack_skill_ids.Length; i++)
+                {
+                    attackSkillIds[i] = config.attack_skill_ids[i];
+                    attackSkillConfigs[i] = ConfigManager.Instance.GetSkillConfig(attackSkillIds[i]);
+                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
+                    attackSkillTimers[i] = 0f;
+
+                    // 使用第一个技能的攻击范围作为默认攻击范围
+                    if (i == 0 && attackSkillConfigs[i] != null)
+                    {
+                        attackRange = attackSkillConfigs[i].attack_range;
+                        attackInterval = attackSkillCds[i];
+                    }
+                }
+            }
+            else
+            {
+                attackRange = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
+                attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
+            }
+
+            normalAttackConfig = attackSkillConfigs != null && attackSkillConfigs.Length > 0 ? attackSkillConfigs[0] : null;
 
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
@@ -87,11 +114,18 @@ namespace GeometryTD
         {
             if (IsDead || battleManager == null) return;
 
-            attackTimer += Time.deltaTime;
-            if (attackTimer >= attackInterval)
+            // 更新所有攻击技能的计时器
+            if (attackSkillTimers != null)
             {
-                TryAttack();
-                attackTimer = 0f;
+                for (int i = 0; i < attackSkillTimers.Length; i++)
+                {
+                    attackSkillTimers[i] += Time.deltaTime;
+                    if (attackSkillTimers[i] >= attackSkillCds[i])
+                    {
+                        TryAttack(i);
+                        attackSkillTimers[i] = 0f;
+                    }
+                }
             }
 
             // HoT
@@ -112,21 +146,26 @@ namespace GeometryTD
             }
         }
 
-        private void TryAttack()
+        private void TryAttack(int skillIndex = 0)
         {
-            if (normalAttackConfig == null) return;
+            if (attackSkillConfigs == null || skillIndex >= attackSkillConfigs.Length) return;
+            var skillConfig = attackSkillConfigs[skillIndex];
+            if (skillConfig == null) return;
+
+            // 使用技能配置的攻击范围
+            float skillRange = skillConfig.attack_range > 0 ? skillConfig.attack_range : attackRange;
 
             List<Transform> targets = battleManager.GetNearestEnemiesUnique(
-                transform.position, attackRange, attackCount);
+                transform.position, skillRange, attackCount);
             if (targets.Count == 0) return;
 
             facing?.FaceToward(targets[0].position);
 
-            float actualDmg = baseAttack * normalAttackConfig.dmg / 10000f;
+            float actualDmg = baseAttack * skillConfig.dmg / 10000f;
             var mods = new BulletModifiers();
             foreach (var target in targets)
                 battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    normalAttackConfig.bulletSpeed, mods.Clone(), normalAttackConfig.bulletStyleId);
+                    skillConfig.bulletSpeed, mods.Clone(), skillConfig.bulletStyleId);
 
             battleManager.OnHeroNormalAttack(transform.position);
             animator?.SetTrigger("Attack");
@@ -206,8 +245,9 @@ namespace GeometryTD
             }
 
             int totalShots = config.atkCnt + extraShots;
+            float skillRange = config.attack_range > 0 ? config.attack_range : attackRange;
             List<Transform> targets = battleManager.GetNearestEnemies(
-                transform.position, attackRange, totalShots);
+                transform.position, skillRange, totalShots);
             if (targets.Count == 0) return;
 
             foreach (var target in targets)

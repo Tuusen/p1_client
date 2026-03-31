@@ -20,11 +20,10 @@ namespace GeometryTD
         public const int HP = 1;
         public const int Shield = 2;
         public const int Attack = 3;
-        public const int AttackRange = 4;
-        public const int AttackInterval = 5;
-        public const int MoveSpeed = 6;
-        public const int Damage = 7;
-        public const int AttackCount = 8;
+        public const int AttackInterval = 4;
+        public const int MoveSpeed = 5;
+        public const int Damage = 6;
+        public const int AttackCount = 7;
     }
 
     // ===== 角色配置 =====
@@ -92,7 +91,7 @@ namespace GeometryTD
         public string name;
         public string description;
         public int role;
-        public int attack_skill_id;
+        public int[] attack_skill_ids;
         public float skill_xp_interval;
         public int skill_xp_min;
         public int skill_xp_max;
@@ -114,8 +113,7 @@ namespace GeometryTD
         public int level;
         public bool is_boss;
         public bool is_elite;
-        public int attack_skill_id;
-        public float attack_range;
+        public int[] attack_skill_ids;
         public float attack_interval;
         public AttrEntry[] attrs;
     }
@@ -188,6 +186,7 @@ namespace GeometryTD
         public int atkCnt;
         public float cd;
         public int bulletStyleId;
+        public float attack_range;
         public SkillEvent[] events;
     }
 

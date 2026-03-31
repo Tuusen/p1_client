@@ -7,13 +7,12 @@
       "level": 1,
       "is_boss": false,
       "is_elite": false,
-      "attack_skill_id": 0,
-      "attack_range": 0,
+      "attack_skill_ids": [],
       "attack_interval": 0,
       "attrs": [
         {"id": 1, "value": 30},
-        {"id": 6, "value": 2.5},
-        {"id": 7, "value": 20}
+        {"id": 5, "value": 2.5},
+        {"id": 6, "value": 20}
       ]
     },
     {
@@ -23,13 +22,12 @@
       "level": 2,
       "is_boss": false,
       "is_elite": false,
-      "attack_skill_id": 0,
-      "attack_range": 0,
+      "attack_skill_ids": [],
       "attack_interval": 0,
       "attrs": [
         {"id": 1, "value": 60},
-        {"id": 6, "value": 2.0},
-        {"id": 7, "value": 35}
+        {"id": 5, "value": 2.0},
+        {"id": 6, "value": 35}
       ]
     },
     {
@@ -39,13 +37,12 @@
       "level": 3,
       "is_boss": false,
       "is_elite": false,
-      "attack_skill_id": 0,
-      "attack_range": 0,
+      "attack_skill_ids": [],
       "attack_interval": 0,
       "attrs": [
         {"id": 1, "value": 100},
-        {"id": 6, "value": 1.5},
-        {"id": 7, "value": 50}
+        {"id": 5, "value": 1.5},
+        {"id": 6, "value": 50}
       ]
     },
     {
@@ -55,13 +52,12 @@
       "level": 4,
       "is_boss": false,
       "is_elite": true,
-      "attack_skill_id": 0,
-      "attack_range": 0,
+      "attack_skill_ids": [],
       "attack_interval": 0,
       "attrs": [
         {"id": 1, "value": 200},
-        {"id": 6, "value": 2.2},
-        {"id": 7, "value": 60}
+        {"id": 5, "value": 2.2},
+        {"id": 6, "value": 60}
       ]
     },
     {
@@ -71,13 +67,12 @@
       "level": 5,
       "is_boss": false,
       "is_elite": true,
-      "attack_skill_id": 0,
-      "attack_range": 0,
+      "attack_skill_ids": [],
       "attack_interval": 0,
       "attrs": [
         {"id": 1, "value": 350},
-        {"id": 6, "value": 1.8},
-        {"id": 7, "value": 80}
+        {"id": 5, "value": 1.8},
+        {"id": 6, "value": 80}
       ]
     },
     {
@@ -87,13 +82,12 @@
       "level": 10,
       "is_boss": true,
       "is_elite": false,
-      "attack_skill_id": 3001,
-      "attack_range": 15.0,
+      "attack_skill_ids": [3001],
       "attack_interval": 1.0,
       "attrs": [
         {"id": 1, "value": 1000},
-        {"id": 6, "value": 3.0},
-        {"id": 7, "value": 30}
+        {"id": 5, "value": 3.0},
+        {"id": 6, "value": 30}
       ]
     },
     {
@@ -103,13 +97,12 @@
       "level": 12,
       "is_boss": true,
       "is_elite": false,
-      "attack_skill_id": 3001,
-      "attack_range": 15.0,
+      "attack_skill_ids": [3001],
       "attack_interval": 0.9,
       "attrs": [
         {"id": 1, "value": 1500},
-        {"id": 6, "value": 2.5},
-        {"id": 7, "value": 40}
+        {"id": 5, "value": 2.5},
+        {"id": 6, "value": 40}
       ]
     },
     {
@@ -119,13 +112,12 @@
       "level": 15,
       "is_boss": true,
       "is_elite": false,
-      "attack_skill_id": 3001,
-      "attack_range": 15.0,
+      "attack_skill_ids": [3001],
       "attack_interval": 0.8,
       "attrs": [
         {"id": 1, "value": 2500},
-        {"id": 6, "value": 2.0},
-        {"id": 7, "value": 50}
+        {"id": 5, "value": 2.0},
+        {"id": 6, "value": 50}
       ]
     },
     {
@@ -135,8 +127,7 @@
       "level": 1,
       "is_boss": false,
       "is_elite": false,
-      "attack_skill_id": 1001,
-      "attack_range": 15.0,
+      "attack_skill_ids": [1001],
       "attack_interval": 0.8,
       "attrs": [
       ]
@@ -148,8 +139,7 @@
       "level": 1,
       "is_boss": false,
       "is_elite": false,
-      "attack_skill_id": 1001,
-      "attack_range": 15.0,
+      "attack_skill_ids": [1001],
       "attack_interval": 0.8,
       "attrs": [
       ]

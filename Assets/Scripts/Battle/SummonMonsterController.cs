@@ -15,6 +15,11 @@ namespace GeometryTD
         private BattleManager battleManager;
         private Animator animator;
         private CharacterFacing facing;
+        private int[] attackSkillIds;
+        private float[] attackSkillCds;
+        private float[] attackSkillTimers;
+        private SkillConfig[] attackSkillConfigs;
+        private int currentSkillIndex;
 
         // 状态效果
         private bool isFrozen;
@@ -35,6 +40,7 @@ namespace GeometryTD
             battleManager = bm;
             duration = dur;
             homing = isHoming;
+            currentSkillIndex = 0;
 
             float ratio = attrRatio / 10000f;
 
@@ -47,8 +53,30 @@ namespace GeometryTD
                 attackDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack) * ratio;
 
             attackInterval = config.attack_interval > 0 ? config.attack_interval : 1f;
-            attackRange = config.attack_range > 0 ? config.attack_range : 50f;
-            attackTimer = 0f;
+            attackRange = 50f; // 默认攻击范围
+
+            // 初始化攻击技能
+            if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
+            {
+                attackSkillIds = new int[config.attack_skill_ids.Length];
+                attackSkillCds = new float[config.attack_skill_ids.Length];
+                attackSkillTimers = new float[config.attack_skill_ids.Length];
+                attackSkillConfigs = new SkillConfig[config.attack_skill_ids.Length];
+
+                for (int i = 0; i < config.attack_skill_ids.Length; i++)
+                {
+                    attackSkillIds[i] = config.attack_skill_ids[i];
+                    attackSkillConfigs[i] = ConfigManager.Instance.GetSkillConfig(attackSkillIds[i]);
+                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
+                    attackSkillTimers[i] = 0f;
+
+                    // 使用第一个技能的攻击范围
+                    if (i == 0 && attackSkillConfigs[i] != null)
+                    {
+                        attackRange = attackSkillConfigs[i].attack_range > 0 ? attackSkillConfigs[i].attack_range : 50f;
+                    }
+                }
+            }
 
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
@@ -109,26 +137,35 @@ namespace GeometryTD
             if (vulnerabilityTimer > 0)
                 vulnerabilityTimer -= Time.deltaTime;
 
-            // 攻击计时
-            attackTimer += Time.deltaTime;
-            if (attackTimer >= attackInterval)
+            // 更新所有攻击技能的计时器
+            if (attackSkillTimers != null)
             {
-                attackTimer = 0f;
-                Attack();
+                for (int i = 0; i < attackSkillTimers.Length; i++)
+                {
+                    attackSkillTimers[i] += Time.deltaTime;
+                    if (attackSkillTimers[i] >= attackSkillCds[i])
+                    {
+                        Attack(i);
+                        attackSkillTimers[i] = 0f;
+                    }
+                }
             }
         }
 
-        private void Attack()
+        private void Attack(int skillIndex = 0)
         {
             if (battleManager == null) return;
+            if (attackSkillConfigs == null || skillIndex >= attackSkillConfigs.Length) return;
 
+            var skillConfig = attackSkillConfigs[skillIndex];
             Transform target = battleManager.GetNearestEnemy(transform.position, attackRange);
             if (target == null) return;
 
             facing?.FaceToward(target.position);
 
             var mods = new BulletModifiers { homing = this.homing };
-            battleManager.SpawnSkillBullet(transform.position, target, attackDamage, 8f, mods);
+            float bulletSpeed = skillConfig != null ? skillConfig.bulletSpeed : 8f;
+            battleManager.SpawnSkillBullet(transform.position, target, attackDamage, bulletSpeed, mods);
 
             animator?.SetTrigger("Attack");
         }

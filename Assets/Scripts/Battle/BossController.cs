@@ -10,7 +10,11 @@ namespace GeometryTD
         private float moveSpeed;
         private float attackRange;
         private float attackInterval;
-        private int attackSkillId;
+        private int[] attackSkillIds;
+        private float[] attackSkillCds;
+        private float[] attackSkillTimers;
+        private SkillConfig[] attackSkillConfigs;
+        private int currentSkillIndex;
 
         private Transform heroTarget;
         private BattleManager battleManager;
@@ -49,17 +53,42 @@ namespace GeometryTD
             heroTarget = hero;
             targetPosition = bossPosition;
             reachedPosition = false;
-            attackTimer = 0f;
+            currentSkillIndex = 0;
 
             maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
             currentHp = maxHp;
             baseDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * hardMultiplier;
             moveSpeed = ConfigManager.GetAttrValue(config.attrs, AttributeIds.MoveSpeed);
-            attackRange = config.attack_range;
             attackInterval = config.attack_interval;
-            attackSkillId = config.attack_skill_id;
 
-            skillConfig = ConfigManager.Instance.GetSkillConfig(attackSkillId);
+            // 初始化攻击技能
+            if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
+            {
+                attackSkillIds = new int[config.attack_skill_ids.Length];
+                attackSkillCds = new float[config.attack_skill_ids.Length];
+                attackSkillTimers = new float[config.attack_skill_ids.Length];
+                attackSkillConfigs = new SkillConfig[config.attack_skill_ids.Length];
+
+                for (int i = 0; i < config.attack_skill_ids.Length; i++)
+                {
+                    attackSkillIds[i] = config.attack_skill_ids[i];
+                    attackSkillConfigs[i] = ConfigManager.Instance.GetSkillConfig(attackSkillIds[i]);
+                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
+                    attackSkillTimers[i] = 0f;
+
+                    // 使用第一个技能的攻击范围
+                    if (i == 0 && attackSkillConfigs[i] != null)
+                    {
+                        attackRange = attackSkillConfigs[i].attack_range;
+                    }
+                }
+            }
+            else
+            {
+                attackRange = 15.0f; // 默认攻击范围
+            }
+
+            skillConfig = attackSkillConfigs != null && attackSkillConfigs.Length > 0 ? attackSkillConfigs[0] : null;
 
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
@@ -140,16 +169,25 @@ namespace GeometryTD
                 return;
             }
 
-            attackTimer += Time.deltaTime;
-            if (attackTimer >= attackInterval)
+            // 更新所有攻击技能的计时器
+            if (attackSkillTimers != null)
             {
-                Attack();
-                attackTimer = 0f;
+                for (int i = 0; i < attackSkillTimers.Length; i++)
+                {
+                    attackSkillTimers[i] += Time.deltaTime;
+                    if (attackSkillTimers[i] >= attackSkillCds[i])
+                    {
+                        Attack(i);
+                        attackSkillTimers[i] = 0f;
+                    }
+                }
             }
         }
 
-        private void Attack()
+        private void Attack(int skillIndex = 0)
         {
+            if (attackSkillConfigs == null || skillIndex >= attackSkillConfigs.Length) return;
+            skillConfig = attackSkillConfigs[skillIndex];
             if (skillConfig == null || heroTarget == null) return;
 
             facing?.FaceToward(heroTarget.position);
