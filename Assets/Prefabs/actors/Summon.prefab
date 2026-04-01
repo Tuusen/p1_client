@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1205327412492215558}
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6961465007262472169}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58e84dbf9db7e614589af073fcb2cd0d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b3e761a722cf9348ab3cc0b1f02d245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &7218031741654553980
@@ -74,15 +74,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.3
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.3
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.3
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_LocalPosition.x

@@ -13,6 +13,9 @@ namespace GeometryTD
         private bool hasTarget;
         private float lifeTime = 5f;
 
+        private float maxAttackRange = 50f;
+        private Vector3 startPosition;
+
         private BattleManager battleManager;
         private BulletModifiers modifiers;
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
@@ -21,7 +24,7 @@ namespace GeometryTD
         private Vector3 pierceDirection;
 
         // 普通子弹 / Boss子弹
-        public void Init(Transform target, float speed, float damage, bool isEnemyBullet, BattleManager bm)
+        public void Init(Transform target, float speed, float damage, bool isEnemyBullet, BattleManager bm, float attackRange = 50f)
         {
             this.target = target;
             this.speed = speed;
@@ -30,6 +33,8 @@ namespace GeometryTD
             this.battleManager = bm;
             this.modifiers = new BulletModifiers();
             this.hasTarget = target != null;
+            this.maxAttackRange = attackRange;
+            this.startPosition = transform.position;
 
             if (hasTarget)
             {
@@ -40,7 +45,7 @@ namespace GeometryTD
 
         // 技能子弹
         public void InitSkillBullet(Transform target, float speed, float damage,
-                                     BattleManager bm, BulletModifiers mods)
+                                     BattleManager bm, BulletModifiers mods, float attackRange)
         {
             this.target = target;
             this.speed = speed;
@@ -49,6 +54,8 @@ namespace GeometryTD
             this.battleManager = bm;
             this.modifiers = mods ?? new BulletModifiers();
             this.hasTarget = target != null;
+            this.maxAttackRange = attackRange;
+            this.startPosition = transform.position;
 
             if (hasTarget)
             {
@@ -61,6 +68,14 @@ namespace GeometryTD
         {
             lifeTime -= Time.deltaTime;
             if (lifeTime <= 0f)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // 检查是否超出攻击距离
+            float traveledDist = Vector3.Distance(transform.position, startPosition);
+            if (traveledDist > maxAttackRange)
             {
                 Destroy(gameObject);
                 return;
@@ -109,10 +124,22 @@ namespace GeometryTD
                 }
             }
 
-            float dist = Vector3.Distance(transform.position, lastTargetPos);
-            if (dist < 0.3f)
+            // 只有在目标仍然存在时才检测到达
+            if (target != null)
             {
-                OnArrival();
+                float dist = Vector3.Distance(transform.position, lastTargetPos);
+                if (dist < 0.3f)
+                {
+                    OnArrival();
+                }
+            } else {
+                // 超出攻击范围，继续飞行（穿透+1）
+                isPiercing = true;
+                if (modifiers == null) {
+                    modifiers = new BulletModifiers();
+                };
+                modifiers.pierceCount = 1;
+                lastTargetPos = transform.position + pierceDirection * 50f;
             }
         }
 

@@ -502,7 +502,7 @@ namespace GeometryTD
         }
 
         public void SpawnSkillBullet(Vector3 from, Transform target, float damage,
-                                      float speed, BulletModifiers mods, int bulletStyleId = 0)
+                                      float speed, BulletModifiers mods, int bulletStyleId = 0, float attackRange = 50f)
         {
             if (gameEnded) return;
 
@@ -516,7 +516,7 @@ namespace GeometryTD
 
             GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
-            bullet.InitSkillBullet(target, speed, damage, this, mods);
+            bullet.InitSkillBullet(target, speed, damage, this, mods, attackRange);
         }
 
         public void SpawnBossBullet(Vector3 from, Transform target, float damage, float speed)
@@ -526,6 +526,15 @@ namespace GeometryTD
             GameObject bulletObj = Instantiate(bossBulletPrefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
             bullet.Init(target, speed, damage, true, this);
+        }
+
+        public void SpawnMonsterBullet(Vector3 from, Transform target, float damage, float speed, float attackRange = 15f)
+        {
+            if (gameEnded) return;
+
+            GameObject bulletObj = Instantiate(heroBulletPrefab, from, Quaternion.identity);
+            BulletController bullet = bulletObj.GetComponent<BulletController>();
+            bullet.Init(target, speed, damage, false, this, attackRange);
         }
 
         public void SpawnSummon(Vector3 position, float duration, float attrRatio, int monsterId, bool homing)

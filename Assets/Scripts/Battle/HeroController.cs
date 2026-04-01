@@ -20,6 +20,7 @@ namespace GeometryTD
         [Header("运行时状态")]
         private float currentHp;
         private float currentShield;
+        private float attackTimer;
 
         // Buff状态
         private float hotHealPerSec;
@@ -67,6 +68,9 @@ namespace GeometryTD
             currentShield = maxShield;
 
             // 初始化攻击技能
+            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
+            if (attackInterval <= 0) attackInterval = 1f;
+
             if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
             {
                 attackSkillIds = new int[config.attack_skill_ids.Length];
@@ -85,14 +89,12 @@ namespace GeometryTD
                     if (i == 0 && attackSkillConfigs[i] != null)
                     {
                         attackRange = attackSkillConfigs[i].attack_range;
-                        attackInterval = attackSkillCds[i];
                     }
                 }
             }
             else
             {
-                attackRange = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
-                attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
+                attackRange = 5f; // 默认近战距离
             }
 
             normalAttackConfig = attackSkillConfigs != null && attackSkillConfigs.Length > 0 ? attackSkillConfigs[0] : null;
@@ -114,18 +116,12 @@ namespace GeometryTD
         {
             if (IsDead || battleManager == null) return;
 
-            // 更新所有攻击技能的计时器
-            if (attackSkillTimers != null)
+            // 攻击间隔计时器
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackInterval)
             {
-                for (int i = 0; i < attackSkillTimers.Length; i++)
-                {
-                    attackSkillTimers[i] += Time.deltaTime;
-                    if (attackSkillTimers[i] >= attackSkillCds[i])
-                    {
-                        TryAttack(i);
-                        attackSkillTimers[i] = 0f;
-                    }
-                }
+                attackTimer = 0f;
+                TryAttack();
             }
 
             // HoT
@@ -146,9 +142,26 @@ namespace GeometryTD
             }
         }
 
-        private void TryAttack(int skillIndex = 0)
+        private void TryAttack()
         {
-            if (attackSkillConfigs == null || skillIndex >= attackSkillConfigs.Length) return;
+            if (attackSkillConfigs == null || attackSkillConfigs.Length == 0) return;
+
+            // 从后往前查找第一个未冷却的技能
+            int skillIndex = -1;
+            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
+            {
+                if (attackSkillTimers[i] >= attackSkillCds[i])
+                {
+                    skillIndex = i;
+                    break;
+                }
+            }
+
+            if (skillIndex < 0) return;
+
+            // 重置该技能的冷却计时器
+            attackSkillTimers[skillIndex] = 0f;
+
             var skillConfig = attackSkillConfigs[skillIndex];
             if (skillConfig == null) return;
 
@@ -165,7 +178,7 @@ namespace GeometryTD
             var mods = new BulletModifiers();
             foreach (var target in targets)
                 battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    skillConfig.bulletSpeed, mods.Clone(), skillConfig.bulletStyleId);
+                    skillConfig.bulletSpeed, mods.Clone(), skillConfig.bulletStyleId, skillRange);
 
             battleManager.OnHeroNormalAttack(transform.position);
             animator?.SetTrigger("Attack");
@@ -253,7 +266,7 @@ namespace GeometryTD
             foreach (var target in targets)
             {
                 battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    config.bulletSpeed, mods.Clone(), config.bulletStyleId);
+                    config.bulletSpeed, mods.Clone(), config.bulletStyleId, skillRange);
             }
         }
 
@@ -412,7 +425,7 @@ namespace GeometryTD
                 knockbackForce, slowDuration, slowRatio, vulnRatio, vulnDuration);
         }
 
-        // ===== 召唤技能 (风影守卫) =====
+        // ===== 召唤技能 =====
         private void HandleSummonSkill(SkillConfig config)
         {
             if (config.events == null) return;
@@ -428,10 +441,10 @@ namespace GeometryTD
                     case SkillEventType.Summon:
                         if (evt.param != null && evt.param.Length >= 4)
                         {
-                            duration = evt.param[0];
-                            attrRatio = evt.param[1];
-                            extraCount = (int)evt.param[2];
-                            monsterId = (int)evt.param[3];
+                            monsterId = (int)evt.param[0];
+                            duration = evt.param[1];
+                            attrRatio = evt.param[2];
+                            extraCount = (int)evt.param[3];
                         }
                         break;
                     case SkillEventType.Homing:
@@ -521,7 +534,7 @@ namespace GeometryTD
             {
                 var mods = new BulletModifiers { pierceCount = retaliationPierceCount };
                 battleManager.SpawnSkillBullet(
-                    transform.position, target, retaliationDmg, 15f, mods, retaliationBulletStyleId);
+                    transform.position, target, retaliationDmg, 15f, mods, retaliationBulletStyleId, attackRange);
             }
         }
 

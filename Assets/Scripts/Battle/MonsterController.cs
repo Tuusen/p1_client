@@ -30,6 +30,18 @@ namespace GeometryTD
 
         private bool isElite;
 
+        // 技能攻击相关
+        private bool hasSkill;
+        private float skillAttackRange;
+        private float attackInterval;
+        private float attackTimer;
+        private int[] attackSkillIds;
+        private float[] attackSkillCds;
+        private float[] attackSkillTimers;
+        private SkillConfig[] attackSkillConfigs;
+        private const float DefaultSkillAttackRange = 15f;
+        private const float DefaultAttackInterval = 1f;
+
         [SerializeField] private HealthBarUI hpBar;
 
         public bool IsDead => isDead;
@@ -43,11 +55,47 @@ namespace GeometryTD
 
             maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
             currentHp = maxHp;
-            damage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * hardMultiplier;
+            damage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack) * hardMultiplier;
             moveSpeed = ConfigManager.GetAttrValue(config.attrs, AttributeIds.MoveSpeed);
 
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
+
+            // 统一从 attrs 读取攻击间隔
+            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, DefaultAttackInterval);
+            if (attackInterval <= 0) attackInterval = DefaultAttackInterval;
+
+            // 初始化技能攻击
+            hasSkill = false;
+            if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
+            {
+                attackSkillIds = config.attack_skill_ids;
+                attackSkillCds = new float[attackSkillIds.Length];
+                attackSkillTimers = new float[attackSkillIds.Length];
+                attackSkillConfigs = new SkillConfig[attackSkillIds.Length];
+
+                for (int i = 0; i < attackSkillIds.Length; i++)
+                {
+                    attackSkillConfigs[i] = ConfigManager.Instance.GetSkillConfig(attackSkillIds[i]);
+                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
+                    attackSkillTimers[i] = 0f;
+                }
+
+                if (attackSkillConfigs[0] != null)
+                {
+                    skillAttackRange = attackSkillConfigs[0].attack_range > 0 ? attackSkillConfigs[0].attack_range : DefaultSkillAttackRange;
+                }
+                else
+                {
+                    skillAttackRange = DefaultSkillAttackRange;
+                }
+
+                hasSkill = true;
+            }
+            else
+            {
+                skillAttackRange = 0.5f; // 默认近战距离
+            }
 
             UpdateBar();
         }
@@ -107,22 +155,89 @@ namespace GeometryTD
             if (vulnerabilityTimer > 0)
                 vulnerabilityTimer -= Time.deltaTime;
 
-            // 移动
-            Vector3 direction = (heroTarget.position - transform.position).normalized;
-            transform.position += direction * currentSpeed * Time.deltaTime;
-            facing?.FaceToward(heroTarget.position);
-            animator?.SetBool("IsMoving", true);
-
             float dist = Vector3.Distance(transform.position, heroTarget.position);
-            if (dist < 0.5f)
+
+            // 有技能的怪物：保持在技能攻击距离内
+            if (hasSkill)
             {
-                HeroController hero = heroTarget.GetComponent<HeroController>();
-                if (hero != null)
+                // 统一攻击间隔计时器
+                attackTimer += Time.deltaTime;
+
+                // 在技能攻击范围内，保持静止并攻击
+                if (dist <= skillAttackRange)
                 {
-                    hero.TakeDamage(damage);
+                    // 停止移动
+                    animator?.SetBool("IsMoving", false);
+                    facing?.FaceToward(heroTarget.position);
+
+                    // 尝试攻击
+                    if (attackTimer >= attackInterval)
+                    {
+                        attackTimer = 0f;
+                        TrySkillAttack();
+                    }
                 }
-                Die();
+                else
+                {
+                    // 向英雄移动直到达到技能攻击范围
+                    Vector3 direction = (heroTarget.position - transform.position).normalized;
+                    transform.position += direction * currentSpeed * Time.deltaTime;
+                    facing?.FaceToward(heroTarget.position);
+                    animator?.SetBool("IsMoving", true);
+                }
             }
+            else
+            {
+                // 无技能的怪物：近战行为，保持原逻辑
+                Vector3 direction = (heroTarget.position - transform.position).normalized;
+                transform.position += direction * currentSpeed * Time.deltaTime;
+                facing?.FaceToward(heroTarget.position);
+                animator?.SetBool("IsMoving", true);
+
+                if (dist < 0.5f)
+                {
+                    HeroController hero = heroTarget.GetComponent<HeroController>();
+                    if (hero != null)
+                    {
+                        hero.TakeDamage(damage);
+                    }
+                    Die();
+                }
+            }
+        }
+
+        private void TrySkillAttack()
+        {
+            if (battleManager == null) return;
+
+            // 从后往前查找第一个未冷却的技能
+            int skillIndex = -1;
+            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
+            {
+                if (attackSkillTimers[i] >= attackSkillCds[i])
+                {
+                    skillIndex = i;
+                    break;
+                }
+            }
+
+            if (skillIndex < 0) return;
+
+            // 重置该技能的冷却计时器
+            attackSkillTimers[skillIndex] = 0f;
+
+            var skillConfig = attackSkillConfigs[skillIndex];
+            if (skillConfig != null)
+            {
+                float actualDamage = damage * skillConfig.dmg / 10000f;
+                battleManager.SpawnMonsterBullet(transform.position, heroTarget, actualDamage, skillConfig.bulletSpeed);
+            }
+            else
+            {
+                battleManager.SpawnMonsterBullet(transform.position, heroTarget, damage, 8f);
+            }
+
+            animator?.SetTrigger("Attack");
         }
 
         public void TakeDamage(float dmg)

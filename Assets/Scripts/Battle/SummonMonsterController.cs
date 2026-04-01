@@ -19,7 +19,6 @@ namespace GeometryTD
         private float[] attackSkillCds;
         private float[] attackSkillTimers;
         private SkillConfig[] attackSkillConfigs;
-        private int currentSkillIndex;
 
         // 状态效果
         private bool isFrozen;
@@ -40,7 +39,6 @@ namespace GeometryTD
             battleManager = bm;
             duration = dur;
             homing = isHoming;
-            currentSkillIndex = 0;
 
             float ratio = attrRatio / 10000f;
 
@@ -48,11 +46,12 @@ namespace GeometryTD
             if (maxHp <= 0f) maxHp = 1f;
             currentHp = maxHp;
 
-            attackDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * ratio;
+            attackDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack) * ratio;
             if (attackDamage <= 0f)
                 attackDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack) * ratio;
 
-            attackInterval = config.attack_interval > 0 ? config.attack_interval : 1f;
+            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
+            if (attackInterval <= 0) attackInterval = 1f;
             attackRange = 50f; // 默认攻击范围
 
             // 初始化攻击技能
@@ -137,35 +136,49 @@ namespace GeometryTD
             if (vulnerabilityTimer > 0)
                 vulnerabilityTimer -= Time.deltaTime;
 
-            // 更新所有攻击技能的计时器
-            if (attackSkillTimers != null)
+            // 统一攻击间隔计时器
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackInterval)
             {
-                for (int i = 0; i < attackSkillTimers.Length; i++)
-                {
-                    attackSkillTimers[i] += Time.deltaTime;
-                    if (attackSkillTimers[i] >= attackSkillCds[i])
-                    {
-                        Attack(i);
-                        attackSkillTimers[i] = 0f;
-                    }
-                }
+                attackTimer = 0f;
+                TryAttack();
             }
         }
 
-        private void Attack(int skillIndex = 0)
+        private void TryAttack()
         {
             if (battleManager == null) return;
-            if (attackSkillConfigs == null || skillIndex >= attackSkillConfigs.Length) return;
+            if (attackSkillConfigs == null || attackSkillConfigs.Length == 0) return;
+
+            // 从后往前查找第一个未冷却的技能
+            int skillIndex = -1;
+            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
+            {
+                if (attackSkillTimers[i] >= attackSkillCds[i])
+                {
+                    skillIndex = i;
+                    break;
+                }
+            }
+
+            if (skillIndex < 0) return;
+
+            // 重置该技能的冷却计时器
+            attackSkillTimers[skillIndex] = 0f;
 
             var skillConfig = attackSkillConfigs[skillIndex];
-            Transform target = battleManager.GetNearestEnemy(transform.position, attackRange);
+            if (skillConfig == null) return;
+
+            Transform target = battleManager.GetNearestEnemy(transform.position, skillConfig.attack_range);
             if (target == null) return;
 
             facing?.FaceToward(target.position);
 
             var mods = new BulletModifiers { homing = this.homing };
-            float bulletSpeed = skillConfig != null ? skillConfig.bulletSpeed : 8f;
-            battleManager.SpawnSkillBullet(transform.position, target, attackDamage, bulletSpeed, mods);
+            float bulletSpeed = skillConfig.bulletSpeed;
+            float actualDamage = attackDamage * skillConfig.dmg / 10000f;
+            Debug.LogWarning($"伤害是：{actualDamage}，范围是：{skillConfig.attack_range}，目标为:{target}");
+            battleManager.SpawnSkillBullet(transform.position, target, actualDamage, bulletSpeed, mods, skillConfig.bulletStyleId, skillConfig.attack_range);
 
             animator?.SetTrigger("Attack");
         }

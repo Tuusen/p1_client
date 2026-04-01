@@ -14,7 +14,6 @@ namespace GeometryTD
         private float[] attackSkillCds;
         private float[] attackSkillTimers;
         private SkillConfig[] attackSkillConfigs;
-        private int currentSkillIndex;
 
         private Transform heroTarget;
         private BattleManager battleManager;
@@ -53,13 +52,14 @@ namespace GeometryTD
             heroTarget = hero;
             targetPosition = bossPosition;
             reachedPosition = false;
-            currentSkillIndex = 0;
 
             maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
             currentHp = maxHp;
-            baseDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Damage) * hardMultiplier;
+            baseDamage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack) * hardMultiplier;
             moveSpeed = ConfigManager.GetAttrValue(config.attrs, AttributeIds.MoveSpeed);
-            attackInterval = config.attack_interval;
+            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
+            if (attackInterval <= 0) attackInterval = 1f;
+            attackTimer = 0f;
 
             // 初始化攻击技能
             if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
@@ -169,26 +169,38 @@ namespace GeometryTD
                 return;
             }
 
-            // 更新所有攻击技能的计时器
-            if (attackSkillTimers != null)
+            // 统一攻击间隔计时器
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackInterval)
             {
-                for (int i = 0; i < attackSkillTimers.Length; i++)
-                {
-                    attackSkillTimers[i] += Time.deltaTime;
-                    if (attackSkillTimers[i] >= attackSkillCds[i])
-                    {
-                        Attack(i);
-                        attackSkillTimers[i] = 0f;
-                    }
-                }
+                attackTimer = 0f;
+                TryAttack();
             }
         }
 
-        private void Attack(int skillIndex = 0)
+        private void TryAttack()
         {
-            if (attackSkillConfigs == null || skillIndex >= attackSkillConfigs.Length) return;
-            skillConfig = attackSkillConfigs[skillIndex];
-            if (skillConfig == null || heroTarget == null) return;
+            if (attackSkillConfigs == null || attackSkillConfigs.Length == 0) return;
+            if (heroTarget == null) return;
+
+            // 从后往前查找第一个未冷却的技能
+            int skillIndex = -1;
+            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
+            {
+                if (attackSkillTimers[i] >= attackSkillCds[i])
+                {
+                    skillIndex = i;
+                    break;
+                }
+            }
+
+            if (skillIndex < 0) return;
+
+            // 重置该技能的冷却计时器
+            attackSkillTimers[skillIndex] = 0f;
+
+            var skillConfig = attackSkillConfigs[skillIndex];
+            if (skillConfig == null) return;
 
             facing?.FaceToward(heroTarget.position);
 
