@@ -23,6 +23,11 @@ namespace GeometryTD
         private bool isPiercing;
         private Vector3 pierceDirection;
 
+        // DamageCalculator 上下文（可选）
+        private AttrComponent attackerAttrs;
+        private int skillDmgRatio;
+        private int skillDmgType;
+
         // 普通子弹 / Boss子弹
         public void Init(Transform target, float speed, float damage, bool isEnemyBullet, BattleManager bm, float attackRange = 50f)
         {
@@ -62,6 +67,17 @@ namespace GeometryTD
                 lastTargetPos = target.position;
                 hitTargets.Add(target);
             }
+        }
+
+        /// <summary>
+        /// 设置 DamageCalculator 上下文，使子弹在命中时使用完整伤害公式
+        /// （含命中/暴击/元素加减/Boss加成）。不调用则退回预计算 damage。
+        /// </summary>
+        public void SetDamageContext(AttrComponent attacker, int dmgRatio, int dmgType)
+        {
+            attackerAttrs = attacker;
+            skillDmgRatio = dmgRatio;
+            skillDmgType = dmgType;
         }
 
         private void Update()
@@ -197,22 +213,81 @@ namespace GeometryTD
                 HeroController hero = target.GetComponent<HeroController>();
                 if (hero != null)
                 {
-                    hero.TakeDamage(damage);
+                    if (attackerAttrs != null && hero.Attrs != null)
+                    {
+                        var ctx = new DamageContext
+                        {
+                            attackerAttrs = attackerAttrs,
+                            defenderAttrs = hero.Attrs,
+                            skillDmgRatio = skillDmgRatio,
+                            skillDmgType = skillDmgType,
+                            isTargetBoss = false,
+                            isTargetElite = false
+                        };
+                        var result = DamageCalculator.Calculate(ctx);
+                        if (!result.isMiss)
+                        {
+                            hero.TakeDamage(result.finalDamage);
+                            if (result.isCrit && battleManager != null)
+                                battleManager.ShowDamageText(target.position, result.finalDamage, true);
+                        }
+                    }
+                    else
+                    {
+                        hero.TakeDamage(damage);
+                    }
                 }
             }
             else
             {
+                AttrComponent defenderAttrs = null;
+                bool isBoss = false;
+                bool isElite = false;
+
                 MonsterController monster = target.GetComponent<MonsterController>();
                 if (monster != null)
                 {
-                    monster.TakeDamage(damage);
-                    return;
+                    defenderAttrs = monster.Attrs;
+                    isElite = monster.IsElite;
                 }
 
-                BossController boss = target.GetComponent<BossController>();
-                if (boss != null)
+                BossController boss = null;
+                if (monster == null)
                 {
-                    boss.TakeDamage(damage);
+                    boss = target.GetComponent<BossController>();
+                    if (boss != null)
+                    {
+                        defenderAttrs = boss.Attrs;
+                        isBoss = true;
+                    }
+                }
+
+                if (attackerAttrs != null && defenderAttrs != null)
+                {
+                    var ctx = new DamageContext
+                    {
+                        attackerAttrs = attackerAttrs,
+                        defenderAttrs = defenderAttrs,
+                        skillDmgRatio = skillDmgRatio,
+                        skillDmgType = skillDmgType,
+                        isTargetBoss = isBoss,
+                        isTargetElite = isElite
+                    };
+                    var result = DamageCalculator.Calculate(ctx);
+                    if (!result.isMiss)
+                    {
+                        if (monster != null) monster.TakeDamage(result.finalDamage);
+                        else if (boss != null) boss.TakeDamage(result.finalDamage);
+
+                        if (result.isCrit && battleManager != null)
+                            battleManager.ShowDamageText(target.position, result.finalDamage, true);
+                    }
+                }
+                else
+                {
+                    // 退回预计算伤害
+                    if (monster != null) { monster.TakeDamage(damage); return; }
+                    if (boss != null) boss.TakeDamage(damage);
                 }
             }
         }

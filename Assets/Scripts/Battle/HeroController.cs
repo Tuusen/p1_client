@@ -3,30 +3,24 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public class HeroController : MonoBehaviour
+    public class HeroController : MonoBehaviour, IBuffTarget
     {
+        private AttrComponent attrs;
+        private BuffSystem buffSystem = new BuffSystem();
+
         [Header("配置")]
-        private float maxHp;
-        private float maxShield;
         private float attackRange;
-        private float attackInterval;
         private int[] attackSkillIds;
         private float[] attackSkillCds;
         private float[] attackSkillTimers;
         private SkillConfig[] attackSkillConfigs;
-        private float baseAttack;
-        private int attackCount;
 
         [Header("运行时状态")]
+        private int maxHp;
         private float currentHp;
+        private int maxShield;
         private float currentShield;
         private float attackTimer;
-
-        // Buff状态
-        private float hotHealPerSec;
-        private float hotRemaining;
-        private float dmgReductionRatio;
-        private float dmgReductionRemaining;
 
         // 反击状态（电磁盾牌）
         private float retaliationDmg;
@@ -40,6 +34,12 @@ namespace GeometryTD
         private float shieldBreakDmg;
         private bool shieldBreakPending;
 
+        // Charge 状态
+        private AttrEntry[] chargeBuffConfigs;
+        private float lastAttackTime;
+        private bool isCharging;
+        private const float ChargeIdleThreshold = 5f;
+
         [Header("引用")]
         [SerializeField] private HealthBarUI shieldBar;
         [SerializeField] private HealthBarUI hpBar;
@@ -49,28 +49,46 @@ namespace GeometryTD
         private Animator animator;
         private CharacterFacing facing;
 
+        // IBuffTarget 实现
+        public AttrComponent Attrs => attrs;
         public bool IsDead => currentHp <= 0;
+        public Vector3 Position => transform.position;
+
         public float AttackRange => attackRange;
-        public float BaseAttack => baseAttack;
+        public float BaseAttack => attrs != null ? attrs.GetAttack() : 0;
         public float MaxHp => maxHp;
+
+        public void OnBuffDamage(float dmg)
+        {
+            TakeDamage(dmg);
+        }
+
+        public void OnBuffHeal(float heal)
+        {
+            currentHp = Mathf.Min(currentHp + heal, maxHp);
+            UpdateBars();
+        }
 
         public void Init(HeroConfig config, BattleManager manager)
         {
             battleManager = manager;
 
-            maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP);
-            maxShield = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Shield);
-            baseAttack = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack);
-            attackCount = (int)ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackCount, 1f);
-            if (attackCount < 1) attackCount = 1;
+            // 初始化属性组件
+            attrs = GetComponent<AttrComponent>();
+            if (attrs == null) attrs = gameObject.AddComponent<AttrComponent>();
+            attrs.Init(config.attrs);
 
+            maxHp = attrs.GetMaxHp();
+            maxShield = attrs.GetFinal(AttributeIds.Shield);
             currentHp = maxHp;
             currentShield = maxShield;
 
-            // 初始化攻击技能
-            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, 1f);
-            if (attackInterval <= 0) attackInterval = 1f;
+            // Charge 配置
+            chargeBuffConfigs = config.charge_buffs;
+            lastAttackTime = Time.time;
+            isCharging = false;
 
+            // 初始化攻击技能
             if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
             {
                 attackSkillIds = new int[config.attack_skill_ids.Length];
@@ -85,7 +103,6 @@ namespace GeometryTD
                     attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
                     attackSkillTimers[i] = 0f;
 
-                    // 使用第一个技能的攻击范围作为默认攻击范围
                     if (i == 0 && attackSkillConfigs[i] != null)
                     {
                         attackRange = attackSkillConfigs[i].attack_range;
@@ -94,7 +111,7 @@ namespace GeometryTD
             }
             else
             {
-                attackRange = 5f; // 默认近战距离
+                attackRange = 5f;
             }
 
             normalAttackConfig = attackSkillConfigs != null && attackSkillConfigs.Length > 0 ? attackSkillConfigs[0] : null;
@@ -102,6 +119,7 @@ namespace GeometryTD
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
 
+            buffSystem.Clear();
             UpdateBars();
         }
 
@@ -116,37 +134,67 @@ namespace GeometryTD
         {
             if (IsDead || battleManager == null) return;
 
+            // Buff 系统驱动（HoT、减伤等）
+            buffSystem.Tick(Time.deltaTime, this);
+            if (IsDead) return;
+
+            // Charge 状态检测
+            UpdateChargeState();
+
+            // 技能冷却计时
+            if (attackSkillTimers != null)
+            {
+                for (int i = 0; i < attackSkillTimers.Length; i++)
+                    attackSkillTimers[i] += Time.deltaTime;
+            }
+
             // 攻击间隔计时器
+            float atkInterval = attrs.GetAttackIntervalSec();
             attackTimer += Time.deltaTime;
-            if (attackTimer >= attackInterval)
+            if (attackTimer >= atkInterval)
             {
                 attackTimer = 0f;
                 TryAttack();
             }
 
-            // HoT
-            if (hotRemaining > 0)
-            {
-                float heal = hotHealPerSec * Time.deltaTime;
-                currentHp = Mathf.Min(currentHp + heal, maxHp);
-                hotRemaining -= Time.deltaTime;
-                UpdateBars();
-            }
+            UpdateBars();
+        }
 
-            // 减伤计时
-            if (dmgReductionRemaining > 0)
+        private void UpdateChargeState()
+        {
+            if (chargeBuffConfigs == null || chargeBuffConfigs.Length == 0) return;
+
+            float idle = Time.time - lastAttackTime;
+
+            if (!isCharging && idle >= ChargeIdleThreshold)
             {
-                dmgReductionRemaining -= Time.deltaTime;
-                if (dmgReductionRemaining <= 0)
-                    dmgReductionRatio = 0;
+                // 进入蓄力：添加 Charge buff
+                isCharging = true;
+                for (int i = 0; i < chargeBuffConfigs.Length; i++)
+                {
+                    var entry = chargeBuffConfigs[i];
+                    buffSystem.AddBuff(new BuffEntry
+                    {
+                        type = BuffType.Charge,
+                        duration = -1f, // 永久，直到手动移除
+                        attrId = entry.id,
+                        value = entry.value
+                    });
+                }
             }
+        }
+
+        private void ExitCharge()
+        {
+            if (!isCharging) return;
+            isCharging = false;
+            buffSystem.RemoveBuffsByType(BuffType.Charge);
         }
 
         private void TryAttack()
         {
             if (attackSkillConfigs == null || attackSkillConfigs.Length == 0) return;
 
-            // 从后往前查找第一个未冷却的技能
             int skillIndex = -1;
             for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
             {
@@ -159,22 +207,27 @@ namespace GeometryTD
 
             if (skillIndex < 0) return;
 
-            // 重置该技能的冷却计时器
             attackSkillTimers[skillIndex] = 0f;
 
             var skillConfig = attackSkillConfigs[skillIndex];
             if (skillConfig == null) return;
 
-            // 使用技能配置的攻击范围
             float skillRange = skillConfig.attack_range > 0 ? skillConfig.attack_range : attackRange;
+            int atkCount = attrs.GetFinal(AttributeIds.AttackCount);
+            if (atkCount < 1) atkCount = 1;
 
             List<Transform> targets = battleManager.GetNearestEnemiesUnique(
-                transform.position, skillRange, attackCount);
+                transform.position, skillRange, atkCount);
             if (targets.Count == 0) return;
+
+            // 攻击时退出蓄力
+            ExitCharge();
+            lastAttackTime = Time.time;
 
             facing?.FaceToward(targets[0].position);
 
-            float actualDmg = baseAttack * skillConfig.dmg / 10000f;
+            float atk = attrs.GetAttack();
+            float actualDmg = atk * skillConfig.dmg / 10000f;
             var mods = new BulletModifiers();
             foreach (var target in targets)
                 battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
@@ -203,7 +256,8 @@ namespace GeometryTD
         // ===== 弹幕技能 (烈焰圣弹, 急冻冰锥, 闪电连锁) =====
         private void HandleProjectileSkill(SkillConfig config)
         {
-            float actualDmg = baseAttack * config.dmg / 10000f;
+            float atk = attrs.GetAttack();
+            float actualDmg = atk * config.dmg / 10000f;
             var mods = new BulletModifiers();
             int extraShots = 0;
 
@@ -221,7 +275,7 @@ namespace GeometryTD
                             if (evt.param.Length >= 2)
                             {
                                 mods.explosionRadius = evt.param[0];
-                                mods.explosionDmg = baseAttack * evt.param[1] / 10000f;
+                                mods.explosionDmg = atk * evt.param[1] / 10000f;
                             }
                             break;
                         case SkillEventType.ExtraShot:
@@ -242,7 +296,7 @@ namespace GeometryTD
                         case SkillEventType.Burn:
                             if (evt.param.Length >= 2)
                             {
-                                mods.burnDmg = baseAttack * evt.param[0] / 10000f;
+                                mods.burnDmg = atk * evt.param[0] / 10000f;
                                 mods.burnDuration = evt.param[1];
                             }
                             break;
@@ -293,15 +347,26 @@ namespace GeometryTD
                     case SkillEventType.HealOverTime:
                         if (evt.param.Length >= 2)
                         {
-                            hotHealPerSec = maxHp * evt.param[0] / 10000f;
-                            hotRemaining = evt.param[1];
+                            int healPerSec = (int)(maxHp * evt.param[0] / 10000f);
+                            buffSystem.AddBuff(new BuffEntry
+                            {
+                                type = BuffType.HealOverTime,
+                                duration = evt.param[1],
+                                value = healPerSec,
+                                tickInterval = 1f
+                            });
                         }
                         break;
                     case SkillEventType.DamageReduction:
                         if (evt.param.Length >= 2)
                         {
-                            dmgReductionRatio = evt.param[0];
-                            dmgReductionRemaining = evt.param[1];
+                            buffSystem.AddBuff(new BuffEntry
+                            {
+                                type = BuffType.AttrModify,
+                                duration = evt.param[1],
+                                attrId = AttributeIds.AllElemDmgReduce,
+                                value = (int)evt.param[0]
+                            });
                         }
                         break;
                     case SkillEventType.SelfDamage:
@@ -334,6 +399,7 @@ namespace GeometryTD
 
             var efx = battleManager.EventEffectManager;
             int pierceFromEvent = 0;
+            float atk = attrs.GetAttack();
 
             foreach (var evt in config.events)
             {
@@ -352,12 +418,10 @@ namespace GeometryTD
                     case SkillEventType.Retaliation:
                         if (evt.param.Length >= 3)
                         {
-                            retaliationDmg = baseAttack * evt.param[0] / 10000f;
+                            retaliationDmg = atk * evt.param[0] / 10000f;
                             retaliationBullets = (int)evt.param[1];
                             retaliationPierceCount = 0;
                             retaliationActive = true;
-                            // param[2] = 反击子弹速度, 0时使用默认值
-                            // 反击穿刺由单独的 Pierce 事件提供
                         }
                         break;
                     case SkillEventType.Pierce:
@@ -368,7 +432,7 @@ namespace GeometryTD
                         if (evt.param.Length >= 2)
                         {
                             shieldBreakRadius = evt.param[0];
-                            shieldBreakDmg = baseAttack * evt.param[1] / 10000f;
+                            shieldBreakDmg = atk * evt.param[1] / 10000f;
                             shieldBreakPending = true;
                         }
                         break;
@@ -387,7 +451,8 @@ namespace GeometryTD
         // ===== 全屏AoE技能 (超暴风) =====
         private void HandleAoeSkill(SkillConfig config)
         {
-            float actualDmg = baseAttack * config.dmg / 10000f;
+            float atk = attrs.GetAttack();
+            float actualDmg = atk * config.dmg / 10000f;
 
             float knockbackForce = 0f;
             float slowDuration = 0f, slowRatio = 0f;
@@ -471,10 +536,11 @@ namespace GeometryTD
         {
             if (IsDead) return;
 
-            // 减伤
-            if (dmgReductionRemaining > 0 && dmgReductionRatio > 0)
+            // 减伤（通过 buff 挂载到 AllElemDmgReduce）
+            int dmgReduce = attrs.GetFinal(AttributeIds.AllElemDmgReduce);
+            if (dmgReduce > 0)
             {
-                damage *= (1f - dmgReductionRatio / 10000f);
+                damage *= (1f - dmgReduce / 10000f);
             }
 
             bool shieldWasActive = currentShield > 0;

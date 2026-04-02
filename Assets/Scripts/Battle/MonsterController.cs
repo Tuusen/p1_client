@@ -2,50 +2,49 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public class MonsterController : MonoBehaviour
+    public class MonsterController : MonoBehaviour, IBuffTarget
     {
-        private float maxHp;
+        private AttrComponent attrs;
+        private BuffSystem buffSystem = new BuffSystem();
+
+        private int maxHp;
         private float currentHp;
-        private float damage;
-        private float moveSpeed;
         private Transform heroTarget;
         private BattleManager battleManager;
         private bool isDead;
         private Animator animator;
         private CharacterFacing facing;
 
-        // 状态效果
-        private bool isFrozen;
-        private float freezeTimer;
-        private float burnDmg;
-        private float burnTimer;
-        private float burnTickTimer;
-        private float slowTimer;
-        private float slowRatio;
-        private float vulnerabilityRatio;
-        private float vulnerabilityTimer;
-        private Vector3 knockbackDir;
-        private float knockbackRemaining;
-        private const float KnockbackSpeed = 20f;
-
         private bool isElite;
 
         // 技能攻击相关
         private bool hasSkill;
         private float skillAttackRange;
-        private float attackInterval;
         private float attackTimer;
         private int[] attackSkillIds;
         private float[] attackSkillCds;
         private float[] attackSkillTimers;
         private SkillConfig[] attackSkillConfigs;
         private const float DefaultSkillAttackRange = 15f;
-        private const float DefaultAttackInterval = 1f;
 
         [SerializeField] private HealthBarUI hpBar;
 
+        // IBuffTarget 实现
+        public AttrComponent Attrs => attrs;
         public bool IsDead => isDead;
         public bool IsElite => isElite;
+        public Vector3 Position => transform.position;
+
+        public void OnBuffDamage(float dmg)
+        {
+            TakeDamage(dmg);
+        }
+
+        public void OnBuffHeal(float heal)
+        {
+            currentHp = Mathf.Min(currentHp + heal, maxHp);
+            UpdateBar();
+        }
 
         public void Init(MonsterConfig config, Transform hero, BattleManager manager, float hardMultiplier = 1f)
         {
@@ -53,17 +52,23 @@ namespace GeometryTD
             heroTarget = hero;
             isElite = config.is_elite;
 
-            maxHp = ConfigManager.GetAttrValue(config.attrs, AttributeIds.HP) * hardMultiplier;
+            // 初始化属性组件
+            attrs = GetComponent<AttrComponent>();
+            if (attrs == null) attrs = gameObject.AddComponent<AttrComponent>();
+            attrs.Init(config.attrs);
+
+            // 应用难度乘数到基础属性
+            if (hardMultiplier != 1f)
+            {
+                attrs.SetBase(AttributeIds.HP, (int)(attrs.GetBase(AttributeIds.HP) * hardMultiplier));
+                attrs.SetBase(AttributeIds.Attack, (int)(attrs.GetBase(AttributeIds.Attack) * hardMultiplier));
+            }
+
+            maxHp = attrs.GetMaxHp();
             currentHp = maxHp;
-            damage = ConfigManager.GetAttrValue(config.attrs, AttributeIds.Attack) * hardMultiplier;
-            moveSpeed = ConfigManager.GetAttrValue(config.attrs, AttributeIds.MoveSpeed);
 
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
-
-            // 统一从 attrs 读取攻击间隔
-            attackInterval = ConfigManager.GetAttrValue(config.attrs, AttributeIds.AttackInterval, DefaultAttackInterval);
-            if (attackInterval <= 0) attackInterval = DefaultAttackInterval;
 
             // 初始化技能攻击
             hasSkill = false;
@@ -97,6 +102,7 @@ namespace GeometryTD
                 skillAttackRange = 0.5f; // 默认近战距离
             }
 
+            buffSystem.Clear();
             UpdateBar();
         }
 
@@ -110,68 +116,47 @@ namespace GeometryTD
         {
             if (IsDead || heroTarget == null) return;
 
-            // 击退
-            if (knockbackRemaining > 0)
+            // Buff 系统驱动（DoT、冰冻计时、击退位移等全在这里处理）
+            buffSystem.Tick(Time.deltaTime, this);
+            if (IsDead) return;
+
+            // 击退中不做其他行为
+            if (buffSystem.IsKnockingBack())
             {
-                float step = KnockbackSpeed * Time.deltaTime;
-                if (step > knockbackRemaining) step = knockbackRemaining;
-                transform.position += knockbackDir * step;
-                knockbackRemaining -= step;
                 ClampToScreen();
                 return;
             }
 
-            // 灼烧 DoT
-            if (burnTimer > 0)
+            // 冰冻中只停止移动
+            if (buffSystem.HasBuff(BuffType.Freeze))
             {
-                burnTickTimer += Time.deltaTime;
-                if (burnTickTimer >= 1f)
-                {
-                    burnTickTimer -= 1f;
-                    TakeDamage(burnDmg);
-                    if (IsDead) return;
-                }
-                burnTimer -= Time.deltaTime;
-            }
-
-            // 冰冻
-            if (isFrozen)
-            {
-                freezeTimer -= Time.deltaTime;
-                if (freezeTimer <= 0) isFrozen = false;
                 animator?.SetBool("IsMoving", false);
                 return;
             }
 
-            // 减速
-            float currentSpeed = moveSpeed;
-            if (slowTimer > 0)
-            {
-                currentSpeed *= (1f - slowRatio / 10000f);
-                slowTimer -= Time.deltaTime;
-            }
+            // 移速（AttrComponent 已含 buff 加成）
+            float currentSpeed = attrs.GetMoveSpeed();
 
-            // 易伤计时
-            if (vulnerabilityTimer > 0)
-                vulnerabilityTimer -= Time.deltaTime;
+            // 技能冷却计时（不受冰冻影响已被 return 拦截）
+            if (hasSkill)
+            {
+                for (int i = 0; i < attackSkillTimers.Length; i++)
+                    attackSkillTimers[i] += Time.deltaTime;
+            }
 
             float dist = Vector3.Distance(transform.position, heroTarget.position);
 
-            // 有技能的怪物：保持在技能攻击距离内
             if (hasSkill)
             {
-                // 统一攻击间隔计时器
                 attackTimer += Time.deltaTime;
+                float atkInterval = attrs.GetAttackIntervalSec();
 
-                // 在技能攻击范围内，保持静止并攻击
                 if (dist <= skillAttackRange)
                 {
-                    // 停止移动
                     animator?.SetBool("IsMoving", false);
                     facing?.FaceToward(heroTarget.position);
 
-                    // 尝试攻击
-                    if (attackTimer >= attackInterval)
+                    if (attackTimer >= atkInterval)
                     {
                         attackTimer = 0f;
                         TrySkillAttack();
@@ -179,7 +164,6 @@ namespace GeometryTD
                 }
                 else
                 {
-                    // 向英雄移动直到达到技能攻击范围
                     Vector3 direction = (heroTarget.position - transform.position).normalized;
                     transform.position += direction * currentSpeed * Time.deltaTime;
                     facing?.FaceToward(heroTarget.position);
@@ -188,7 +172,6 @@ namespace GeometryTD
             }
             else
             {
-                // 无技能的怪物：近战行为，保持原逻辑
                 Vector3 direction = (heroTarget.position - transform.position).normalized;
                 transform.position += direction * currentSpeed * Time.deltaTime;
                 facing?.FaceToward(heroTarget.position);
@@ -199,7 +182,7 @@ namespace GeometryTD
                     HeroController hero = heroTarget.GetComponent<HeroController>();
                     if (hero != null)
                     {
-                        hero.TakeDamage(damage);
+                        hero.TakeDamage(attrs.GetAttack());
                     }
                     Die();
                 }
@@ -210,7 +193,6 @@ namespace GeometryTD
         {
             if (battleManager == null) return;
 
-            // 从后往前查找第一个未冷却的技能
             int skillIndex = -1;
             for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
             {
@@ -223,18 +205,18 @@ namespace GeometryTD
 
             if (skillIndex < 0) return;
 
-            // 重置该技能的冷却计时器
             attackSkillTimers[skillIndex] = 0f;
 
+            float atk = attrs.GetAttack();
             var skillConfig = attackSkillConfigs[skillIndex];
             if (skillConfig != null)
             {
-                float actualDamage = damage * skillConfig.dmg / 10000f;
+                float actualDamage = atk * skillConfig.dmg / 10000f;
                 battleManager.SpawnMonsterBullet(transform.position, heroTarget, actualDamage, skillConfig.bulletSpeed);
             }
             else
             {
-                battleManager.SpawnMonsterBullet(transform.position, heroTarget, damage, 8f);
+                battleManager.SpawnMonsterBullet(transform.position, heroTarget, atk, 8f);
             }
 
             animator?.SetTrigger("Attack");
@@ -243,9 +225,6 @@ namespace GeometryTD
         public void TakeDamage(float dmg)
         {
             if (IsDead) return;
-
-            if (vulnerabilityTimer > 0 && vulnerabilityRatio > 0)
-                dmg *= (1f + vulnerabilityRatio / 10000f);
 
             currentHp -= dmg;
             currentHp = Mathf.Max(0, currentHp);
@@ -260,35 +239,65 @@ namespace GeometryTD
             }
         }
 
+        // === Buff 快捷方法（供外部 BulletController / ArcaneManager 等调用） ===
+
         public void ApplyFreeze(float duration)
         {
-            isFrozen = true;
-            if (duration > freezeTimer) freezeTimer = duration;
+            var buff = new BuffEntry
+            {
+                type = BuffType.Freeze,
+                duration = duration
+            };
+            buffSystem.AddBuff(buff);
         }
 
         public void ApplyBurn(float dmgPerTick, float duration)
         {
-            burnDmg = dmgPerTick;
-            burnTimer = duration;
-            burnTickTimer = 0f;
+            var buff = new BuffEntry
+            {
+                type = BuffType.DamageOverTime,
+                duration = duration,
+                value = (int)dmgPerTick,
+                tickInterval = 1f
+            };
+            buffSystem.AddBuff(buff);
         }
 
         public void ApplySlow(float duration, float ratio)
         {
-            slowRatio = ratio;
-            if (duration > slowTimer) slowTimer = duration;
+            // 减速通过降低 MoveSpeed 属性实现
+            var buff = new BuffEntry
+            {
+                type = BuffType.AttrModify,
+                duration = duration,
+                attrId = AttributeIds.MoveSpeed,
+                value = -(int)ratio // 负值 = 减少移速
+            };
+            buffSystem.AddBuff(buff);
         }
 
         public void ApplyVulnerability(float duration, float ratio)
         {
-            vulnerabilityRatio = ratio;
-            if (duration > vulnerabilityTimer) vulnerabilityTimer = duration;
+            // 易伤通过增加 AllElemDmgBonus（受到的）实现 — 暂用 AttrModify 挂 BeHurtBonus
+            var buff = new BuffEntry
+            {
+                type = BuffType.AttrModify,
+                duration = duration,
+                attrId = AttributeIds.AllElemDmgReduce,
+                value = -(int)ratio // 负值 = 降低减伤 = 增加受到伤害
+            };
+            buffSystem.AddBuff(buff);
         }
 
         public void ApplyKnockback(Vector3 sourcePos, float force)
         {
-            knockbackDir = Vector3.right;
-            knockbackRemaining = force;
+            var buff = new BuffEntry
+            {
+                type = BuffType.Knockback,
+                duration = force,
+                knockbackDir = Vector3.right
+            };
+            buffSystem.AddBuff(buff);
         }
 
         private void ClampToScreen()
@@ -299,10 +308,10 @@ namespace GeometryTD
             float w = h * cam.aspect;
             Vector3 cp = cam.transform.position;
             Vector3 pos = transform.position;
-            if (pos.x > cp.x + w) { pos.x = cp.x + w; knockbackRemaining = 0; }
-            if (pos.x < cp.x - w) { pos.x = cp.x - w; knockbackRemaining = 0; }
-            if (pos.y > cp.y + h) { pos.y = cp.y + h; knockbackRemaining = 0; }
-            if (pos.y < cp.y - h) { pos.y = cp.y - h; knockbackRemaining = 0; }
+            if (pos.x > cp.x + w) pos.x = cp.x + w;
+            if (pos.x < cp.x - w) pos.x = cp.x - w;
+            if (pos.y > cp.y + h) pos.y = cp.y + h;
+            if (pos.y < cp.y - h) pos.y = cp.y - h;
             transform.position = pos;
         }
 
@@ -310,6 +319,7 @@ namespace GeometryTD
         {
             if (isDead) return;
             isDead = true;
+            buffSystem.Clear();
 
             if (battleManager != null)
             {

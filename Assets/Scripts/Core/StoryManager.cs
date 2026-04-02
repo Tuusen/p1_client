@@ -471,15 +471,15 @@ namespace GeometryTD
             {
                 var (percent, flat) = GetAttributeBonus(modified[i].id);
 
-                // 攻击间隔(id=5)比较特殊：百分比值表示"缩短"，所以用减法
+                // 攻击间隔比较特殊：百分比值表示"缩短"，所以用减法；单位为毫秒
                 if (modified[i].id == AttributeIds.AttackInterval)
                 {
-                    modified[i].value = modified[i].value * (1f - percent / 100f) + flat;
-                    if (modified[i].value < 0.1f) modified[i].value = 0.1f; // 最小攻击间隔
+                    modified[i].value = (int)(modified[i].value * (1f - percent / 100f) + flat);
+                    if (modified[i].value < 100) modified[i].value = 100; // 最小攻击间隔 100ms
                 }
                 else
                 {
-                    modified[i].value = modified[i].value * (1f + percent / 100f) + flat;
+                    modified[i].value = (int)(modified[i].value * (1f + percent / 100f) + flat);
                 }
             }
 

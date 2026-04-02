@@ -532,9 +532,9 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            GameObject bulletObj = Instantiate(heroBulletPrefab, from, Quaternion.identity);
+            GameObject bulletObj = Instantiate(bossBulletPrefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
-            bullet.Init(target, speed, damage, false, this, attackRange);
+            bullet.Init(target, speed, damage, true, this, attackRange);
         }
 
         public void SpawnSummon(Vector3 position, float duration, float attrRatio, int monsterId, bool homing)

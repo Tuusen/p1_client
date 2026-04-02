@@ -359,7 +359,9 @@ namespace GeometryTD
 
         // ===== 属性辅助方法 =====
 
-        public static float GetAttrValue(AttrEntry[] attrs, int attrId, float defaultValue = 0f)
+        private Dictionary<int, AttributeConfig> attrMetaLookup;
+
+        public static int GetAttrValue(AttrEntry[] attrs, int attrId, int defaultValue = 0)
         {
             if (attrs == null) return defaultValue;
             for (int i = 0; i < attrs.Length; i++)
@@ -368,6 +370,27 @@ namespace GeometryTD
                     return attrs[i].value;
             }
             return defaultValue;
+        }
+
+        public AttributeConfig GetAttrMeta(int attrId)
+        {
+            if (attrMetaLookup == null)
+            {
+                attrMetaLookup = new Dictionary<int, AttributeConfig>();
+                if (AttributeConfigs != null)
+                {
+                    foreach (var attr in AttributeConfigs)
+                        attrMetaLookup[attr.id] = attr;
+                }
+            }
+            if (attrMetaLookup.TryGetValue(attrId, out var meta))
+                return meta;
+            return null;
+        }
+
+        public List<AttributeConfig> GetAllAttrMetas()
+        {
+            return AttributeConfigs;
         }
 
         // ===== 故事集配置 =====

@@ -1,8 +1,8 @@
 {"skills":[
     {"id":1001,"level":1,"name":"剑气","desList":["发射等离子弹攻击最近的敌人"],"icon":"","category":"Projectile","dmg":10000,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":10.0,"atkCnt":10,"cd":0,"bulletStyleId":1,"attack_range":10.0,"events":[]},
     {"id":1002,"level":1,"name":"元素弹","desList":["发射等离子弹攻击最近的敌人"],"icon":"","category":"Projectile","dmg":10000,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":10.0,"atkCnt":1,"cd":0,"bulletStyleId":1,"attack_range":50.0,"events":[]},
-    {"id":1003,"level":1,"name":"风弹","desList":["召唤物发射的风弹"],"icon":"","category":"Projectile","dmg":2500,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":10.0,"atkCnt":1,"cd":0,"bulletStyleId":1,"attack_range":50.0,"events":[]},
-    {"id":1004,"level":1,"name":"追踪风弹","desList":["召唤物发射的追踪风弹"],"icon":"","category":"Projectile","dmg":2500,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":10.0,"atkCnt":1,"cd":0,"bulletStyleId":1,"attack_range":50.0,"events":[{"type":18,"param":[]}]},
+    {"id":1003,"level":1,"name":"风弹","desList":["召唤物发射的风弹"],"icon":"","category":"Projectile","dmg":10000,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":10.0,"atkCnt":1,"cd":0,"bulletStyleId":1,"attack_range":50.0,"events":[]},
+    {"id":1004,"level":1,"name":"追踪风弹","desList":["召唤物发射的追踪风弹"],"icon":"","category":"Projectile","dmg":10000,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":10.0,"atkCnt":1,"cd":0,"bulletStyleId":1,"attack_range":50.0,"events":[{"type":18,"param":[]}]},
     {"id":1005,"level":1,"name":"岩弹","desList":["召唤物发射的岩弹"],"icon":"","category":"Projectile","dmg":10000,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":10.0,"atkCnt":1,"cd":0,"bulletStyleId":1,"attack_range":50.0,"events":[]},
    
     {"id":3001,"level":1,"name":"暗影弹","desList":["发射暗影弹攻击目标"],"icon":"","category":"Projectile","dmg":10000,"dmgType":0,"mp":0,"mpType":0,"bulletSpeed":8.0,"atkCnt":1,"cd":0.8,"bulletStyleId":201,"attack_range":15.0,"events":[]},

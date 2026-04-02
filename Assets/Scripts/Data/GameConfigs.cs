@@ -12,18 +12,75 @@ namespace GeometryTD
     public class AttrEntry
     {
         public int id;
-        public float value;
+        public int value;
     }
 
     public static class AttributeIds
     {
+        // 基础属性 (type=1)
         public const int HP = 1;
-        public const int Shield = 2;
-        public const int Attack = 3;
-        public const int AttackInterval = 4;
-        public const int MoveSpeed = 5;
-        public const int Damage = 6;
-        public const int AttackCount = 7;
+        public const int Attack = 2;
+
+        // 特殊属性 (type=2)
+        public const int FireDmgBonus = 100;
+        public const int IceDmgBonus = 101;
+        public const int WindDmgBonus = 102;
+        public const int ElecDmgBonus = 103;
+        public const int AllElemDmgBonus = 104;
+        public const int FireDmgReduce = 105;
+        public const int IceDmgReduce = 106;
+        public const int WindDmgReduce = 107;
+        public const int ElecDmgReduce = 108;
+        public const int AllElemDmgReduce = 109;
+        public const int HpPercentBonus = 110;
+        public const int AtkPercentBonus = 111;
+        public const int BossDmgBonus = 112;
+        public const int EliteDmgBonus = 113;
+        public const int Shield = 114;
+        public const int CritRate = 115;
+        public const int CritDamage = 116;
+        public const int CritResist = 117;
+        public const int CritDmgResist = 118;
+        public const int HitRate = 119;
+        public const int DodgeRate = 120;
+        public const int AttackInterval = 121;
+        public const int FireEnergy = 122;
+        public const int IceEnergy = 123;
+        public const int WindEnergy = 124;
+        public const int ElecEnergy = 125;
+        public const int Proficiency = 126;
+        public const int Craftsmanship = 127;
+        public const int Selfless = 128;
+        public const int SkillCdReduce = 129;
+        public const int ArcaneCdReduce = 130;
+        public const int MoveSpeed = 131;
+        public const int AttackCount = 132;
+
+        // 元素类型 -> 加伤属性ID映射 (dmgType: 1火,2冰,3电,4风)
+        public static int GetElemDmgBonusId(int dmgType)
+        {
+            switch (dmgType)
+            {
+                case 1: return FireDmgBonus;
+                case 2: return IceDmgBonus;
+                case 3: return ElecDmgBonus;
+                case 4: return WindDmgBonus;
+                default: return -1;
+            }
+        }
+
+        // 元素类型 -> 减免属性ID映射
+        public static int GetElemDmgReduceId(int dmgType)
+        {
+            switch (dmgType)
+            {
+                case 1: return FireDmgReduce;
+                case 2: return IceDmgReduce;
+                case 3: return ElecDmgReduce;
+                case 4: return WindDmgReduce;
+                default: return -1;
+            }
+        }
     }
 
     // ===== 角色配置 =====
@@ -50,7 +107,11 @@ namespace GeometryTD
     {
         public int id;
         public string name;
-        public string description;
+        public string des;
+        public int type;      // 1=基础属性, 2=特殊属性
+        public int downLimit;
+        public int upLimit;
+        public int powerType; // 0=直接值, 1=万分比
     }
 
     [Serializable]
@@ -96,6 +157,7 @@ namespace GeometryTD
         public int skill_xp_min;
         public int skill_xp_max;
         public AttrEntry[] attrs;
+        public AttrEntry[] charge_buffs;
     }
 
     [Serializable]
