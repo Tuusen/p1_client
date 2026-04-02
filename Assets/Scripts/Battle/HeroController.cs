@@ -170,6 +170,7 @@ namespace GeometryTD
             {
                 // 进入蓄力：添加 Charge buff
                 isCharging = true;
+                animator?.SetTrigger("Charge");
                 for (int i = 0; i < chargeBuffConfigs.Length; i++)
                 {
                     var entry = chargeBuffConfigs[i];
