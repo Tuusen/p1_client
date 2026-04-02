@@ -132,7 +132,7 @@ namespace GeometryTD
                 particleRT.position = currentPos;
 
                 // 逐渐缩小并淡出
-                float scale = Mathf.Lerp(1f, 0.5f, smoothT);
+                float scale = Mathf.Lerp(2f, 1f, smoothT);
                 particleRT.localScale = Vector3.one * scale;
 
                 float alpha = t < 0.8f ? 1f : Mathf.Lerp(1f, 0f, (t - 0.8f) / 0.2f);
