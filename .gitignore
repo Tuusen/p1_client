@@ -86,3 +86,6 @@ launchpad-hierarchies/
 # Annotation
 /[Aa]ssets/StreamingAssets/aa.meta
 /[Aa]ssets/StreamingAssets/aa/
+
+# Windows null device file
+nul
