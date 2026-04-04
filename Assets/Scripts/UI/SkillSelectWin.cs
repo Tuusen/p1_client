@@ -58,35 +58,35 @@ namespace GeometryTD
             }
 
             Font font = GameHelper.LoadFont();
-            int[] allSkillIds = ConfigManager.Instance.GameConfig.skill_slot_ids;
-            if (allSkillIds == null) return;
+            int[] allSkillPoolIds = ConfigManager.Instance.GameConfig.skill_slot_ids;
+            if (allSkillPoolIds == null) return;
 
-            foreach (int skillId in allSkillIds)
+            foreach (int poolId in allSkillPoolIds)
             {
-                SkillConfig config = ConfigManager.Instance.GetSkillConfig(skillId, 0);
-                if (config == null) continue;
-                GameObject itemObj = CreateSkillItem(config, font);
+                SkillPoolConfig poolConfig = ConfigManager.Instance.GetSkillPoolConfig(poolId);
+                if (poolConfig == null) continue;
+                GameObject itemObj = CreateSkillItem(poolConfig, font);
                 skillItems.Add(itemObj);
             }
 
             UpdateVisuals();
         }
 
-        private GameObject CreateSkillItem(SkillConfig config, Font font)
+        private GameObject CreateSkillItem(SkillPoolConfig poolConfig, Font font)
         {
-            GameObject itemObj = new GameObject($"SkillItem_{config.id}");
+            GameObject itemObj = new GameObject($"SkillItem_{poolConfig.id}");
             itemObj.transform.SetParent(skillListContent, false);
 
             Image bg = itemObj.AddComponent<Image>();
             bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
-            itemBgMap[config.id] = bg;
+            itemBgMap[poolConfig.id] = bg;
 
             LayoutElement le = itemObj.AddComponent<LayoutElement>();
             le.preferredHeight = 70;
 
             Button btn = itemObj.AddComponent<Button>();
-            int skillId = config.id;
-            btn.onClick.AddListener(() => OnSkillClicked(skillId));
+            int poolId = poolConfig.id;
+            btn.onClick.AddListener(() => OnSkillClicked(poolId));
 
             // 名称
             GameObject nameObj = new GameObject("Name");
@@ -101,7 +101,7 @@ namespace GeometryTD
             nameText.font = font;
             nameText.fontSize = 26;
             nameText.alignment = TextAnchor.MiddleLeft;
-            nameText.text = config.name;
+            nameText.text = poolConfig.name;
             nameText.color = Color.white;
 
             // 描述
@@ -117,7 +117,7 @@ namespace GeometryTD
             descText.font = font;
             descText.fontSize = 18;
             descText.alignment = TextAnchor.MiddleLeft;
-            descText.text = config.desList != null && config.desList.Length > 0 ? config.desList[0] : "";
+            descText.text = poolConfig.desList != null && poolConfig.desList.Length > 0 ? poolConfig.desList[0] : "";
             descText.color = new Color(0.7f, 0.7f, 0.7f);
 
             return itemObj;

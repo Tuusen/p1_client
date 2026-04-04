@@ -4,7 +4,7 @@ namespace GeometryTD
 {
     public class SkillSlotState
     {
-        public int skillId;
+        public int skillPoolId;
         public string skillName;
         public int level;
         public int xp;
@@ -67,21 +67,21 @@ namespace GeometryTD
             return slots[index];
         }
 
-        public void Init(int[] skillSlotIds, HeroController hero, BattleManager bm, FloatingTextUI ft)
+        public void Init(int[] skillPoolIds, HeroController hero, BattleManager bm, FloatingTextUI ft)
         {
             this.hero = hero;
             this.battleManager = bm;
 
-            slots = new SkillSlotState[skillSlotIds.Length];
-            for (int i = 0; i < skillSlotIds.Length; i++)
+            slots = new SkillSlotState[skillPoolIds.Length];
+            for (int i = 0; i < skillPoolIds.Length; i++)
             {
                 string name = "";
-                var nameConfig = ConfigManager.Instance.GetSkillConfig(skillSlotIds[i], 0);
-                if (nameConfig != null) name = nameConfig.name;
+                var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(skillPoolIds[i]);
+                if (poolConfig != null) name = poolConfig.name;
 
                 slots[i] = new SkillSlotState
                 {
-                    skillId = skillSlotIds[i],
+                    skillPoolId = skillPoolIds[i],
                     skillName = name,
                     level = 0,
                     xp = 0,
@@ -140,7 +140,7 @@ namespace GeometryTD
                 return info;
             }
 
-            SkillConfig config = ConfigManager.Instance.GetSkillConfig(slot.skillId, slot.level);
+            SkillConfig config = ConfigManager.Instance.GetSkillConfigByPool(slot.skillPoolId, slot.level);
             if (config == null || config.cd <= 0)
             {
                 info.result = SkillUseResult.InvalidSlot;

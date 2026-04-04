@@ -12,6 +12,7 @@ namespace GeometryTD
         public List<SkillConfig> SkillConfigs { get; private set; }
         public GameConfig GameConfig { get; private set; }
         public List<BulletStyleConfig> BulletStyleConfigs { get; private set; }
+        public List<SkillPoolConfig> SkillPoolConfigs { get; private set; }
         public List<ArcaneConfig> ArcaneConfigs { get; private set; }
         public List<EventEffectConfig> EventEffectConfigs { get; private set; }
         public List<LevelConfig> LevelConfigs { get; private set; }
@@ -27,7 +28,8 @@ namespace GeometryTD
         public List<PassiveEffectConfig> PassiveEffectConfigs { get; private set; }
         public List<EventShopConfig> EventShopConfigs { get; private set; }
 
-        private Dictionary<int, Dictionary<int, SkillConfig>> skillLookup;
+        private Dictionary<int, SkillConfig> skillLookup;
+        private Dictionary<int, SkillPoolConfig> skillPoolLookup;
         private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
         private Dictionary<int, ArcaneConfig> arcaneLookup;
         private Dictionary<int, EventEffectConfig> eventEffectLookup;
@@ -65,6 +67,7 @@ namespace GeometryTD
             HeroConfigs = LoadConfig<HeroConfigList>("Configs/hero_config").heroes;
             MonsterConfigs = LoadConfig<MonsterConfigList>("Configs/monster_config").monsters;
             SkillConfigs = LoadConfig<SkillConfigList>("Configs/skill_config").skills;
+            SkillPoolConfigs = LoadConfig<SkillPoolConfigList>("Configs/skill_pool_config").skill_pool_config;
             GameConfig = LoadConfig<GameConfig>("Configs/game_config");
             BulletStyleConfigs = LoadConfig<BulletStyleConfigList>("Configs/bullet_config").bulletStyles;
             ArcaneConfigs = LoadConfig<ArcaneConfigList>("Configs/arcane_config").arcanes;
@@ -80,6 +83,7 @@ namespace GeometryTD
             PassiveEffectConfigs = LoadConfig<PassiveEffectConfigList>("Configs/passive_effect_config").effects;
             EventShopConfigs = LoadConfig<EventShopConfigList>("Configs/event_shop_config").shops;
             BuildSkillLookup();
+            BuildSkillPoolLookup();
             BuildBulletStyleLookup();
             BuildArcaneLookup();
             BuildEventEffectLookup();
@@ -99,14 +103,18 @@ namespace GeometryTD
 
         private void BuildSkillLookup()
         {
-            skillLookup = new Dictionary<int, Dictionary<int, SkillConfig>>();
+            skillLookup = new Dictionary<int, SkillConfig>();
             if (SkillConfigs == null) return;
             foreach (var skill in SkillConfigs)
-            {
-                if (!skillLookup.ContainsKey(skill.id))
-                    skillLookup[skill.id] = new Dictionary<int, SkillConfig>();
-                skillLookup[skill.id][skill.level] = skill;
-            }
+                skillLookup[skill.id] = skill;
+        }
+
+        private void BuildSkillPoolLookup()
+        {
+            skillPoolLookup = new Dictionary<int, SkillPoolConfig>();
+            if (SkillPoolConfigs == null) return;
+            foreach (var pool in SkillPoolConfigs)
+                skillPoolLookup[pool.id] = pool;
         }
 
         private void BuildBulletStyleLookup()
@@ -188,18 +196,20 @@ namespace GeometryTD
 
         public SkillConfig GetSkillConfig(int skillId)
         {
-            return GetSkillConfig(skillId, 1);
+            if (skillLookup != null && skillLookup.TryGetValue(skillId, out var config))
+                return config;
+            return null;
         }
 
-        public SkillConfig GetSkillConfig(int skillId, int level)
+        public SkillConfig GetSkillConfigByPool(int poolId, int level)
         {
-            if (skillLookup != null &&
-                skillLookup.TryGetValue(skillId, out var levels) &&
-                levels.TryGetValue(level, out var config))
-            {
+            return GetSkillConfig(poolId * 100 + level);
+        }
+
+        public SkillPoolConfig GetSkillPoolConfig(int poolId)
+        {
+            if (skillPoolLookup != null && skillPoolLookup.TryGetValue(poolId, out var config))
                 return config;
-            }
-            Debug.LogError($"[ConfigManager] 未找到技能配置, id: {skillId}, level: {level}");
             return null;
         }
 

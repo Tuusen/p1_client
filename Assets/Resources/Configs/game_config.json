@@ -3,6 +3,6 @@
   "monster_spawn_interval": 1.5,
   "boss_monster_id": 100,
   "default_hero_id": 1,
-  "skill_slot_ids": [100100, 100200, 100300, 100400, 100500, 100600, 100700, 100800],
+  "skill_slot_ids": [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008],
   "arcane_slot_ids": [4001, 4002, 4003, 4004]
 }

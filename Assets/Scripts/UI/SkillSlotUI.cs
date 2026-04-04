@@ -42,16 +42,19 @@ namespace GeometryTD
                 var state = skillManager.GetSlot(index);
                 if (state != null)
                 {
-                    if (nameText != null)
-                        nameText.text = state.skillName;
-
-                    // Load icon from config
-                    var baseConfig = ConfigManager.Instance.GetSkillConfig(state.skillId, 0);
-                    if (baseConfig != null && !string.IsNullOrEmpty(baseConfig.icon) && iconImage != null)
+                    // Load name and icon from skill pool config
+                    var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(state.skillPoolId);
+                    if (poolConfig != null)
                     {
-                        var sprite = GameHelper.LoadSprite(baseConfig.icon);
-                        if (sprite != null)
-                            iconImage.sprite = sprite;
+                        if (nameText != null)
+                            nameText.text = poolConfig.name;
+
+                        if (!string.IsNullOrEmpty(poolConfig.icon) && iconImage != null)
+                        {
+                            var sprite = GameHelper.LoadSprite(poolConfig.icon);
+                            if (sprite != null)
+                                iconImage.sprite = sprite;
+                        }
                     }
                 }
             }
@@ -138,12 +141,12 @@ namespace GeometryTD
             isDragging = true;
 
             // 分类技能并启动视觉效果
-            var config = ConfigManager.Instance.GetSkillConfig(state.skillId, Mathf.Max(state.level, 1));
+            var config = ConfigManager.Instance.GetSkillConfigByPool(state.skillPoolId, Mathf.Max(state.level, 1));
             currentDragCategory = SkillManager.ClassifySkill(config);
 
-            // Read dragHint from level=0 config
-            var baseConfig = ConfigManager.Instance.GetSkillConfig(state.skillId, 0);
-            string hintText = baseConfig != null ? baseConfig.dragHint : "";
+            // Read dragHint from skill pool config
+            var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(state.skillPoolId);
+            string hintText = poolConfig != null ? poolConfig.dragHint : "";
 
             if (dragVisualManager != null)
                 dragVisualManager.BeginDrag(currentDragCategory, hintText);
@@ -244,17 +247,16 @@ namespace GeometryTD
             var state = skillManager.GetSlot(slotIndex);
             if (state == null) return;
 
-            // 获取 desList（从 level 0 配置，保证总是有描述）
-            var config = ConfigManager.Instance.GetSkillConfig(state.skillId, 0);
-            if (config == null || config.desList == null) return;
+            // 获取 desList（从 skill pool 配置）
+            var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(state.skillPoolId);
+            if (poolConfig == null || poolConfig.desList == null) return;
 
             int currentLevel = state.level;
             float cd = 0f;
             var lvConfig = currentLevel > 0
-                ? ConfigManager.Instance.GetSkillConfig(state.skillId, currentLevel)
+                ? ConfigManager.Instance.GetSkillConfigByPool(state.skillPoolId, currentLevel)
                 : null;
             if (lvConfig != null) cd = lvConfig.cd;
-            else if (config.cd > 0) cd = config.cd;
 
             // 创建 tooltip
             activeTooltip = new GameObject("SkillTooltip");
@@ -268,7 +270,7 @@ namespace GeometryTD
             // 内容容器
             float lineHeight = 22f;
             float padding = 10f;
-            int lineCount = config.desList.Length + 2; // name + desList + cd
+            int lineCount = poolConfig.desList.Length + 2; // name + desList + cd
             float totalHeight = lineCount * lineHeight + padding * 2;
             float tooltipWidth = 220f;
 
@@ -289,11 +291,11 @@ namespace GeometryTD
             float yOffset = totalHeight / 2f - padding;
 
             // 技能名
-            CreateTooltipText(activeTooltip, state.skillName, font, 16, FontStyle.Bold,
+            CreateTooltipText(activeTooltip, poolConfig.name, font, 16, FontStyle.Bold,
                 Color.white, tooltipWidth, ref yOffset, lineHeight);
 
             // desList
-            for (int i = 0; i < config.desList.Length; i++)
+            for (int i = 0; i < poolConfig.desList.Length; i++)
             {
                 Color textColor = Color.white;
                 if (i == 2)
@@ -303,7 +305,7 @@ namespace GeometryTD
                     textColor = currentLevel >= 10
                         ? new Color(0.2f, 0.9f, 0.2f) : new Color(0.5f, 0.5f, 0.5f);
 
-                CreateTooltipText(activeTooltip, config.desList[i], font, 13, FontStyle.Normal,
+                CreateTooltipText(activeTooltip, poolConfig.desList[i], font, 13, FontStyle.Normal,
                     textColor, tooltipWidth, ref yOffset, lineHeight);
             }
 

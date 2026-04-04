@@ -231,15 +231,30 @@ namespace GeometryTD
     }
 
     [Serializable]
+    public class SkillPoolConfig
+    {
+        public int id;
+        public string name;
+        public string[] desList;
+        public string icon;
+        public string dragHint;
+    }
+
+    [Serializable]
+    public class SkillPoolConfigList
+    {
+        public List<SkillPoolConfig> skill_pool_config;
+    }
+
+    [Serializable]
     public class SkillConfig
     {
         public int id;
         public int level;
         public string name;
-        public string[] desList;
+        public string des;
         public string icon;
         public string category;
-        public string dragHint;
         public int dmg;
         public int dmgType;
         public int mp;

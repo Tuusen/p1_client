@@ -127,8 +127,8 @@ namespace GeometryTD
                 var slot = skillManager.GetSlot(pendingXpSlotIndex);
                 if (slot != null)
                 {
-                    var config = ConfigManager.Instance.GetSkillConfig(slot.skillId, 0);
-                    string iconPath = config != null ? config.icon : null;
+                    var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(slot.skillPoolId);
+                    string iconPath = poolConfig != null ? poolConfig.icon : null;
                     skillXpTimerUI.SetTargetSkill(slot.skillName, iconPath);
                 }
                 else
