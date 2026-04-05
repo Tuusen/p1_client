@@ -28,6 +28,12 @@ namespace GeometryTD
         public List<PassiveEffectConfig> PassiveEffectConfigs { get; private set; }
         public List<EventShopConfig> EventShopConfigs { get; private set; }
 
+        // Event/Buff/Passive 系统配置
+        public List<EventConfig> EventConfigs { get; private set; }
+        public List<BulletEventConfig> BulletEventConfigs { get; private set; }
+        public List<BuffConfig> BuffConfigs { get; private set; }
+        public List<PassiveConfig> PassiveConfigs { get; private set; }
+
         private Dictionary<int, SkillConfig> skillLookup;
         private Dictionary<int, SkillPoolConfig> skillPoolLookup;
         private Dictionary<int, BulletStyleConfig> bulletStyleLookup;
@@ -45,6 +51,12 @@ namespace GeometryTD
         private Dictionary<int, ChoiceGroupConfig> choiceGroupLookup;
         private Dictionary<int, PassiveEffectConfig> passiveEffectLookup;
         private Dictionary<int, EventShopConfig> eventShopLookup;
+
+        // Event/Buff/Passive 查询索引
+        private Dictionary<int, EventConfig> eventConfigLookup;
+        private Dictionary<int, BulletEventConfig> bulletEventConfigLookup;
+        private Dictionary<int, BuffConfig> buffConfigLookup;
+        private Dictionary<int, PassiveConfig> passiveConfigLookup;
 
         private Dictionary<int, GameObject> bulletPrefabCache;
         private Dictionary<int, GameObject> effectPrefabCache;
@@ -82,6 +94,10 @@ namespace GeometryTD
             ChoiceGroupConfigs = LoadConfig<ChoiceGroupConfigList>("Configs/choice_option_config").choiceGroups;
             PassiveEffectConfigs = LoadConfig<PassiveEffectConfigList>("Configs/passive_effect_config").effects;
             EventShopConfigs = LoadConfig<EventShopConfigList>("Configs/event_shop_config").shops;
+            EventConfigs = LoadConfig<EventConfigList>("Configs/event_config").events;
+            BulletEventConfigs = LoadConfig<BulletEventConfigList>("Configs/bullet_event_config").bulletEvents;
+            BuffConfigs = LoadConfig<BuffConfigList>("Configs/buff_config").buffs;
+            PassiveConfigs = LoadConfig<PassiveConfigList>("Configs/passive_config").passives;
             BuildSkillLookup();
             BuildSkillPoolLookup();
             BuildBulletStyleLookup();
@@ -97,6 +113,10 @@ namespace GeometryTD
             BuildChoiceGroupLookup();
             BuildPassiveEffectLookup();
             BuildEventShopLookup();
+            BuildEventConfigLookup();
+            BuildBulletEventConfigLookup();
+            BuildBuffConfigLookup();
+            BuildPassiveConfigLookup();
             PreloadPrefabs();
             PreloadRolePrefabs();
         }
@@ -520,6 +540,78 @@ namespace GeometryTD
             if (eventShopLookup != null && eventShopLookup.TryGetValue(id, out var config))
                 return config;
             Debug.LogError($"[ConfigManager] 未找到商店配置, id: {id}");
+            return null;
+        }
+
+        // ===== Event 事件配置 =====
+
+        private void BuildEventConfigLookup()
+        {
+            eventConfigLookup = new Dictionary<int, EventConfig>();
+            if (EventConfigs == null) return;
+            foreach (var config in EventConfigs)
+                eventConfigLookup[config.id] = config;
+        }
+
+        public EventConfig GetEventConfig(int id)
+        {
+            if (eventConfigLookup != null && eventConfigLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogWarning($"[ConfigManager] 未找到事件配置, id: {id}");
+            return null;
+        }
+
+        // ===== BulletEvent 子弹事件配置 =====
+
+        private void BuildBulletEventConfigLookup()
+        {
+            bulletEventConfigLookup = new Dictionary<int, BulletEventConfig>();
+            if (BulletEventConfigs == null) return;
+            foreach (var config in BulletEventConfigs)
+                bulletEventConfigLookup[config.id] = config;
+        }
+
+        public BulletEventConfig GetBulletEventConfig(int id)
+        {
+            if (bulletEventConfigLookup != null && bulletEventConfigLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogWarning($"[ConfigManager] 未找到子弹事件配置, id: {id}");
+            return null;
+        }
+
+        // ===== Buff 配置 =====
+
+        private void BuildBuffConfigLookup()
+        {
+            buffConfigLookup = new Dictionary<int, BuffConfig>();
+            if (BuffConfigs == null) return;
+            foreach (var config in BuffConfigs)
+                buffConfigLookup[config.id] = config;
+        }
+
+        public BuffConfig GetBuffConfig(int id)
+        {
+            if (buffConfigLookup != null && buffConfigLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogWarning($"[ConfigManager] 未找到Buff配置, id: {id}");
+            return null;
+        }
+
+        // ===== Passive 被动配置 =====
+
+        private void BuildPassiveConfigLookup()
+        {
+            passiveConfigLookup = new Dictionary<int, PassiveConfig>();
+            if (PassiveConfigs == null) return;
+            foreach (var config in PassiveConfigs)
+                passiveConfigLookup[config.id] = config;
+        }
+
+        public PassiveConfig GetPassiveConfig(int id)
+        {
+            if (passiveConfigLookup != null && passiveConfigLookup.TryGetValue(id, out var config))
+                return config;
+            Debug.LogWarning($"[ConfigManager] 未找到被动配置, id: {id}");
             return null;
         }
     }

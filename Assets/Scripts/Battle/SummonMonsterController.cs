@@ -24,6 +24,7 @@ namespace GeometryTD
 
         // IBuffTarget 实现
         public AttrComponent Attrs => attrs;
+        public BuffSystem BuffSystem => buffSystem;
         public bool IsDead => isDead;
         public Vector3 Position => transform.position;
 
@@ -120,13 +121,7 @@ namespace GeometryTD
             buffSystem.Tick(Time.deltaTime, this);
             if (isDead) return;
 
-            if (buffSystem.IsKnockingBack())
-            {
-                ClampToScreen();
-                return;
-            }
-
-            if (buffSystem.HasBuff(BuffType.Freeze))
+            if (buffSystem.IsFrozen())
             {
                 animator?.SetBool("IsMoving", false);
                 return;
@@ -175,56 +170,15 @@ namespace GeometryTD
 
             facing?.FaceToward(target.position);
 
-            var mods = new BulletModifiers { homing = this.homing };
+            var bulletData = BulletEventExecutor.BuildBulletData(skillConfig.bulletEvents);
+            if (this.homing) bulletData.homing = true;
+
             float bulletSpeed = skillConfig.bulletSpeed;
             float atk = attrs.GetAttack();
             float actualDamage = atk * skillConfig.dmg / 10000f;
-            battleManager.SpawnSkillBullet(transform.position, target, actualDamage, bulletSpeed, mods, skillConfig.bulletStyleId, skillConfig.attack_range);
+            battleManager.SpawnSkillBullet(transform.position, target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range);
 
             animator?.SetTrigger("Attack");
-        }
-
-        // === Buff 快捷方法 ===
-
-        public void ApplyFreeze(float duration)
-        {
-            buffSystem.AddBuff(new BuffEntry { type = BuffType.Freeze, duration = duration });
-        }
-
-        public void ApplyBurn(float dmgPerTick, float duration)
-        {
-            buffSystem.AddBuff(new BuffEntry
-            {
-                type = BuffType.DamageOverTime, duration = duration,
-                value = (int)dmgPerTick, tickInterval = 1f
-            });
-        }
-
-        public void ApplySlow(float duration, float ratio)
-        {
-            buffSystem.AddBuff(new BuffEntry
-            {
-                type = BuffType.AttrModify, duration = duration,
-                attrId = AttributeIds.MoveSpeed, value = -(int)ratio
-            });
-        }
-
-        public void ApplyVulnerability(float duration, float ratio)
-        {
-            buffSystem.AddBuff(new BuffEntry
-            {
-                type = BuffType.AttrModify, duration = duration,
-                attrId = AttributeIds.AllElemDmgReduce, value = -(int)ratio
-            });
-        }
-
-        public void ApplyKnockback(Vector3 sourcePos, float force)
-        {
-            buffSystem.AddBuff(new BuffEntry
-            {
-                type = BuffType.Knockback, duration = force,
-                knockbackDir = Vector3.right
-            });
         }
 
         private void ClampToScreen()

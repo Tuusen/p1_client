@@ -31,6 +31,7 @@ namespace GeometryTD
 
         // IBuffTarget 实现
         public AttrComponent Attrs => attrs;
+        public BuffSystem BuffSystem => buffSystem;
         public bool IsDead => isDead;
         public bool IsElite => isElite;
         public Vector3 Position => transform.position;
@@ -116,19 +117,12 @@ namespace GeometryTD
         {
             if (IsDead || heroTarget == null) return;
 
-            // Buff 系统驱动（DoT、冰冻计时、击退位移等全在这里处理）
+            // Buff 系统驱动
             buffSystem.Tick(Time.deltaTime, this);
             if (IsDead) return;
 
-            // 击退中不做其他行为
-            if (buffSystem.IsKnockingBack())
-            {
-                ClampToScreen();
-                return;
-            }
-
             // 冰冻中只停止移动
-            if (buffSystem.HasBuff(BuffType.Freeze))
+            if (buffSystem.IsFrozen())
             {
                 animator?.SetBool("IsMoving", false);
                 return;
@@ -137,7 +131,7 @@ namespace GeometryTD
             // 移速（AttrComponent 已含 buff 加成）
             float currentSpeed = attrs.GetMoveSpeed();
 
-            // 技能冷却计时（不受冰冻影响已被 return 拦截）
+            // 技能冷却计时
             if (hasSkill)
             {
                 for (int i = 0; i < attackSkillTimers.Length; i++)
@@ -187,6 +181,8 @@ namespace GeometryTD
                     Die();
                 }
             }
+
+            ClampToScreen();
         }
 
         private void TrySkillAttack()
@@ -237,67 +233,6 @@ namespace GeometryTD
             {
                 Die();
             }
-        }
-
-        // === Buff 快捷方法（供外部 BulletController / ArcaneManager 等调用） ===
-
-        public void ApplyFreeze(float duration)
-        {
-            var buff = new BuffEntry
-            {
-                type = BuffType.Freeze,
-                duration = duration
-            };
-            buffSystem.AddBuff(buff);
-        }
-
-        public void ApplyBurn(float dmgPerTick, float duration)
-        {
-            var buff = new BuffEntry
-            {
-                type = BuffType.DamageOverTime,
-                duration = duration,
-                value = (int)dmgPerTick,
-                tickInterval = 1f
-            };
-            buffSystem.AddBuff(buff);
-        }
-
-        public void ApplySlow(float duration, float ratio)
-        {
-            // 减速通过降低 MoveSpeed 属性实现
-            var buff = new BuffEntry
-            {
-                type = BuffType.AttrModify,
-                duration = duration,
-                attrId = AttributeIds.MoveSpeed,
-                value = -(int)ratio // 负值 = 减少移速
-            };
-            buffSystem.AddBuff(buff);
-        }
-
-        public void ApplyVulnerability(float duration, float ratio)
-        {
-            // 易伤通过增加 AllElemDmgBonus（受到的）实现 — 暂用 AttrModify 挂 BeHurtBonus
-            var buff = new BuffEntry
-            {
-                type = BuffType.AttrModify,
-                duration = duration,
-                attrId = AttributeIds.AllElemDmgReduce,
-                value = -(int)ratio // 负值 = 降低减伤 = 增加受到伤害
-            };
-            buffSystem.AddBuff(buff);
-        }
-
-        public void ApplyKnockback(Vector3 sourcePos, float force)
-        {
-            var buff = new BuffEntry
-            {
-                type = BuffType.Knockback,
-                duration = force,
-                knockbackDir = Vector3.right
-            };
-            buffSystem.AddBuff(buff);
         }
 
         private void ClampToScreen()

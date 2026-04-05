@@ -189,117 +189,55 @@ namespace GeometryTD
             float actualDmg = hero.BaseAttack * config.dmg / 10000f;
             bool fullScreen = config.radius < 0f;
 
-            // Parse events for status effects
-            float freezeDuration = 0f;
-            float burnDmg = 0f, burnDuration = 0f;
-            float slowDuration = 0f, slowRatio = 0f;
-            float knockbackForce = 0f;
-            float vulnRatio = 0f, vulnDuration = 0f;
-            int chainCount = 0;
-            float chainDecay = 0f, chainRange = 0f, chainAoeRadius = 0f;
-
-            if (config.events != null)
-            {
-                foreach (var evt in config.events)
-                {
-                    if (evt.param == null) continue;
-                    switch (evt.type)
-                    {
-                        case SkillEventType.Freeze:
-                            if (evt.param.Length >= 1) freezeDuration = evt.param[0];
-                            break;
-                        case SkillEventType.Burn:
-                            if (evt.param.Length >= 2)
-                            {
-                                burnDmg = hero.BaseAttack * evt.param[0] / 10000f;
-                                burnDuration = evt.param[1];
-                            }
-                            break;
-                        case SkillEventType.Slow:
-                            if (evt.param.Length >= 2)
-                            {
-                                slowDuration = evt.param[0];
-                                slowRatio = evt.param[1];
-                            }
-                            break;
-                        case SkillEventType.Knockback:
-                            if (evt.param.Length >= 1) knockbackForce = evt.param[0];
-                            break;
-                        case SkillEventType.Vulnerability:
-                            if (evt.param.Length >= 2)
-                            {
-                                vulnRatio = evt.param[0];
-                                vulnDuration = evt.param[1];
-                            }
-                            break;
-                        case SkillEventType.Chain:
-                            if (evt.param.Length >= 4)
-                            {
-                                chainCount = (int)evt.param[0];
-                                chainDecay = evt.param[1];
-                                chainRange = evt.param[2];
-                                chainAoeRadius = evt.param[3];
-                            }
-                            break;
-                    }
-                }
-            }
-
             if (fullScreen)
             {
-                battleManager.DealFullScreenAoe(
-                    a.position, actualDmg, knockbackForce,
-                    slowDuration, slowRatio, vulnRatio, vulnDuration);
+                battleManager.DealFullScreenAoe(a.position, actualDmg, config.enemyEvents, hero);
                 SpawnTickVfx(a.position, 20f, config.dmgType);
             }
             else
             {
-                DealArcaneAoe(a.position, config.radius, actualDmg,
-                    freezeDuration, burnDmg, burnDuration,
-                    slowDuration, slowRatio, knockbackForce,
-                    vulnRatio, vulnDuration,
-                    chainCount, chainDecay, chainRange, chainAoeRadius);
+                // 对范围内敌人造成伤害 + 执行敌方事件
+                var enemies = battleManager.GetEnemiesInRadius(a.position, config.radius);
+                foreach (var enemy in enemies)
+                {
+                    if (enemy == null) continue;
+
+                    IBuffTarget target = enemy.GetComponent<MonsterController>() as IBuffTarget;
+                    if (target == null)
+                        target = enemy.GetComponent<BossController>() as IBuffTarget;
+
+                    if (target != null)
+                    {
+                        target.OnBuffDamage(actualDmg);
+
+                        if (config.enemyEvents != null && config.enemyEvents.Length > 0)
+                        {
+                            var ctx = new EventContext
+                            {
+                                caster = hero,
+                                target = target,
+                                battleManager = battleManager,
+                                position = enemy.position
+                            };
+                            EventExecutor.ExecuteEvents(config.enemyEvents, ctx);
+                        }
+                    }
+                }
+
                 SpawnTickVfx(a.position, config.radius, config.dmgType);
             }
-        }
 
-        private void DealArcaneAoe(Vector3 center, float radius, float damage,
-            float freezeDur, float burnDmg, float burnDur,
-            float slowDur, float slowRatio, float knockback,
-            float vulnRatio, float vulnDur,
-            int chainCount, float chainDecay, float chainRange, float chainAoeRadius)
-        {
-            var efx = battleManager.EventEffectManager;
-
-            // Get all enemies in range and apply damage + effects
-            var enemies = battleManager.GetEnemiesInRadius(center, radius);
-            foreach (var enemy in enemies)
+            // 执行自身事件（对英雄）
+            if (config.events != null && config.events.Length > 0)
             {
-                if (enemy == null) continue;
-                Vector3 pos = enemy.position;
-
-                MonsterController mc = enemy.GetComponent<MonsterController>();
-                if (mc != null)
+                var selfCtx = new EventContext
                 {
-                    mc.TakeDamage(damage);
-                    if (freezeDur > 0) { mc.ApplyFreeze(freezeDur); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
-                    if (burnDmg > 0 && burnDur > 0) { mc.ApplyBurn(burnDmg, burnDur); efx?.TriggerEffect(SkillEventType.Burn, pos); }
-                    if (slowDur > 0) { mc.ApplySlow(slowDur, slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
-                    if (knockback > 0) { mc.ApplyKnockback(center, knockback); efx?.TriggerEffect(SkillEventType.Knockback, pos); }
-                    if (vulnDur > 0) { mc.ApplyVulnerability(vulnDur, vulnRatio); efx?.TriggerEffect(SkillEventType.Vulnerability, pos); }
-                    continue;
-                }
-
-                BossController bc = enemy.GetComponent<BossController>();
-                if (bc != null)
-                {
-                    bc.TakeDamage(damage);
-                    if (freezeDur > 0) { bc.ApplyFreeze(freezeDur); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
-                    if (burnDmg > 0 && burnDur > 0) { bc.ApplyBurn(burnDmg, burnDur); efx?.TriggerEffect(SkillEventType.Burn, pos); }
-                    if (slowDur > 0) { bc.ApplySlow(slowDur, slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
-                    if (knockback > 0) { bc.ApplyKnockback(center, knockback); efx?.TriggerEffect(SkillEventType.Knockback, pos); }
-                    if (vulnDur > 0) { bc.ApplyVulnerability(vulnDur, vulnRatio); efx?.TriggerEffect(SkillEventType.Vulnerability, pos); }
-                }
+                    caster = hero,
+                    target = hero,
+                    battleManager = battleManager,
+                    position = hero.Position
+                };
+                EventExecutor.ExecuteEvents(config.events, selfCtx);
             }
         }
 

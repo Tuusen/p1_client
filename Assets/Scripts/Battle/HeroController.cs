@@ -7,6 +7,7 @@ namespace GeometryTD
     {
         private AttrComponent attrs;
         private BuffSystem buffSystem = new BuffSystem();
+        private PassiveSystem passiveSystem = new PassiveSystem();
 
         [Header("配置")]
         private float attackRange;
@@ -22,20 +23,8 @@ namespace GeometryTD
         private float currentShield;
         private float attackTimer;
 
-        // 反击状态（电磁盾牌）
-        private float retaliationDmg;
-        private int retaliationBullets;
-        private int retaliationPierceCount;
-        private bool retaliationActive;
-        private int retaliationBulletStyleId;
-
-        // 护盾破裂状态
-        private float shieldBreakRadius;
-        private float shieldBreakDmg;
-        private bool shieldBreakPending;
-
         // Charge 状态
-        private AttrEntry[] chargeBuffConfigs;
+        private int[] chargeBuffIds;
         private float lastAttackTime;
         private bool isCharging;
         private const float ChargeIdleThreshold = 5f;
@@ -51,6 +40,7 @@ namespace GeometryTD
 
         // IBuffTarget 实现
         public AttrComponent Attrs => attrs;
+        public BuffSystem BuffSystem => buffSystem;
         public bool IsDead => currentHp <= 0;
         public Vector3 Position => transform.position;
 
@@ -84,7 +74,7 @@ namespace GeometryTD
             currentShield = maxShield;
 
             // Charge 配置
-            chargeBuffConfigs = config.charge_buffs;
+            chargeBuffIds = config.charge_buff_ids;
             lastAttackTime = Time.time;
             isCharging = false;
 
@@ -120,6 +110,7 @@ namespace GeometryTD
             facing = GetComponent<CharacterFacing>();
 
             buffSystem.Clear();
+            passiveSystem.Clear();
             UpdateBars();
         }
 
@@ -134,7 +125,7 @@ namespace GeometryTD
         {
             if (IsDead || battleManager == null) return;
 
-            // Buff 系统驱动（HoT、减伤等）
+            // Buff 系统驱动
             buffSystem.Tick(Time.deltaTime, this);
             if (IsDead) return;
 
@@ -162,7 +153,7 @@ namespace GeometryTD
 
         private void UpdateChargeState()
         {
-            if (chargeBuffConfigs == null || chargeBuffConfigs.Length == 0) return;
+            if (chargeBuffIds == null || chargeBuffIds.Length == 0) return;
 
             float idle = Time.time - lastAttackTime;
 
@@ -171,16 +162,9 @@ namespace GeometryTD
                 // 进入蓄力：添加 Charge buff
                 isCharging = true;
                 animator?.SetTrigger("Charge");
-                for (int i = 0; i < chargeBuffConfigs.Length; i++)
+                for (int i = 0; i < chargeBuffIds.Length; i++)
                 {
-                    var entry = chargeBuffConfigs[i];
-                    buffSystem.AddBuff(new BuffEntry
-                    {
-                        type = BuffType.Charge,
-                        duration = -1f, // 永久，直到手动移除
-                        attrId = entry.id,
-                        value = entry.value
-                    });
+                    buffSystem.AddBuff(chargeBuffIds[i], this);
                 }
             }
         }
@@ -189,7 +173,11 @@ namespace GeometryTD
         {
             if (!isCharging) return;
             isCharging = false;
-            buffSystem.RemoveBuffsByType(BuffType.Charge);
+            if (chargeBuffIds != null)
+            {
+                for (int i = 0; i < chargeBuffIds.Length; i++)
+                    buffSystem.RemoveBuffByConfigId(chargeBuffIds[i], 1);
+            }
         }
 
         private void TryAttack()
@@ -214,11 +202,18 @@ namespace GeometryTD
             if (skillConfig == null) return;
 
             float skillRange = skillConfig.attack_range > 0 ? skillConfig.attack_range : attackRange;
-            int atkCount = attrs.GetFinal(AttributeIds.AttackCount);
-            if (atkCount < 1) atkCount = 1;
+
+            // 构建子弹数据
+            var bulletData = BulletEventExecutor.BuildBulletData(skillConfig.bulletEvents);
+
+            // 目标数量：优先 volleyCount，其次 AttackCount 属性
+            int targetCount = bulletData.volleyCount > 0
+                ? bulletData.volleyCount
+                : attrs.GetFinal(AttributeIds.AttackCount);
+            if (targetCount < 1) targetCount = 1;
 
             List<Transform> targets = battleManager.GetNearestEnemiesUnique(
-                transform.position, skillRange, atkCount);
+                transform.position, skillRange, targetCount);
             if (targets.Count == 0) return;
 
             // 攻击时退出蓄力
@@ -229,10 +224,23 @@ namespace GeometryTD
 
             float atk = attrs.GetAttack();
             float actualDmg = atk * skillConfig.dmg / 10000f;
-            var mods = new BulletModifiers();
+
+            // 合并 enemyEvents 到子弹的 attachToTargetEventIds
+            MergeEnemyEvents(bulletData, skillConfig.enemyEvents);
+
             foreach (var target in targets)
                 battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    skillConfig.bulletSpeed, mods.Clone(), skillConfig.bulletStyleId, skillRange);
+                    skillConfig.bulletSpeed, bulletData.Clone(), skillConfig.bulletStyleId, skillRange, this);
+
+            // 执行自身事件
+            var ctx = new EventContext
+            {
+                caster = this,
+                target = this,
+                battleManager = battleManager,
+                position = transform.position
+            };
+            EventExecutor.ExecuteEvents(skillConfig.events, ctx);
 
             battleManager.OnHeroNormalAttack(transform.position);
             animator?.SetTrigger("Attack");
@@ -254,282 +262,96 @@ namespace GeometryTD
             }
         }
 
-        // ===== 弹幕技能 (烈焰圣弹, 急冻冰锥, 闪电连锁) =====
+        // ===== 弹幕技能 =====
         private void HandleProjectileSkill(SkillConfig config)
         {
             float atk = attrs.GetAttack();
             float actualDmg = atk * config.dmg / 10000f;
-            var mods = new BulletModifiers();
-            int extraShots = 0;
 
-            if (config.events != null)
-            {
-                foreach (var evt in config.events)
-                {
-                    if (evt.param == null) continue;
-                    switch (evt.type)
-                    {
-                        case SkillEventType.Pierce:
-                            if (evt.param.Length >= 1) mods.pierceCount = (int)evt.param[0];
-                            break;
-                        case SkillEventType.Explosion:
-                            if (evt.param.Length >= 2)
-                            {
-                                mods.explosionRadius = evt.param[0];
-                                mods.explosionDmg = atk * evt.param[1] / 10000f;
-                            }
-                            break;
-                        case SkillEventType.ExtraShot:
-                            if (evt.param.Length >= 1) extraShots = (int)evt.param[0];
-                            break;
-                        case SkillEventType.Chain:
-                            if (evt.param.Length >= 4)
-                            {
-                                mods.chainCount = (int)evt.param[0];
-                                mods.chainDecayRatio = evt.param[1];
-                                mods.chainRange = evt.param[2];
-                                mods.chainAoeRadius = evt.param[3];
-                            }
-                            break;
-                        case SkillEventType.Freeze:
-                            if (evt.param.Length >= 1) mods.freezeDuration = evt.param[0];
-                            break;
-                        case SkillEventType.Burn:
-                            if (evt.param.Length >= 2)
-                            {
-                                mods.burnDmg = atk * evt.param[0] / 10000f;
-                                mods.burnDuration = evt.param[1];
-                            }
-                            break;
-                        case SkillEventType.Slow:
-                            if (evt.param.Length >= 2)
-                            {
-                                mods.slowDuration = evt.param[0];
-                                mods.slowRatio = evt.param[1];
-                            }
-                            break;
-                    }
-                }
-            }
+            var bulletData = BulletEventExecutor.BuildBulletData(config.bulletEvents);
+            MergeEnemyEvents(bulletData, config.enemyEvents);
 
-            int totalShots = config.atkCnt + extraShots;
+            int shotCount = bulletData.volleyCount > 0 ? bulletData.volleyCount : 1;
             float skillRange = config.attack_range > 0 ? config.attack_range : attackRange;
+
             List<Transform> targets = battleManager.GetNearestEnemies(
-                transform.position, skillRange, totalShots);
+                transform.position, skillRange, shotCount);
             if (targets.Count == 0) return;
 
             foreach (var target in targets)
             {
                 battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    config.bulletSpeed, mods.Clone(), config.bulletStyleId, skillRange);
+                    config.bulletSpeed, bulletData.Clone(), config.bulletStyleId, skillRange, this);
             }
+
+            // 执行自身事件
+            var ctx = new EventContext
+            {
+                caster = this,
+                target = this,
+                battleManager = battleManager,
+                position = transform.position
+            };
+            EventExecutor.ExecuteEvents(config.events, ctx);
         }
 
-        // ===== 自身效果技能 (沐浴之火, 牺牲寒冰) =====
+        // ===== 自身效果技能 =====
         private void HandleSelfSkill(SkillConfig config)
         {
-            if (config.events == null) return;
-
-            var efx = battleManager.EventEffectManager;
-
-            foreach (var evt in config.events)
+            var ctx = new EventContext
             {
-                if (evt.param == null) continue;
-                switch (evt.type)
-                {
-                    case SkillEventType.Heal:
-                        if (evt.param.Length >= 1)
-                        {
-                            float healAmount = maxHp * evt.param[0] / 10000f;
-                            currentHp = Mathf.Min(currentHp + healAmount, maxHp);
-                            UpdateBars();
-                        }
-                        break;
-                    case SkillEventType.HealOverTime:
-                        if (evt.param.Length >= 2)
-                        {
-                            int healPerSec = (int)(maxHp * evt.param[0] / 10000f);
-                            buffSystem.AddBuff(new BuffEntry
-                            {
-                                type = BuffType.HealOverTime,
-                                duration = evt.param[1],
-                                value = healPerSec,
-                                tickInterval = 1f
-                            });
-                        }
-                        break;
-                    case SkillEventType.DamageReduction:
-                        if (evt.param.Length >= 2)
-                        {
-                            buffSystem.AddBuff(new BuffEntry
-                            {
-                                type = BuffType.AttrModify,
-                                duration = evt.param[1],
-                                attrId = AttributeIds.AllElemDmgReduce,
-                                value = (int)evt.param[0]
-                            });
-                        }
-                        break;
-                    case SkillEventType.SelfDamage:
-                        if (evt.param.Length >= 1)
-                        {
-                            float selfDmg = maxHp * evt.param[0] / 10000f;
-                            currentHp -= selfDmg;
-                            currentHp = Mathf.Max(1f, currentHp);
-                            UpdateBars();
-                        }
-                        break;
-                    case SkillEventType.GrantXp:
-                        if (evt.param.Length >= 2)
-                        {
-                            int xpAmount = (int)evt.param[0];
-                            int targetCount = (int)evt.param[1];
-                            battleManager.GrantSkillXp(xpAmount, targetCount);
-                        }
-                        break;
-                }
-
-                efx?.TriggerEffect(evt.type, transform.position);
-            }
+                caster = this,
+                target = this,
+                battleManager = battleManager,
+                position = transform.position
+            };
+            EventExecutor.ExecuteEvents(config.events, ctx);
         }
 
-        // ===== 护盾技能 (电磁盾牌) =====
+        // ===== 护盾技能 =====
         private void HandleShieldSkill(SkillConfig config)
         {
-            if (config.events == null) return;
-
-            var efx = battleManager.EventEffectManager;
-            int pierceFromEvent = 0;
-            float atk = attrs.GetAttack();
-
-            foreach (var evt in config.events)
+            var ctx = new EventContext
             {
-                if (evt.param == null) continue;
-                switch (evt.type)
-                {
-                    case SkillEventType.Shield:
-                        if (evt.param.Length >= 1)
-                        {
-                            float shieldAmount = maxHp * evt.param[0] / 10000f;
-                            float shieldCap = maxShield > 0 ? maxShield : maxHp;
-                            currentShield = Mathf.Min(currentShield + shieldAmount, shieldCap);
-                            UpdateBars();
-                        }
-                        break;
-                    case SkillEventType.Retaliation:
-                        if (evt.param.Length >= 3)
-                        {
-                            retaliationDmg = atk * evt.param[0] / 10000f;
-                            retaliationBullets = (int)evt.param[1];
-                            retaliationPierceCount = 0;
-                            retaliationActive = true;
-                        }
-                        break;
-                    case SkillEventType.Pierce:
-                        if (evt.param.Length >= 1)
-                            pierceFromEvent = (int)evt.param[0];
-                        break;
-                    case SkillEventType.ShieldBreak:
-                        if (evt.param.Length >= 2)
-                        {
-                            shieldBreakRadius = evt.param[0];
-                            shieldBreakDmg = atk * evt.param[1] / 10000f;
-                            shieldBreakPending = true;
-                        }
-                        break;
-                }
-
-                efx?.TriggerEffect(evt.type, transform.position);
-            }
-
-            if (retaliationActive)
-            {
-                retaliationPierceCount = pierceFromEvent;
-                retaliationBulletStyleId = config.bulletStyleId;
-            }
+                caster = this,
+                target = this,
+                battleManager = battleManager,
+                position = transform.position
+            };
+            EventExecutor.ExecuteEvents(config.events, ctx);
         }
 
-        // ===== 全屏AoE技能 (超暴风) =====
+        // ===== 全屏AoE技能 =====
         private void HandleAoeSkill(SkillConfig config)
         {
             float atk = attrs.GetAttack();
             float actualDmg = atk * config.dmg / 10000f;
 
-            float knockbackForce = 0f;
-            float slowDuration = 0f, slowRatio = 0f;
-            float vulnRatio = 0f, vulnDuration = 0f;
-
-            if (config.events != null)
+            // 执行自身事件
+            var selfCtx = new EventContext
             {
-                foreach (var evt in config.events)
-                {
-                    if (evt.param == null) continue;
-                    switch (evt.type)
-                    {
-                        case SkillEventType.Knockback:
-                            if (evt.param.Length >= 1) knockbackForce = evt.param[0];
-                            break;
-                        case SkillEventType.Slow:
-                            if (evt.param.Length >= 2)
-                            {
-                                slowDuration = evt.param[0];
-                                slowRatio = evt.param[1];
-                            }
-                            break;
-                        case SkillEventType.Vulnerability:
-                            if (evt.param.Length >= 2)
-                            {
-                                vulnRatio = evt.param[0];
-                                vulnDuration = evt.param[1];
-                            }
-                            break;
-                    }
-                }
-            }
+                caster = this,
+                target = this,
+                battleManager = battleManager,
+                position = transform.position
+            };
+            EventExecutor.ExecuteEvents(config.events, selfCtx);
 
-            battleManager.DealFullScreenAoe(transform.position, actualDmg,
-                knockbackForce, slowDuration, slowRatio, vulnRatio, vulnDuration);
+            // 全屏AoE伤害 + 敌方事件
+            battleManager.DealFullScreenAoe(transform.position, actualDmg, config.enemyEvents, this);
         }
 
         // ===== 召唤技能 =====
         private void HandleSummonSkill(SkillConfig config)
         {
-            if (config.events == null) return;
-
-            float duration = 0f, attrRatio = 0f;
-            int extraCount = 0, monsterId = 0;
-            bool homing = false;
-
-            foreach (var evt in config.events)
+            var ctx = new EventContext
             {
-                switch (evt.type)
-                {
-                    case SkillEventType.Summon:
-                        if (evt.param != null && evt.param.Length >= 4)
-                        {
-                            monsterId = (int)evt.param[0];
-                            duration = evt.param[1];
-                            attrRatio = evt.param[2];
-                            extraCount = (int)evt.param[3];
-                        }
-                        break;
-                    case SkillEventType.Homing:
-                        homing = true;
-                        break;
-                }
-            }
-
-            if (monsterId <= 0) return;
-
-            int totalSummons = 1 + extraCount;
-
-            for (int i = 0; i < totalSummons; i++)
-            {
-                Vector3 offset = new Vector3(
-                    Random.Range(-1.5f, 1.5f), Random.Range(-2f, -0.5f), 0f);
-                battleManager.SpawnSummon(
-                    transform.position + offset, duration, attrRatio, monsterId, homing);
-            }
+                caster = this,
+                target = this,
+                battleManager = battleManager,
+                position = transform.position
+            };
+            EventExecutor.ExecuteEvents(config.events, ctx);
         }
 
         // ===== 受伤 =====
@@ -544,8 +366,6 @@ namespace GeometryTD
                 damage *= (1f - dmgReduce / 10000f);
             }
 
-            bool shieldWasActive = currentShield > 0;
-
             if (currentShield > 0)
             {
                 if (damage <= currentShield)
@@ -558,27 +378,10 @@ namespace GeometryTD
                     currentShield = 0;
                     currentHp -= remaining;
                 }
-
-                // 反击
-                if (retaliationActive && retaliationBullets > 0)
-                {
-                    FireRetaliationBullets();
-                }
             }
             else
             {
                 currentHp -= damage;
-            }
-
-            // 护盾破裂
-            if (shieldWasActive && currentShield <= 0)
-            {
-                retaliationActive = false;
-                if (shieldBreakPending)
-                {
-                    shieldBreakPending = false;
-                    battleManager.DealAoeDamage(transform.position, shieldBreakRadius, shieldBreakDmg);
-                }
             }
 
             currentHp = Mathf.Max(0, currentHp);
@@ -587,21 +390,6 @@ namespace GeometryTD
             if (currentHp <= 0)
             {
                 battleManager.OnHeroDead();
-            }
-        }
-
-        private void FireRetaliationBullets()
-        {
-            if (battleManager == null) return;
-
-            List<Transform> targets = battleManager.GetNearestEnemies(
-                transform.position, attackRange, retaliationBullets);
-
-            foreach (var target in targets)
-            {
-                var mods = new BulletModifiers { pierceCount = retaliationPierceCount };
-                battleManager.SpawnSkillBullet(
-                    transform.position, target, retaliationDmg, 15f, mods, retaliationBulletStyleId, attackRange);
             }
         }
 
@@ -616,6 +404,20 @@ namespace GeometryTD
             {
                 hpBar.SetValue(currentHp, maxHp);
             }
+        }
+
+        // ===== 工具方法 =====
+
+        /// <summary>
+        /// 将技能的 enemyEvents 合并到 bulletData 的 attachToTargetEventIds 中
+        /// </summary>
+        private static void MergeEnemyEvents(BulletEventData bulletData, int[] enemyEvents)
+        {
+            if (enemyEvents == null || enemyEvents.Length == 0) return;
+            if (bulletData.attachToTargetEventIds == null)
+                bulletData.attachToTargetEventIds = new List<int>();
+            for (int i = 0; i < enemyEvents.Length; i++)
+                bulletData.attachToTargetEventIds.Add(enemyEvents[i]);
         }
     }
 }

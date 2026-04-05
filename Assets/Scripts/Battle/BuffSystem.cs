@@ -3,32 +3,19 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public enum BuffType
-    {
-        AttrModify,
-        DamageOverTime,
-        Freeze,
-        Knockback,
-        HealOverTime,
-        Charge,
-    }
-
     public class BuffEntry
     {
-        public int buffId;
-        public BuffType type;
-        public float duration;
-        public int value;
-        public int secondaryValue;
-        public int attrId;
-        public float tickInterval;
-        public float tickTimer;
-        public Vector3 knockbackDir;
+        public int buffConfigId;
+        public BuffConfig cachedConfig;
+        public int stackCount;
+        public float remainingTime;   // 秒
+        public float tickTimer;       // 跳伤计时（秒）
     }
 
     public interface IBuffTarget
     {
         AttrComponent Attrs { get; }
+        BuffSystem BuffSystem { get; }
         void OnBuffDamage(float dmg);
         void OnBuffHeal(float heal);
         bool IsDead { get; }
@@ -38,213 +25,187 @@ namespace GeometryTD
     public class BuffSystem
     {
         private List<BuffEntry> buffs = new List<BuffEntry>();
-        private int nextBuffId = 1;
 
-        public void AddBuff(BuffEntry buff)
+        public void AddBuff(int buffConfigId, IBuffTarget target)
         {
-            buff.buffId = nextBuffId++;
+            var config = ConfigManager.Instance.GetBuffConfig(buffConfigId);
+            if (config == null) return;
 
-            switch (buff.type)
+            // 概率判定
+            if (config.probability > 0 && config.probability < 10000)
             {
-                case BuffType.DamageOverTime:
-                    // Refresh duration, keep highest damage
-                    for (int i = 0; i < buffs.Count; i++)
-                    {
-                        if (buffs[i].type == BuffType.DamageOverTime)
-                        {
-                            if (buff.duration > buffs[i].duration)
-                                buffs[i].duration = buff.duration;
-                            if (buff.value > buffs[i].value)
-                                buffs[i].value = buff.value;
-                            buffs[i].tickTimer = 0f;
-                            return;
-                        }
-                    }
-                    break;
-
-                case BuffType.Freeze:
-                    for (int i = 0; i < buffs.Count; i++)
-                    {
-                        if (buffs[i].type == BuffType.Freeze)
-                        {
-                            if (buff.duration > buffs[i].duration)
-                                buffs[i].duration = buff.duration;
-                            return;
-                        }
-                    }
-                    break;
-
-                case BuffType.Knockback:
-                    for (int i = 0; i < buffs.Count; i++)
-                    {
-                        if (buffs[i].type == BuffType.Knockback)
-                        {
-                            buffs[i].duration = buff.duration;
-                            buffs[i].knockbackDir = buff.knockbackDir;
-                            return;
-                        }
-                    }
-                    break;
-
-                case BuffType.Charge:
-                    // Charge buffs are managed by controller (isCharging flag)
-                    // Allow multiple charge buffs (one per attribute)
-                    break;
-
-                case BuffType.AttrModify:
-                    // Each AttrModify buff is independent, apply bonus on add
-                    break;
-
-                case BuffType.HealOverTime:
-                    // Refresh
-                    for (int i = 0; i < buffs.Count; i++)
-                    {
-                        if (buffs[i].type == BuffType.HealOverTime)
-                        {
-                            buffs[i].duration = buff.duration;
-                            buffs[i].value = buff.value;
-                            buffs[i].tickTimer = 0f;
-                            return;
-                        }
-                    }
-                    break;
+                if (Random.Range(0, 10000) >= config.probability)
+                    return;
             }
 
-            // Apply attr bonus on add for AttrModify and Charge
-            if (buff.type == BuffType.AttrModify || buff.type == BuffType.Charge)
+            // 查找已存在的同ID buff
+            BuffEntry existing = null;
+            for (int i = 0; i < buffs.Count; i++)
             {
-                // AttrModify stores attrId and value; applied via target.Attrs
-                // Actual apply happens in ApplyAttrBuffs
+                if (buffs[i].buffConfigId == buffConfigId)
+                {
+                    existing = buffs[i];
+                    break;
+                }
             }
 
-            buffs.Add(buff);
+            if (existing != null)
+            {
+                // 叠加逻辑
+                if (config.overlap > 0 && existing.stackCount < config.overlap)
+                {
+                    existing.stackCount++;
+                }
+                // 刷新持续时间
+                if (config.lastTime > 0)
+                    existing.remainingTime = config.lastTime / 1000f;
+                existing.tickTimer = 0f;
+                return;
+            }
+
+            // 新增buff
+            var entry = new BuffEntry
+            {
+                buffConfigId = buffConfigId,
+                cachedConfig = config,
+                stackCount = 1,
+                remainingTime = config.lastTime > 0 ? config.lastTime / 1000f : -1f,
+                tickTimer = 0f
+            };
+            buffs.Add(entry);
         }
 
-        public void RemoveBuff(int buffId)
+        public void RemoveBuffByConfigId(int buffConfigId, int count)
         {
+            int removed = 0;
             for (int i = buffs.Count - 1; i >= 0; i--)
             {
-                if (buffs[i].buffId == buffId)
+                if (buffs[i].buffConfigId == buffConfigId)
                 {
                     buffs.RemoveAt(i);
-                    return;
+                    removed++;
+                    if (count > 0 && removed >= count) break;
                 }
             }
         }
 
-        public void RemoveBuffsByType(BuffType type)
+        public void RemoveBuffsByType(int buffType)
         {
             for (int i = buffs.Count - 1; i >= 0; i--)
             {
-                if (buffs[i].type == type)
+                if (buffs[i].cachedConfig != null && buffs[i].cachedConfig.type == buffType)
                     buffs.RemoveAt(i);
             }
         }
 
-        public bool HasBuff(BuffType type)
+        public bool HasSpecialEffect(int specialType)
         {
             for (int i = 0; i < buffs.Count; i++)
             {
-                if (buffs[i].type == type)
-                    return true;
+                var cfg = buffs[i].cachedConfig;
+                if (cfg == null || cfg.specialEvent == null) continue;
+                for (int j = 0; j < cfg.specialEvent.Length; j++)
+                {
+                    if (cfg.specialEvent[j].type == specialType)
+                        return true;
+                }
             }
             return false;
+        }
+
+        public bool IsFrozen()
+        {
+            return HasSpecialEffect(103);
         }
 
         public void Tick(float deltaTime, IBuffTarget target)
         {
             if (target == null || target.IsDead) return;
 
-            // Recalculate attr bonuses from buffs each tick
             ReapplyAttrBonuses(target);
 
             for (int i = buffs.Count - 1; i >= 0; i--)
             {
                 var buff = buffs[i];
+                var cfg = buff.cachedConfig;
+                if (cfg == null) { buffs.RemoveAt(i); continue; }
 
-                switch (buff.type)
+                // 跳伤/跳效果
+                if (cfg.jumpTime > 0)
                 {
-                    case BuffType.DamageOverTime:
-                        buff.tickTimer += deltaTime;
-                        if (buff.tickTimer >= buff.tickInterval)
-                        {
-                            buff.tickTimer -= buff.tickInterval;
-                            target.OnBuffDamage(buff.value);
-                            if (target.IsDead) return;
-                        }
-                        break;
+                    float jumpSec = cfg.jumpTime / 1000f;
+                    buff.tickTimer += deltaTime;
+                    while (buff.tickTimer >= jumpSec)
+                    {
+                        buff.tickTimer -= jumpSec;
 
-                    case BuffType.HealOverTime:
-                        buff.tickTimer += deltaTime;
-                        if (buff.tickTimer >= buff.tickInterval)
-                        {
-                            buff.tickTimer -= buff.tickInterval;
-                            target.OnBuffHeal(buff.value);
-                        }
-                        break;
+                        // evtDmgRate 快照伤害
+                        // TODO: 未生效 - evtDmgRate 快照伤害计算
 
-                    case BuffType.Knockback:
-                        if (buff.duration > 0)
+                        // evtDamage 触发事件
+                        if (cfg.evtDamage != null && cfg.evtDamage.Length > 0)
                         {
-                            float step = 20f * deltaTime;
-                            if (step > buff.duration) step = buff.duration;
-                            var t = target as MonoBehaviour;
-                            if (t != null)
-                                t.transform.position += buff.knockbackDir * step;
-                            buff.duration -= step;
+                            var ctx = new EventContext
+                            {
+                                caster = target,
+                                target = target,
+                                position = target.Position
+                            };
+                            EventExecutor.ExecuteEvents(cfg.evtDamage, ctx);
                         }
-                        break;
+
+                        if (target.IsDead) return;
+                    }
                 }
 
-                // Duration countdown (Knockback uses duration as remaining distance)
-                if (buff.type != BuffType.Knockback && buff.duration >= 0)
+                // 持续时间倒计时
+                if (buff.remainingTime > 0)
                 {
-                    buff.duration -= deltaTime;
-                    if (buff.duration <= 0)
+                    buff.remainingTime -= deltaTime;
+                    if (buff.remainingTime <= 0)
                     {
+                        // buff过期 - 触发结束事件
+                        if (cfg.evtWhenEnd != null && cfg.evtWhenEnd.Length > 0)
+                        {
+                            // TODO: 未生效 - evtWhenEnd 结束事件
+                            Debug.Log($"[BuffSystem] evtWhenEnd 未生效, buffId={buff.buffConfigId}");
+                        }
+
                         buffs.RemoveAt(i);
                     }
                 }
-                else if (buff.type == BuffType.Knockback && buff.duration <= 0)
-                {
-                    buffs.RemoveAt(i);
-                }
+                // remainingTime == -1 表示永久buff，不自动过期
             }
         }
 
-        // Re-apply all AttrModify/Charge bonuses to target's AttrComponent
-        // Called at the start of each Tick to keep bonuses in sync
         private void ReapplyAttrBonuses(IBuffTarget target)
         {
             if (target.Attrs == null) return;
 
-            // Clear all buff bonuses first
             target.Attrs.ClearBonuses();
 
-            // Re-add from active buffs
             for (int i = 0; i < buffs.Count; i++)
             {
-                var buff = buffs[i];
-                if ((buff.type == BuffType.AttrModify || buff.type == BuffType.Charge) && buff.attrId > 0)
+                var cfg = buffs[i].cachedConfig;
+                if (cfg == null || cfg.attribute == null) continue;
+
+                int stacks = buffs[i].stackCount;
+                for (int j = 0; j < cfg.attribute.Length; j++)
                 {
-                    target.Attrs.AddBonus(buff.attrId, buff.value);
+                    var attr = cfg.attribute[j];
+                    target.Attrs.AddBonus(attr.id, attr.value * stacks);
                 }
             }
-        }
-
-        public bool IsKnockingBack()
-        {
-            for (int i = 0; i < buffs.Count; i++)
-            {
-                if (buffs[i].type == BuffType.Knockback && buffs[i].duration > 0)
-                    return true;
-            }
-            return false;
         }
 
         public void Clear()
         {
             buffs.Clear();
+        }
+
+        public List<BuffEntry> GetActiveBuffs()
+        {
+            return buffs;
         }
     }
 }

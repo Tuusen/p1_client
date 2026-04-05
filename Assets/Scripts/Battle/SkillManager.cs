@@ -33,30 +33,8 @@ namespace GeometryTD
                 return cat;
             }
 
-            // Fallback: infer from events (legacy compatibility)
-            bool hasSummon = false, hasShield = false, hasSelfEffect = false;
-            if (config.events != null)
-            {
-                foreach (var evt in config.events)
-                {
-                    switch (evt.type)
-                    {
-                        case SkillEventType.Summon: hasSummon = true; break;
-                        case SkillEventType.Shield: hasShield = true; break;
-                        case SkillEventType.Heal:
-                        case SkillEventType.HealOverTime:
-                        case SkillEventType.DamageReduction:
-                        case SkillEventType.SelfDamage:
-                        case SkillEventType.GrantXp:
-                            hasSelfEffect = true; break;
-                    }
-                }
-            }
-
-            if (hasSummon) return SkillCategory.Summon;
-            if (hasShield) return SkillCategory.Shield;
-            if (hasSelfEffect && config.bulletSpeed <= 0) return SkillCategory.Self;
-            if (config.bulletSpeed > 0 && config.atkCnt > 0) return SkillCategory.Projectile;
+            // Fallback
+            if (config.bulletSpeed > 0) return SkillCategory.Projectile;
             if (config.dmg > 0) return SkillCategory.Aoe;
             return SkillCategory.Self;
         }
@@ -148,14 +126,6 @@ namespace GeometryTD
             }
 
             hero.UseSkill(config);
-
-            // 技能使用后产生能量
-            if (config.mpType > 0 && config.mp > 0 && battleManager != null)
-            {
-                var arcMgr = battleManager.ArcaneManager;
-                if (arcMgr != null)
-                    arcMgr.AddEnergy(config.mpType, config.mp);
-            }
 
             slot.cooldownRemaining = config.cd;
             slot.maxCooldown = config.cd;

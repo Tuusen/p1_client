@@ -416,10 +416,9 @@ namespace GeometryTD
             }
         }
 
-        // 全屏AoE（超暴风）：伤害 + 击退 + 减速 + 易伤
+        // 全屏AoE：伤害 + 通过 enemyEvents 附加效果
         public void DealFullScreenAoe(Vector3 heroPos, float damage,
-            float knockbackForce, float slowDuration, float slowRatio,
-            float vulnRatio, float vulnDuration)
+            int[] enemyEventIds = null, IBuffTarget caster = null)
         {
             for (int i = aliveEnemies.Count - 1; i >= 0; i--)
             {
@@ -430,24 +429,25 @@ namespace GeometryTD
                 }
 
                 Transform enemy = aliveEnemies[i];
+                IBuffTarget target = enemy.GetComponent<MonsterController>() as IBuffTarget;
+                if (target == null)
+                    target = enemy.GetComponent<BossController>() as IBuffTarget;
 
-                MonsterController mc = enemy.GetComponent<MonsterController>();
-                if (mc != null)
+                if (target != null)
                 {
-                    mc.TakeDamage(damage);
-                    if (knockbackForce > 0) mc.ApplyKnockback(heroPos, knockbackForce);
-                    if (slowDuration > 0) mc.ApplySlow(slowDuration, slowRatio);
-                    if (vulnDuration > 0) mc.ApplyVulnerability(vulnDuration, vulnRatio);
-                    continue;
-                }
+                    target.OnBuffDamage(damage);
 
-                BossController bc = enemy.GetComponent<BossController>();
-                if (bc != null)
-                {
-                    bc.TakeDamage(damage);
-                    if (knockbackForce > 0) bc.ApplyKnockback(heroPos, knockbackForce);
-                    if (slowDuration > 0) bc.ApplySlow(slowDuration, slowRatio);
-                    if (vulnDuration > 0) bc.ApplyVulnerability(vulnDuration, vulnRatio);
+                    if (enemyEventIds != null && enemyEventIds.Length > 0)
+                    {
+                        var ctx = new EventContext
+                        {
+                            caster = caster,
+                            target = target,
+                            battleManager = this,
+                            position = enemy.position
+                        };
+                        EventExecutor.ExecuteEvents(enemyEventIds, ctx);
+                    }
                 }
             }
         }
@@ -502,7 +502,8 @@ namespace GeometryTD
         }
 
         public void SpawnSkillBullet(Vector3 from, Transform target, float damage,
-                                      float speed, BulletModifiers mods, int bulletStyleId = 0, float attackRange = 50f)
+                                      float speed, BulletEventData bulletData, int bulletStyleId = 0,
+                                      float attackRange = 50f, IBuffTarget caster = null)
         {
             if (gameEnded) return;
 
@@ -516,7 +517,7 @@ namespace GeometryTD
 
             GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
-            bullet.InitSkillBullet(target, speed, damage, this, mods, attackRange);
+            bullet.InitSkillBullet(target, speed, damage, this, bulletData, attackRange, caster);
         }
 
         public void SpawnBossBullet(Vector3 from, Transform target, float damage, float speed)

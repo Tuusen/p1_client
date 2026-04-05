@@ -17,7 +17,8 @@ namespace GeometryTD
         private Vector3 startPosition;
 
         private BattleManager battleManager;
-        private BulletModifiers modifiers;
+        private BulletEventData bulletData;
+        private IBuffTarget caster;
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
 
         private bool isPiercing;
@@ -36,7 +37,7 @@ namespace GeometryTD
             this.damage = damage;
             this.isEnemyBullet = isEnemyBullet;
             this.battleManager = bm;
-            this.modifiers = new BulletModifiers();
+            this.bulletData = new BulletEventData();
             this.hasTarget = target != null;
             this.maxAttackRange = attackRange;
             this.startPosition = transform.position;
@@ -50,14 +51,16 @@ namespace GeometryTD
 
         // 技能子弹
         public void InitSkillBullet(Transform target, float speed, float damage,
-                                     BattleManager bm, BulletModifiers mods, float attackRange)
+                                     BattleManager bm, BulletEventData data, float attackRange,
+                                     IBuffTarget caster = null)
         {
             this.target = target;
             this.speed = speed;
             this.damage = damage;
             this.isEnemyBullet = false;
             this.battleManager = bm;
-            this.modifiers = mods ?? new BulletModifiers();
+            this.bulletData = data ?? new BulletEventData();
+            this.caster = caster;
             this.hasTarget = target != null;
             this.maxAttackRange = attackRange;
             this.startPosition = transform.position;
@@ -98,7 +101,7 @@ namespace GeometryTD
             }
 
             // 追踪：目标死亡后寻找新目标
-            if (modifiers != null && modifiers.homing && target == null && battleManager != null)
+            if (bulletData != null && bulletData.homing && target == null && battleManager != null)
             {
                 Transform newTarget = battleManager.GetNearestEnemyExcluding(
                     transform.position, 50f, hitTargets);
@@ -120,7 +123,7 @@ namespace GeometryTD
             transform.position += direction * speed * Time.deltaTime;
 
             // 穿刺模式：沿直线飞行，检测路径上的敌人
-            if (isPiercing && modifiers != null && modifiers.pierceCount > 0 && battleManager != null)
+            if (isPiercing && bulletData != null && bulletData.pierceCount > 0 && battleManager != null)
             {
                 Transform nearby = battleManager.GetNearestEnemyExcluding(
                     transform.position, 0.5f, hitTargets);
@@ -128,11 +131,11 @@ namespace GeometryTD
                 {
                     target = nearby;
                     ApplyDamage();
-                    ApplyStatusEffects();
+                    ExecuteHitEvents();
                     hitTargets.Add(nearby);
                     target = null;
-                    modifiers.pierceCount--;
-                    if (modifiers.pierceCount <= 0)
+                    bulletData.pierceCount--;
+                    if (bulletData.pierceCount <= 0)
                     {
                         Destroy(gameObject);
                         return;
@@ -151,10 +154,10 @@ namespace GeometryTD
             } else {
                 // 超出攻击范围，继续飞行（穿透+1）
                 isPiercing = true;
-                if (modifiers == null) {
-                    modifiers = new BulletModifiers();
+                if (bulletData == null) {
+                    bulletData = new BulletEventData();
                 };
-                modifiers.pierceCount = 1;
+                bulletData.pierceCount = 1;
                 lastTargetPos = transform.position + pierceDirection * 50f;
             }
         }
@@ -164,28 +167,26 @@ namespace GeometryTD
             if (target != null)
             {
                 ApplyDamage();
-                ApplyStatusEffects();
+                ExecuteHitEvents();
 
                 // 爆炸
-                if (modifiers != null && modifiers.explosionRadius > 0f && battleManager != null)
+                if (bulletData != null && bulletData.explosionRadius > 0 && battleManager != null)
                 {
-                    battleManager.DealAoeDamage(transform.position, modifiers.explosionRadius, modifiers.explosionDmg);
-                    var efx = battleManager.EventEffectManager;
-                    if (efx != null) efx.TriggerEffect(SkillEventType.Explosion, transform.position);
+                    float explDmg = damage * bulletData.explosionDmgRate / 10000f;
+                    battleManager.DealAoeDamage(transform.position, bulletData.explosionRadius, explDmg);
                 }
             }
 
-            // 连锁弹射优先
-            if (modifiers != null && modifiers.chainCount > 0 && battleManager != null)
+            // 弹射优先
+            if (bulletData != null && bulletData.bounceCount > 0 && battleManager != null)
             {
-                modifiers.chainCount--;
-                damage *= modifiers.chainDecayRatio / 10000f;
+                bulletData.bounceCount--;
+                if (bulletData.bounceDmgMod > 0)
+                    damage *= bulletData.bounceDmgMod / 10000f;
 
-                if (modifiers.chainAoeRadius > 0)
-                    battleManager.DealAoeDamage(transform.position, modifiers.chainAoeRadius, damage);
-
+                float bounceRange = bulletData.bounceRadius > 0 ? bulletData.bounceRadius : 10f;
                 Transform next = battleManager.GetNearestEnemyExcluding(
-                    transform.position, modifiers.chainRange, hitTargets);
+                    transform.position, bounceRange, hitTargets);
                 if (next != null)
                 {
                     target = next;
@@ -195,7 +196,7 @@ namespace GeometryTD
                 }
             }
             // 穿刺：进入直线飞行模式，方向不变
-            else if (modifiers != null && modifiers.pierceCount > 0 && battleManager != null && !isEnemyBullet)
+            else if (bulletData != null && bulletData.pierceCount > 0 && battleManager != null && !isEnemyBullet)
             {
                 isPiercing = true;
                 target = null;
@@ -292,28 +293,43 @@ namespace GeometryTD
             }
         }
 
-        private void ApplyStatusEffects()
+        private void ExecuteHitEvents()
         {
-            if (isEnemyBullet || target == null || modifiers == null) return;
+            if (isEnemyBullet || target == null || bulletData == null) return;
 
-            Vector3 pos = target.position;
-            var efx = battleManager != null ? battleManager.EventEffectManager : null;
-
-            MonsterController mc = target.GetComponent<MonsterController>();
-            if (mc != null)
+            // 对目标附加事件（冰冻、灼烧、减速等通过 buff 事件实现）
+            if (bulletData.attachToTargetEventIds != null && bulletData.attachToTargetEventIds.Count > 0)
             {
-                if (modifiers.freezeDuration > 0) { mc.ApplyFreeze(modifiers.freezeDuration); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
-                if (modifiers.burnDuration > 0)   { mc.ApplyBurn(modifiers.burnDmg, modifiers.burnDuration); efx?.TriggerEffect(SkillEventType.Burn, pos); }
-                if (modifiers.slowDuration > 0)    { mc.ApplySlow(modifiers.slowDuration, modifiers.slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
-                return;
+                IBuffTarget hitTarget = target.GetComponent<MonsterController>() as IBuffTarget;
+                if (hitTarget == null)
+                    hitTarget = target.GetComponent<BossController>() as IBuffTarget;
+
+                if (hitTarget != null)
+                {
+                    var ctx = new EventContext
+                    {
+                        caster = caster,
+                        target = hitTarget,
+                        battleManager = battleManager,
+                        position = target.position
+                    };
+                    for (int i = 0; i < bulletData.attachToTargetEventIds.Count; i++)
+                        EventExecutor.ExecuteEvent(bulletData.attachToTargetEventIds[i], ctx);
+                }
             }
 
-            BossController bc = target.GetComponent<BossController>();
-            if (bc != null)
+            // 对施法者附加事件
+            if (bulletData.attachToCasterEventIds != null && bulletData.attachToCasterEventIds.Count > 0 && caster != null)
             {
-                if (modifiers.freezeDuration > 0) { bc.ApplyFreeze(modifiers.freezeDuration); efx?.TriggerEffect(SkillEventType.Freeze, pos); }
-                if (modifiers.burnDuration > 0)   { bc.ApplyBurn(modifiers.burnDmg, modifiers.burnDuration); efx?.TriggerEffect(SkillEventType.Burn, pos); }
-                if (modifiers.slowDuration > 0)    { bc.ApplySlow(modifiers.slowDuration, modifiers.slowRatio); efx?.TriggerEffect(SkillEventType.Slow, pos); }
+                var ctx = new EventContext
+                {
+                    caster = caster,
+                    target = caster,
+                    battleManager = battleManager,
+                    position = caster.Position
+                };
+                for (int i = 0; i < bulletData.attachToCasterEventIds.Count; i++)
+                    EventExecutor.ExecuteEvent(bulletData.attachToCasterEventIds[i], ctx);
             }
         }
     }

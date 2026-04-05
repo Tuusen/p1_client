@@ -4,7 +4,6 @@ using System.Collections.Generic;
 namespace GeometryTD
 {
     // dmgType: 0=无属性, 1=火, 2=冰, 3=电, 4=风
-    // mpType:  0=不产生能量, 1=火, 2=冰, 3=电, 4=风, 99=所有
 
     // ===== 属性系统 =====
 
@@ -120,30 +119,189 @@ namespace GeometryTD
         public List<AttributeConfig> attributes;
     }
 
-    // ===== 技能事件类型 =====
+    // ===== Event 事件配置 =====
+    // type: 1=伤害/治疗, 2=护盾/破盾, 4=击退, 5=获得经验, 6=获得能量, 7=获得buff, 8=获得passive, 9=召唤, 10=驱散
 
-    public static class SkillEventType
+    public static class EventType
     {
-        public const int Pierce = 1;
-        public const int Explosion = 2;
-        public const int Freeze = 3;
-        public const int Burn = 4;
-        public const int ExtraShot = 5;
-        public const int Chain = 6;
-        public const int Slow = 7;
-        public const int Heal = 8;
-        public const int HealOverTime = 9;
-        public const int DamageReduction = 10;
-        public const int SelfDamage = 11;
-        public const int GrantXp = 12;
-        public const int Shield = 13;
-        public const int Retaliation = 14;
-        public const int Knockback = 15;
-        public const int Vulnerability = 16;
-        public const int Summon = 17;
-        public const int Homing = 18;
-        public const int ShieldBreak = 19;
+        public const int Damage = 1;       // args=[伤害倍率, 伤害类型] 负数为治疗
+        public const int Shield = 2;       // args=[护盾值]
+        public const int Knockback = 4;    // args=[击退力度万分比]
+        public const int GrantXp = 5;      // args=[经验值, 技能数量(-1=全部)]
+        public const int GainEnergy = 6;   // args=[能量值, 能量类型(-1=全部)]
+        public const int GainBuff = 7;     // args=[buffId]
+        public const int GainPassive = 8;  // args=[passiveId]
+        public const int Summon = 9;       // args=[怪物ID, 持续时间, 继承属性%, 额外数量]
+        public const int Dispel = 10;      // args=[BuffId(-1=全部增益,-2=全部减益), 驱散个数]
     }
+
+    [Serializable]
+    public class EventConfig
+    {
+        public int id;
+        public int type;
+        public string name;
+        public string des;
+        public int[] args;
+    }
+
+    [Serializable]
+    public class EventConfigList
+    {
+        public List<EventConfig> events;
+    }
+
+    // ===== BulletEvent 子弹事件配置 =====
+    // type: 101=穿透,102=爆炸,103=追踪, 201=散射,202=弹射,203=连射,204=齐射, 301=附加目标,302=附加施法者
+
+    public static class BulletEventType
+    {
+        public const int Pierce = 101;         // args=[穿透数量]
+        public const int Explosion = 102;      // args=[爆炸伤害倍率, 爆炸半径]
+        public const int Tracking = 103;       // args=[]
+
+        public const int Scatter = 201;        // args=[额外子弹数, 分散角度]
+        public const int Bounce = 202;         // args=[弹射次数, 范围半径, 最小距离, 初始伤害修正]
+        public const int Burst = 203;          // args=[连续释放次数]
+        public const int Volley = 204;         // args=[攻击目标数量]
+
+        public const int AttachToTarget = 301; // args=[eventId] 命中后对目标附加
+        public const int AttachToCaster = 302; // args=[eventId] 命中后对施法者附加
+    }
+
+    [Serializable]
+    public class BulletEventConfig
+    {
+        public int id;
+        public int type;
+        public string name;
+        public string des;
+        public int[] args;
+    }
+
+    [Serializable]
+    public class BulletEventConfigList
+    {
+        public List<BulletEventConfig> bulletEvents;
+    }
+
+    // ===== Buff 配置 =====
+    // type: 1=增益, 2=减益
+
+    [Serializable]
+    public class EvtDmgRateEntry
+    {
+        public int type;   // 伤害类型
+        public int rate;   // 伤害倍率（万分比）
+    }
+
+    [Serializable]
+    public class BuffSpecialEvent
+    {
+        public int type;   // 1=技能伤害变化, 2=奥术消耗变化, 3=技能子弹变化, 101=无敌, 102=反击, 103=冰冻
+        public int[] args;
+    }
+
+    [Serializable]
+    public class BuffConfig
+    {
+        public int id;
+        public string name;
+        public string icon;
+        public string desc;
+        public int overlap;            // 叠加上限
+        public int probability;        // 上buff概率（万分比）
+        public int lastTime;           // 持续时间（毫秒）
+        public int jumpTime;           // 间隔跳伤时间（毫秒）
+        public string persistJson;     // buff持续特效
+        public string position;        // buff位置
+        public int type;               // 1=增益, 2=减益
+        public int dispel;             // 可否驱散
+        public AttrEntry[] attribute;           // 持续属性变化
+        public EvtDmgRateEntry[] evtDmgRate;    // buff伤害快照
+        public int[] evtDamage;                 // 每跳触发event
+        public int[] evtWhenEnd;                // 结束触发event
+        public BuffSpecialEvent[] specialEvent; // 特殊事件
+    }
+
+    [Serializable]
+    public class BuffConfigList
+    {
+        public List<BuffConfig> buffs;
+    }
+
+    // ===== Passive 被动配置 =====
+
+    [Serializable]
+    public class PassiveCondEntry
+    {
+        public int id;     // 1=目标生命值百分比, 2=目标护盾百分比
+        public int[] args;
+    }
+
+    [Serializable]
+    public class PassiveConfig
+    {
+        public int id;
+        public string name;
+        public string icon;
+        public string des;
+        public int[] eventTarget;           // 触发时机
+        public int[] eventRemove;           // 移除时机
+        public PassiveCondEntry[] eventCond; // 触发条件
+        public int[] events;                // 触发时附加的事件ID
+    }
+
+    [Serializable]
+    public class PassiveConfigList
+    {
+        public List<PassiveConfig> passives;
+    }
+
+    // ===== BulletEventData 运行时数据（替代旧 BulletModifiers）=====
+
+    public class BulletEventData
+    {
+        public int pierceCount;
+        public int explosionDmgRate;
+        public int explosionRadius;
+        public bool homing;
+        public int scatterCount;
+        public int scatterAngle;
+        public int bounceCount;
+        public int bounceRadius;
+        public int bounceMinDist;
+        public int bounceDmgMod;
+        public int burstCount;
+        public int volleyCount;
+        public List<int> attachToTargetEventIds;
+        public List<int> attachToCasterEventIds;
+
+        public BulletEventData Clone()
+        {
+            return new BulletEventData
+            {
+                pierceCount = pierceCount,
+                explosionDmgRate = explosionDmgRate,
+                explosionRadius = explosionRadius,
+                homing = homing,
+                scatterCount = scatterCount,
+                scatterAngle = scatterAngle,
+                bounceCount = bounceCount,
+                bounceRadius = bounceRadius,
+                bounceMinDist = bounceMinDist,
+                bounceDmgMod = bounceDmgMod,
+                burstCount = burstCount,
+                volleyCount = volleyCount,
+                attachToTargetEventIds = attachToTargetEventIds != null
+                    ? new List<int>(attachToTargetEventIds) : null,
+                attachToCasterEventIds = attachToCasterEventIds != null
+                    ? new List<int>(attachToCasterEventIds) : null
+            };
+        }
+    }
+
+    // ===== 英雄配置 =====
 
     [Serializable]
     public class HeroConfig
@@ -157,7 +315,7 @@ namespace GeometryTD
         public int skill_xp_min;
         public int skill_xp_max;
         public AttrEntry[] attrs;
-        public AttrEntry[] charge_buffs;
+        public int[] charge_buff_ids; // 引用 buff_config 中的 buffId
     }
 
     [Serializable]
@@ -186,49 +344,7 @@ namespace GeometryTD
         public List<MonsterConfig> monsters;
     }
 
-    [Serializable]
-    public class SkillEvent
-    {
-        public int type;
-        public float[] param;
-    }
-
-    public class BulletModifiers
-    {
-        public int pierceCount;
-        public float explosionRadius;
-        public float explosionDmg;
-        public int chainCount;
-        public float chainDecayRatio;
-        public float chainRange;
-        public float chainAoeRadius;
-        public float freezeDuration;
-        public float burnDmg;
-        public float burnDuration;
-        public float slowDuration;
-        public float slowRatio;
-        public bool homing;
-
-        public BulletModifiers Clone()
-        {
-            return new BulletModifiers
-            {
-                pierceCount = pierceCount,
-                explosionRadius = explosionRadius,
-                explosionDmg = explosionDmg,
-                chainCount = chainCount,
-                chainDecayRatio = chainDecayRatio,
-                chainRange = chainRange,
-                chainAoeRadius = chainAoeRadius,
-                freezeDuration = freezeDuration,
-                burnDmg = burnDmg,
-                burnDuration = burnDuration,
-                slowDuration = slowDuration,
-                slowRatio = slowRatio,
-                homing = homing
-            };
-        }
-    }
+    // ===== 技能配置 =====
 
     [Serializable]
     public class SkillPoolConfig
@@ -257,14 +373,13 @@ namespace GeometryTD
         public string category;
         public int dmg;
         public int dmgType;
-        public int mp;
-        public int mpType;
         public float bulletSpeed;
-        public int atkCnt;
         public float cd;
         public int bulletStyleId;
         public float attack_range;
-        public SkillEvent[] events;
+        public int[] events;        // 自身事件ID数组
+        public int[] enemyEvents;   // 敌方事件ID数组
+        public int[] bulletEvents;  // 子弹事件ID数组
     }
 
     [Serializable]
@@ -297,6 +412,8 @@ namespace GeometryTD
         public List<BulletStyleConfig> bulletStyles;
     }
 
+    // ===== 奥术配置 =====
+
     [Serializable]
     public class ArcaneConfig
     {
@@ -311,7 +428,9 @@ namespace GeometryTD
         public float cd;
         public int runeCost;
         public int runeType;
-        public SkillEvent[] events;
+        public int[] events;        // 自身事件ID数组
+        public int[] enemyEvents;   // 敌方事件ID数组
+        public int[] bulletEvents;  // 子弹事件ID数组
     }
 
     [Serializable]
