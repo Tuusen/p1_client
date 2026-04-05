@@ -45,18 +45,16 @@ namespace GeometryTD
                     HandleGainEnergy(args, ctx);
                     break;
                 case EventType.GainBuff:
-                    HandleGainBuff(args, effectTarget);
+                    HandleGainBuff(args, effectTarget, ctx);
                     break;
                 case EventType.GainPassive:
-                    // TODO: 未生效
-                    Debug.Log($"[EventExecutor] GainPassive 未生效, eventId={eventId}");
+                    HandleGainPassive(args, effectTarget, ctx);
                     break;
                 case EventType.Summon:
                     HandleSummon(args, ctx);
                     break;
                 case EventType.Dispel:
-                    // TODO: 未生效
-                    Debug.Log($"[EventExecutor] Dispel 未生效, eventId={eventId}");
+                    HandleDispel(args, effectTarget);
                     break;
                 default:
                     Debug.LogWarning($"[EventExecutor] 未知事件类型: {config.type}, eventId={eventId}");
@@ -68,19 +66,28 @@ namespace GeometryTD
         {
             if (args == null || args.Length < 2 || target == null) return;
             int dmgRate = args[0];
-            // args[1] = dmgType (暂未使用元素类型计算)
-
-            if (target.Attrs == null) return;
-            float baseAtk = ctx.caster != null && ctx.caster.Attrs != null
-                ? ctx.caster.Attrs.GetAttack() : 0f;
-            float amount = baseAtk * Mathf.Abs(dmgRate) / 10000f;
+            int dmgType = args[1];
+            if (ctx.caster == null || ctx.caster.Attrs == null) return;
 
             if (dmgRate > 0)
             {
-                target.OnBuffDamage(amount);
+                var dmgCtx = new DamageContext
+                {
+                    attackerAttrs = ctx.caster.Attrs,
+                    defenderAttrs = target.Attrs,
+                    skillDmgRatio = dmgRate,
+                    skillDmgType = dmgType,
+                    isTargetBoss = target is BossController,
+                    isTargetElite = (target as MonsterController)?.IsElite ?? false
+                };
+                var result = DamageCalculator.Calculate(dmgCtx);
+                if (!result.isMiss && result.finalDamage > 0)
+                    target.OnBuffDamage(result.finalDamage);
             }
             else if (dmgRate < 0)
             {
+                float baseAtk = ctx.caster.Attrs.GetAttack();
+                float amount = baseAtk * Mathf.Abs(dmgRate) / 10000f;
                 target.OnBuffHeal(amount);
             }
         }
@@ -89,22 +96,19 @@ namespace GeometryTD
         {
             if (args == null || args.Length < 1 || target == null) return;
             int shieldValue = args[0];
-            // 通过属性系统添加护盾值
-            if (target.Attrs != null)
-                target.Attrs.AddBonus(AttributeIds.Shield, shieldValue);
+            target.AddShield(shieldValue);
         }
 
         private static void HandleKnockback(int[] args, IBuffTarget target, EventContext ctx)
         {
             if (args == null || args.Length < 1 || target == null) return;
-            int force = args[0];
-            float forceFloat = force / 10000f;
+            float distance = args[0];
 
             var mono = target as MonoBehaviour;
             if (mono != null && ctx.caster != null)
             {
                 Vector3 dir = (target.Position - ctx.caster.Position).normalized;
-                mono.transform.position += dir * forceFloat;
+                mono.transform.position += dir * distance;
             }
         }
 
@@ -137,12 +141,35 @@ namespace GeometryTD
             }
         }
 
-        private static void HandleGainBuff(int[] args, IBuffTarget target)
+        private static void HandleGainBuff(int[] args, IBuffTarget target, EventContext ctx)
         {
             if (args == null || args.Length < 1 || target == null) return;
             int buffId = args[0];
             if (target.BuffSystem != null)
-                target.BuffSystem.AddBuff(buffId, target);
+                target.BuffSystem.AddBuff(buffId, target, ctx.caster);
+        }
+
+        private static void HandleGainPassive(int[] args, IBuffTarget target, EventContext ctx)
+        {
+            if (args == null || args.Length < 1 || target == null) return;
+            int passiveId = args[0];
+            if (target.PassiveSystem != null)
+                target.PassiveSystem.RegisterPassive(passiveId, ctx);
+        }
+
+        private static void HandleDispel(int[] args, IBuffTarget target)
+        {
+            if (args == null || args.Length < 2 || target == null) return;
+            if (target.BuffSystem == null) return;
+            int buffId = args[0];
+            int count = args[1];
+
+            if (buffId == -1)
+                target.BuffSystem.RemoveBuffsByType(1, count);
+            else if (buffId == -2)
+                target.BuffSystem.RemoveBuffsByType(2, count);
+            else
+                target.BuffSystem.RemoveBuffByConfigId(buffId, count);
         }
 
         private static void HandleSummon(int[] args, EventContext ctx)

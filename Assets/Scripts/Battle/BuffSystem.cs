@@ -10,23 +10,28 @@ namespace GeometryTD
         public int stackCount;
         public float remainingTime;   // 秒
         public float tickTimer;       // 跳伤计时（秒）
+        public IBuffTarget caster;    // 施加者引用，用于 evtDmgRate 伤害计算
     }
 
     public interface IBuffTarget
     {
         AttrComponent Attrs { get; }
         BuffSystem BuffSystem { get; }
+        PassiveSystem PassiveSystem { get; }
         void OnBuffDamage(float dmg);
         void OnBuffHeal(float heal);
+        void AddShield(int value);
         bool IsDead { get; }
         Vector3 Position { get; }
+        int GetHpPercent();
+        int GetShieldPercent();
     }
 
     public class BuffSystem
     {
         private List<BuffEntry> buffs = new List<BuffEntry>();
 
-        public void AddBuff(int buffConfigId, IBuffTarget target)
+        public void AddBuff(int buffConfigId, IBuffTarget target, IBuffTarget caster = null)
         {
             var config = ConfigManager.Instance.GetBuffConfig(buffConfigId);
             if (config == null) return;
@@ -60,6 +65,8 @@ namespace GeometryTD
                 if (config.lastTime > 0)
                     existing.remainingTime = config.lastTime / 1000f;
                 existing.tickTimer = 0f;
+                if (caster != null)
+                    existing.caster = caster;
                 return;
             }
 
@@ -70,7 +77,8 @@ namespace GeometryTD
                 cachedConfig = config,
                 stackCount = 1,
                 remainingTime = config.lastTime > 0 ? config.lastTime / 1000f : -1f,
-                tickTimer = 0f
+                tickTimer = 0f,
+                caster = caster
             };
             buffs.Add(entry);
         }
@@ -89,12 +97,17 @@ namespace GeometryTD
             }
         }
 
-        public void RemoveBuffsByType(int buffType)
+        public void RemoveBuffsByType(int buffType, int count = 0)
         {
+            int removed = 0;
             for (int i = buffs.Count - 1; i >= 0; i--)
             {
                 if (buffs[i].cachedConfig != null && buffs[i].cachedConfig.type == buffType)
+                {
                     buffs.RemoveAt(i);
+                    removed++;
+                    if (count > 0 && removed >= count) break;
+                }
             }
         }
 
@@ -139,8 +152,30 @@ namespace GeometryTD
                     {
                         buff.tickTimer -= jumpSec;
 
-                        // evtDmgRate 快照伤害
-                        // TODO: 未生效 - evtDmgRate 快照伤害计算
+                        // evtDmgRate 伤害计算
+                        if (cfg.evtDmgRate != null && cfg.evtDmgRate.Length > 0)
+                        {
+                            var casterMono = buff.caster as MonoBehaviour;
+                            if (casterMono != null && !buff.caster.IsDead)
+                            {
+                                for (int j = 0; j < cfg.evtDmgRate.Length; j++)
+                                {
+                                    var rateEntry = cfg.evtDmgRate[j];
+                                    var dmgCtx = new DamageContext
+                                    {
+                                        attackerAttrs = buff.caster.Attrs,
+                                        defenderAttrs = target.Attrs,
+                                        skillDmgRatio = rateEntry.rate,
+                                        skillDmgType = rateEntry.type,
+                                        isTargetBoss = target is BossController,
+                                        isTargetElite = (target as MonsterController)?.IsElite ?? false
+                                    };
+                                    var result = DamageCalculator.Calculate(dmgCtx);
+                                    if (!result.isMiss && result.finalDamage > 0)
+                                        target.OnBuffDamage(result.finalDamage);
+                                }
+                            }
+                        }
 
                         // evtDamage 触发事件
                         if (cfg.evtDamage != null && cfg.evtDamage.Length > 0)
@@ -167,8 +202,13 @@ namespace GeometryTD
                         // buff过期 - 触发结束事件
                         if (cfg.evtWhenEnd != null && cfg.evtWhenEnd.Length > 0)
                         {
-                            // TODO: 未生效 - evtWhenEnd 结束事件
-                            Debug.Log($"[BuffSystem] evtWhenEnd 未生效, buffId={buff.buffConfigId}");
+                            var endCtx = new EventContext
+                            {
+                                caster = buff.caster ?? target,
+                                target = target,
+                                position = target.Position
+                            };
+                            EventExecutor.ExecuteEvents(cfg.evtWhenEnd, endCtx);
                         }
 
                         buffs.RemoveAt(i);

@@ -41,6 +41,7 @@ namespace GeometryTD
         // IBuffTarget 实现
         public AttrComponent Attrs => attrs;
         public BuffSystem BuffSystem => buffSystem;
+        public PassiveSystem PassiveSystem => passiveSystem;
         public bool IsDead => currentHp <= 0;
         public Vector3 Position => transform.position;
 
@@ -57,6 +58,26 @@ namespace GeometryTD
         {
             currentHp = Mathf.Min(currentHp + heal, maxHp);
             UpdateBars();
+        }
+
+        public void AddShield(int value)
+        {
+            currentShield += value;
+            if (currentShield < 0) currentShield = 0;
+            if (currentShield > maxHp) currentShield = maxHp;
+            UpdateBars();
+        }
+
+        public int GetHpPercent()
+        {
+            if (maxHp <= 0) return 0;
+            return Mathf.RoundToInt(currentHp / maxHp * 10000);
+        }
+
+        public int GetShieldPercent()
+        {
+            if (maxHp <= 0) return 0;
+            return Mathf.RoundToInt(currentShield / maxHp * 10000);
         }
 
         public void Init(HeroConfig config, BattleManager manager)

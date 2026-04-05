@@ -31,6 +31,7 @@ namespace GeometryTD
         // IBuffTarget 实现
         public AttrComponent Attrs => attrs;
         public BuffSystem BuffSystem => buffSystem;
+        public PassiveSystem PassiveSystem => null;
         public bool IsDead => isDead;
         public Vector3 Position => transform.position;
 
@@ -47,6 +48,16 @@ namespace GeometryTD
             currentHp = Mathf.Min(currentHp + heal, maxHp);
             UpdateBar();
         }
+
+        public void AddShield(int value) { }
+
+        public int GetHpPercent()
+        {
+            if (maxHp <= 0) return 0;
+            return Mathf.RoundToInt(currentHp / (float)maxHp * 10000);
+        }
+
+        public int GetShieldPercent() => 0;
 
         public void Init(MonsterConfig config, Transform hero, BattleManager manager, Vector3 bossPosition, float hardMultiplier = 1f)
         {

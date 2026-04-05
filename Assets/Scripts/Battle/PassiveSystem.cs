@@ -88,10 +88,29 @@ namespace GeometryTD
                 switch (cond.id)
                 {
                     case 1: // 目标生命值百分比
-                        // TODO: 未生效 - 需要接入生命值百分比检查
+                        if (cond.args != null && cond.args.Length >= 2)
+                        {
+                            var condTarget = ctx.target ?? ctx.caster;
+                            if (condTarget != null)
+                            {
+                                int hpPct = condTarget.GetHpPercent();
+                                // args[0]=1: 要求 < 阈值, args[0]=2: 要求 > 阈值
+                                if (cond.args[0] == 1 && hpPct >= cond.args[1]) return false;
+                                if (cond.args[0] == 2 && hpPct <= cond.args[1]) return false;
+                            }
+                        }
                         break;
                     case 2: // 目标护盾百分比
-                        // TODO: 未生效 - 需要接入护盾百分比检查
+                        if (cond.args != null && cond.args.Length >= 2)
+                        {
+                            var condTarget = ctx.target ?? ctx.caster;
+                            if (condTarget != null)
+                            {
+                                int shieldPct = condTarget.GetShieldPercent();
+                                if (cond.args[0] == 1 && shieldPct >= cond.args[1]) return false;
+                                if (cond.args[0] == 2 && shieldPct <= cond.args[1]) return false;
+                            }
+                        }
                         break;
                 }
             }
