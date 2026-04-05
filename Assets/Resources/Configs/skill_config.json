@@ -85,6 +85,12 @@
             "bulletEvents": [],
             "des": ""
         },
+        {"id": 1004,"level": 1,"name": "反击盾弹","icon": "","category": "Projectile","dmg": 10000,"dmgType": 0,"bulletSpeed": 10.0,"cd": 0,"bulletStyleId": 1,"attack_range": 50.0,"events": [],"enemyEvents": [],"bulletEvents": [],"des": "" },
+        {"id": 1004,"level": 2,"name": "反击盾弹","icon": "","category": "Projectile","dmg": 10000,"dmgType": 0,"bulletSpeed": 10.0,"cd": 0,"bulletStyleId": 1,"attack_range": 50.0,"events": [],"enemyEvents": [],"bulletEvents": [],"des": "" },
+        {"id": 1004,"level": 3,"name": "反击盾弹","icon": "","category": "Projectile","dmg": 10000,"dmgType": 0,"bulletSpeed": 10.0,"cd": 0,"bulletStyleId": 1,"attack_range": 50.0,"events": [],"enemyEvents": [],"bulletEvents": [],"des": "" },
+        {"id": 1004,"level": 4,"name": "反击盾弹","icon": "","category": "Projectile","dmg": 10000,"dmgType": 0,"bulletSpeed": 10.0,"cd": 0,"bulletStyleId": 1,"attack_range": 50.0,"events": [],"enemyEvents": [],"bulletEvents": [],"des": "" },
+        {"id": 1004,"level": 5,"name": "反击盾弹","icon": "","category": "Projectile","dmg": 10000,"dmgType": 0,"bulletSpeed": 10.0,"cd": 0,"bulletStyleId": 1,"attack_range": 50.0,"events": [],"enemyEvents": [],"bulletEvents": [],"des": "" },
+        {"id": 1004,"level": 6,"name": "反击穿刺盾弹","icon": "","category": "Projectile","dmg": 10000,"dmgType": 0,"bulletSpeed": 10.0,"cd": 0,"bulletStyleId": 1,"attack_range": 50.0,"events": [],"enemyEvents": [],"bulletEvents": [],"des": "" },
         {
             "id": 3001,
             "level": 1,

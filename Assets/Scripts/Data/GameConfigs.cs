@@ -169,6 +169,18 @@ namespace GeometryTD
         public const int AttachToCaster = 302; // args=[eventId] 命中后对施法者附加
     }
 
+    // specialEvent.type: 1=技能伤害变化, 2=奥术消耗变化, 3=技能子弹变化, 101=无敌, 102=反击, 103=冰冻
+
+    public static class BuffSpecialEventType
+    {
+        public const int SkillDmgMod = 1;       // args=[技能Id(-1=全部), 改变比例(万分比)]
+        public const int ArcaneCostMod = 2;      // args=[奥术Id(-1=全部), 符能类型, 消耗改变值]
+        public const int SkillBulletMod = 3;     // args=[技能Id(-1=全部), bulletEventId]
+        public const int Invincible = 101;       // args=[] 免疫伤害+控制
+        public const int Counter = 102;          // args=[skillId] 被攻击时释放技能
+        public const int Freeze = 103;           // args=[] 无法移动和攻击
+    }
+
     [Serializable]
     public class BulletEventConfig
     {

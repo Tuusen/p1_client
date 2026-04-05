@@ -83,6 +83,14 @@ namespace GeometryTD
             skillDmgType = dmgType;
         }
 
+        public void SetDirectionalFlight(Vector3 direction)
+        {
+            this.target = null;
+            this.hasTarget = false;
+            this.pierceDirection = direction.normalized;
+            this.lastTargetPos = transform.position + this.pierceDirection * maxAttackRange;
+        }
+
         private void Update()
         {
             lifeTime -= Time.deltaTime;
@@ -173,7 +181,7 @@ namespace GeometryTD
                 if (bulletData != null && bulletData.explosionRadius > 0 && battleManager != null)
                 {
                     float explDmg = damage * bulletData.explosionDmgRate / 10000f;
-                    battleManager.DealAoeDamage(transform.position, bulletData.explosionRadius, explDmg);
+                    battleManager.DealAoeDamage(transform.position, bulletData.explosionRadius, explDmg, caster);
                 }
             }
 
@@ -228,14 +236,14 @@ namespace GeometryTD
                         var result = DamageCalculator.Calculate(ctx);
                         if (!result.isMiss)
                         {
-                            hero.TakeDamage(result.finalDamage);
+                            hero.TakeDamage(result.finalDamage, caster);
                             if (result.isCrit && battleManager != null)
                                 battleManager.ShowDamageText(target.position, result.finalDamage, true);
                         }
                     }
                     else
                     {
-                        hero.TakeDamage(damage);
+                        hero.TakeDamage(damage, caster);
                     }
                 }
             }
@@ -277,8 +285,8 @@ namespace GeometryTD
                     var result = DamageCalculator.Calculate(ctx);
                     if (!result.isMiss)
                     {
-                        if (monster != null) monster.TakeDamage(result.finalDamage);
-                        else if (boss != null) boss.TakeDamage(result.finalDamage);
+                        if (monster != null) monster.TakeDamage(result.finalDamage, caster);
+                        else if (boss != null) boss.TakeDamage(result.finalDamage, caster);
 
                         if (result.isCrit && battleManager != null)
                             battleManager.ShowDamageText(target.position, result.finalDamage, true);
@@ -287,8 +295,8 @@ namespace GeometryTD
                 else
                 {
                     // 退回预计算伤害
-                    if (monster != null) { monster.TakeDamage(damage); return; }
-                    if (boss != null) boss.TakeDamage(damage);
+                    if (monster != null) { monster.TakeDamage(damage, caster); return; }
+                    if (boss != null) boss.TakeDamage(damage, caster);
                 }
             }
         }

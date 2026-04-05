@@ -40,7 +40,6 @@ namespace GeometryTD
                         break;
 
                     case BulletEventType.Scatter:
-                        // TODO: 未生效 - 散射子弹飞行逻辑待实现
                         if (args != null && args.Length >= 2)
                         {
                             data.scatterCount = args[0];
@@ -59,7 +58,6 @@ namespace GeometryTD
                         break;
 
                     case BulletEventType.Burst:
-                        // TODO: 未生效 - 连射逻辑待实现
                         if (args != null && args.Length >= 1)
                             data.burstCount = args[0];
                         break;
@@ -78,7 +76,6 @@ namespace GeometryTD
                         break;
 
                     case BulletEventType.AttachToCaster:
-                        // TODO: 未生效 - 附加施法者事件待完善
                         if (args != null && args.Length >= 1)
                         {
                             if (casterEvts == null) casterEvts = new List<int>();

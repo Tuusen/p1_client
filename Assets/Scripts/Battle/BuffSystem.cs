@@ -126,9 +126,15 @@ namespace GeometryTD
             return false;
         }
 
+        public bool IsInvincible()
+        {
+            return HasSpecialEffect(BuffSpecialEventType.Invincible);
+        }
+
         public bool IsFrozen()
         {
-            return HasSpecialEffect(103);
+            if (IsInvincible()) return false;
+            return HasSpecialEffect(BuffSpecialEventType.Freeze);
         }
 
         public void Tick(float deltaTime, IBuffTarget target)
@@ -152,8 +158,8 @@ namespace GeometryTD
                     {
                         buff.tickTimer -= jumpSec;
 
-                        // evtDmgRate 伤害计算
-                        if (cfg.evtDmgRate != null && cfg.evtDmgRate.Length > 0)
+                        // evtDmgRate 伤害计算（无敌时跳过）
+                        if (cfg.evtDmgRate != null && cfg.evtDmgRate.Length > 0 && !IsInvincible())
                         {
                             var casterMono = buff.caster as MonoBehaviour;
                             if (casterMono != null && !buff.caster.IsDead)
@@ -223,11 +229,14 @@ namespace GeometryTD
             if (target.Attrs == null) return;
 
             target.Attrs.ClearBonuses();
+            bool invincible = IsInvincible();
 
             for (int i = 0; i < buffs.Count; i++)
             {
                 var cfg = buffs[i].cachedConfig;
                 if (cfg == null || cfg.attribute == null) continue;
+                // 无敌时跳过减益buff的属性（防止减速等控制效果）
+                if (invincible && cfg.type == 2) continue;
 
                 int stacks = buffs[i].stackCount;
                 for (int j = 0; j < cfg.attribute.Length; j++)
@@ -246,6 +255,123 @@ namespace GeometryTD
         public List<BuffEntry> GetActiveBuffs()
         {
             return buffs;
+        }
+
+        /// <summary>
+        /// Type 1: 获取技能伤害累积修正值（万分比）
+        /// </summary>
+        public int GetSkillDmgModifier(int skillId)
+        {
+            int total = 0;
+            for (int i = 0; i < buffs.Count; i++)
+            {
+                var cfg = buffs[i].cachedConfig;
+                if (cfg == null || cfg.specialEvent == null) continue;
+                for (int j = 0; j < cfg.specialEvent.Length; j++)
+                {
+                    var se = cfg.specialEvent[j];
+                    if (se.type != BuffSpecialEventType.SkillDmgMod) continue;
+                    if (se.args == null || se.args.Length < 2) continue;
+                    if (se.args[0] != -1 && se.args[0] != skillId) continue;
+                    total += se.args[1] * buffs[i].stackCount;
+                }
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Type 2: 获取奥术消耗累积改变值
+        /// </summary>
+        public int GetArcaneCostModifier(int arcaneId, int runeType)
+        {
+            int total = 0;
+            for (int i = 0; i < buffs.Count; i++)
+            {
+                var cfg = buffs[i].cachedConfig;
+                if (cfg == null || cfg.specialEvent == null) continue;
+                for (int j = 0; j < cfg.specialEvent.Length; j++)
+                {
+                    var se = cfg.specialEvent[j];
+                    if (se.type != BuffSpecialEventType.ArcaneCostMod) continue;
+                    if (se.args == null || se.args.Length < 3) continue;
+                    if (se.args[0] != -1 && se.args[0] != arcaneId) continue;
+                    if (se.args[1] != -1 && se.args[1] != runeType) continue;
+                    total += se.args[2] * buffs[i].stackCount;
+                }
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Type 3: 收集额外子弹事件ID
+        /// </summary>
+        public List<int> CollectExtraBulletEventIds(int skillId)
+        {
+            List<int> result = null;
+            for (int i = 0; i < buffs.Count; i++)
+            {
+                var cfg = buffs[i].cachedConfig;
+                if (cfg == null || cfg.specialEvent == null) continue;
+                for (int j = 0; j < cfg.specialEvent.Length; j++)
+                {
+                    var se = cfg.specialEvent[j];
+                    if (se.type != BuffSpecialEventType.SkillBulletMod) continue;
+                    if (se.args == null || se.args.Length < 2) continue;
+                    if (se.args[0] != -1 && se.args[0] != skillId) continue;
+                    if (result == null) result = new List<int>();
+                    result.Add(se.args[1]);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Type 102: 反击 - 被攻击时释放技能
+        /// </summary>
+        public static void TryCounterAttack(IBuffTarget defender, IBuffTarget attacker,
+            BuffSystem buffSystem, BattleManager battleManager)
+        {
+            if (attacker == null || battleManager == null || buffSystem == null) return;
+            var attackerMono = attacker as MonoBehaviour;
+            if (attackerMono == null || attacker.IsDead) return;
+
+            for (int i = 0; i < buffSystem.buffs.Count; i++)
+            {
+                var cfg = buffSystem.buffs[i].cachedConfig;
+                if (cfg == null || cfg.specialEvent == null) continue;
+                for (int j = 0; j < cfg.specialEvent.Length; j++)
+                {
+                    var se = cfg.specialEvent[j];
+                    if (se.type != BuffSpecialEventType.Counter) continue;
+                    if (se.args == null || se.args.Length < 1) continue;
+
+                    int skillId = se.args[0];
+                    var skillConfig = ConfigManager.Instance.GetSkillConfig(skillId);
+                    if (skillConfig == null) continue;
+
+                    float atk = defender.Attrs.GetAttack();
+                    float actualDmg = atk * skillConfig.dmg / 10000f;
+
+                    var bulletData = BulletEventExecutor.BuildBulletData(skillConfig.bulletEvents);
+                    if (skillConfig.enemyEvents != null && skillConfig.enemyEvents.Length > 0)
+                    {
+                        if (bulletData.attachToTargetEventIds == null)
+                            bulletData.attachToTargetEventIds = new List<int>();
+                        for (int k = 0; k < skillConfig.enemyEvents.Length; k++)
+                            bulletData.attachToTargetEventIds.Add(skillConfig.enemyEvents[k]);
+                    }
+
+                    float skillRange = skillConfig.attack_range > 0 ? skillConfig.attack_range : 10f;
+                    var defenderMono = defender as MonoBehaviour;
+                    if (defenderMono != null)
+                    {
+                        battleManager.SpawnSkillBulletWithScatter(
+                            defenderMono.transform.position, attackerMono.transform,
+                            actualDmg, skillConfig.bulletSpeed, bulletData,
+                            skillConfig.bulletStyleId, skillRange, defender);
+                    }
+                }
+            }
         }
     }
 }

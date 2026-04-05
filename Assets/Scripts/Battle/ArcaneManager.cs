@@ -105,6 +105,17 @@ namespace GeometryTD
             OnRunesChanged?.Invoke();
         }
 
+        private int GetModifiedCost(ArcaneConfig config)
+        {
+            int cost = config.runeCost;
+            if (hero != null)
+            {
+                int costMod = hero.BuffSystem.GetArcaneCostModifier(config.id, config.runeType);
+                cost = Mathf.Max(0, cost + costMod);
+            }
+            return cost;
+        }
+
         public bool CanCast(int slotIndex)
         {
             if (slots == null || slotIndex < 0 || slotIndex >= slots.Length) return false;
@@ -116,7 +127,9 @@ namespace GeometryTD
 
             int runeIdx = config.runeType - 1;
             if (runeIdx < 0 || runeIdx >= 4) return false;
-            return runes[runeIdx] >= config.runeCost;
+
+            int modifiedCost = GetModifiedCost(config);
+            return runes[runeIdx] >= modifiedCost;
         }
 
         public bool TryCastArcane(int slotIndex, Vector3 worldPos)
@@ -126,9 +139,10 @@ namespace GeometryTD
             var slot = slots[slotIndex];
             var config = ConfigManager.Instance.GetArcaneConfig(slot.arcaneId);
 
-            // Consume runes
+            // Consume runes (with buff modifier)
             int runeIdx = config.runeType - 1;
-            runes[runeIdx] -= config.runeCost;
+            int modifiedCost = GetModifiedCost(config);
+            runes[runeIdx] -= modifiedCost;
             OnRunesChanged?.Invoke();
 
             // Start cooldown

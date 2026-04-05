@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace GeometryTD
@@ -31,6 +32,7 @@ namespace GeometryTD
 
         public void OnBuffDamage(float dmg)
         {
+            if (buffSystem.IsInvincible()) return;
             currentHp -= dmg;
             if (currentHp <= 0f)
             {
@@ -181,15 +183,44 @@ namespace GeometryTD
 
             facing?.FaceToward(target.position);
 
-            var bulletData = BulletEventExecutor.BuildBulletData(skillConfig.bulletEvents);
+            // Type 3: 合并buff附加的bulletEvent
+            int[] allBulletEventIds = MergeBulletEventIds(skillConfig.bulletEvents, buffSystem.CollectExtraBulletEventIds(skillConfig.id));
+            var bulletData = BulletEventExecutor.BuildBulletData(allBulletEventIds);
             if (this.homing) bulletData.homing = true;
 
             float bulletSpeed = skillConfig.bulletSpeed;
             float atk = attrs.GetAttack();
             float actualDamage = atk * skillConfig.dmg / 10000f;
-            battleManager.SpawnSkillBullet(transform.position, target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range);
+
+            // Type 1: buff技能伤害修饰
+            int dmgMod = buffSystem.GetSkillDmgModifier(skillConfig.id);
+            if (dmgMod != 0) actualDamage *= (1f + dmgMod / 10000f);
+
+            if (bulletData.burstCount > 1)
+            {
+                StartCoroutine(BurstFireRoutine(target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range));
+            }
+            else
+            {
+                battleManager.SpawnSkillBulletWithScatter(transform.position, target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range);
+            }
 
             animator?.SetTrigger("Attack");
+        }
+
+        private IEnumerator BurstFireRoutine(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange)
+        {
+            int burstCount = bulletData.burstCount;
+            bulletData.burstCount = 0;
+
+            for (int b = 0; b < burstCount; b++)
+            {
+                if (isDead || battleManager == null) yield break;
+                if (target != null)
+                    battleManager.SpawnSkillBulletWithScatter(transform.position, target, damage, speed, bulletData, bulletStyleId, attackRange);
+                if (b < burstCount - 1)
+                    yield return new WaitForSeconds(0.05f);
+            }
         }
 
         private void ClampToScreen()
@@ -213,6 +244,18 @@ namespace GeometryTD
             isDead = true;
             buffSystem.Clear();
             Destroy(gameObject);
+        }
+
+        private static int[] MergeBulletEventIds(int[] baseIds, System.Collections.Generic.List<int> extraIds)
+        {
+            if (extraIds == null || extraIds.Count == 0) return baseIds;
+            int baseLen = baseIds != null ? baseIds.Length : 0;
+            int[] merged = new int[baseLen + extraIds.Count];
+            if (baseIds != null)
+                System.Array.Copy(baseIds, merged, baseLen);
+            for (int i = 0; i < extraIds.Count; i++)
+                merged[baseLen + i] = extraIds[i];
+            return merged;
         }
     }
 }

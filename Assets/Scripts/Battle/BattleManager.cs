@@ -395,7 +395,7 @@ namespace GeometryTD
         }
 
         // ===== AoE 伤害 =====
-        public void DealAoeDamage(Vector3 center, float radius, float damage)
+        public void DealAoeDamage(Vector3 center, float radius, float damage, IBuffTarget caster = null)
         {
             for (int i = aliveEnemies.Count - 1; i >= 0; i--)
             {
@@ -408,10 +408,10 @@ namespace GeometryTD
                 if (dist <= radius)
                 {
                     MonsterController mc = aliveEnemies[i].GetComponent<MonsterController>();
-                    if (mc != null) { mc.TakeDamage(damage); continue; }
+                    if (mc != null) { mc.TakeDamage(damage, caster); continue; }
 
                     BossController bc = aliveEnemies[i].GetComponent<BossController>();
-                    if (bc != null) bc.TakeDamage(damage);
+                    if (bc != null) bc.TakeDamage(damage, caster);
                 }
             }
         }
@@ -518,6 +518,61 @@ namespace GeometryTD
             GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
             bullet.InitSkillBullet(target, speed, damage, this, bulletData, attackRange, caster);
+        }
+
+        public void SpawnSkillBulletDirectional(Vector3 from, Vector3 direction, float damage,
+                                                 float speed, BulletEventData bulletData, int bulletStyleId,
+                                                 float attackRange, IBuffTarget caster = null)
+        {
+            if (gameEnded) return;
+
+            GameObject prefab = heroBulletPrefab;
+            if (bulletStyleId > 0)
+            {
+                GameObject stylePrefab = ConfigManager.Instance.GetBulletPrefab(bulletStyleId);
+                if (stylePrefab != null)
+                    prefab = stylePrefab;
+            }
+
+            GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
+            BulletController bullet = bulletObj.GetComponent<BulletController>();
+            bullet.InitSkillBullet(null, speed, damage, this, bulletData, attackRange, caster);
+            bullet.SetDirectionalFlight(direction);
+        }
+
+        public void SpawnSkillBulletWithScatter(Vector3 from, Transform target, float damage,
+                                                 float speed, BulletEventData bulletData, int bulletStyleId,
+                                                 float attackRange, IBuffTarget caster = null)
+        {
+            if (gameEnded) return;
+
+            SpawnSkillBullet(from, target, damage, speed, bulletData.Clone(), bulletStyleId, attackRange, caster);
+
+            if (bulletData.scatterCount > 0 && bulletData.scatterAngle > 0)
+            {
+                Vector3 baseDir = (target.position - from).normalized;
+                float angle = bulletData.scatterAngle;
+                int count = bulletData.scatterCount;
+
+                for (int i = 0; i < count; i++)
+                {
+                    float t = (i + 1f) / (count + 1f);
+                    float offsetAngle = Mathf.Lerp(-angle, angle, t);
+                    Vector3 scatterDir = RotateDirection2D(baseDir, offsetAngle);
+
+                    var data = bulletData.Clone();
+                    data.scatterCount = 0;
+                    SpawnSkillBulletDirectional(from, scatterDir, damage, speed, data, bulletStyleId, attackRange, caster);
+                }
+            }
+        }
+
+        private static Vector3 RotateDirection2D(Vector3 dir, float angleDeg)
+        {
+            float rad = angleDeg * Mathf.Deg2Rad;
+            float cos = Mathf.Cos(rad);
+            float sin = Mathf.Sin(rad);
+            return new Vector3(dir.x * cos - dir.y * sin, dir.x * sin + dir.y * cos, 0f);
         }
 
         public void SpawnBossBullet(Vector3 from, Transform target, float damage, float speed)

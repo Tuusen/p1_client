@@ -102,7 +102,8 @@ namespace GeometryTD
         private static void HandleKnockback(int[] args, IBuffTarget target, EventContext ctx)
         {
             if (args == null || args.Length < 1 || target == null) return;
-            float distance = args[0];
+            if (target.BuffSystem != null && target.BuffSystem.IsInvincible()) return;
+            float distance = args[0]/10000f;
 
             var mono = target as MonoBehaviour;
             if (mono != null && ctx.caster != null)

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,6 +52,7 @@ namespace GeometryTD
 
         public void OnBuffDamage(float dmg)
         {
+            if (buffSystem.IsInvincible()) return;
             TakeDamage(dmg);
         }
 
@@ -166,7 +168,8 @@ namespace GeometryTD
             if (attackTimer >= atkInterval)
             {
                 attackTimer = 0f;
-                TryAttack();
+                if (!buffSystem.IsFrozen())
+                    TryAttack();
             }
 
             UpdateBars();
@@ -224,8 +227,9 @@ namespace GeometryTD
 
             float skillRange = skillConfig.attack_range > 0 ? skillConfig.attack_range : attackRange;
 
-            // 构建子弹数据
-            var bulletData = BulletEventExecutor.BuildBulletData(skillConfig.bulletEvents);
+            // 构建子弹数据（合并buff附加的bulletEvent）
+            int[] allBulletEventIds = MergeBulletEventIds(skillConfig.bulletEvents, buffSystem.CollectExtraBulletEventIds(skillConfig.id));
+            var bulletData = BulletEventExecutor.BuildBulletData(allBulletEventIds);
 
             // 目标数量：优先 volleyCount，其次 AttackCount 属性
             int targetCount = bulletData.volleyCount > 0
@@ -246,12 +250,21 @@ namespace GeometryTD
             float atk = attrs.GetAttack();
             float actualDmg = atk * skillConfig.dmg / 10000f;
 
+            // Type 1: buff技能伤害修饰
+            int dmgMod = buffSystem.GetSkillDmgModifier(skillConfig.id);
+            if (dmgMod != 0) actualDmg *= (1f + dmgMod / 10000f);
+
             // 合并 enemyEvents 到子弹的 attachToTargetEventIds
             MergeEnemyEvents(bulletData, skillConfig.enemyEvents);
 
-            foreach (var target in targets)
-                battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    skillConfig.bulletSpeed, bulletData.Clone(), skillConfig.bulletStyleId, skillRange, this);
+            if (bulletData.burstCount > 1)
+            {
+                StartCoroutine(BurstFireRoutine(targets, actualDmg, skillConfig, bulletData));
+            }
+            else
+            {
+                FireBullets(targets, actualDmg, skillConfig, bulletData);
+            }
 
             // 执行自身事件
             var ctx = new EventContext
@@ -289,7 +302,13 @@ namespace GeometryTD
             float atk = attrs.GetAttack();
             float actualDmg = atk * config.dmg / 10000f;
 
-            var bulletData = BulletEventExecutor.BuildBulletData(config.bulletEvents);
+            // Type 1: buff技能伤害修饰
+            int dmgMod = buffSystem.GetSkillDmgModifier(config.id);
+            if (dmgMod != 0) actualDmg *= (1f + dmgMod / 10000f);
+
+            // Type 3: 合并buff附加的bulletEvent
+            int[] allBulletEventIds = MergeBulletEventIds(config.bulletEvents, buffSystem.CollectExtraBulletEventIds(config.id));
+            var bulletData = BulletEventExecutor.BuildBulletData(allBulletEventIds);
             MergeEnemyEvents(bulletData, config.enemyEvents);
 
             int shotCount = bulletData.volleyCount > 0 ? bulletData.volleyCount : 1;
@@ -299,10 +318,13 @@ namespace GeometryTD
                 transform.position, skillRange, shotCount);
             if (targets.Count == 0) return;
 
-            foreach (var target in targets)
+            if (bulletData.burstCount > 1)
             {
-                battleManager.SpawnSkillBullet(transform.position, target, actualDmg,
-                    config.bulletSpeed, bulletData.Clone(), config.bulletStyleId, skillRange, this);
+                StartCoroutine(BurstFireRoutine(targets, actualDmg, config, bulletData));
+            }
+            else
+            {
+                FireBullets(targets, actualDmg, config, bulletData);
             }
 
             // 执行自身事件
@@ -348,6 +370,10 @@ namespace GeometryTD
             float atk = attrs.GetAttack();
             float actualDmg = atk * config.dmg / 10000f;
 
+            // Type 1: buff技能伤害修饰
+            int dmgMod = buffSystem.GetSkillDmgModifier(config.id);
+            if (dmgMod != 0) actualDmg *= (1f + dmgMod / 10000f);
+
             // 执行自身事件
             var selfCtx = new EventContext
             {
@@ -376,9 +402,15 @@ namespace GeometryTD
         }
 
         // ===== 受伤 =====
-        public void TakeDamage(float damage)
+        public void TakeDamage(float damage, IBuffTarget attacker = null)
         {
             if (IsDead) return;
+
+            // 反击（在无敌判定前触发）
+            BuffSystem.TryCounterAttack(this, attacker, buffSystem, battleManager);
+
+            // 无敌免疫伤害
+            if (buffSystem.IsInvincible()) return;
 
             // 减伤（通过 buff 挂载到 AllElemDmgReduce）
             int dmgReduce = attrs.GetFinal(AttributeIds.AllElemDmgReduce);
@@ -429,6 +461,31 @@ namespace GeometryTD
 
         // ===== 工具方法 =====
 
+        private void FireBullets(List<Transform> targets, float actualDmg, SkillConfig config, BulletEventData bulletData)
+        {
+            float skillRange = config.attack_range > 0 ? config.attack_range : attackRange;
+            foreach (var target in targets)
+            {
+                if (target == null) continue;
+                battleManager.SpawnSkillBulletWithScatter(transform.position, target, actualDmg,
+                    config.bulletSpeed, bulletData, config.bulletStyleId, skillRange, this);
+            }
+        }
+
+        private IEnumerator BurstFireRoutine(List<Transform> targets, float actualDmg, SkillConfig config, BulletEventData bulletData)
+        {
+            int burstCount = bulletData.burstCount;
+            bulletData.burstCount = 0;
+
+            for (int b = 0; b < burstCount; b++)
+            {
+                if (IsDead || battleManager == null) yield break;
+                FireBullets(targets, actualDmg, config, bulletData);
+                if (b < burstCount - 1)
+                    yield return new WaitForSeconds(0.05f);
+            }
+        }
+
         /// <summary>
         /// 将技能的 enemyEvents 合并到 bulletData 的 attachToTargetEventIds 中
         /// </summary>
@@ -439,6 +496,18 @@ namespace GeometryTD
                 bulletData.attachToTargetEventIds = new List<int>();
             for (int i = 0; i < enemyEvents.Length; i++)
                 bulletData.attachToTargetEventIds.Add(enemyEvents[i]);
+        }
+
+        private static int[] MergeBulletEventIds(int[] baseIds, List<int> extraIds)
+        {
+            if (extraIds == null || extraIds.Count == 0) return baseIds;
+            int baseLen = baseIds != null ? baseIds.Length : 0;
+            int[] merged = new int[baseLen + extraIds.Count];
+            if (baseIds != null)
+                System.Array.Copy(baseIds, merged, baseLen);
+            for (int i = 0; i < extraIds.Count; i++)
+                merged[baseLen + i] = extraIds[i];
+            return merged;
         }
     }
 }

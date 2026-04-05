@@ -40,6 +40,7 @@ namespace GeometryTD
 
         public void OnBuffDamage(float dmg)
         {
+            if (buffSystem.IsInvincible()) return;
             TakeDamage(dmg);
         }
 
@@ -212,9 +213,12 @@ namespace GeometryTD
             animator?.SetTrigger("Attack");
         }
 
-        public void TakeDamage(float dmg)
+        public void TakeDamage(float dmg, IBuffTarget attacker = null)
         {
             if (IsDead) return;
+
+            BuffSystem.TryCounterAttack(this, attacker, buffSystem, battleManager);
+            if (buffSystem.IsInvincible()) return;
 
             currentHp -= dmg;
             currentHp = Mathf.Max(0, currentHp);
