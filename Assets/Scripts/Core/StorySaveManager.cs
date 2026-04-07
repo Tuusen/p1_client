@@ -77,7 +77,7 @@ namespace GeometryTD
         /// <summary>创建全新的运行时状态</summary>
         public StoryRuntime CreateNewRuntime(int collectionId)
         {
-            StoryCollectionConfig config = ConfigManager.Instance.GetStoryCollectionConfig(collectionId);
+            StoryCollectionConfig config = Cfg.StoryCollection.Get(collectionId);
             if (config == null)
             {
                 Debug.LogError($"[StorySaveManager] 创建运行时失败，未找到故事集配置: {collectionId}");
@@ -135,7 +135,7 @@ namespace GeometryTD
         /// <summary>获取完成度百分比</summary>
         public float GetCompletionRate(int collectionId)
         {
-            StoryCollectionConfig config = ConfigManager.Instance.GetStoryCollectionConfig(collectionId);
+            StoryCollectionConfig config = Cfg.StoryCollection.Get(collectionId);
             StoryProgressData progress = GetProgress(collectionId);
             return progress.GetCompletionRate(config);
         }

@@ -63,7 +63,7 @@ namespace GeometryTD
         {
             if (effectId <= 0) return;
 
-            PassiveEffectConfig config = ConfigManager.Instance.GetPassiveEffectConfig(effectId);
+            PassiveEffectConfig config = Cfg.PassiveEffect.Get(effectId);
             if (config == null) return;
 
             if (!config.stackable)
@@ -133,7 +133,7 @@ namespace GeometryTD
 
             for (int i = 0; i < currentNode.nextNodes.Length; i++)
             {
-                NextNodeEntry entry = currentNode.nextNodes[i];
+                StoryNodeConfig.NextNodesItem entry = currentNode.nextNodes[i];
                 if (entry.conditions == null) continue;
 
                 bool match = true;
@@ -169,7 +169,7 @@ namespace GeometryTD
             {
                 for (int i = 0; i < currentNode.nextNodes.Length; i++)
                 {
-                    NextNodeEntry entry = currentNode.nextNodes[i];
+                    StoryNodeConfig.NextNodesItem entry = currentNode.nextNodes[i];
                     if (entry.conditions == null) continue;
 
                     bool allZero = true;

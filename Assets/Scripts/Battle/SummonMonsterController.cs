@@ -68,7 +68,7 @@ namespace GeometryTD
             attrs.Init(config.attrs);
 
             // 属性继承：type=1(基础) 按 attrRatio/10000 缩放，type=2(特殊) 完整继承
-            var allMetas = ConfigManager.Instance.GetAllAttrMetas();
+            var allMetas = Cfg.Attribute.All;
             if (allMetas != null)
             {
                 for (int i = 0; i < allMetas.Count; i++)
@@ -102,7 +102,7 @@ namespace GeometryTD
                 for (int i = 0; i < config.attack_skill_ids.Length; i++)
                 {
                     attackSkillIds[i] = config.attack_skill_ids[i];
-                    attackSkillConfigs[i] = ConfigManager.Instance.GetSkillConfig(attackSkillIds[i]);
+                    attackSkillConfigs[i] = Cfg.Skill.Get(attackSkillIds[i]);
                     attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
                     attackSkillTimers[i] = 0f;
 

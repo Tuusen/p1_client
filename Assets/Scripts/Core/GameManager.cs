@@ -77,7 +77,7 @@ namespace GeometryTD
         {
             if (ConfigManager.Instance == null) return false;
 
-            LevelConfig levelConfig = ConfigManager.Instance.GetLevelConfig(levelId);
+            LevelConfig levelConfig = Cfg.Level.Get(levelId);
             if (levelConfig == null) return false;
 
             if (levelConfig.conditions == null || levelConfig.conditions.Length == 0)
@@ -85,7 +85,7 @@ namespace GeometryTD
 
             foreach (int condId in levelConfig.conditions)
             {
-                ConditionConfig cond = ConfigManager.Instance.GetConditionConfig(condId);
+                ConditionConfig cond = Cfg.Condition.Get(condId);
                 if (cond == null) return false;
 
                 if (cond.type == 1)
@@ -109,8 +109,8 @@ namespace GeometryTD
         public int GetSelectedHeroId()
         {
             if (selectedHeroId > 0) return selectedHeroId;
-            if (ConfigManager.Instance != null && ConfigManager.Instance.GameConfig != null)
-                return ConfigManager.Instance.GameConfig.default_hero_id;
+            if (ConfigManager.Instance != null)
+                return Cfg.Hero.Meta.default_hero_id;
             return 1;
         }
 
@@ -126,8 +126,8 @@ namespace GeometryTD
         {
             if (equippedSkillIds != null && equippedSkillIds.Length > 0)
                 return equippedSkillIds;
-            if (ConfigManager.Instance != null && ConfigManager.Instance.GameConfig != null)
-                return ConfigManager.Instance.GameConfig.skill_slot_ids;
+            if (ConfigManager.Instance != null)
+                return Cfg.Skill.Meta.slot_ids;
             return new int[0];
         }
 
@@ -149,8 +149,8 @@ namespace GeometryTD
         {
             if (equippedArcaneIds != null && equippedArcaneIds.Length > 0)
                 return equippedArcaneIds;
-            if (ConfigManager.Instance != null && ConfigManager.Instance.GameConfig != null)
-                return ConfigManager.Instance.GameConfig.arcane_slot_ids;
+            if (ConfigManager.Instance != null)
+                return Cfg.Arcane.Meta.slot_ids;
             return new int[0];
         }
 

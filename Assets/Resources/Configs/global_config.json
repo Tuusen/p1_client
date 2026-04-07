@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "kill_count_for_boss": 100, 
+    "monster_spawn_interval": 1.5
+  }
+}

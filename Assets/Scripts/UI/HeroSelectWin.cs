@@ -40,7 +40,7 @@ namespace GeometryTD
             heroItems.Clear();
             itemBgMap.Clear();
 
-            if (ConfigManager.Instance == null || ConfigManager.Instance.HeroConfigs == null) return;
+            if (ConfigManager.Instance == null || Cfg.Hero.All == null) return;
 
             selectedHeroId = GameManager.Instance != null
                 ? GameManager.Instance.GetSelectedHeroId()
@@ -48,7 +48,7 @@ namespace GeometryTD
 
             Font font = GameHelper.LoadFont();
 
-            foreach (HeroConfig hero in ConfigManager.Instance.HeroConfigs)
+            foreach (HeroConfig hero in Cfg.Hero.All)
             {
                 GameObject itemObj = CreateHeroItem(hero, font);
                 heroItems.Add(itemObj);

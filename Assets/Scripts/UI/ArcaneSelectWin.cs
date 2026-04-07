@@ -46,12 +46,12 @@ namespace GeometryTD
             itemBgMap.Clear();
             selectedIds.Clear();
 
-            if (ConfigManager.Instance == null || ConfigManager.Instance.GameConfig == null) return;
+            if (ConfigManager.Instance == null) return;
 
             // 加载已装备的奥术
             int[] equipped = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedArcanes()
-                : ConfigManager.Instance.GameConfig.arcane_slot_ids;
+                : Cfg.Arcane.Meta.slot_ids;
             if (equipped != null)
             {
                 foreach (int id in equipped)
@@ -59,12 +59,12 @@ namespace GeometryTD
             }
 
             Font font = GameHelper.LoadFont();
-            int[] allArcaneIds = ConfigManager.Instance.GameConfig.arcane_slot_ids;
+            int[] allArcaneIds = Cfg.Arcane.Meta.slot_ids;
             if (allArcaneIds == null) return;
 
             foreach (int arcaneId in allArcaneIds)
             {
-                ArcaneConfig config = ConfigManager.Instance.GetArcaneConfig(arcaneId);
+                ArcaneConfig config = Cfg.Arcane.Get(arcaneId);
                 if (config == null) continue;
                 GameObject itemObj = CreateArcaneItem(config, font);
                 arcaneItems.Add(itemObj);

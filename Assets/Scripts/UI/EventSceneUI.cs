@@ -99,7 +99,7 @@ namespace GeometryTD
             }
         }
 
-        private void OnEventChoicesComplete(int index, ChoiceOption option)
+        private void OnEventChoicesComplete(int index, ChoiceGroupConfig.OptionsItem option)
         {
             if (option != null)
                 StoryManager.Instance.ProcessChoice(index, option);
@@ -123,7 +123,7 @@ namespace GeometryTD
                 return;
             }
 
-            EventShopConfig shopConfig = ConfigManager.Instance.GetEventShopConfig(currentNode.shopId);
+            EventShopConfig shopConfig = Cfg.EventShop.Get(currentNode.shopId);
             if (shopConfig == null)
             {
                 FinishShopNode();
@@ -211,7 +211,7 @@ namespace GeometryTD
             shopItemContent = contentRt;
 
             // Select items from pool (weighted random, up to refreshCount)
-            List<ShopItem> selectedItems = SelectShopItems(shopConfig);
+            List<EventShopConfig.ItemsItem> selectedItems = SelectShopItems(shopConfig);
 
             for (int i = 0; i < selectedItems.Count; i++)
             {
@@ -221,9 +221,9 @@ namespace GeometryTD
             StoryManager.Instance.OnGoldChanged += HandleShopGoldChanged;
         }
 
-        private List<ShopItem> SelectShopItems(EventShopConfig config)
+        private List<EventShopConfig.ItemsItem> SelectShopItems(EventShopConfig config)
         {
-            List<ShopItem> pool = new List<ShopItem>();
+            List<EventShopConfig.ItemsItem> pool = new List<EventShopConfig.ItemsItem>();
             if (config.items != null)
             {
                 for (int i = 0; i < config.items.Length; i++)
@@ -231,7 +231,7 @@ namespace GeometryTD
             }
 
             int count = Mathf.Min(config.refreshCount, pool.Count);
-            List<ShopItem> selected = new List<ShopItem>();
+            List<EventShopConfig.ItemsItem> selected = new List<EventShopConfig.ItemsItem>();
 
             for (int i = 0; i < count && pool.Count > 0; i++)
             {
@@ -259,9 +259,9 @@ namespace GeometryTD
             return selected;
         }
 
-        private void CreateShopItemUI(ShopItem item)
+        private void CreateShopItemUI(EventShopConfig.ItemsItem item)
         {
-            PassiveEffectConfig effect = ConfigManager.Instance.GetPassiveEffectConfig(item.effectId);
+            PassiveEffectConfig effect = Cfg.PassiveEffect.Get(item.effectId);
             if (effect == null) return;
 
             GameObject itemObj = new GameObject($"ShopItem_{item.effectId}");
@@ -497,7 +497,7 @@ namespace GeometryTD
 
         private void ShowDialogue(int dialogueId, System.Action onComplete)
         {
-            DialogueConfig config = ConfigManager.Instance.GetDialogueConfig(dialogueId);
+            DialogueConfig config = Cfg.Dialogue.Get(dialogueId);
             if (config == null || config.lines == null || config.lines.Length == 0)
             {
                 onComplete?.Invoke();
@@ -508,9 +508,9 @@ namespace GeometryTD
             win.ShowDialogue(config, onComplete);
         }
 
-        private void ShowChoices(int choiceGroupId, System.Action<int, ChoiceOption> onSelected)
+        private void ShowChoices(int choiceGroupId, System.Action<int, ChoiceGroupConfig.OptionsItem> onSelected)
         {
-            ChoiceGroupConfig config = ConfigManager.Instance.GetChoiceGroupConfig(choiceGroupId);
+            ChoiceGroupConfig config = Cfg.ChoiceGroup.Get(choiceGroupId);
             if (config == null || config.options == null || config.options.Length == 0)
             {
                 onSelected?.Invoke(0, null);

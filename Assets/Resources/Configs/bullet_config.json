@@ -1,8 +1,0 @@
-{"bulletStyles":[
-    {"id":1,   "prefabPath":"Bullets/Bullet_Style1"},
-    {"id":101, "prefabPath":"Bullets/Bullet_Style101"},
-    {"id":102, "prefabPath":"Bullets/Bullet_Style102"},
-    {"id":103, "prefabPath":"Bullets/Bullet_Style103"},
-    {"id":104, "prefabPath":"Bullets/Bullet_Style104"},
-    {"id":201, "prefabPath":"Bullets/Bullet_Style201"}
-]}

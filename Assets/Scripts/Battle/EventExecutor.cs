@@ -21,7 +21,7 @@ namespace GeometryTD
 
         public static void ExecuteEvent(int eventId, EventContext ctx)
         {
-            var config = ConfigManager.Instance.GetEventConfig(eventId);
+            var config = Cfg.Event.Get(eventId);
             if (config == null) return;
 
             var args = config.args;

@@ -33,7 +33,7 @@ namespace GeometryTD
 
         public void AddBuff(int buffConfigId, IBuffTarget target, IBuffTarget caster = null)
         {
-            var config = ConfigManager.Instance.GetBuffConfig(buffConfigId);
+            var config = Cfg.Buff.Get(buffConfigId);
             if (config == null) return;
 
             // 概率判定
@@ -346,7 +346,7 @@ namespace GeometryTD
                     if (se.args == null || se.args.Length < 1) continue;
 
                     int skillId = se.args[0];
-                    var skillConfig = ConfigManager.Instance.GetSkillConfig(skillId);
+                    var skillConfig = Cfg.Skill.Get(skillId);
                     if (skillConfig == null) continue;
 
                     float atk = defender.Attrs.GetAttack();

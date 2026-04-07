@@ -43,7 +43,7 @@ namespace GeometryTD
                 if (state != null)
                 {
                     // Load name and icon from skill pool config
-                    var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(state.skillPoolId);
+                    var poolConfig = Cfg.SkillPool.Get(state.skillPoolId);
                     if (poolConfig != null)
                     {
                         if (nameText != null)
@@ -144,8 +144,7 @@ namespace GeometryTD
             var config = ConfigManager.Instance.GetSkillConfigByPool(state.skillPoolId, Mathf.Max(state.level, 1));
             currentDragCategory = SkillManager.ClassifySkill(config);
 
-            // Read dragHint from skill pool config
-            var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(state.skillPoolId);
+            var poolConfig = Cfg.SkillPool.Get(state.skillPoolId);
             string hintText = poolConfig != null ? poolConfig.dragHint : "";
 
             if (dragVisualManager != null)
@@ -248,7 +247,7 @@ namespace GeometryTD
             if (state == null) return;
 
             // 获取 desList（从 skill pool 配置）
-            var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(state.skillPoolId);
+            var poolConfig = Cfg.SkillPool.Get(state.skillPoolId);
             if (poolConfig == null || poolConfig.desList == null) return;
 
             int currentLevel = state.level;

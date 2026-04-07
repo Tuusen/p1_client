@@ -93,7 +93,7 @@ namespace GeometryTD
                 for (int i = 0; i < config.attack_skill_ids.Length; i++)
                 {
                     attackSkillIds[i] = config.attack_skill_ids[i];
-                    attackSkillConfigs[i] = ConfigManager.Instance.GetSkillConfig(attackSkillIds[i]);
+                    attackSkillConfigs[i] = Cfg.Skill.Get(attackSkillIds[i]);
                     attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
                     attackSkillTimers[i] = 0f;
 

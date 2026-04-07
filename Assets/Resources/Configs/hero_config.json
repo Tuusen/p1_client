@@ -1,44 +1,97 @@
 {
-  "heroes": [
+  "items": [
     {
-      "id": 1,
-      "name": "小小士兵",
-      "description": "血量护甲极高，擅长于高频率攻击多个目标，伤害但较低，攻击距离较短",
-      "role": 1,
-      "attack_skill_ids": [1001],
-      "skill_xp_interval": 0.5,
-      "skill_xp_min": 1,
-      "skill_xp_max": 10,
-      "charge_buff_ids": [3021],
+      "id": 1, 
+      "name": "小小士兵", 
+      "description": "血量护甲极高，擅长于高频率攻击多个目标，伤害但较低，攻击距离较短", 
+      "role": 1, 
+      "attack_skill_ids": [
+        1001
+      ], 
+      "skill_xp_interval": 0.5, 
+      "skill_xp_min": 1, 
+      "skill_xp_max": 10, 
       "attrs": [
-        {"id": 1, "value": 5000},
-        {"id": 2, "value": 10},
-        {"id": 114, "value": 1000},
-        {"id": 113, "value": 10000},
-        {"id": 121, "value": 300},
-        {"id": 131, "value": 10000},
-        {"id": 119, "value": 10000},
-        {"id": 132, "value": 3}
+        {
+          "id": 1, 
+          "value": 5000
+        }, 
+        {
+          "id": 2, 
+          "value": 10
+        }, 
+        {
+          "id": 114, 
+          "value": 1000
+        }, 
+        {
+          "id": 113, 
+          "value": 10000
+        }, 
+        {
+          "id": 121, 
+          "value": 300
+        }, 
+        {
+          "id": 131, 
+          "value": 10000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }, 
+        {
+          "id": 132, 
+          "value": 3
+        }
+      ], 
+      "charge_buff_ids": [
+        3021
       ]
-    },
+    }, 
     {
-      "id": 2,
-      "name": "小小法师",
-      "description": "蓄力将获得大量技能经验值，单次伤害极高，攻击距离很长",
-      "role": 1,
-      "attack_skill_ids": [1002],
-      "skill_xp_interval": 3,
-      "skill_xp_min": 60,
-      "skill_xp_max": 100,
-      "charge_buff_ids": [3021],
+      "id": 2, 
+      "name": "小小法师", 
+      "description": "蓄力将获得大量技能经验值，单次伤害极高，攻击距离很长", 
+      "role": 1, 
+      "attack_skill_ids": [
+        1002
+      ], 
+      "skill_xp_interval": 3.0, 
+      "skill_xp_min": 60, 
+      "skill_xp_max": 100, 
       "attrs": [
-        {"id": 1, "value": 500},
-        {"id": 2, "value": 200},
-        {"id": 121, "value": 2500},
-        {"id": 131, "value": 10000},
-        {"id": 119, "value": 10000},
-        {"id": 132, "value": 1}
+        {
+          "id": 1, 
+          "value": 500
+        }, 
+        {
+          "id": 2, 
+          "value": 200
+        }, 
+        {
+          "id": 121, 
+          "value": 2500
+        }, 
+        {
+          "id": 131, 
+          "value": 10000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }, 
+        {
+          "id": 132, 
+          "value": 1
+        }
+      ], 
+      "charge_buff_ids": [
+        3021
       ]
     }
-  ]
+  ], 
+  "meta": {
+    "default_hero_id": 1
+  }
 }

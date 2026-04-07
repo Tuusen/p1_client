@@ -16,7 +16,7 @@ namespace GeometryTD
 
             for (int i = 0; i < bulletEventIds.Length; i++)
             {
-                var config = ConfigManager.Instance.GetBulletEventConfig(bulletEventIds[i]);
+                var config = Cfg.BulletEvent.Get(bulletEventIds[i]);
                 if (config == null) continue;
 
                 var args = config.args;

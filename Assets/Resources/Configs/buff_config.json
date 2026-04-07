@@ -1,23 +1,531 @@
-{"buffs":[
-    {"id":3001,"name":"灼烧","icon":"","desc":"持续受到火焰伤害","overlap":1,"probability":10000,"lastTime":5000,"jumpTime":1000,"persistJson":"","position":"","type":2,"dispel":1,"attribute":[],"evtDmgRate":[{"type":1,"rate":3000}],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[]},
-    {"id":3002,"name":"冰冻","icon":"","desc":"无法移动3秒","overlap":1,"probability":10000,"lastTime":3000,"jumpTime":0,"persistJson":"","position":"","type":2,"dispel":1,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":103,"args":[]}]},
-    {"id":3003,"name":"冰冻","icon":"","desc":"无法移动10秒","overlap":1,"probability":10000,"lastTime":10000,"jumpTime":0,"persistJson":"","position":"","type":2,"dispel":1,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":103,"args":[]}]},
-    {"id":3004,"name":"冰冻","icon":"","desc":"无法移动2秒","overlap":1,"probability":10000,"lastTime":2000,"jumpTime":0,"persistJson":"","position":"","type":2,"dispel":1,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":103,"args":[]}]},
-    {"id":3005,"name":"减速","icon":"","desc":"移动速度降低50%持续3秒","overlap":1,"probability":10000,"lastTime":3000,"jumpTime":0,"persistJson":"","position":"","type":2,"dispel":1,"attribute":[{"id":131,"value":-5000}],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[]},
-    {"id":3006,"name":"减速","icon":"","desc":"移动速度降低30%持续10秒","overlap":1,"probability":10000,"lastTime":10000,"jumpTime":0,"persistJson":"","position":"","type":2,"dispel":1,"attribute":[{"id":131,"value":-3000}],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[]},
-    {"id":3007,"name":"持续治疗","icon":"","desc":"每秒恢复10%攻击力的生命持续10秒","overlap":1,"probability":10000,"lastTime":10000,"jumpTime":1000,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[{"type":0,"rate":-1000}],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[]},
-    {"id":3008,"name":"伤害减免","icon":"","desc":"受到的伤害降低50%持续10秒","overlap":1,"probability":10000,"lastTime":10000,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[{"id":109,"value":5000}],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[]},
-    {"id":3009,"name":"易伤","icon":"","desc":"受到的伤害增加50%持续3秒","overlap":1,"probability":10000,"lastTime":3000,"jumpTime":0,"persistJson":"","position":"","type":2,"dispel":1,"attribute":[{"id":109,"value":-5000}],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[]},
-    {"id":3010,"name":"反击 Lv1","icon":"","desc":"受击时发射1枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3011,"name":"反击 Lv2","icon":"","desc":"受击时发射2枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3012,"name":"反击 Lv3","icon":"","desc":"受击时发射3枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3013,"name":"反击 Lv4","icon":"","desc":"受击时发射4枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3014,"name":"反击 Lv5","icon":"","desc":"受击时发射5枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3015,"name":"反击 Lv6","icon":"","desc":"受击时发射6枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3016,"name":"反击 Lv7","icon":"","desc":"受击时发射7枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3017,"name":"反击 Lv8","icon":"","desc":"受击时发射8枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3018,"name":"反击 Lv9","icon":"","desc":"受击时发射9枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3019,"name":"反击 Lv10","icon":"","desc":"受击时发射10枚反击弹","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":102,"args":[3000]}]},
-    {"id":3020,"name":"破盾爆发","icon":"","desc":"护盾破碎时造成范围伤害","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[{"type":104,"args":[3000,10]}]},
-    {"id":3021,"name":"蓄力","icon":"","desc":"蓄力期间获得属性加成","overlap":1,"probability":10000,"lastTime":-1,"jumpTime":0,"persistJson":"","position":"","type":1,"dispel":0,"attribute":[{"id":128,"value":5000}],"evtDmgRate":[],"evtDamage":[],"evtWhenEnd":[],"specialEvent":[]}
-]}
+{
+  "items": [
+    {
+      "id": 3001, 
+      "name": "灼烧", 
+      "icon": "", 
+      "desc": "持续受到火焰伤害", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 5000, 
+      "jumpTime": 1000, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [
+        {
+          "type": 1, 
+          "rate": 3000
+        }
+      ], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }, 
+    {
+      "id": 3002, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动3秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 3000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
+      "id": 3003, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动10秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 10000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
+      "id": 3004, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动2秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 2000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
+      "id": 3005, 
+      "name": "减速", 
+      "icon": "", 
+      "desc": "移动速度降低50%持续3秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 3000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [
+        {
+          "id": 131, 
+          "value": -5000
+        }
+      ], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }, 
+    {
+      "id": 3006, 
+      "name": "减速", 
+      "icon": "", 
+      "desc": "移动速度降低30%持续10秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 10000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [
+        {
+          "id": 131, 
+          "value": -3000
+        }
+      ], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }, 
+    {
+      "id": 3007, 
+      "name": "持续治疗", 
+      "icon": "", 
+      "desc": "每秒恢复10%攻击力的生命持续10秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 10000, 
+      "jumpTime": 1000, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [
+        {
+          "type": 0, 
+          "rate": -1000
+        }
+      ], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }, 
+    {
+      "id": 3008, 
+      "name": "伤害减免", 
+      "icon": "", 
+      "desc": "受到的伤害降低50%持续10秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 10000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [
+        {
+          "id": 109, 
+          "value": 5000
+        }
+      ], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }, 
+    {
+      "id": 3009, 
+      "name": "易伤", 
+      "icon": "", 
+      "desc": "受到的伤害增加50%持续3秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 3000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [
+        {
+          "id": 109, 
+          "value": -5000
+        }
+      ], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }, 
+    {
+      "id": 3010, 
+      "name": "反击 Lv1", 
+      "icon": "", 
+      "desc": "受击时发射1枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3011, 
+      "name": "反击 Lv2", 
+      "icon": "", 
+      "desc": "受击时发射2枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3012, 
+      "name": "反击 Lv3", 
+      "icon": "", 
+      "desc": "受击时发射3枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3013, 
+      "name": "反击 Lv4", 
+      "icon": "", 
+      "desc": "受击时发射4枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3014, 
+      "name": "反击 Lv5", 
+      "icon": "", 
+      "desc": "受击时发射5枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3015, 
+      "name": "反击 Lv6", 
+      "icon": "", 
+      "desc": "受击时发射6枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3016, 
+      "name": "反击 Lv7", 
+      "icon": "", 
+      "desc": "受击时发射7枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3017, 
+      "name": "反击 Lv8", 
+      "icon": "", 
+      "desc": "受击时发射8枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3018, 
+      "name": "反击 Lv9", 
+      "icon": "", 
+      "desc": "受击时发射9枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3019, 
+      "name": "反击 Lv10", 
+      "icon": "", 
+      "desc": "受击时发射10枚反击弹", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 102, 
+          "args": [
+            3000
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3020, 
+      "name": "破盾爆发", 
+      "icon": "", 
+      "desc": "护盾破碎时造成范围伤害", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 104, 
+          "args": [
+            3000, 
+            10
+          ]
+        }
+      ]
+    }, 
+    {
+      "id": 3021, 
+      "name": "蓄力", 
+      "icon": "", 
+      "desc": "蓄力期间获得属性加成", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": -1, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 1, 
+      "dispel": 0, 
+      "attribute": [
+        {
+          "id": 128, 
+          "value": 5000
+        }
+      ], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }
+  ]
+}

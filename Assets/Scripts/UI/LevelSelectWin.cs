@@ -62,11 +62,11 @@ namespace GeometryTD
             }
             levelItems.Clear();
 
-            if (ConfigManager.Instance == null || ConfigManager.Instance.LevelConfigs == null) return;
+            if (ConfigManager.Instance == null || Cfg.Level.All == null) return;
 
             Font font = GameHelper.LoadFont();
 
-            foreach (LevelConfig level in ConfigManager.Instance.LevelConfigs)
+            foreach (LevelConfig level in Cfg.Level.All)
             {
                 bool unlocked = GameManager.Instance != null && GameManager.Instance.IsLevelUnlocked(level.id);
                 bool completed = GameManager.Instance != null && GameManager.Instance.IsLevelCompleted(level.id);
@@ -138,7 +138,7 @@ namespace GeometryTD
         {
             if (detailPanel == null) return;
 
-            LevelConfig config = ConfigManager.Instance.GetLevelConfig(levelId);
+            LevelConfig config = Cfg.Level.Get(levelId);
             if (config == null) return;
 
             detailPanel.SetActive(true);
@@ -157,7 +157,7 @@ namespace GeometryTD
                     string eliteInfo = "";
                     foreach (var elite in config.superMList)
                     {
-                        MonsterConfig mc = ConfigManager.Instance.GetMonsterConfig(elite.id);
+                        MonsterConfig mc = Cfg.Monster.Get(elite.id);
                         string name = mc != null ? mc.name : $"ID:{elite.id}";
                         eliteInfo += $"  {name} (每{elite.num}只小怪出现{elite.generate}只)\n";
                     }
@@ -177,7 +177,7 @@ namespace GeometryTD
                     string bossInfo = "";
                     foreach (var boss in config.bossList)
                     {
-                        MonsterConfig mc = ConfigManager.Instance.GetMonsterConfig(boss.id);
+                        MonsterConfig mc = Cfg.Monster.Get(boss.id);
                         string name = mc != null ? mc.name : $"ID:{boss.id}";
                         bossInfo += $"  {name} (击杀{boss.num}只怪物后出现)\n";
                     }
@@ -202,7 +202,7 @@ namespace GeometryTD
                     string condInfo = "";
                     foreach (int condId in config.conditions)
                     {
-                        ConditionConfig cond = ConfigManager.Instance.GetConditionConfig(condId);
+                        ConditionConfig cond = Cfg.Condition.Get(condId);
                         if (cond != null)
                         {
                             bool met = false;

@@ -17,7 +17,7 @@ namespace GeometryTD
 
         public void RegisterPassive(int passiveConfigId, EventContext ctx)
         {
-            var config = ConfigManager.Instance.GetPassiveConfig(passiveConfigId);
+            var config = Cfg.Passive.Get(passiveConfigId);
             if (config == null) return;
 
             // eventTarget 为空 → 立即触发
@@ -78,7 +78,7 @@ namespace GeometryTD
             return false;
         }
 
-        private bool CheckConditions(PassiveCondEntry[] conds, EventContext ctx)
+        private bool CheckConditions(PassiveConfig.EventCondItem[] conds, EventContext ctx)
         {
             if (conds == null || conds.Length == 0) return true;
 

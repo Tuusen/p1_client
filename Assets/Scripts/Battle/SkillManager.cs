@@ -54,7 +54,7 @@ namespace GeometryTD
             for (int i = 0; i < skillPoolIds.Length; i++)
             {
                 string name = "";
-                var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(skillPoolIds[i]);
+                var poolConfig = Cfg.SkillPool.Get(skillPoolIds[i]);
                 if (poolConfig != null) name = poolConfig.name;
 
                 slots[i] = new SkillSlotState

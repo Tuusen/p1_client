@@ -257,7 +257,7 @@ namespace GeometryTD
             interactionBlocker.blocksRaycasts = true;
 
             StoryRuntime runtime = StoryManager.Instance.Runtime;
-            StoryNodeConfig oldNode = ConfigManager.Instance.GetStoryNodeConfig(runtime.previousNodeId);
+            StoryNodeConfig oldNode = Cfg.StoryNode.Get(runtime.previousNodeId);
             StoryNodeConfig newNode = StoryManager.Instance.CurrentNode;
 
             if (oldNode == null || newNode == null)

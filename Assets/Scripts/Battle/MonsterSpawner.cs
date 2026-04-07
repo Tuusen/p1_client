@@ -68,8 +68,8 @@ namespace GeometryTD
         private void SpawnWave()
         {
             int index = Random.Range(0, levelConfig.monsterList.Length);
-            LevelMonsterEntry entry = levelConfig.monsterList[index];
-            MonsterConfig monsterConfig = ConfigManager.Instance.GetMonsterConfig(entry.id);
+            LevelConfig.MonsterListItem entry = levelConfig.monsterList[index];
+            MonsterConfig monsterConfig = Cfg.Monster.Get(entry.id);
             if (monsterConfig == null) return;
 
             for (int i = 0; i < entry.generate; i++)
@@ -88,7 +88,7 @@ namespace GeometryTD
 
             for (int i = 0; i < levelConfig.superMList.Length; i++)
             {
-                LevelEliteEntry elite = levelConfig.superMList[i];
+                LevelConfig.SuperMListItem elite = levelConfig.superMList[i];
                 if (elite.num <= 0) continue;
 
                 int triggerCount = spawnCount / elite.num;
@@ -96,7 +96,7 @@ namespace GeometryTD
                 {
                     eliteLastTrigger[i] = triggerCount;
 
-                    MonsterConfig eliteConfig = ConfigManager.Instance.GetMonsterConfig(elite.id);
+                    MonsterConfig eliteConfig = Cfg.Monster.Get(elite.id);
                     if (eliteConfig == null) continue;
 
                     for (int j = 0; j < elite.generate; j++)
@@ -120,7 +120,7 @@ namespace GeometryTD
             if (levelConfig.bossList == null || levelConfig.bossList.Length == 0) return;
             if (currentBossIndex >= levelConfig.bossList.Length) return;
 
-            LevelBossEntry bossEntry = levelConfig.bossList[currentBossIndex];
+            LevelConfig.BossListItem bossEntry = levelConfig.bossList[currentBossIndex];
             if (killCount >= bossEntry.num)
             {
                 bossActive = true;

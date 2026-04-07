@@ -12,7 +12,7 @@ namespace GeometryTD
         /// </summary>
         public void TriggerEffect(int eventType, Vector3 position)
         {
-            var config = ConfigManager.Instance.GetEventEffectConfig(eventType);
+            var config = Cfg.EventEffect.Get(eventType);
             if (config == null) return;
 
             SpawnEffect(config, position);

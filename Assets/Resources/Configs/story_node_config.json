@@ -1,303 +1,457 @@
 {
-  "nodes": [
+  "items": [
     {
-      "id": 1001,
-      "collectionId": 1,
-      "name": "虚空入口",
-      "icon": "Icon/node_battle",
-      "type": 1,
-      "levelId": 1,
+      "id": 1001, 
+      "collectionId": 1, 
+      "name": "虚空入口", 
+      "icon": "Icon/node_battle", 
+      "type": 1, 
+      "levelId": 1, 
       "bossEvents": [
-        { "dialogueId": 1, "choiceGroupId": 1 }
-      ],
-      "dialogueId": 0,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 9001,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 3,
+        {
+          "dialogueId": 1, 
+          "choiceGroupId": 1
+        }
+      ], 
+      "dialogueId": 0, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 9001, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 3, 
       "nextNodes": [
-        { "nodeId": 1002, "conditions": [1] },
-        { "nodeId": 1003, "conditions": [2] },
-        { "nodeId": 1004, "conditions": [0] }
+        {
+          "nodeId": 1002, 
+          "conditions": [
+            1
+          ]
+        }, 
+        {
+          "nodeId": 1003, 
+          "conditions": [
+            2
+          ]
+        }, 
+        {
+          "nodeId": 1004, 
+          "conditions": [
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1002,
-      "collectionId": 1,
-      "name": "虚空裂隙",
-      "icon": "Icon/node_battle",
-      "type": 1,
-      "levelId": 2,
+      "id": 1002, 
+      "collectionId": 1, 
+      "name": "虚空裂隙", 
+      "icon": "Icon/node_battle", 
+      "type": 1, 
+      "levelId": 2, 
       "bossEvents": [
-        { "dialogueId": 2, "choiceGroupId": 2 },
-        { "dialogueId": 3, "choiceGroupId": 3 }
-      ],
-      "dialogueId": 0,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 9001,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 2,
+        {
+          "dialogueId": 2, 
+          "choiceGroupId": 2
+        }, 
+        {
+          "dialogueId": 3, 
+          "choiceGroupId": 3
+        }
+      ], 
+      "dialogueId": 0, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 9001, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 2, 
       "nextNodes": [
-        { "nodeId": 1005, "conditions": [0, 1] },
-        { "nodeId": 1006, "conditions": [1, 2] },
-        { "nodeId": 1005, "conditions": [0, 0] }
+        {
+          "nodeId": 1005, 
+          "conditions": [
+            0, 
+            1
+          ]
+        }, 
+        {
+          "nodeId": 1006, 
+          "conditions": [
+            1, 
+            2
+          ]
+        }, 
+        {
+          "nodeId": 1005, 
+          "conditions": [
+            0, 
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1003,
-      "collectionId": 1,
-      "name": "暗影通道",
-      "icon": "Icon/node_battle",
-      "type": 1,
-      "levelId": 2,
+      "id": 1003, 
+      "collectionId": 1, 
+      "name": "暗影通道", 
+      "icon": "Icon/node_battle", 
+      "type": 1, 
+      "levelId": 2, 
       "bossEvents": [
-        { "dialogueId": 4, "choiceGroupId": 4 },
-        { "dialogueId": 5, "choiceGroupId": 5 }
-      ],
-      "dialogueId": 0,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 9001,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 2,
+        {
+          "dialogueId": 4, 
+          "choiceGroupId": 4
+        }, 
+        {
+          "dialogueId": 5, 
+          "choiceGroupId": 5
+        }
+      ], 
+      "dialogueId": 0, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 9001, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 2, 
       "nextNodes": [
-        { "nodeId": 1007, "conditions": [0, 1] },
-        { "nodeId": 1008, "conditions": [0, 0] }
+        {
+          "nodeId": 1007, 
+          "conditions": [
+            0, 
+            1
+          ]
+        }, 
+        {
+          "nodeId": 1008, 
+          "conditions": [
+            0, 
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1004,
-      "collectionId": 1,
-      "name": "沉默之路",
-      "icon": "Icon/node_event",
-      "type": 2,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 10,
-      "choiceGroupId": 6,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 0,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 2,
+      "id": 1004, 
+      "collectionId": 1, 
+      "name": "沉默之路", 
+      "icon": "Icon/node_event", 
+      "type": 2, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 10, 
+      "choiceGroupId": 6, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 0, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 2, 
       "nextNodes": [
-        { "nodeId": 1005, "conditions": [1] },
-        { "nodeId": 1008, "conditions": [0] }
+        {
+          "nodeId": 1005, 
+          "conditions": [
+            1
+          ]
+        }, 
+        {
+          "nodeId": 1008, 
+          "conditions": [
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1005,
-      "collectionId": 1,
-      "name": "旅者的营地",
-      "icon": "Icon/node_event",
-      "type": 2,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 11,
-      "choiceGroupId": 7,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 0,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 2,
+      "id": 1005, 
+      "collectionId": 1, 
+      "name": "旅者的营地", 
+      "icon": "Icon/node_event", 
+      "type": 2, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 11, 
+      "choiceGroupId": 7, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 0, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 2, 
       "nextNodes": [
-        { "nodeId": 1010, "conditions": [1] },
-        { "nodeId": 1011, "conditions": [0] }
+        {
+          "nodeId": 1010, 
+          "conditions": [
+            1
+          ]
+        }, 
+        {
+          "nodeId": 1011, 
+          "conditions": [
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1006,
-      "collectionId": 1,
-      "name": "虚空裂隙深处",
-      "icon": "Icon/node_battle",
-      "type": 1,
-      "levelId": 3,
+      "id": 1006, 
+      "collectionId": 1, 
+      "name": "虚空裂隙深处", 
+      "icon": "Icon/node_battle", 
+      "type": 1, 
+      "levelId": 3, 
       "bossEvents": [
-        { "dialogueId": 6, "choiceGroupId": 0 },
-        { "dialogueId": 7, "choiceGroupId": 0 },
-        { "dialogueId": 8, "choiceGroupId": 8 }
-      ],
-      "dialogueId": 0,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 9001,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 1,
+        {
+          "dialogueId": 6, 
+          "choiceGroupId": 0
+        }, 
+        {
+          "dialogueId": 7, 
+          "choiceGroupId": 0
+        }, 
+        {
+          "dialogueId": 8, 
+          "choiceGroupId": 8
+        }
+      ], 
+      "dialogueId": 0, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 9001, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 1, 
       "nextNodes": [
-        { "nodeId": 1010, "conditions": [0, 0, 0] }
+        {
+          "nodeId": 1010, 
+          "conditions": [
+            0, 
+            0, 
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1007,
-      "collectionId": 1,
-      "name": "暗影密室",
-      "icon": "Icon/node_event",
-      "type": 2,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 12,
-      "choiceGroupId": 9,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 0,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 1,
+      "id": 1007, 
+      "collectionId": 1, 
+      "name": "暗影密室", 
+      "icon": "Icon/node_event", 
+      "type": 2, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 12, 
+      "choiceGroupId": 9, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 0, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 1, 
       "nextNodes": [
-        { "nodeId": 1010, "conditions": [0] }
+        {
+          "nodeId": 1010, 
+          "conditions": [
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1008,
-      "collectionId": 1,
-      "name": "虚空商人",
-      "icon": "Icon/node_shop",
-      "type": 3,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 0,
-      "choiceGroupId": 0,
-      "shopId": 1,
-      "defaultNextNodeId": 1010,
-      "failNodeId": 0,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 1,
+      "id": 1008, 
+      "collectionId": 1, 
+      "name": "虚空商人", 
+      "icon": "Icon/node_shop", 
+      "type": 3, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 0, 
+      "choiceGroupId": 0, 
+      "shopId": 1, 
+      "defaultNextNodeId": 1010, 
+      "failNodeId": 0, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 1, 
       "nextNodes": []
-    },
+    }, 
     {
-      "id": 1010,
-      "collectionId": 1,
-      "name": "虚空风暴",
-      "icon": "Icon/node_battle",
-      "type": 1,
-      "levelId": 3,
+      "id": 1010, 
+      "collectionId": 1, 
+      "name": "虚空风暴", 
+      "icon": "Icon/node_battle", 
+      "type": 1, 
+      "levelId": 3, 
       "bossEvents": [
-        { "dialogueId": 20, "choiceGroupId": 10 },
-        { "dialogueId": 21, "choiceGroupId": 11 },
-        { "dialogueId": 22, "choiceGroupId": 12 }
-      ],
-      "dialogueId": 0,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 9001,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 3,
+        {
+          "dialogueId": 20, 
+          "choiceGroupId": 10
+        }, 
+        {
+          "dialogueId": 21, 
+          "choiceGroupId": 11
+        }, 
+        {
+          "dialogueId": 22, 
+          "choiceGroupId": 12
+        }
+      ], 
+      "dialogueId": 0, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 9001, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 3, 
       "nextNodes": [
-        { "nodeId": 1020, "conditions": [1, 1, 1] },
-        { "nodeId": 1022, "conditions": [2, 0, 2] },
-        { "nodeId": 1021, "conditions": [0, 0, 0] }
+        {
+          "nodeId": 1020, 
+          "conditions": [
+            1, 
+            1, 
+            1
+          ]
+        }, 
+        {
+          "nodeId": 1022, 
+          "conditions": [
+            2, 
+            0, 
+            2
+          ]
+        }, 
+        {
+          "nodeId": 1021, 
+          "conditions": [
+            0, 
+            0, 
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1011,
-      "collectionId": 1,
-      "name": "虚空风暴（歧路）",
-      "icon": "Icon/node_battle",
-      "type": 1,
-      "levelId": 3,
+      "id": 1011, 
+      "collectionId": 1, 
+      "name": "虚空风暴（歧路）", 
+      "icon": "Icon/node_battle", 
+      "type": 1, 
+      "levelId": 3, 
       "bossEvents": [
-        { "dialogueId": 23, "choiceGroupId": 0 },
-        { "dialogueId": 24, "choiceGroupId": 0 },
-        { "dialogueId": 25, "choiceGroupId": 13 }
-      ],
-      "dialogueId": 0,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 9001,
-      "endingType": 0,
-      "endingCg": "",
-      "branchLineCount": 2,
+        {
+          "dialogueId": 23, 
+          "choiceGroupId": 0
+        }, 
+        {
+          "dialogueId": 24, 
+          "choiceGroupId": 0
+        }, 
+        {
+          "dialogueId": 25, 
+          "choiceGroupId": 13
+        }
+      ], 
+      "dialogueId": 0, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 9001, 
+      "endingType": 0, 
+      "endingCg": "", 
+      "branchLineCount": 2, 
       "nextNodes": [
-        { "nodeId": 1020, "conditions": [0, 0, 1] },
-        { "nodeId": 1021, "conditions": [0, 0, 0] }
+        {
+          "nodeId": 1020, 
+          "conditions": [
+            0, 
+            0, 
+            1
+          ]
+        }, 
+        {
+          "nodeId": 1021, 
+          "conditions": [
+            0, 
+            0, 
+            0
+          ]
+        }
       ]
-    },
+    }, 
     {
-      "id": 1020,
-      "collectionId": 1,
-      "name": "虚空的终焉",
-      "icon": "Icon/node_ending",
-      "type": 4,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 50,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 0,
-      "endingType": 2,
-      "endingCg": "CG/ending_true",
-      "branchLineCount": 0,
+      "id": 1020, 
+      "collectionId": 1, 
+      "name": "虚空的终焉", 
+      "icon": "Icon/node_ending", 
+      "type": 4, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 50, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 0, 
+      "endingType": 2, 
+      "endingCg": "CG/ending_true", 
+      "branchLineCount": 0, 
       "nextNodes": []
-    },
+    }, 
     {
-      "id": 1021,
-      "collectionId": 1,
-      "name": "虚空的黄昏",
-      "icon": "Icon/node_ending",
-      "type": 4,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 51,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 0,
-      "endingType": 1,
-      "endingCg": "CG/ending_normal",
-      "branchLineCount": 0,
+      "id": 1021, 
+      "collectionId": 1, 
+      "name": "虚空的黄昏", 
+      "icon": "Icon/node_ending", 
+      "type": 4, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 51, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 0, 
+      "endingType": 1, 
+      "endingCg": "CG/ending_normal", 
+      "branchLineCount": 0, 
       "nextNodes": []
-    },
+    }, 
     {
-      "id": 1022,
-      "collectionId": 1,
-      "name": "虚空之外",
-      "icon": "Icon/node_ending",
-      "type": 4,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 52,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 0,
-      "endingType": 3,
-      "endingCg": "CG/ending_hidden",
-      "branchLineCount": 0,
+      "id": 1022, 
+      "collectionId": 1, 
+      "name": "虚空之外", 
+      "icon": "Icon/node_ending", 
+      "type": 4, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 52, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 0, 
+      "endingType": 3, 
+      "endingCg": "CG/ending_hidden", 
+      "branchLineCount": 0, 
       "nextNodes": []
-    },
+    }, 
     {
-      "id": 9001,
-      "collectionId": 1,
-      "name": "虚空吞噬",
-      "icon": "Icon/node_fail",
-      "type": 4,
-      "levelId": 0,
-      "bossEvents": [],
-      "dialogueId": 60,
-      "choiceGroupId": 0,
-      "shopId": 0,
-      "defaultNextNodeId": 0,
-      "failNodeId": 0,
-      "endingType": 4,
-      "endingCg": "CG/ending_fail",
-      "branchLineCount": 0,
+      "id": 9001, 
+      "collectionId": 1, 
+      "name": "虚空吞噬", 
+      "icon": "Icon/node_fail", 
+      "type": 4, 
+      "levelId": 0, 
+      "bossEvents": [], 
+      "dialogueId": 60, 
+      "choiceGroupId": 0, 
+      "shopId": 0, 
+      "defaultNextNodeId": 0, 
+      "failNodeId": 0, 
+      "endingType": 4, 
+      "endingCg": "CG/ending_fail", 
+      "branchLineCount": 0, 
       "nextNodes": []
     }
   ]

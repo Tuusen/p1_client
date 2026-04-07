@@ -1,166 +1,315 @@
 {
-  "monsters": [
+  "items": [
     {
-      "id": 1,
-      "name": "小型异形",
-      "role": 101,
-      "level": 1,
-      "is_boss": false,
-      "is_elite": false,
-      "attack_skill_ids": [],
+      "id": 1, 
+      "name": "小型异形", 
+      "role": 101, 
+      "level": 1, 
+      "is_boss": false, 
+      "is_elite": false, 
+      "attack_skill_ids": [], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 30},
-        {"id": 2, "value": 20},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 30
+        }, 
+        {
+          "id": 2, 
+          "value": 20
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 2,
-      "name": "中型异形",
-      "role": 102,
-      "level": 2,
-      "is_boss": false,
-      "is_elite": false,
-      "attack_skill_ids": [],
+      "id": 2, 
+      "name": "中型异形", 
+      "role": 102, 
+      "level": 2, 
+      "is_boss": false, 
+      "is_elite": false, 
+      "attack_skill_ids": [], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 60},
-        {"id": 2, "value": 35},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 60
+        }, 
+        {
+          "id": 2, 
+          "value": 35
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 3,
-      "name": "大型异形",
-      "role": 103,
-      "level": 3,
-      "is_boss": false,
-      "is_elite": false,
-      "attack_skill_ids": [],
+      "id": 3, 
+      "name": "大型异形", 
+      "role": 103, 
+      "level": 3, 
+      "is_boss": false, 
+      "is_elite": false, 
+      "attack_skill_ids": [], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 100},
-        {"id": 2, "value": 50},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 100
+        }, 
+        {
+          "id": 2, 
+          "value": 50
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 10,
-      "name": "异形精锐",
-      "role": 110,
-      "level": 4,
-      "is_boss": false,
-      "is_elite": true,
-      "attack_skill_ids": [],
+      "id": 10, 
+      "name": "异形精锐", 
+      "role": 110, 
+      "level": 4, 
+      "is_boss": false, 
+      "is_elite": true, 
+      "attack_skill_ids": [], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 200},
-        {"id": 2, "value": 60},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 200
+        }, 
+        {
+          "id": 2, 
+          "value": 60
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 11,
-      "name": "虚空侍卫",
-      "role": 111,
-      "level": 5,
-      "is_boss": false,
-      "is_elite": true,
-      "attack_skill_ids": [],
+      "id": 11, 
+      "name": "虚空侍卫", 
+      "role": 111, 
+      "level": 5, 
+      "is_boss": false, 
+      "is_elite": true, 
+      "attack_skill_ids": [], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 350},
-        {"id": 2, "value": 80},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 350
+        }, 
+        {
+          "id": 2, 
+          "value": 80
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 100,
-      "name": "虚空领主",
-      "role": 200,
-      "level": 10,
-      "is_boss": true,
-      "is_elite": false,
-      "attack_skill_ids": [3001],
+      "id": 100, 
+      "name": "虚空领主", 
+      "role": 200, 
+      "level": 10, 
+      "is_boss": true, 
+      "is_elite": false, 
+      "attack_skill_ids": [
+        3001
+      ], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 1000},
-        {"id": 2, "value": 30},
-        {"id": 121, "value": 1000},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 1000
+        }, 
+        {
+          "id": 2, 
+          "value": 30
+        }, 
+        {
+          "id": 121, 
+          "value": 1000
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 101,
-      "name": "深渊守卫",
-      "role": 201,
-      "level": 12,
-      "is_boss": true,
-      "is_elite": false,
-      "attack_skill_ids": [3001],
+      "id": 101, 
+      "name": "深渊守卫", 
+      "role": 201, 
+      "level": 12, 
+      "is_boss": true, 
+      "is_elite": false, 
+      "attack_skill_ids": [
+        3001
+      ], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 1500},
-        {"id": 2, "value": 40},
-        {"id": 121, "value": 900},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 1500
+        }, 
+        {
+          "id": 2, 
+          "value": 40
+        }, 
+        {
+          "id": 121, 
+          "value": 900
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 102,
-      "name": "虚空暴君",
-      "role": 202,
-      "level": 15,
-      "is_boss": true,
-      "is_elite": false,
-      "attack_skill_ids": [3001],
+      "id": 102, 
+      "name": "虚空暴君", 
+      "role": 202, 
+      "level": 15, 
+      "is_boss": true, 
+      "is_elite": false, 
+      "attack_skill_ids": [
+        3001
+      ], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 1, "value": 2500},
-        {"id": 2, "value": 50},
-        {"id": 121, "value": 800},
-        {"id": 131, "value": 20000},
-        {"id": 119, "value": 10000}
+        {
+          "id": 1, 
+          "value": 2500
+        }, 
+        {
+          "id": 2, 
+          "value": 50
+        }, 
+        {
+          "id": 121, 
+          "value": 800
+        }, 
+        {
+          "id": 131, 
+          "value": 20000
+        }, 
+        {
+          "id": 119, 
+          "value": 10000
+        }
       ]
-    },
+    }, 
     {
-      "id": 1001,
-      "name": "风影守卫",
-      "role": 1001,
-      "level": 1,
-      "is_boss": false,
-      "is_elite": false,
-      "attack_skill_ids": [1003],
+      "id": 1001, 
+      "name": "风影守卫", 
+      "role": 1001, 
+      "level": 1, 
+      "is_boss": false, 
+      "is_elite": false, 
+      "attack_skill_ids": [
+        1003
+      ], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 2, "value": 10},
-        {"id": 121, "value": 400}
+        {
+          "id": 2, 
+          "value": 10
+        }, 
+        {
+          "id": 121, 
+          "value": 400
+        }
       ]
-    },
+    }, 
     {
-      "id": 1002,
-      "name": "风影守卫（升级）",
-      "role": 1001,
-      "level": 1,
-      "is_boss": false,
-      "is_elite": false,
-      "attack_skill_ids": [1004],
+      "id": 1002, 
+      "name": "风影守卫（升级）", 
+      "role": 1001, 
+      "level": 1, 
+      "is_boss": false, 
+      "is_elite": false, 
+      "attack_skill_ids": [
+        1004
+      ], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 2, "value": 15},
-        {"id": 121, "value": 400}
+        {
+          "id": 2, 
+          "value": 15
+        }, 
+        {
+          "id": 121, 
+          "value": 400
+        }
       ]
-    },
+    }, 
     {
-      "id": 1010,
-      "name": "熔岩守卫",
-      "role": 1002,
-      "level": 1,
-      "is_boss": false,
-      "is_elite": false,
-      "attack_skill_ids": [1005],
+      "id": 1010, 
+      "name": "熔岩守卫", 
+      "role": 1002, 
+      "level": 1, 
+      "is_boss": false, 
+      "is_elite": false, 
+      "attack_skill_ids": [
+        1005
+      ], 
+      "attack_interval": 0.0, 
       "attrs": [
-        {"id": 2, "value": 20},
-        {"id": 121, "value": 1000}
+        {
+          "id": 2, 
+          "value": 20
+        }, 
+        {
+          "id": 121, 
+          "value": 1000
+        }
       ]
     }
-  ]
+  ], 
+  "meta": {
+    "boss_monster_id": 100
+  }
 }

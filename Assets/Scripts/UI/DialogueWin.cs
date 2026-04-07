@@ -108,7 +108,7 @@ namespace GeometryTD
                 return;
             }
 
-            DialogueLine line = currentConfig.lines[currentLineIndex];
+            DialogueConfig.LinesItem line = currentConfig.lines[currentLineIndex];
 
             if (speakerText != null)
                 speakerText.text = line.speaker ?? "";
@@ -127,12 +127,12 @@ namespace GeometryTD
                 nextIndicator.SetActive(false);
         }
 
-        private void UpdatePortrait(DialogueLine line)
+        private void UpdatePortrait(DialogueConfig.LinesItem line)
         {
             Sprite portrait = null;
             if (line.roleId > 0)
             {
-                RoleConfig role = ConfigManager.Instance.GetRoleConfig(line.roleId);
+                RoleConfig role = Cfg.Role.Get(line.roleId);
                 if (role != null && !string.IsNullOrEmpty(role.portraitPath))
                     portrait = GameHelper.LoadSprite(role.portraitPath);
             }

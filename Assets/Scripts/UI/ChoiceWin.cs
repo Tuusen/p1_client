@@ -11,7 +11,7 @@ namespace GeometryTD
         [SerializeField] private Transform optionListContent;
 
         private ChoiceGroupConfig currentConfig;
-        private Action<int, ChoiceOption> onSelected;
+        private Action<int, ChoiceGroupConfig.OptionsItem> onSelected;
         private List<GameObject> optionItems = new List<GameObject>();
 
         private float savedTimeScale;
@@ -39,17 +39,17 @@ namespace GeometryTD
                 RestoreTimeScale();
                 currentConfig = null;
 
-                Action<int, ChoiceOption> callback = onSelected;
+                Action<int, ChoiceGroupConfig.OptionsItem> callback = onSelected;
                 onSelected = null;
                 callback?.Invoke(0, null);
             }
         }
 
         /// <summary>
-        /// 显示选项组。玩家选择后回调返回 (1-based索引, 选中的ChoiceOption)。
+        /// 显示选项组。玩家选择后回调返回 (1-based索引, 选中的ChoiceGroupConfig.OptionsItem)。
         /// 外部关闭窗口时回调返回 (0, null)。
         /// </summary>
-        public void ShowChoices(ChoiceGroupConfig config, Action<int, ChoiceOption> onSelected)
+        public void ShowChoices(ChoiceGroupConfig config, Action<int, ChoiceGroupConfig.OptionsItem> onSelected)
         {
             if (config == null || config.options == null || config.options.Length == 0)
             {
@@ -78,14 +78,14 @@ namespace GeometryTD
 
             for (int i = 0; i < currentConfig.options.Length; i++)
             {
-                ChoiceOption option = currentConfig.options[i];
+                ChoiceGroupConfig.OptionsItem option = currentConfig.options[i];
                 int optionIndex = i + 1; // 1-based
                 GameObject item = CreateOptionItem(option, optionIndex, font);
                 optionItems.Add(item);
             }
         }
 
-        private GameObject CreateOptionItem(ChoiceOption option, int optionIndex, Font font)
+        private GameObject CreateOptionItem(ChoiceGroupConfig.OptionsItem option, int optionIndex, Font font)
         {
             GameObject itemObj = new GameObject($"Option_{option.id}");
             itemObj.transform.SetParent(optionListContent, false);
@@ -104,7 +104,7 @@ namespace GeometryTD
             colors.pressedColor = new Color(0.2f, 0.4f, 0.2f, 0.95f);
             btn.colors = colors;
 
-            ChoiceOption capturedOption = option;
+            ChoiceGroupConfig.OptionsItem capturedOption = option;
             int capturedIndex = optionIndex;
             btn.onClick.AddListener(() => OnOptionClicked(capturedIndex, capturedOption));
 
@@ -166,13 +166,13 @@ namespace GeometryTD
             return itemObj;
         }
 
-        private string BuildRewardHint(ChoiceOption option)
+        private string BuildRewardHint(ChoiceGroupConfig.OptionsItem option)
         {
             List<string> hints = new List<string>();
 
             if (option.effectId > 0)
             {
-                PassiveEffectConfig effect = ConfigManager.Instance.GetPassiveEffectConfig(option.effectId);
+                PassiveEffectConfig effect = Cfg.PassiveEffect.Get(option.effectId);
                 if (effect != null)
                     hints.Add(effect.name);
             }
@@ -186,14 +186,14 @@ namespace GeometryTD
             return hints.Count > 0 ? string.Join("  ", hints) : null;
         }
 
-        private void OnOptionClicked(int optionIndex, ChoiceOption option)
+        private void OnOptionClicked(int optionIndex, ChoiceGroupConfig.OptionsItem option)
         {
             if (currentConfig == null) return;
 
             RestoreTimeScale();
             currentConfig = null;
 
-            Action<int, ChoiceOption> callback = onSelected;
+            Action<int, ChoiceGroupConfig.OptionsItem> callback = onSelected;
             onSelected = null;
 
             WinManager.Instance.CloseWin<ChoiceWin>();

@@ -50,7 +50,7 @@ namespace GeometryTD
         {
             if (state == null) return;
 
-            var config = ConfigManager.Instance.GetArcaneConfig(state.arcaneId);
+            var config = Cfg.Arcane.Get(state.arcaneId);
 
             // Load icon from config
             if (config != null && !string.IsNullOrEmpty(config.icon) && iconImage != null && iconImage.sprite == null)
@@ -108,7 +108,7 @@ namespace GeometryTD
             isDragging = true;
 
             var state = arcaneManager.GetSlot(slotIndex);
-            var config = ConfigManager.Instance.GetArcaneConfig(state.arcaneId);
+            var config = Cfg.Arcane.Get(state.arcaneId);
             arcaneRadius = config != null ? config.radius : 3f;
 
             CreateDragGhost(eventData.position);
@@ -248,7 +248,7 @@ namespace GeometryTD
             var state = arcaneManager.GetSlot(slotIndex);
             if (state == null) return;
 
-            var config = ConfigManager.Instance.GetArcaneConfig(state.arcaneId);
+            var config = Cfg.Arcane.Get(state.arcaneId);
             if (config == null || config.desList == null) return;
 
             string[] runeNames = { "火", "冰", "雷", "风" };

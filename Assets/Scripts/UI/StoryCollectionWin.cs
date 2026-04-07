@@ -283,7 +283,7 @@ namespace GeometryTD
 
             if (ConfigManager.Instance == null) return;
 
-            var collections = ConfigManager.Instance.StoryCollectionConfigs;
+            var collections = Cfg.StoryCollection.All;
             if (collections == null || collections.Count == 0) return;
 
             bool hasSelection = false;
@@ -403,7 +403,7 @@ namespace GeometryTD
         private void RefreshDetail()
         {
             StoryCollectionConfig config = ConfigManager.Instance != null
-                ? ConfigManager.Instance.GetStoryCollectionConfig(selectedCollectionId)
+                ? Cfg.StoryCollection.Get(selectedCollectionId)
                 : null;
 
             if (config == null)

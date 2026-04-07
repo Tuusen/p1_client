@@ -37,7 +37,7 @@ namespace GeometryTD
             get
             {
                 if (Runtime == null) return null;
-                return ConfigManager.Instance.GetStoryNodeConfig(Runtime.currentNodeId);
+                return Cfg.StoryNode.Get(Runtime.currentNodeId);
             }
         }
 
@@ -47,7 +47,7 @@ namespace GeometryTD
             get
             {
                 if (Runtime == null) return null;
-                return ConfigManager.Instance.GetStoryCollectionConfig(Runtime.collectionId);
+                return Cfg.StoryCollection.Get(Runtime.collectionId);
             }
         }
 
@@ -138,7 +138,7 @@ namespace GeometryTD
 
             // 如果是结局节点，解锁结局
             bool isNewEnding = false;
-            StoryNodeConfig endingNode = ConfigManager.Instance.GetStoryNodeConfig(endingNodeId);
+            StoryNodeConfig endingNode = Cfg.StoryNode.Get(endingNodeId);
             int endingType = EndingType.None;
             if (endingNode != null && endingNode.endingType != EndingType.None)
             {
@@ -272,7 +272,7 @@ namespace GeometryTD
         /// </summary>
         /// <param name="choiceOptionIndex">选择的选项在选项组中的索引（1-based）</param>
         /// <param name="choiceOption">选中的选项配置</param>
-        public void ProcessChoice(int choiceOptionIndex, ChoiceOption choiceOption)
+        public void ProcessChoice(int choiceOptionIndex, ChoiceGroupConfig.OptionsItem choiceOption)
         {
             if (Runtime == null || choiceOption == null) return;
 
@@ -303,7 +303,7 @@ namespace GeometryTD
         /// 自动推进 bossEventIndex。
         /// 返回 null 表示该 Boss 没有配置事件。
         /// </summary>
-        public BossEventEntry GetCurrentBossEvent()
+        public StoryNodeConfig.BossEventsItem GetCurrentBossEvent()
         {
             if (Runtime == null) return null;
 
@@ -314,7 +314,7 @@ namespace GeometryTD
             if (currentBossEventIndex >= node.bossEvents.Length)
                 return null;
 
-            BossEventEntry entry = node.bossEvents[currentBossEventIndex];
+            StoryNodeConfig.BossEventsItem entry = node.bossEvents[currentBossEventIndex];
             currentBossEventIndex++;
             return entry;
         }
@@ -379,7 +379,7 @@ namespace GeometryTD
 
             for (int i = 0; i < Runtime.ownedEffectIds.Count; i++)
             {
-                PassiveEffectConfig config = ConfigManager.Instance.GetPassiveEffectConfig(Runtime.ownedEffectIds[i]);
+                PassiveEffectConfig config = Cfg.PassiveEffect.Get(Runtime.ownedEffectIds[i]);
                 if (config == null) continue;
                 if (config.effectType != PassiveEffectType.AttributeBoost) continue;
                 if (config.targetAttrId != attrId) continue;
@@ -403,7 +403,7 @@ namespace GeometryTD
             float total = 0f;
             for (int i = 0; i < Runtime.ownedEffectIds.Count; i++)
             {
-                PassiveEffectConfig config = ConfigManager.Instance.GetPassiveEffectConfig(Runtime.ownedEffectIds[i]);
+                PassiveEffectConfig config = Cfg.PassiveEffect.Get(Runtime.ownedEffectIds[i]);
                 if (config == null) continue;
                 if (config.effectType != PassiveEffectType.SkillEnhance) continue;
                 if (config.targetAttrId != enhanceType) continue;
@@ -422,7 +422,7 @@ namespace GeometryTD
             float total = 0f;
             for (int i = 0; i < Runtime.ownedEffectIds.Count; i++)
             {
-                PassiveEffectConfig config = ConfigManager.Instance.GetPassiveEffectConfig(Runtime.ownedEffectIds[i]);
+                PassiveEffectConfig config = Cfg.PassiveEffect.Get(Runtime.ownedEffectIds[i]);
                 if (config == null) continue;
                 if (config.effectType != PassiveEffectType.Special) continue;
                 if (config.targetAttrId != specialType) continue;
@@ -441,49 +441,11 @@ namespace GeometryTD
 
             for (int i = 0; i < Runtime.ownedEffectIds.Count; i++)
             {
-                PassiveEffectConfig config = ConfigManager.Instance.GetPassiveEffectConfig(Runtime.ownedEffectIds[i]);
+                PassiveEffectConfig config = Cfg.PassiveEffect.Get(Runtime.ownedEffectIds[i]);
                 if (config != null)
                     result.Add(config);
             }
             return result;
-        }
-
-        // ===== 藏品效果应用（进入战斗时调用） =====
-
-        /// <summary>
-        /// 将藏品效果应用到英雄属性上。
-        /// 在 BattleManager.InitBattle 中调用。
-        /// 返回修改后的属性数组。
-        /// </summary>
-        public AttrEntry[] ApplyEffectsToAttrs(AttrEntry[] baseAttrs)
-        {
-            if (Runtime == null || baseAttrs == null) return baseAttrs;
-
-            // 复制一份避免修改原始配置
-            AttrEntry[] modified = new AttrEntry[baseAttrs.Length];
-            for (int i = 0; i < baseAttrs.Length; i++)
-            {
-                modified[i] = new AttrEntry { id = baseAttrs[i].id, value = baseAttrs[i].value };
-            }
-
-            // 遍历所有已有属性，应用加成
-            for (int i = 0; i < modified.Length; i++)
-            {
-                var (percent, flat) = GetAttributeBonus(modified[i].id);
-
-                // 攻击间隔比较特殊：百分比值表示"缩短"，所以用减法；单位为毫秒
-                if (modified[i].id == AttributeIds.AttackInterval)
-                {
-                    modified[i].value = (int)(modified[i].value * (1f - percent / 100f) + flat);
-                    if (modified[i].value < 100) modified[i].value = 100; // 最小攻击间隔 100ms
-                }
-                else
-                {
-                    modified[i].value = (int)(modified[i].value * (1f + percent / 100f) + flat);
-                }
-            }
-
-            return modified;
         }
 
         /// <summary>

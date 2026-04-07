@@ -46,11 +46,11 @@ namespace GeometryTD
             itemBgMap.Clear();
             selectedIds.Clear();
 
-            if (ConfigManager.Instance == null || ConfigManager.Instance.GameConfig == null) return;
+            if (ConfigManager.Instance == null) return;
 
             int[] equipped = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedSkills()
-                : ConfigManager.Instance.GameConfig.skill_slot_ids;
+                : Cfg.Skill.Meta.slot_ids;
             if (equipped != null)
             {
                 foreach (int id in equipped)
@@ -58,12 +58,12 @@ namespace GeometryTD
             }
 
             Font font = GameHelper.LoadFont();
-            int[] allSkillPoolIds = ConfigManager.Instance.GameConfig.skill_slot_ids;
+            int[] allSkillPoolIds = Cfg.Skill.Meta.slot_ids;
             if (allSkillPoolIds == null) return;
 
             foreach (int poolId in allSkillPoolIds)
             {
-                SkillPoolConfig poolConfig = ConfigManager.Instance.GetSkillPoolConfig(poolId);
+                SkillPoolConfig poolConfig = Cfg.SkillPool.Get(poolId);
                 if (poolConfig == null) continue;
                 GameObject itemObj = CreateSkillItem(poolConfig, font);
                 skillItems.Add(itemObj);

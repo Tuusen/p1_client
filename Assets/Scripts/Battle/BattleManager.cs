@@ -127,7 +127,7 @@ namespace GeometryTD
                 var slot = skillManager.GetSlot(pendingXpSlotIndex);
                 if (slot != null)
                 {
-                    var poolConfig = ConfigManager.Instance.GetSkillPoolConfig(slot.skillPoolId);
+                    var poolConfig = Cfg.SkillPool.Get(slot.skillPoolId);
                     string iconPath = poolConfig != null ? poolConfig.icon : null;
                     skillXpTimerUI.SetTargetSkill(slot.skillName, iconPath);
                 }
@@ -150,13 +150,11 @@ namespace GeometryTD
                 return;
             }
 
-            GameConfig gameConfig = ConfigManager.Instance.GameConfig;
-
             // 获取玩家选择的英雄
             int heroId = GameManager.Instance != null
                 ? GameManager.Instance.GetSelectedHeroId()
-                : gameConfig.default_hero_id;
-            HeroConfig heroConfig = ConfigManager.Instance.GetHeroConfig(heroId);
+                : Cfg.Hero.Meta.default_hero_id;
+            HeroConfig heroConfig = Cfg.Hero.Get(heroId);
             if (heroConfig == null)
             {
                 Debug.LogError($"[BattleManager] 未找到英雄配置, id: {heroId}");
@@ -166,7 +164,7 @@ namespace GeometryTD
             // 获取关卡配置
             currentLevelId = GameManager.Instance != null ? GameManager.Instance.GetSelectedLevelId() : 1;
             if (currentLevelId <= 0) currentLevelId = 1;
-            currentLevelConfig = ConfigManager.Instance.GetLevelConfig(currentLevelId);
+            currentLevelConfig = Cfg.Level.Get(currentLevelId);
             if (currentLevelConfig == null)
             {
                 Debug.LogError($"[BattleManager] 未找到关卡配置, id: {currentLevelId}");
@@ -215,7 +213,7 @@ namespace GeometryTD
             // 初始化技能管理器（使用玩家装备的技能）
             int[] equippedSkills = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedSkills()
-                : gameConfig.skill_slot_ids;
+                : Cfg.Skill.Meta.slot_ids;
             if (equippedSkills != null && equippedSkills.Length > 0)
             {
                 skillManager = gameObject.AddComponent<SkillManager>();
@@ -240,7 +238,7 @@ namespace GeometryTD
             // 初始化奥术管理器（使用玩家装备的奥术）
             int[] equippedArcanes = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedArcanes()
-                : gameConfig.arcane_slot_ids;
+                : Cfg.Arcane.Meta.slot_ids;
             if (equippedArcanes != null && equippedArcanes.Length > 0)
             {
                 arcaneManager = gameObject.AddComponent<ArcaneManager>();
@@ -469,7 +467,7 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            MonsterConfig bossConfig = ConfigManager.Instance.GetMonsterConfig(bossId);
+            MonsterConfig bossConfig = Cfg.Monster.Get(bossId);
             if (bossConfig == null) return;
 
             float spawnX = 12f;
@@ -597,7 +595,7 @@ namespace GeometryTD
         {
             if (gameEnded) return;
 
-            MonsterConfig monsterConfig = ConfigManager.Instance.GetMonsterConfig(monsterId);
+            MonsterConfig monsterConfig = Cfg.Monster.Get(monsterId);
             if (monsterConfig == null)
             {
                 Debug.LogWarning($"[BattleManager] 召唤物找不到怪物配置, monsterId: {monsterId}");
@@ -692,7 +690,7 @@ namespace GeometryTD
             // Story: check boss death event (dialogue/choices overlay)
             if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
             {
-                BossEventEntry bossEvent = StoryManager.Instance.GetCurrentBossEvent();
+                StoryNodeConfig.BossEventsItem bossEvent = StoryManager.Instance.GetCurrentBossEvent();
                 if (bossEvent != null)
                 {
                     HandleBossEvent(bossEvent);
@@ -705,11 +703,11 @@ namespace GeometryTD
 
         // ===== Boss Death Event Chain =====
 
-        private void HandleBossEvent(BossEventEntry bossEvent)
+        private void HandleBossEvent(StoryNodeConfig.BossEventsItem bossEvent)
         {
             if (bossEvent.dialogueId > 0)
             {
-                DialogueConfig config = ConfigManager.Instance.GetDialogueConfig(bossEvent.dialogueId);
+                DialogueConfig config = Cfg.Dialogue.Get(bossEvent.dialogueId);
                 if (config != null && config.lines != null && config.lines.Length > 0)
                 {
                     DialogueWin win = GameHelper.OpenWin<DialogueWin>();
@@ -727,7 +725,7 @@ namespace GeometryTD
             monsterSpawner.OnBossKilled();
         }
 
-        private void OnBossDialogueComplete(BossEventEntry bossEvent)
+        private void OnBossDialogueComplete(StoryNodeConfig.BossEventsItem bossEvent)
         {
             if (bossEvent.choiceGroupId > 0)
             {
@@ -741,7 +739,7 @@ namespace GeometryTD
 
         private void ShowBossChoices(int choiceGroupId)
         {
-            ChoiceGroupConfig config = ConfigManager.Instance.GetChoiceGroupConfig(choiceGroupId);
+            ChoiceGroupConfig config = Cfg.ChoiceGroup.Get(choiceGroupId);
             if (config != null && config.options != null && config.options.Length > 0)
             {
                 ChoiceWin win = GameHelper.OpenWin<ChoiceWin>();
@@ -752,7 +750,7 @@ namespace GeometryTD
             monsterSpawner.OnBossKilled();
         }
 
-        private void OnBossChoiceSelected(int index, ChoiceOption option)
+        private void OnBossChoiceSelected(int index, ChoiceGroupConfig.OptionsItem option)
         {
             if (option != null && StoryManager.Instance != null)
                 StoryManager.Instance.ProcessChoice(index, option);

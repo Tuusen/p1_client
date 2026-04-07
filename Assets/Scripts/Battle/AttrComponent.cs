@@ -38,7 +38,7 @@ namespace GeometryTD
         public int GetFinal(int attrId)
         {
             int raw = GetRaw(attrId);
-            var meta = ConfigManager.Instance != null ? ConfigManager.Instance.GetAttrMeta(attrId) : null;
+            var meta = ConfigManager.Instance != null ? Cfg.Attribute.Get(attrId) : null;
             if (meta != null)
             {
                 if (meta.downLimit != 0 || meta.upLimit != 0)
@@ -55,7 +55,7 @@ namespace GeometryTD
         public float GetFinalFloat(int attrId)
         {
             int val = GetFinal(attrId);
-            var meta = ConfigManager.Instance != null ? ConfigManager.Instance.GetAttrMeta(attrId) : null;
+            var meta = ConfigManager.Instance != null ? Cfg.Attribute.Get(attrId) : null;
             if (meta != null && meta.powerType == 1)
                 return val / 10000f;
             return val;

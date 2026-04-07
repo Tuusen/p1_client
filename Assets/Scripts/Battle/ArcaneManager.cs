@@ -44,7 +44,7 @@ namespace GeometryTD
             slots = new ArcaneSlotState[arcaneSlotIds.Length];
             for (int i = 0; i < arcaneSlotIds.Length; i++)
             {
-                var config = ConfigManager.Instance.GetArcaneConfig(arcaneSlotIds[i]);
+                var config = Cfg.Arcane.Get(arcaneSlotIds[i]);
                 slots[i] = new ArcaneSlotState
                 {
                     arcaneId = arcaneSlotIds[i],
@@ -122,7 +122,7 @@ namespace GeometryTD
             var slot = slots[slotIndex];
             if (slot.cooldownRemaining > 0f) return false;
 
-            var config = ConfigManager.Instance.GetArcaneConfig(slot.arcaneId);
+            var config = Cfg.Arcane.Get(slot.arcaneId);
             if (config == null) return false;
 
             int runeIdx = config.runeType - 1;
@@ -137,7 +137,7 @@ namespace GeometryTD
             if (!CanCast(slotIndex)) return false;
 
             var slot = slots[slotIndex];
-            var config = ConfigManager.Instance.GetArcaneConfig(slot.arcaneId);
+            var config = Cfg.Arcane.Get(slot.arcaneId);
 
             // Consume runes (with buff modifier)
             int runeIdx = config.runeType - 1;
