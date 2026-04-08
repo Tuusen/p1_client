@@ -148,7 +148,7 @@
       "is_boss": true, 
       "is_elite": false, 
       "attack_skill_ids": [
-        3001
+        2000001
       ], 
       "attack_interval": 0.0, 
       "attrs": [
@@ -182,7 +182,7 @@
       "is_boss": true, 
       "is_elite": false, 
       "attack_skill_ids": [
-        3001
+        2000001
       ], 
       "attack_interval": 0.0, 
       "attrs": [
@@ -216,7 +216,7 @@
       "is_boss": true, 
       "is_elite": false, 
       "attack_skill_ids": [
-        3001
+        2000001
       ], 
       "attack_interval": 0.0, 
       "attrs": [
@@ -250,7 +250,7 @@
       "is_boss": false, 
       "is_elite": false, 
       "attack_skill_ids": [
-        1003
+        1000201
       ], 
       "attack_interval": 0.0, 
       "attrs": [
@@ -272,7 +272,7 @@
       "is_boss": false, 
       "is_elite": false, 
       "attack_skill_ids": [
-        1004
+        1000202
       ], 
       "attack_interval": 0.0, 
       "attrs": [
@@ -294,7 +294,7 @@
       "is_boss": false, 
       "is_elite": false, 
       "attack_skill_ids": [
-        1005
+        1000301
       ], 
       "attack_interval": 0.0, 
       "attrs": [

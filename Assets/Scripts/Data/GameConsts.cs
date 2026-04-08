@@ -96,7 +96,14 @@ namespace GeometryTD
         public const int AttachToCaster = 302;
     }
 
-    // specialEvent.type: 1=技能伤害变化, 2=奥术消耗变化, 3=技能子弹变化, 101=无敌, 102=反击, 103=冰冻
+    // specialEvent.type:
+    // 1=技能伤害变化
+    // 2=奥术消耗变化
+    // 3=技能子弹变化
+    // 101=无敌
+    // 102=反击| 反击技能Id
+    // 103=冰冻
+    // 104=
     public static class BuffSpecialEventType
     {
         public const int SkillDmgMod = 1;

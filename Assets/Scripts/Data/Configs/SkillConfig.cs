@@ -11,6 +11,7 @@ namespace GeometryTD
     public class SkillConfig
     {
         public int id;
+        public int poolId;
         public int level;
         public string name;
         public string des;

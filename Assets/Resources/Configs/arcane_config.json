@@ -16,7 +16,9 @@
       "runeCost": 2, 
       "runeType": 1, 
       "events": [], 
-      "enemyEvents": [], 
+      "enemyEvents": [
+        70010
+      ], 
       "bulletEvents": []
     }, 
     {
@@ -36,7 +38,7 @@
       "runeType": 2, 
       "events": [], 
       "enemyEvents": [
-        10104
+        70201
       ], 
       "bulletEvents": []
     }, 
@@ -58,7 +60,7 @@
       "events": [], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20023
+        202003
       ]
     }, 
     {
@@ -78,7 +80,7 @@
       "runeType": 4, 
       "events": [], 
       "enemyEvents": [
-        10138
+        40002
       ], 
       "bulletEvents": []
     }

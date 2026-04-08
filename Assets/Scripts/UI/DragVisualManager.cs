@@ -28,7 +28,6 @@ namespace GeometryTD
 
         public void BeginDrag(SkillCategory category, string hintText = "")
         {
-            Debug.Log($"[DragVisualManager] BeginDrag called, category={category}");
             if (isDragging) EndDrag();
             isDragging = true;
 
@@ -87,7 +86,6 @@ namespace GeometryTD
 
         public void EndDrag()
         {
-            Debug.Log("[DragVisualManager] EndDrag called");
             if (!isDragging) return;
             isDragging = false;
 

@@ -43,6 +43,10 @@ namespace GeometryTD
         
         
         
+        
+        
+        
+        
         // USER CODE END - Fields
 
         private void Awake()
@@ -173,6 +177,10 @@ namespace GeometryTD
             
             
             
+            
+            
+            
+            
             // USER CODE END - AfterLoad
         }
 
@@ -297,6 +305,10 @@ namespace GeometryTD
             }
         }
 
+        
+        
+        
+        
         
         
         

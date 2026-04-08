@@ -1,1 +1,15 @@
-{}
+{
+  "items": [
+    {
+      "id": 1001, 
+      "name": "护盾破损", 
+      "icon": "", 
+      "des": "", 
+      "eventTarget": [], 
+      "eventRemove": [], 
+      "eventCond": [], 
+      "events": [], 
+      "skills": []
+    }
+  ]
+}

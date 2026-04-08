@@ -1,7 +1,8 @@
 {
   "items": [
     {
-      "id": 1001, 
+      "id": 1000001, 
+      "poolId": 10000, 
       "level": 1, 
       "name": "剑气", 
       "des": "", 
@@ -16,11 +17,12 @@
       "events": [], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20010
+        204010
       ]
     }, 
     {
-      "id": 1002, 
+      "id": 1000101, 
+      "poolId": 10001, 
       "level": 1, 
       "name": "元素弹", 
       "des": "", 
@@ -37,7 +39,8 @@
       "bulletEvents": []
     }, 
     {
-      "id": 1003, 
+      "id": 1000201, 
+      "poolId": 10002, 
       "level": 1, 
       "name": "风弹", 
       "des": "", 
@@ -54,8 +57,9 @@
       "bulletEvents": []
     }, 
     {
-      "id": 1004, 
-      "level": 1, 
+      "id": 1000202, 
+      "poolId": 10002, 
+      "level": 2, 
       "name": "追踪风弹", 
       "des": "", 
       "icon": "", 
@@ -69,11 +73,12 @@
       "events": [], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20001
+        103000
       ]
     }, 
     {
-      "id": 1005, 
+      "id": 1000301, 
+      "poolId": 10003, 
       "level": 1, 
       "name": "岩弹", 
       "des": "", 
@@ -90,109 +95,26 @@
       "bulletEvents": []
     }, 
     {
-      "id": 1004, 
+      "id": 1000401, 
+      "poolId": 10004, 
       "level": 1, 
-      "name": "反击盾弹", 
-      "des": "", 
+      "name": "全屏反击", 
+      "des": "TODO 附加减速和击退", 
       "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
+      "category": "Aoe", 
+      "dmg": 3000, 
       "dmgType": 0, 
-      "bulletSpeed": 10.0, 
+      "bulletSpeed": 0.0, 
       "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
+      "bulletStyleId": 0, 
+      "attack_range": 0.0, 
       "events": [], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
-      "id": 1004, 
-      "level": 2, 
-      "name": "反击盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": []
-    }, 
-    {
-      "id": 1004, 
-      "level": 3, 
-      "name": "反击盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": []
-    }, 
-    {
-      "id": 1004, 
-      "level": 4, 
-      "name": "反击盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": []
-    }, 
-    {
-      "id": 1004, 
-      "level": 5, 
-      "name": "反击盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": []
-    }, 
-    {
-      "id": 1004, 
-      "level": 6, 
-      "name": "反击穿刺盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": []
-    }, 
-    {
-      "id": 3001, 
+      "id": 2000001, 
+      "poolId": 20000, 
       "level": 1, 
       "name": "暗影弹", 
       "des": "", 
@@ -209,7 +131,211 @@
       "bulletEvents": []
     }, 
     {
+      "id": 1006101, 
+      "poolId": 10061, 
+      "level": 1, 
+      "name": "反击盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": []
+    }, 
+    {
+      "id": 1006102, 
+      "poolId": 10061, 
+      "level": 2, 
+      "name": "反击盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201002
+      ]
+    }, 
+    {
+      "id": 1006103, 
+      "poolId": 10061, 
+      "level": 3, 
+      "name": "反击盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201003
+      ]
+    }, 
+    {
+      "id": 1006104, 
+      "poolId": 10061, 
+      "level": 4, 
+      "name": "反击盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201004
+      ]
+    }, 
+    {
+      "id": 1006105, 
+      "poolId": 10061, 
+      "level": 5, 
+      "name": "反击盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201005
+      ]
+    }, 
+    {
+      "id": 1006106, 
+      "poolId": 10061, 
+      "level": 6, 
+      "name": "反击穿刺盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201006, 
+        101000
+      ]
+    }, 
+    {
+      "id": 1006107, 
+      "poolId": 10061, 
+      "level": 7, 
+      "name": "反击穿刺盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201007, 
+        101000
+      ]
+    }, 
+    {
+      "id": 1006108, 
+      "poolId": 10061, 
+      "level": 8, 
+      "name": "反击穿刺盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201008, 
+        101000
+      ]
+    }, 
+    {
+      "id": 1006109, 
+      "poolId": 10061, 
+      "level": 9, 
+      "name": "反击穿刺盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201009, 
+        101000
+      ]
+    }, 
+    {
+      "id": 1006110, 
+      "poolId": 10061, 
+      "level": 10, 
+      "name": "反击穿刺盾弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        201010, 
+        101000
+      ]
+    }, 
+    {
       "id": 100100, 
+      "poolId": 1001, 
       "level": 0, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -227,6 +353,7 @@
     }, 
     {
       "id": 100101, 
+      "poolId": 1001, 
       "level": 1, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -239,13 +366,14 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10041
+        60001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100102, 
+      "poolId": 1001, 
       "level": 2, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -258,15 +386,16 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10042
+        60002
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20002
+        201002
       ]
     }, 
     {
       "id": 100103, 
+      "poolId": 1001, 
       "level": 3, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -279,15 +408,16 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10043
+        60003
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20003
+        201003
       ]
     }, 
     {
       "id": 100104, 
+      "poolId": 1001, 
       "level": 4, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -300,15 +430,16 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10044
+        60004
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20004
+        201004
       ]
     }, 
     {
       "id": 100105, 
+      "poolId": 1001, 
       "level": 5, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -321,15 +452,16 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10045
+        60005
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20005
+        201005
       ]
     }, 
     {
       "id": 100106, 
+      "poolId": 1001, 
       "level": 6, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -342,17 +474,18 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10046
+        60006
       ], 
       "enemyEvents": [
-        10101
+        70100
       ], 
       "bulletEvents": [
-        20006
+        201006
       ]
     }, 
     {
       "id": 100107, 
+      "poolId": 1001, 
       "level": 7, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -365,17 +498,18 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10047
+        60007
       ], 
       "enemyEvents": [
-        10101
+        70100
       ], 
       "bulletEvents": [
-        20007
+        201007
       ]
     }, 
     {
       "id": 100108, 
+      "poolId": 1001, 
       "level": 8, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -388,17 +522,18 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10048
+        60008
       ], 
       "enemyEvents": [
-        10101
+        70100
       ], 
       "bulletEvents": [
-        20008
+        201008
       ]
     }, 
     {
       "id": 100109, 
+      "poolId": 1001, 
       "level": 9, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -411,17 +546,18 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10049
+        60009
       ], 
       "enemyEvents": [
-        10101
+        70100
       ], 
       "bulletEvents": [
-        20009
+        201009
       ]
     }, 
     {
       "id": 100110, 
+      "poolId": 1001, 
       "level": 10, 
       "name": "烈焰圣弹", 
       "des": "", 
@@ -434,18 +570,19 @@
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
-        10050
+        60010
       ], 
       "enemyEvents": [
-        10101
+        70100
       ], 
       "bulletEvents": [
-        20010, 
-        20011
+        201010, 
+        102001
       ]
     }, 
     {
       "id": 100200, 
+      "poolId": 1002, 
       "level": 0, 
       "name": "治愈圣火", 
       "des": "", 
@@ -463,6 +600,7 @@
     }, 
     {
       "id": 100201, 
+      "poolId": 1002, 
       "level": 1, 
       "name": "治愈圣火", 
       "des": "", 
@@ -475,7 +613,7 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10041, 
+        60001, 
         10001
       ], 
       "enemyEvents": [], 
@@ -483,6 +621,7 @@
     }, 
     {
       "id": 100202, 
+      "poolId": 1002, 
       "level": 2, 
       "name": "治愈圣火", 
       "des": "", 
@@ -495,7 +634,7 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10042, 
+        60002, 
         10002
       ], 
       "enemyEvents": [], 
@@ -503,6 +642,7 @@
     }, 
     {
       "id": 100203, 
+      "poolId": 1002, 
       "level": 3, 
       "name": "治愈圣火", 
       "des": "", 
@@ -515,7 +655,7 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10043, 
+        60003, 
         10003
       ], 
       "enemyEvents": [], 
@@ -523,6 +663,7 @@
     }, 
     {
       "id": 100204, 
+      "poolId": 1002, 
       "level": 4, 
       "name": "治愈圣火", 
       "des": "", 
@@ -535,7 +676,7 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10044, 
+        60004, 
         10004
       ], 
       "enemyEvents": [], 
@@ -543,6 +684,7 @@
     }, 
     {
       "id": 100205, 
+      "poolId": 1002, 
       "level": 5, 
       "name": "治愈圣火", 
       "des": "", 
@@ -555,7 +697,7 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10045, 
+        60005, 
         10005
       ], 
       "enemyEvents": [], 
@@ -563,6 +705,7 @@
     }, 
     {
       "id": 100206, 
+      "poolId": 1002, 
       "level": 6, 
       "name": "治愈圣火", 
       "des": "", 
@@ -575,15 +718,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10046, 
+        60006, 
         10006, 
-        10107
+        70007
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100207, 
+      "poolId": 1002, 
       "level": 7, 
       "name": "治愈圣火", 
       "des": "", 
@@ -596,15 +740,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10047, 
+        60007, 
         10007, 
-        10107
+        70007
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100208, 
+      "poolId": 1002, 
       "level": 8, 
       "name": "治愈圣火", 
       "des": "", 
@@ -617,15 +762,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10048, 
+        60008, 
         10008, 
-        10107
+        70007
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100209, 
+      "poolId": 1002, 
       "level": 9, 
       "name": "治愈圣火", 
       "des": "", 
@@ -638,15 +784,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10049, 
+        60009, 
         10009, 
-        10107
+        70007
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100210, 
+      "poolId": 1002, 
       "level": 10, 
       "name": "治愈圣火", 
       "des": "", 
@@ -659,16 +806,17 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10050, 
+        60010, 
         10010, 
-        10107, 
-        10108
+        70007, 
+        70008
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100300, 
+      "poolId": 1003, 
       "level": 0, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -686,6 +834,7 @@
     }, 
     {
       "id": 100301, 
+      "poolId": 1003, 
       "level": 1, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -698,15 +847,16 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10051
+        60011
       ], 
       "enemyEvents": [
-        10102
+        70200
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100302, 
+      "poolId": 1003, 
       "level": 2, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -719,17 +869,18 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10052
+        60012
       ], 
       "enemyEvents": [
-        10102
+        70201
       ], 
       "bulletEvents": [
-        20002
+        201002
       ]
     }, 
     {
       "id": 100303, 
+      "poolId": 1003, 
       "level": 3, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -742,17 +893,18 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10053
+        60013
       ], 
       "enemyEvents": [
-        10102
+        70202
       ], 
       "bulletEvents": [
-        20003
+        201003
       ]
     }, 
     {
       "id": 100304, 
+      "poolId": 1003, 
       "level": 4, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -765,17 +917,18 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10054
+        60014
       ], 
       "enemyEvents": [
-        10102
+        70203
       ], 
       "bulletEvents": [
-        20004
+        201004
       ]
     }, 
     {
       "id": 100305, 
+      "poolId": 1003, 
       "level": 5, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -788,17 +941,18 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10055
+        60015
       ], 
       "enemyEvents": [
-        10102
+        70204
       ], 
       "bulletEvents": [
-        20005
+        201005
       ]
     }, 
     {
       "id": 100306, 
+      "poolId": 1003, 
       "level": 6, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -811,18 +965,19 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10056
+        60016
       ], 
       "enemyEvents": [
-        10102
+        70205
       ], 
       "bulletEvents": [
-        20006, 
-        20012
+        201006, 
+        101000
       ]
     }, 
     {
       "id": 100307, 
+      "poolId": 1003, 
       "level": 7, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -835,18 +990,19 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10057
+        60017
       ], 
       "enemyEvents": [
-        10102
+        70206
       ], 
       "bulletEvents": [
-        20007, 
-        20012
+        201007, 
+        101000
       ]
     }, 
     {
       "id": 100308, 
+      "poolId": 1003, 
       "level": 8, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -859,18 +1015,19 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10058
+        60018
       ], 
       "enemyEvents": [
-        10102
+        70207
       ], 
       "bulletEvents": [
-        20008, 
-        20012
+        201008, 
+        101000
       ]
     }, 
     {
       "id": 100309, 
+      "poolId": 1003, 
       "level": 9, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -883,18 +1040,19 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10059
+        60019
       ], 
       "enemyEvents": [
-        10102
+        70208
       ], 
       "bulletEvents": [
-        20009, 
-        20012
+        201009, 
+        101000
       ]
     }, 
     {
       "id": 100310, 
+      "poolId": 1003, 
       "level": 10, 
       "name": "急冻冰锥", 
       "des": "", 
@@ -907,18 +1065,19 @@
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
-        10060
+        60020
       ], 
       "enemyEvents": [
-        10103
+        70209
       ], 
       "bulletEvents": [
-        20010, 
-        20012
+        201010, 
+        101000
       ]
     }, 
     {
       "id": 100400, 
+      "poolId": 1004, 
       "level": 0, 
       "name": "血能交换", 
       "des": "", 
@@ -936,6 +1095,7 @@
     }, 
     {
       "id": 100401, 
+      "poolId": 1004, 
       "level": 1, 
       "name": "血能交换", 
       "des": "", 
@@ -948,15 +1108,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10051, 
+        60011, 
         10011, 
-        10021
+        50001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100402, 
+      "poolId": 1004, 
       "level": 2, 
       "name": "血能交换", 
       "des": "", 
@@ -969,15 +1130,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10052, 
+        60012, 
         10011, 
-        10022
+        50002
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100403, 
+      "poolId": 1004, 
       "level": 3, 
       "name": "血能交换", 
       "des": "", 
@@ -990,15 +1152,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10053, 
+        60013, 
         10011, 
-        10023
+        50003
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100404, 
+      "poolId": 1004, 
       "level": 4, 
       "name": "血能交换", 
       "des": "", 
@@ -1011,15 +1174,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10054, 
+        60014, 
         10011, 
-        10024
+        50004
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100405, 
+      "poolId": 1004, 
       "level": 5, 
       "name": "血能交换", 
       "des": "", 
@@ -1032,15 +1196,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10055, 
+        60015, 
         10011, 
-        10025
+        50005
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100406, 
+      "poolId": 1004, 
       "level": 6, 
       "name": "血能交换", 
       "des": "", 
@@ -1053,15 +1218,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10056, 
+        60016, 
         10011, 
-        10026
+        50006
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100407, 
+      "poolId": 1004, 
       "level": 7, 
       "name": "血能交换", 
       "des": "", 
@@ -1074,15 +1240,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10057, 
+        60017, 
         10011, 
-        10027
+        50007
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100408, 
+      "poolId": 1004, 
       "level": 8, 
       "name": "血能交换", 
       "des": "", 
@@ -1095,15 +1262,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10058, 
+        60018, 
         10011, 
-        10028
+        50008
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100409, 
+      "poolId": 1004, 
       "level": 9, 
       "name": "血能交换", 
       "des": "", 
@@ -1116,15 +1284,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10059, 
+        60019, 
         10011, 
-        10029
+        50009
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100410, 
+      "poolId": 1004, 
       "level": 10, 
       "name": "血能交换", 
       "des": "", 
@@ -1137,15 +1306,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10060, 
+        60020, 
         10011, 
-        10030
+        50010
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100500, 
+      "poolId": 1005, 
       "level": 0, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1163,6 +1333,7 @@
     }, 
     {
       "id": 100501, 
+      "poolId": 1005, 
       "level": 1, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1175,15 +1346,16 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10061
+        60021
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20021
+        202001
       ]
     }, 
     {
       "id": 100502, 
+      "poolId": 1005, 
       "level": 2, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1196,15 +1368,16 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10062
+        60022
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20022
+        202002
       ]
     }, 
     {
       "id": 100503, 
+      "poolId": 1005, 
       "level": 3, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1217,15 +1390,16 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10063
+        60023
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20023
+        202003
       ]
     }, 
     {
       "id": 100504, 
+      "poolId": 1005, 
       "level": 4, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1238,15 +1412,16 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10064
+        60024
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20024
+        202004
       ]
     }, 
     {
       "id": 100505, 
+      "poolId": 1005, 
       "level": 5, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1259,15 +1434,16 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10065
+        60025
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        20025
+        202005
       ]
     }, 
     {
       "id": 100506, 
+      "poolId": 1005, 
       "level": 6, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1280,17 +1456,18 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10066
+        60026
       ], 
       "enemyEvents": [
-        10105
+        70300
       ], 
       "bulletEvents": [
-        20026
+        202006
       ]
     }, 
     {
       "id": 100507, 
+      "poolId": 1005, 
       "level": 7, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1303,17 +1480,18 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10067
+        60027
       ], 
       "enemyEvents": [
-        10105
+        70300
       ], 
       "bulletEvents": [
-        20027
+        202007
       ]
     }, 
     {
       "id": 100508, 
+      "poolId": 1005, 
       "level": 8, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1326,17 +1504,18 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10068
+        60028
       ], 
       "enemyEvents": [
-        10105
+        70300
       ], 
       "bulletEvents": [
-        20028
+        202008
       ]
     }, 
     {
       "id": 100509, 
+      "poolId": 1005, 
       "level": 9, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1349,17 +1528,18 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10069
+        60029
       ], 
       "enemyEvents": [
-        10105
+        70300
       ], 
       "bulletEvents": [
-        20029
+        202009
       ]
     }, 
     {
       "id": 100510, 
+      "poolId": 1005, 
       "level": 10, 
       "name": "闪电连锁", 
       "des": "", 
@@ -1372,17 +1552,18 @@
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
-        10070
+        60030
       ], 
       "enemyEvents": [
-        10105
+        70300
       ], 
       "bulletEvents": [
-        20030
+        202010
       ]
     }, 
     {
       "id": 100600, 
+      "poolId": 1006, 
       "level": 0, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1400,6 +1581,7 @@
     }, 
     {
       "id": 100601, 
+      "poolId": 1006, 
       "level": 1, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1412,15 +1594,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10061, 
-        10031, 
-        10110
+        60021, 
+        20001, 
+        70700
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100602, 
+      "poolId": 1006, 
       "level": 2, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1433,15 +1616,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10062, 
-        10032, 
-        10111
+        60022, 
+        20002, 
+        70701
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100603, 
+      "poolId": 1006, 
       "level": 3, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1454,15 +1638,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10063, 
-        10033, 
-        10112
+        60023, 
+        20003, 
+        70702
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100604, 
+      "poolId": 1006, 
       "level": 4, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1475,15 +1660,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10064, 
-        10034, 
-        10113
+        60024, 
+        20004, 
+        70703
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100605, 
+      "poolId": 1006, 
       "level": 5, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1496,15 +1682,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10065, 
-        10035, 
-        10114
+        60025, 
+        20005, 
+        70704
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100606, 
+      "poolId": 1006, 
       "level": 6, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1517,17 +1704,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10066, 
-        10036, 
-        10115
+        60026, 
+        20006, 
+        70705
       ], 
       "enemyEvents": [], 
-      "bulletEvents": [
-        20013
-      ]
+      "bulletEvents": []
     }, 
     {
       "id": 100607, 
+      "poolId": 1006, 
       "level": 7, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1540,17 +1726,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10067, 
-        10037, 
-        10116
+        60027, 
+        20007, 
+        70706
       ], 
       "enemyEvents": [], 
-      "bulletEvents": [
-        20013
-      ]
+      "bulletEvents": []
     }, 
     {
       "id": 100608, 
+      "poolId": 1006, 
       "level": 8, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1563,17 +1748,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10068, 
-        10038, 
-        10117
+        60028, 
+        20008, 
+        70707
       ], 
       "enemyEvents": [], 
-      "bulletEvents": [
-        20013
-      ]
+      "bulletEvents": []
     }, 
     {
       "id": 100609, 
+      "poolId": 1006, 
       "level": 9, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1586,17 +1770,16 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10069, 
-        10039, 
-        10118
+        60029, 
+        20009, 
+        70708
       ], 
       "enemyEvents": [], 
-      "bulletEvents": [
-        20013
-      ]
+      "bulletEvents": []
     }, 
     {
       "id": 100610, 
+      "poolId": 1006, 
       "level": 10, 
       "name": "电磁盾牌", 
       "des": "", 
@@ -1609,19 +1792,17 @@
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
-        10070, 
-        10040, 
-        10119
+        60030, 
+        20010, 
+        70709, 
+        80001
       ], 
-      "enemyEvents": [
-        10109
-      ], 
-      "bulletEvents": [
-        20013
-      ]
+      "enemyEvents": [], 
+      "bulletEvents": []
     }, 
     {
       "id": 100700, 
+      "poolId": 1007, 
       "level": 0, 
       "name": "超暴风", 
       "des": "", 
@@ -1639,6 +1820,7 @@
     }, 
     {
       "id": 100701, 
+      "poolId": 1007, 
       "level": 1, 
       "name": "超暴风", 
       "des": "", 
@@ -1651,15 +1833,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10071
+        60031
       ], 
       "enemyEvents": [
-        10132
+        40001
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100702, 
+      "poolId": 1007, 
       "level": 2, 
       "name": "超暴风", 
       "des": "", 
@@ -1672,15 +1855,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10072
+        60032
       ], 
       "enemyEvents": [
-        10133
+        40002
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100703, 
+      "poolId": 1007, 
       "level": 3, 
       "name": "超暴风", 
       "des": "", 
@@ -1693,15 +1877,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10073
+        60033
       ], 
       "enemyEvents": [
-        10134
+        40003
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100704, 
+      "poolId": 1007, 
       "level": 4, 
       "name": "超暴风", 
       "des": "", 
@@ -1714,15 +1899,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10074
+        60034
       ], 
       "enemyEvents": [
-        10135
+        40004
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100705, 
+      "poolId": 1007, 
       "level": 5, 
       "name": "超暴风", 
       "des": "", 
@@ -1735,15 +1921,16 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10075
+        60035
       ], 
       "enemyEvents": [
-        10136
+        40005
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100706, 
+      "poolId": 1007, 
       "level": 6, 
       "name": "超暴风", 
       "des": "", 
@@ -1756,16 +1943,17 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10076
+        60036
       ], 
       "enemyEvents": [
-        10137, 
-        10106
+        40006, 
+        70301
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100707, 
+      "poolId": 1007, 
       "level": 7, 
       "name": "超暴风", 
       "des": "", 
@@ -1778,16 +1966,17 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10077
+        60037
       ], 
       "enemyEvents": [
-        10138, 
-        10106
+        40007, 
+        70301
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100708, 
+      "poolId": 1007, 
       "level": 8, 
       "name": "超暴风", 
       "des": "", 
@@ -1800,16 +1989,17 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10078
+        60038
       ], 
       "enemyEvents": [
-        10139, 
-        10106
+        40008, 
+        70301
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100709, 
+      "poolId": 1007, 
       "level": 9, 
       "name": "超暴风", 
       "des": "", 
@@ -1822,16 +2012,17 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10079
+        60039
       ], 
       "enemyEvents": [
-        10140, 
-        10106
+        40009, 
+        70301
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100710, 
+      "poolId": 1007, 
       "level": 10, 
       "name": "超暴风", 
       "des": "", 
@@ -1844,17 +2035,17 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10080, 
-        10120
+        60040
       ], 
       "enemyEvents": [
-        10141, 
-        10106
+        40010, 
+        70301
       ], 
       "bulletEvents": []
     }, 
     {
       "id": 100800, 
+      "poolId": 1008, 
       "level": 0, 
       "name": "风影守卫", 
       "des": "", 
@@ -1872,6 +2063,7 @@
     }, 
     {
       "id": 100801, 
+      "poolId": 1008, 
       "level": 1, 
       "name": "风影守卫", 
       "des": "", 
@@ -1884,14 +2076,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10071, 
-        10151
+        60031, 
+        90001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100802, 
+      "poolId": 1008, 
       "level": 2, 
       "name": "风影守卫", 
       "des": "", 
@@ -1904,14 +2097,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10072, 
-        10152
+        60032, 
+        90002
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100803, 
+      "poolId": 1008, 
       "level": 3, 
       "name": "风影守卫", 
       "des": "", 
@@ -1924,14 +2118,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10073, 
-        10153
+        60033, 
+        90003
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100804, 
+      "poolId": 1008, 
       "level": 4, 
       "name": "风影守卫", 
       "des": "", 
@@ -1944,14 +2139,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10074, 
-        10154
+        60034, 
+        90004
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100805, 
+      "poolId": 1008, 
       "level": 5, 
       "name": "风影守卫", 
       "des": "", 
@@ -1964,14 +2160,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10075, 
-        10155
+        60035, 
+        90005
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100806, 
+      "poolId": 1008, 
       "level": 6, 
       "name": "风影守卫", 
       "des": "", 
@@ -1984,14 +2181,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10076, 
-        10156
+        60036, 
+        90006
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100807, 
+      "poolId": 1008, 
       "level": 7, 
       "name": "风影守卫", 
       "des": "", 
@@ -2004,14 +2202,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10077, 
-        10157
+        60037, 
+        90007
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100808, 
+      "poolId": 1008, 
       "level": 8, 
       "name": "风影守卫", 
       "des": "", 
@@ -2024,14 +2223,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10078, 
-        10158
+        60038, 
+        90008
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100809, 
+      "poolId": 1008, 
       "level": 9, 
       "name": "风影守卫", 
       "des": "", 
@@ -2044,14 +2244,15 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10079, 
-        10159
+        60039, 
+        90009
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
     }, 
     {
       "id": 100810, 
+      "poolId": 1008, 
       "level": 10, 
       "name": "风影守卫", 
       "des": "", 
@@ -2064,8 +2265,8 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        10080, 
-        10160
+        60040, 
+        90010
       ], 
       "enemyEvents": [], 
       "bulletEvents": []

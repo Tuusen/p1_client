@@ -25,6 +25,7 @@ namespace GeometryTD
         public int[] eventRemove;
         public EventCondItem[] eventCond;
         public int[] events;
+        public int[] skills;
     }
 
     [Serializable]
