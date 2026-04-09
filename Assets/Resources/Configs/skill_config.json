@@ -614,7 +614,7 @@
       "attack_range": 0.0, 
       "events": [
         60001, 
-        10001
+        30001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -635,7 +635,7 @@
       "attack_range": 0.0, 
       "events": [
         60002, 
-        10002
+        30002
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -656,7 +656,7 @@
       "attack_range": 0.0, 
       "events": [
         60003, 
-        10003
+        30003
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -677,7 +677,7 @@
       "attack_range": 0.0, 
       "events": [
         60004, 
-        10004
+        30004
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -698,7 +698,7 @@
       "attack_range": 0.0, 
       "events": [
         60005, 
-        10005
+        30005
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -719,7 +719,7 @@
       "attack_range": 0.0, 
       "events": [
         60006, 
-        10006, 
+        30006, 
         70007
       ], 
       "enemyEvents": [], 
@@ -741,7 +741,7 @@
       "attack_range": 0.0, 
       "events": [
         60007, 
-        10007, 
+        30007, 
         70007
       ], 
       "enemyEvents": [], 
@@ -763,7 +763,7 @@
       "attack_range": 0.0, 
       "events": [
         60008, 
-        10008, 
+        30008, 
         70007
       ], 
       "enemyEvents": [], 
@@ -785,7 +785,7 @@
       "attack_range": 0.0, 
       "events": [
         60009, 
-        10009, 
+        30009, 
         70007
       ], 
       "enemyEvents": [], 
@@ -807,7 +807,7 @@
       "attack_range": 0.0, 
       "events": [
         60010, 
-        10010, 
+        30010, 
         70007, 
         70008
       ], 
@@ -1109,7 +1109,7 @@
       "attack_range": 0.0, 
       "events": [
         60011, 
-        10011, 
+        30011, 
         50001
       ], 
       "enemyEvents": [], 
@@ -1131,7 +1131,7 @@
       "attack_range": 0.0, 
       "events": [
         60012, 
-        10011, 
+        30011, 
         50002
       ], 
       "enemyEvents": [], 
@@ -1153,7 +1153,7 @@
       "attack_range": 0.0, 
       "events": [
         60013, 
-        10011, 
+        30011, 
         50003
       ], 
       "enemyEvents": [], 
@@ -1175,7 +1175,7 @@
       "attack_range": 0.0, 
       "events": [
         60014, 
-        10011, 
+        30011, 
         50004
       ], 
       "enemyEvents": [], 
@@ -1197,7 +1197,7 @@
       "attack_range": 0.0, 
       "events": [
         60015, 
-        10011, 
+        30011, 
         50005
       ], 
       "enemyEvents": [], 
@@ -1219,7 +1219,7 @@
       "attack_range": 0.0, 
       "events": [
         60016, 
-        10011, 
+        30011, 
         50006
       ], 
       "enemyEvents": [], 
@@ -1241,7 +1241,7 @@
       "attack_range": 0.0, 
       "events": [
         60017, 
-        10011, 
+        30011, 
         50007
       ], 
       "enemyEvents": [], 
@@ -1263,7 +1263,7 @@
       "attack_range": 0.0, 
       "events": [
         60018, 
-        10011, 
+        30011, 
         50008
       ], 
       "enemyEvents": [], 
@@ -1285,7 +1285,7 @@
       "attack_range": 0.0, 
       "events": [
         60019, 
-        10011, 
+        30011, 
         50009
       ], 
       "enemyEvents": [], 
@@ -1307,7 +1307,7 @@
       "attack_range": 0.0, 
       "events": [
         60020, 
-        10011, 
+        30011, 
         50010
       ], 
       "enemyEvents": [], 

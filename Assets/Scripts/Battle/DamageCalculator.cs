@@ -21,12 +21,10 @@ namespace GeometryTD
 
     public static class DamageCalculator
     {
-        public static DamageResult Calculate(DamageContext ctx)
+        public static bool checkMiss(DamageContext ctx)
         {
-            var result = new DamageResult();
-
             if (ctx.attackerAttrs == null)
-                return result;
+                return true;
 
             // 1. Hit check
             int hitRate = ctx.attackerAttrs.GetFinal(AttributeIds.HitRate);
@@ -37,9 +35,25 @@ namespace GeometryTD
                 int roll = Random.Range(0, 10000);
                 if (roll >= effectiveHitRate)
                 {
-                    result.isMiss = true;
-                    return result;
+                    return true;
                 }
+            }
+
+            return false;
+        }
+
+        public static DamageResult Calculate(DamageContext ctx)
+        {
+            var result = new DamageResult();
+
+            if (ctx.attackerAttrs == null)
+                return result;
+
+            // 1. Hit check
+            if (checkMiss(ctx))
+            {
+                result.isMiss = true;
+                return result;
             }
 
             // 2. Base damage = GetAttack() * skillDmgRatio / 10000

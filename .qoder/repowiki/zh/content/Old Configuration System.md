@@ -9,11 +9,19 @@
 - [Assets/Scripts/Data/Configs/ArcaneConfig.cs](file://Assets/Scripts/Data/Configs/ArcaneConfig.cs)
 - [Assets/Scripts/Data/Configs/HeroConfig.cs](file://Assets/Scripts/Data/Configs/HeroConfig.cs)
 - [Assets/Scripts/Data/Configs/SkillConfig.cs](file://Assets/Scripts/Data/Configs/SkillConfig.cs)
-- [Assets/Resources/Configs/attribute_config.json](file://Assets/Resources/Configs/attribute_config.json)
+- [Assets/Resources/Configs/arcane_config.json](file://Assets/Resources/Configs/arcane_config.json)
 - [Assets/Resources/Configs/hero_config.json](file://Assets/Resources/Configs/hero_config.json)
 - [Assets/Resources/Configs/global_config.json](file://Assets/Resources/Configs/global_config.json)
 - [Tools/config_gen.py](file://Tools/config_gen.py)
 </cite>
+
+## 更新摘要
+**所做更改**
+- 更新了配置系统架构描述，反映现代化重构后的自动化配置表系统
+- 重新组织了核心组件分析，突出新的ConfigTable泛型架构
+- 更新了配置生成流程和加载机制的说明
+- 增强了性能优化和故障排除指南
+- 更新了所有相关的架构图和示例代码
 
 ## 目录
 1. [简介](#简介)
@@ -28,17 +36,20 @@
 
 ## 简介
 
-这是一个基于Unity引擎开发的配置系统，采用JSON配置文件配合自动生成的C#代码实现。该系统通过Excel到JSON再到C#代码的完整转换流程，为游戏提供了灵活且可维护的配置管理机制。
+这是一个基于Unity引擎开发的现代化配置系统，采用自动化配置表系统实现。该系统通过Excel到JSON再到C#代码的完整转换流程，为游戏提供了灵活且可维护的配置管理机制。
+
+**更新** 系统已完全重构为现代化的自动化配置表系统，替代了原有的手动配置管理方式。新系统提供了更强的类型安全性和更好的性能表现。
 
 系统的核心特点包括：
 - 自动化配置生成工具链
-- 类型安全的配置访问接口
+- 泛型类型安全的配置访问接口
 - 预加载资源缓存机制
 - 支持多种配置类型的统一管理
+- 增强的错误处理和调试能力
 
 ## 项目结构
 
-配置系统主要由以下几部分组成：
+现代化配置系统主要由以下几部分组成：
 
 ```mermaid
 graph TB
@@ -55,7 +66,7 @@ end
 subgraph "运行时系统"
 Cfg[Cfg静态入口]
 Manager[ConfigManager]
-Tables[ConfigTable集合]
+Tables[ConfigTable泛型表]
 Types[配置类型定义]
 end
 subgraph "资源系统"
@@ -82,7 +93,7 @@ Resources --> Manager
 **章节来源**
 - [Tools/config_gen.py:1-688](file://Tools/config_gen.py#L1-L688)
 - [Assets/Scripts/Core/Cfg.cs:1-35](file://Assets/Scripts/Core/Cfg.cs#L1-L35)
-- [Assets/Scripts/Core/ConfigManager.cs:1-306](file://Assets/Scripts/Core/ConfigManager.cs#L1-L306)
+- [Assets/Scripts/Core/ConfigManager.cs:1-318](file://Assets/Scripts/Core/ConfigManager.cs#L1-L318)
 
 ## 核心组件
 
@@ -96,6 +107,8 @@ Resources --> Manager
 - C#配置类代码自动生成
 - 配置管理器代码生成
 
+**更新** 新版本增强了类型推断的准确性，支持更复杂的嵌套结构和数组类型。
+
 **章节来源**
 - [Tools/config_gen.py:18-94](file://Tools/config_gen.py#L18-L94)
 - [Tools/config_gen.py:240-262](file://Tools/config_gen.py#L240-L262)
@@ -107,8 +120,10 @@ Resources --> Manager
 
 **核心特性：**
 - 单例模式的ConfigManager访问
-- 类型安全的配置表访问
+- 泛型类型安全的配置表访问
 - 简化的API调用体验
+
+**更新** 新版本支持更多配置表类型，包括带元数据和不带元数据的配置表。
 
 **章节来源**
 - [Assets/Scripts/Core/Cfg.cs:7-33](file://Assets/Scripts/Core/Cfg.cs#L7-L33)
@@ -123,17 +138,21 @@ Resources --> Manager
 - 预制体资源的预加载缓存
 - 自定义业务逻辑方法
 
+**更新** 新版本提供了更强大的资源预加载机制和错误处理能力。
+
 **章节来源**
-- [Assets/Scripts/Core/ConfigManager.cs:11-306](file://Assets/Scripts/Core/ConfigManager.cs#L11-L306)
+- [Assets/Scripts/Core/ConfigManager.cs:11-318](file://Assets/Scripts/Core/ConfigManager.cs#L11-L318)
 
 ### 配置表 (ConfigTable.cs)
 
-通用的配置数据结构，支持带元数据和不带元数据的两种配置表类型。
+现代化的泛型配置数据结构，支持带元数据和不带元数据的两种配置表类型。
 
 **设计模式：**
 - 泛型类型安全
 - 字典索引优化查找性能
 - 统一的数据访问接口
+
+**更新** 新版本引入了ConfigMeta类用于处理纯元数据配置，提供了更清晰的配置分类。
 
 **章节来源**
 - [Assets/Scripts/Core/ConfigTable.cs:11-73](file://Assets/Scripts/Core/ConfigTable.cs#L11-L73)
@@ -147,6 +166,7 @@ class Cfg {
 +static Attribute
 +static Buff
 +static ConfigTable Get(id)
++static ConfigMeta Global
 }
 class ConfigManager {
 +static Instance
@@ -220,6 +240,8 @@ JSON->>Runtime : 资源打包
 Runtime->>Runtime : 初始化配置系统
 ```
 
+**更新** 新版本的生成流程更加高效，支持增量更新和更好的错误报告。
+
 **图表来源**
 - [Tools/config_gen.py:587-688](file://Tools/config_gen.py#L587-L688)
 - [Tools/config_gen.py:240-262](file://Tools/config_gen.py#L240-L262)
@@ -248,6 +270,8 @@ InitHeroTable --> PreloadPrefabs
 InitOtherTables --> PreloadPrefabs
 PreloadPrefabs --> Ready([配置系统就绪])
 ```
+
+**更新** 新版本的加载流程包含了更完善的错误处理和资源预加载机制。
 
 **图表来源**
 - [Assets/Scripts/Core/ConfigManager.cs:48-177](file://Assets/Scripts/Core/ConfigManager.cs#L48-L177)
@@ -293,6 +317,8 @@ TypeInfo --> AttrEntry : "使用"
 TypeInfo --> BulletEventData : "使用"
 ```
 
+**更新** 新版本增强了对复杂嵌套结构的支持，包括匿名结构体和共享类型定义。
+
 **图表来源**
 - [Tools/config_gen.py:22-94](file://Tools/config_gen.py#L22-L94)
 - [Assets/Scripts/Data/GameTypes.cs:8-56](file://Assets/Scripts/Data/GameTypes.cs#L8-L56)
@@ -318,6 +344,8 @@ Lookup-->>Table : 返回HeroConfig对象
 Table-->>Client : 返回配置数据
 Note over Client,Lookup : O(1)时间复杂度查找
 ```
+
+**更新** 新版本的访问模式更加直观，支持泛型参数的自动推断。
 
 **图表来源**
 - [Assets/Scripts/Core/Cfg.cs:23](file://Assets/Scripts/Core/Cfg.cs#L23)
@@ -347,7 +375,7 @@ ConfigManager.cs[ConfigManager.cs]
 ConfigTable.cs[ConfigTable.cs]
 end
 subgraph "配置数据层"
-attribute_config.json[attribute_config.json]
+arcane_config.json[arcane_config.json]
 hero_config.json[hero_config.json]
 global_config.json[global_config.json]
 end
@@ -360,10 +388,12 @@ HeroConfig.cs --> ConfigManager.cs
 SkillConfig.cs --> ConfigManager.cs
 GameTypes.cs --> ConfigManager.cs
 Cfg.cs --> ConfigManager.cs
-ConfigManager.cs --> attribute_config.json
+ConfigManager.cs --> arcane_config.json
 ConfigManager.cs --> hero_config.json
 ConfigManager.cs --> global_config.json
 ```
+
+**更新** 新版本的依赖关系更加清晰，减少了循环依赖的可能性。
 
 **图表来源**
 - [Tools/config_gen.py:16-20](file://Tools/config_gen.py#L16-L20)
@@ -411,6 +441,8 @@ end
 D --> H
 ```
 
+**更新** 新版本的缓存机制更加智能，支持条件加载和资源回收。
+
 **图表来源**
 - [Assets/Scripts/Core/ConfigManager.cs:48-54](file://Assets/Scripts/Core/ConfigManager.cs#L48-L54)
 - [Assets/Scripts/Core/ConfigManager.cs:255-298](file://Assets/Scripts/Core/ConfigManager.cs#L255-L298)
@@ -434,17 +466,22 @@ D --> H
 - 检查配置表的键值唯一性
 - 验证预制体路径的有效性
 
+**更新** 新版本增加了更详细的错误日志和调试信息，便于问题诊断。
+
 **章节来源**
 - [Assets/Scripts/Core/ConfigManager.cs:179-194](file://Assets/Scripts/Core/ConfigManager.cs#L179-L194)
 - [Assets/Scripts/Core/ConfigManager.cs:255-298](file://Assets/Scripts/Core/ConfigManager.cs#L255-L298)
 
 ## 结论
 
-旧配置系统通过自动化工具链实现了从Excel到JSON再到C#代码的完整转换，提供了类型安全、高性能的配置管理方案。系统的主要优势包括：
+现代化配置系统通过自动化工具链实现了从Excel到JSON再到C#代码的完整转换，提供了类型安全、高性能的配置管理方案。系统的主要优势包括：
 
 1. **开发效率提升** - 自动化生成减少手工编码工作
 2. **类型安全保障** - 编译时类型检查避免运行时错误
 3. **性能优化** - 字典索引和资源缓存机制
 4. **扩展性强** - 支持新的配置类型和业务需求
+5. **维护性增强** - 清晰的架构分离和错误处理
+
+**更新** 新版本的配置系统在保持原有优势的基础上，进一步提升了系统的稳定性和可维护性，为游戏开发提供了更加可靠和高效的配置管理基础设施。
 
 该系统为游戏开发提供了稳定可靠的配置管理基础设施，支持复杂的配置数据结构和多样的使用场景。

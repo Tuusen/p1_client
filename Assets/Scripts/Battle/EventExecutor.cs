@@ -35,6 +35,9 @@ namespace GeometryTD
                 case EventType.Shield:
                     HandleShield(args, effectTarget);
                     break;
+                case EventType.DamagePercentage:
+                    HandleDamagePercentage(args, effectTarget, ctx);
+                    break;
                 case EventType.Knockback:
                     HandleKnockback(args, effectTarget, ctx);
                     break;
@@ -88,6 +91,37 @@ namespace GeometryTD
             {
                 float baseAtk = ctx.caster.Attrs.GetAttack();
                 float amount = baseAtk * Mathf.Abs(dmgRate) / 10000f;
+                target.OnBuffHeal(amount);
+            }
+        }
+
+        private static void HandleDamagePercentage(int[] args, IBuffTarget target, EventContext ctx) 
+        {
+            if (args == null || args.Length < 2 || target == null) return;
+            int dmgRate = args[0];
+            int dmgType = args[1];
+            if (ctx.caster == null || ctx.caster.Attrs == null) return;
+
+            if (dmgRate > 0)
+            {
+                float maxHp = target.Attrs.GetMaxHp();
+                var dmgCtx = new DamageContext
+                {
+                    attackerAttrs = ctx.caster.Attrs,
+                    defenderAttrs = target.Attrs,
+                    skillDmgRatio = dmgRate,
+                    skillDmgType = dmgType,
+                    isTargetBoss = target is BossController,
+                    isTargetElite = (target as MonsterController)?.IsElite ?? false
+                };
+                var isMiss = DamageCalculator.checkMiss(dmgCtx);
+                if (!isMiss)
+                    target.OnBuffDamage(maxHp);
+            }
+            else if (dmgRate < 0)
+            {
+                float maxHp = ctx.caster.Attrs.GetMaxHp();
+                float amount = maxHp * Mathf.Abs(dmgRate) / 10000f;
                 target.OnBuffHeal(amount);
             }
         }

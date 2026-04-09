@@ -68,11 +68,21 @@ namespace GeometryTD
         }
     }
 
-    // type: 1=伤害/治疗, 2=护盾/破盾, 4=击退, 5=获得经验, 6=获得能量, 7=获得buff, 8=获得passive, 9=召唤, 10=驱散
+    // 1=伤害/治疗（基于攻击力）
+    // 2=护盾/破盾
+    // 3=伤害/治疗（基于生命最大值）
+    // 4=击退
+    // 5=获得经验
+    // 6=获得能量
+    // 7=获得buff
+    // 8=获得passive
+    // 9=召唤
+    // 10=驱散
     public static class EventType
     {
         public const int Damage = 1;
         public const int Shield = 2;
+        public const int DamagePercentage = 3;
         public const int Knockback = 4;
         public const int GrantXp = 5;
         public const int GainEnergy = 6;
