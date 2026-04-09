@@ -326,13 +326,10 @@
       "type": 1, 
       "dispel": 0, 
       "attribute": [], 
-      "evtDmgRate": [
-        {
-          "type": 0, 
-          "rate": -1000
-        }
+      "evtDmgRate": [], 
+      "evtDamage": [
+        30001
       ], 
-      "evtDamage": [], 
       "evtWhenEnd": [], 
       "specialEvent": []
     }, 

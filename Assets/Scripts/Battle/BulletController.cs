@@ -128,46 +128,75 @@ namespace GeometryTD
             Vector3 direction = (lastTargetPos - transform.position).normalized;
             if (!isPiercing && direction.sqrMagnitude > 0.001f)
                 pierceDirection = direction;
-            transform.position += direction * speed * Time.deltaTime;
 
-            // 穿刺模式：沿直线飞行，检测路径上的敌人
+            // 预计算本帧移动
+            float step = speed * Time.deltaTime;
+            Vector3 nextPos = transform.position + direction * step;
+
+            // 线段碰撞检测：检查从当前位置到移动后位置的路径是否经过目标
+            if (hasTarget && !isPiercing)
+            {
+                float segDist = PointToSegmentDistance(lastTargetPos, transform.position, nextPos);
+                if (segDist <= 0.5f)
+                {
+                    transform.position = lastTargetPos;
+                    OnArrival();
+                    return;
+                }
+            }
+
+            transform.position = nextPos;
+
+            // 穿刺模式：沿直线飞行，用线段检测路径上的敌人
             if (isPiercing && bulletData != null && bulletData.pierceCount > 0 && battleManager != null)
             {
+                float searchRadius = step * 0.5f + 0.5f;
+                Vector3 searchCenter = (transform.position - direction * step + nextPos) * 0.5f;
                 Transform nearby = battleManager.GetNearestEnemyExcluding(
-                    transform.position, 0.5f, hitTargets);
+                    searchCenter, searchRadius, hitTargets);
                 if (nearby != null)
                 {
-                    target = nearby;
-                    ApplyDamage();
-                    ExecuteHitEvents();
-                    hitTargets.Add(nearby);
-                    target = null;
-                    bulletData.pierceCount--;
-                    if (bulletData.pierceCount <= 0)
+                    float segDist = PointToSegmentDistance(nearby.position, transform.position - direction * step, nextPos);
+                    if (segDist <= 0.5f)
                     {
-                        Destroy(gameObject);
-                        return;
+                        target = nearby;
+                        ApplyDamage();
+                        ExecuteHitEvents();
+                        hitTargets.Add(nearby);
+                        target = null;
+                        bulletData.pierceCount--;
+                        if (bulletData.pierceCount <= 0)
+                        {
+                            Destroy(gameObject);
+                            return;
+                        }
                     }
                 }
             }
 
-            // 只有在目标仍然存在时才检测到达
-            if (target != null)
+            // 只有本来就无目标的子弹才进入穿透模式
+            if (!hasTarget && target == null && bulletData != null)
             {
-                float dist = Vector3.Distance(transform.position, lastTargetPos);
-                if (dist < 0.3f)
-                {
-                    OnArrival();
-                }
-            } else {
-                // 超出攻击范围，继续飞行（穿透+1）
                 isPiercing = true;
-                if (bulletData == null) {
-                    bulletData = new BulletEventData();
-                };
-                bulletData.pierceCount = 1;
+                if (bulletData.pierceCount == 0)
+                {
+                    bulletData.pierceCount = 1;
+                }
                 lastTargetPos = transform.position + pierceDirection * 50f;
             }
+        }
+
+        /// <summary>
+        /// 计算点 point 到线段 (segStart, segEnd) 的最短距离
+        /// </summary>
+        private static float PointToSegmentDistance(Vector3 point, Vector3 segStart, Vector3 segEnd)
+        {
+            Vector3 seg = segEnd - segStart;
+            float sqrLen = seg.sqrMagnitude;
+            if (sqrLen < 0.0001f) return Vector3.Distance(point, segStart);
+            float t = Mathf.Clamp01(Vector3.Dot(point - segStart, seg) / sqrLen);
+            Vector3 closest = segStart + t * seg;
+            return Vector3.Distance(point, closest);
         }
 
         private void OnArrival()

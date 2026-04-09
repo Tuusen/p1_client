@@ -104,7 +104,6 @@ namespace GeometryTD
 
             if (dmgRate > 0)
             {
-                float maxHp = target.Attrs.GetMaxHp();
                 var dmgCtx = new DamageContext
                 {
                     attackerAttrs = ctx.caster.Attrs,
@@ -115,8 +114,11 @@ namespace GeometryTD
                     isTargetElite = (target as MonsterController)?.IsElite ?? false
                 };
                 var isMiss = DamageCalculator.checkMiss(dmgCtx);
-                if (!isMiss)
-                    target.OnBuffDamage(maxHp);
+                if (!isMiss) {
+                    float maxHp = target.Attrs.GetMaxHp();
+                    float amount = maxHp * Mathf.Abs(dmgRate) / 10000f;
+                    target.OnBuffDamage(amount);
+                }
             }
             else if (dmgRate < 0)
             {

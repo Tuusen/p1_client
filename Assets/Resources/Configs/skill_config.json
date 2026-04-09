@@ -362,7 +362,7 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
@@ -382,7 +382,7 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
@@ -404,7 +404,7 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
@@ -426,7 +426,7 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
@@ -448,7 +448,7 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
@@ -470,14 +470,14 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
         60006
       ], 
       "enemyEvents": [
-        70100
+        70010
       ], 
       "bulletEvents": [
         201006
@@ -494,14 +494,14 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
         60007
       ], 
       "enemyEvents": [
-        70100
+        70010
       ], 
       "bulletEvents": [
         201007
@@ -518,14 +518,14 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
         60008
       ], 
       "enemyEvents": [
-        70100
+        70010
       ], 
       "bulletEvents": [
         201008
@@ -542,14 +542,14 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
         60009
       ], 
       "enemyEvents": [
-        70100
+        70010
       ], 
       "bulletEvents": [
         201009
@@ -566,14 +566,14 @@
       "dmg": 10000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
-      "cd": 15.0, 
+      "cd": 3.0, 
       "bulletStyleId": 101, 
       "attack_range": 30.0, 
       "events": [
         60010
       ], 
       "enemyEvents": [
-        70100
+        70010
       ], 
       "bulletEvents": [
         201010, 
@@ -591,7 +591,7 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 0.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [], 
@@ -609,7 +609,7 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -630,7 +630,7 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -651,7 +651,7 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -672,7 +672,7 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -693,7 +693,7 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -714,13 +714,13 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
         60006, 
         30006, 
-        70007
+        70400
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -736,13 +736,13 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
         60007, 
         30007, 
-        70007
+        70400
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -758,13 +758,13 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
         60008, 
         30008, 
-        70007
+        70400
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -780,13 +780,13 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
         60009, 
         30009, 
-        70007
+        70400
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -802,14 +802,14 @@
       "dmg": 0, 
       "dmgType": 1, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
         60010, 
         30010, 
-        70007, 
-        70008
+        70400, 
+        70500
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -825,7 +825,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 0.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [], 
@@ -843,7 +843,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -865,7 +865,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -889,7 +889,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -913,7 +913,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -937,7 +937,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -961,7 +961,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -986,7 +986,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -1011,7 +1011,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -1036,7 +1036,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -1061,7 +1061,7 @@
       "dmg": 10000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
-      "cd": 12.0, 
+      "cd": 3.0, 
       "bulletStyleId": 102, 
       "attack_range": 30.0, 
       "events": [
@@ -1086,7 +1086,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 0.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [], 
@@ -1104,7 +1104,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1126,7 +1126,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1148,7 +1148,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1170,7 +1170,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1192,7 +1192,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1214,7 +1214,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1236,7 +1236,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1258,7 +1258,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1280,7 +1280,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1302,7 +1302,7 @@
       "dmg": 0, 
       "dmgType": 2, 
       "bulletSpeed": 0.0, 
-      "cd": 25.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1324,7 +1324,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 0.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [], 
@@ -1342,7 +1342,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1364,7 +1364,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1386,7 +1386,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1408,7 +1408,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1430,7 +1430,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1452,7 +1452,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1476,7 +1476,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1500,7 +1500,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1524,7 +1524,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1548,7 +1548,7 @@
       "dmg": 10000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
-      "cd": 16.0, 
+      "cd": 3.0, 
       "bulletStyleId": 103, 
       "attack_range": 30.0, 
       "events": [
@@ -1572,7 +1572,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 0.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [], 
@@ -1590,7 +1590,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1612,7 +1612,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1634,7 +1634,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1656,7 +1656,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1678,7 +1678,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1700,7 +1700,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1722,7 +1722,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1744,7 +1744,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1766,7 +1766,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1788,7 +1788,7 @@
       "dmg": 0, 
       "dmgType": 3, 
       "bulletSpeed": 0.0, 
-      "cd": 20.0, 
+      "cd": 3.0, 
       "bulletStyleId": 104, 
       "attack_range": 0.0, 
       "events": [
@@ -1811,7 +1811,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 0.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [], 
@@ -1829,7 +1829,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1851,7 +1851,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1873,7 +1873,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1895,7 +1895,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1917,7 +1917,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1939,7 +1939,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1962,7 +1962,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -1985,7 +1985,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2008,7 +2008,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2031,7 +2031,7 @@
       "dmg": 10000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 22.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2054,7 +2054,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 0.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [], 
@@ -2072,7 +2072,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2093,7 +2093,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2114,7 +2114,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2135,7 +2135,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2156,7 +2156,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2177,7 +2177,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2198,7 +2198,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2219,7 +2219,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2240,7 +2240,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
@@ -2261,7 +2261,7 @@
       "dmg": 0, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
-      "cd": 18.0, 
+      "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [

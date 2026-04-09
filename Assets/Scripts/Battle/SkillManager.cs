@@ -147,18 +147,29 @@ namespace GeometryTD
             }
             else
             {
-                int count = Mathf.Min(slotCount, slots.Length);
-                bool[] picked = new bool[slots.Length];
-                int assigned = 0;
-                int safety = 100;
-                while (assigned < count && safety > 0)
+                // 收集非满级的技能槽索引
+                int[] eligible = new int[slots.Length];
+                int eligibleCount = 0;
+                for (int i = 0; i < slots.Length; i++)
                 {
-                    safety--;
-                    int idx = Random.Range(0, slots.Length);
-                    if (picked[idx]) continue;
-                    picked[idx] = true;
-                    AddXpToSlot(idx, xpAmount);
-                    assigned++;
+                    if (slots[i].level < 10)
+                        eligible[eligibleCount++] = i;
+                }
+                if (eligibleCount == 0) return;
+
+                int count = Mathf.Min(slotCount, eligibleCount);
+                // Fisher-Yates 洗牌后取前 count 个
+                for (int i = eligibleCount - 1; i > 0; i--)
+                {
+                    int j = Random.Range(0, i + 1);
+                    int temp = eligible[i];
+                    eligible[i] = eligible[j];
+                    eligible[j] = temp;
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    AddXpToSlot(eligible[i], xpAmount);
                 }
             }
         }
@@ -207,35 +218,17 @@ namespace GeometryTD
             return -1;
         }
 
-        public void AddXpToRandomSlot(int _pick,int min, int max)
+        public void AddXpToRandomSlot(int slotIndex, int min, int max)
         {
             if (slots == null || slots.Length == 0) return;
             if (min < 0) min = 0;
             if (max < min) max = min;
 
-            int candidateCount = 0;
-            for (int i = 0; i < slots.Length; i++)
-            {
-                if (slots[i].level < 10)
-                    candidateCount++;
-            }
-            if (candidateCount == 0) return;
+            int targetIndex = slotIndex >= 0 ? slotIndex : PickRandomEligibleSlot();
+            if (targetIndex < 0 || targetIndex >= slots.Length) return;
 
-            int pick = _pick < 0?Random.Range(0, candidateCount):_pick;
-            int current = 0;
-            for (int i = 0; i < slots.Length; i++)
-            {
-                if (slots[i].level < 10)
-                {
-                    if (current == pick)
-                    {
-                        int amount = Random.Range(min, max + 1);
-                        AddXpToSlot(i, amount);
-                        return;
-                    }
-                    current++;
-                }
-            }
+            int amount = Random.Range(min, max + 1);
+            AddXpToSlot(targetIndex, amount);
         }
     }
 }
