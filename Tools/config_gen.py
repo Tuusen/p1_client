@@ -170,7 +170,7 @@ def convert_value(raw, type_info, shared_types):
                         obj[fn] = convert_primitive(fv, ft.name)
                     elif isinstance(ft, ArrayType):
                         if fv:
-                            inner = [p.strip() for p in fv.split(',') if p.strip()]
+                            inner = [p.strip() for p in fv.split('#') if p.strip()]
                             obj[fn] = [convert_primitive(p, ft.element_type.name) for p in inner]
                         else:
                             obj[fn] = []
