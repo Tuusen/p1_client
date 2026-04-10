@@ -77,6 +77,27 @@
       ]
     }, 
     {
+      "id": 1000203, 
+      "poolId": 10002, 
+      "level": 3, 
+      "name": "追踪穿刺风弹", 
+      "des": "", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 10000, 
+      "dmgType": 0, 
+      "bulletSpeed": 10.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 1, 
+      "attack_range": 50.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        103000, 
+        101002
+      ]
+    }, 
+    {
       "id": 1000301, 
       "poolId": 10003, 
       "level": 1, 
@@ -99,7 +120,7 @@
       "poolId": 10004, 
       "level": 1, 
       "name": "全屏反击", 
-      "des": "TODO 附加减速和击退", 
+      "des": "", 
       "icon": "", 
       "category": "Aoe", 
       "dmg": 3000, 
@@ -109,7 +130,9 @@
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [], 
-      "enemyEvents": [], 
+      "enemyEvents": [
+        40003
+      ], 
       "bulletEvents": []
     }, 
     {
@@ -138,45 +161,7 @@
       "des": "", 
       "icon": "", 
       "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": []
-    }, 
-    {
-      "id": 1006102, 
-      "poolId": 10061, 
-      "level": 2, 
-      "name": "反击盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": [
-        201002
-      ]
-    }, 
-    {
-      "id": 1006103, 
-      "poolId": 10061, 
-      "level": 3, 
-      "name": "反击盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 3000, 
       "dmgType": 0, 
       "bulletSpeed": 10.0, 
       "cd": 0.0, 
@@ -189,14 +174,14 @@
       ]
     }, 
     {
-      "id": 1006104, 
+      "id": 1006102, 
       "poolId": 10061, 
-      "level": 4, 
+      "level": 2, 
       "name": "反击盾弹", 
       "des": "", 
       "icon": "", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 3000, 
       "dmgType": 0, 
       "bulletSpeed": 10.0, 
       "cd": 0.0, 
@@ -205,122 +190,18 @@
       "events": [], 
       "enemyEvents": [], 
       "bulletEvents": [
-        201004
+        201010
       ]
     }, 
     {
-      "id": 1006105, 
+      "id": 1006103, 
       "poolId": 10061, 
-      "level": 5, 
-      "name": "反击盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": [
-        201005
-      ]
-    }, 
-    {
-      "id": 1006106, 
-      "poolId": 10061, 
-      "level": 6, 
+      "level": 3, 
       "name": "反击穿刺盾弹", 
       "des": "", 
       "icon": "", 
       "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": [
-        201006, 
-        101000
-      ]
-    }, 
-    {
-      "id": 1006107, 
-      "poolId": 10061, 
-      "level": 7, 
-      "name": "反击穿刺盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": [
-        201007, 
-        101000
-      ]
-    }, 
-    {
-      "id": 1006108, 
-      "poolId": 10061, 
-      "level": 8, 
-      "name": "反击穿刺盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": [
-        201008, 
-        101000
-      ]
-    }, 
-    {
-      "id": 1006109, 
-      "poolId": 10061, 
-      "level": 9, 
-      "name": "反击穿刺盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
-      "dmgType": 0, 
-      "bulletSpeed": 10.0, 
-      "cd": 0.0, 
-      "bulletStyleId": 1, 
-      "attack_range": 50.0, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": [
-        201009, 
-        101000
-      ]
-    }, 
-    {
-      "id": 1006110, 
-      "poolId": 10061, 
-      "level": 10, 
-      "name": "反击穿刺盾弹", 
-      "des": "", 
-      "icon": "", 
-      "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 3000, 
       "dmgType": 0, 
       "bulletSpeed": 10.0, 
       "cd": 0.0, 
@@ -379,7 +260,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 11000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -389,9 +270,7 @@
         60002
       ], 
       "enemyEvents": [], 
-      "bulletEvents": [
-        201002
-      ]
+      "bulletEvents": []
     }, 
     {
       "id": 100103, 
@@ -401,7 +280,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 12000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -412,7 +291,7 @@
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        201003
+        201004
       ]
     }, 
     {
@@ -423,7 +302,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 13000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -445,7 +324,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 14000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -456,7 +335,7 @@
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        201005
+        201008
       ]
     }, 
     {
@@ -467,7 +346,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 15000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -476,11 +355,9 @@
       "events": [
         60006
       ], 
-      "enemyEvents": [
-        70010
-      ], 
+      "enemyEvents": [], 
       "bulletEvents": [
-        201006
+        201008
       ]
     }, 
     {
@@ -491,7 +368,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 16000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -500,11 +377,9 @@
       "events": [
         60007
       ], 
-      "enemyEvents": [
-        70010
-      ], 
+      "enemyEvents": [], 
       "bulletEvents": [
-        201007
+        201008
       ]
     }, 
     {
@@ -515,7 +390,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 17000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -539,7 +414,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 18000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -552,7 +427,7 @@
         70010
       ], 
       "bulletEvents": [
-        201009
+        201008
       ]
     }, 
     {
@@ -563,7 +438,7 @@
       "des": "", 
       "icon": "Icon/commet-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 19000, 
       "dmgType": 1, 
       "bulletSpeed": 12.0, 
       "cd": 3.0, 
@@ -576,7 +451,7 @@
         70010
       ], 
       "bulletEvents": [
-        201010, 
+        201008, 
         102001
       ]
     }, 
@@ -614,7 +489,7 @@
       "attack_range": 0.0, 
       "events": [
         60001, 
-        30001
+        10001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -635,7 +510,7 @@
       "attack_range": 0.0, 
       "events": [
         60002, 
-        30002
+        10002
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -656,7 +531,8 @@
       "attack_range": 0.0, 
       "events": [
         60003, 
-        30003
+        10003, 
+        30001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -677,7 +553,8 @@
       "attack_range": 0.0, 
       "events": [
         60004, 
-        30004
+        10004, 
+        30001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -698,7 +575,8 @@
       "attack_range": 0.0, 
       "events": [
         60005, 
-        30005
+        10005, 
+        30003
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -719,8 +597,8 @@
       "attack_range": 0.0, 
       "events": [
         60006, 
-        30006, 
-        70400
+        10006, 
+        30003
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -741,8 +619,8 @@
       "attack_range": 0.0, 
       "events": [
         60007, 
-        30007, 
-        70400
+        10007, 
+        30003
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -763,7 +641,8 @@
       "attack_range": 0.0, 
       "events": [
         60008, 
-        30008, 
+        10008, 
+        30003, 
         70400
       ], 
       "enemyEvents": [], 
@@ -785,7 +664,8 @@
       "attack_range": 0.0, 
       "events": [
         60009, 
-        30009, 
+        10009, 
+        30003, 
         70400
       ], 
       "enemyEvents": [], 
@@ -807,9 +687,10 @@
       "attack_range": 0.0, 
       "events": [
         60010, 
-        30010, 
+        10010, 
+        30003, 
         70400, 
-        70500
+        80001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -850,7 +731,7 @@
         60011
       ], 
       "enemyEvents": [
-        70200
+        70201
       ], 
       "bulletEvents": []
     }, 
@@ -862,7 +743,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 11000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -874,9 +755,7 @@
       "enemyEvents": [
         70201
       ], 
-      "bulletEvents": [
-        201002
-      ]
+      "bulletEvents": []
     }, 
     {
       "id": 100303, 
@@ -886,7 +765,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 12000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -896,10 +775,10 @@
         60013
       ], 
       "enemyEvents": [
-        70202
+        70201
       ], 
       "bulletEvents": [
-        201003
+        201005
       ]
     }, 
     {
@@ -910,7 +789,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 13000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -920,10 +799,10 @@
         60014
       ], 
       "enemyEvents": [
-        70203
+        70201
       ], 
       "bulletEvents": [
-        201004
+        201005
       ]
     }, 
     {
@@ -934,7 +813,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 14000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -958,7 +837,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 15000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -968,11 +847,10 @@
         60016
       ], 
       "enemyEvents": [
-        70205
+        70204
       ], 
       "bulletEvents": [
-        201006, 
-        101000
+        201005
       ]
     }, 
     {
@@ -983,7 +861,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 16000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -993,11 +871,10 @@
         60017
       ], 
       "enemyEvents": [
-        70206
+        70204
       ], 
       "bulletEvents": [
-        201007, 
-        101000
+        201005
       ]
     }, 
     {
@@ -1008,7 +885,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 17000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -1018,10 +895,10 @@
         60018
       ], 
       "enemyEvents": [
-        70207
+        70204
       ], 
       "bulletEvents": [
-        201008, 
+        201005, 
         101000
       ]
     }, 
@@ -1033,7 +910,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 18000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -1043,10 +920,10 @@
         60019
       ], 
       "enemyEvents": [
-        70208
+        70204
       ], 
       "bulletEvents": [
-        201009, 
+        201005, 
         101000
       ]
     }, 
@@ -1058,7 +935,7 @@
       "des": "", 
       "icon": "Icon/skull-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 19000, 
       "dmgType": 2, 
       "bulletSpeed": 15.0, 
       "cd": 3.0, 
@@ -1068,18 +945,19 @@
         60020
       ], 
       "enemyEvents": [
-        70209
+        70214
       ], 
       "bulletEvents": [
-        201010, 
-        101000
+        201005, 
+        101000, 
+        70601
       ]
     }, 
     {
       "id": 100400, 
       "poolId": 1004, 
       "level": 0, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1097,7 +975,7 @@
       "id": 100401, 
       "poolId": 1004, 
       "level": 1, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1119,7 +997,7 @@
       "id": 100402, 
       "poolId": 1004, 
       "level": 2, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1141,7 +1019,7 @@
       "id": 100403, 
       "poolId": 1004, 
       "level": 3, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1153,7 +1031,7 @@
       "attack_range": 0.0, 
       "events": [
         60013, 
-        30011, 
+        30012, 
         50003
       ], 
       "enemyEvents": [], 
@@ -1163,7 +1041,7 @@
       "id": 100404, 
       "poolId": 1004, 
       "level": 4, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1175,7 +1053,7 @@
       "attack_range": 0.0, 
       "events": [
         60014, 
-        30011, 
+        30012, 
         50004
       ], 
       "enemyEvents": [], 
@@ -1185,7 +1063,7 @@
       "id": 100405, 
       "poolId": 1004, 
       "level": 5, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1197,7 +1075,7 @@
       "attack_range": 0.0, 
       "events": [
         60015, 
-        30011, 
+        30012, 
         50005
       ], 
       "enemyEvents": [], 
@@ -1207,7 +1085,7 @@
       "id": 100406, 
       "poolId": 1004, 
       "level": 6, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1219,7 +1097,7 @@
       "attack_range": 0.0, 
       "events": [
         60016, 
-        30011, 
+        30012, 
         50006
       ], 
       "enemyEvents": [], 
@@ -1229,7 +1107,7 @@
       "id": 100407, 
       "poolId": 1004, 
       "level": 7, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1241,7 +1119,7 @@
       "attack_range": 0.0, 
       "events": [
         60017, 
-        30011, 
+        30012, 
         50007
       ], 
       "enemyEvents": [], 
@@ -1251,7 +1129,7 @@
       "id": 100408, 
       "poolId": 1004, 
       "level": 8, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1263,7 +1141,6 @@
       "attack_range": 0.0, 
       "events": [
         60018, 
-        30011, 
         50008
       ], 
       "enemyEvents": [], 
@@ -1273,7 +1150,7 @@
       "id": 100409, 
       "poolId": 1004, 
       "level": 9, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1285,7 +1162,6 @@
       "attack_range": 0.0, 
       "events": [
         60019, 
-        30011, 
         50009
       ], 
       "enemyEvents": [], 
@@ -1295,7 +1171,7 @@
       "id": 100410, 
       "poolId": 1004, 
       "level": 10, 
-      "name": "血能交换", 
+      "name": "能量泉源", 
       "des": "", 
       "icon": "Icon/solar-system-1-128", 
       "category": "Self", 
@@ -1307,7 +1183,6 @@
       "attack_range": 0.0, 
       "events": [
         60020, 
-        30011, 
         50010
       ], 
       "enemyEvents": [], 
@@ -1339,7 +1214,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 1000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1361,7 +1236,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 2000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1372,7 +1247,7 @@
       ], 
       "enemyEvents": [], 
       "bulletEvents": [
-        202002
+        202001
       ]
     }, 
     {
@@ -1383,7 +1258,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 3000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1392,9 +1267,11 @@
       "events": [
         60023
       ], 
-      "enemyEvents": [], 
+      "enemyEvents": [
+        70300
+      ], 
       "bulletEvents": [
-        202003
+        202001
       ]
     }, 
     {
@@ -1405,7 +1282,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 4000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1414,9 +1291,11 @@
       "events": [
         60024
       ], 
-      "enemyEvents": [], 
+      "enemyEvents": [
+        70300
+      ], 
       "bulletEvents": [
-        202004
+        202001
       ]
     }, 
     {
@@ -1427,7 +1306,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 5000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1436,9 +1315,11 @@
       "events": [
         60025
       ], 
-      "enemyEvents": [], 
+      "enemyEvents": [
+        70300
+      ], 
       "bulletEvents": [
-        202005
+        202002
       ]
     }, 
     {
@@ -1449,7 +1330,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 6000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1462,7 +1343,7 @@
         70300
       ], 
       "bulletEvents": [
-        202006
+        202002
       ]
     }, 
     {
@@ -1473,7 +1354,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 7000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1486,7 +1367,7 @@
         70300
       ], 
       "bulletEvents": [
-        202007
+        202002
       ]
     }, 
     {
@@ -1497,7 +1378,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 8000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1510,7 +1391,7 @@
         70300
       ], 
       "bulletEvents": [
-        202008
+        202002
       ]
     }, 
     {
@@ -1521,7 +1402,7 @@
       "des": "", 
       "icon": "Icon/satellite-128", 
       "category": "Projectile", 
-      "dmg": 10000, 
+      "dmg": 9000, 
       "dmgType": 3, 
       "bulletSpeed": 20.0, 
       "cd": 3.0, 
@@ -1534,7 +1415,7 @@
         70300
       ], 
       "bulletEvents": [
-        202009
+        202002
       ]
     }, 
     {
@@ -1558,7 +1439,8 @@
         70300
       ], 
       "bulletEvents": [
-        202010
+        202003, 
+        102002
       ]
     }, 
     {
@@ -1595,8 +1477,7 @@
       "attack_range": 0.0, 
       "events": [
         60021, 
-        20001, 
-        70700
+        20001
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1617,8 +1498,7 @@
       "attack_range": 0.0, 
       "events": [
         60022, 
-        20002, 
-        70701
+        20002
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1662,7 +1542,7 @@
       "events": [
         60024, 
         20004, 
-        70703
+        70702
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1684,7 +1564,7 @@
       "events": [
         60025, 
         20005, 
-        70704
+        70709
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1706,7 +1586,7 @@
       "events": [
         60026, 
         20006, 
-        70705
+        70709
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1728,7 +1608,7 @@
       "events": [
         60027, 
         20007, 
-        70706
+        70709
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1750,7 +1630,7 @@
       "events": [
         60028, 
         20008, 
-        70707
+        70709
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1772,7 +1652,7 @@
       "events": [
         60029, 
         20009, 
-        70708
+        70709
       ], 
       "enemyEvents": [], 
       "bulletEvents": []
@@ -1826,7 +1706,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 3000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1836,7 +1716,7 @@
         60031
       ], 
       "enemyEvents": [
-        40001
+        40003
       ], 
       "bulletEvents": []
     }, 
@@ -1848,7 +1728,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 3500, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1858,7 +1738,7 @@
         60032
       ], 
       "enemyEvents": [
-        40002
+        40003
       ], 
       "bulletEvents": []
     }, 
@@ -1870,7 +1750,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 4000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1880,7 +1760,8 @@
         60033
       ], 
       "enemyEvents": [
-        40003
+        40003, 
+        70301
       ], 
       "bulletEvents": []
     }, 
@@ -1892,7 +1773,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 4500, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1902,7 +1783,8 @@
         60034
       ], 
       "enemyEvents": [
-        40004
+        40003, 
+        70301
       ], 
       "bulletEvents": []
     }, 
@@ -1914,7 +1796,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 5000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1924,7 +1806,8 @@
         60035
       ], 
       "enemyEvents": [
-        40005
+        40003, 
+        70301
       ], 
       "bulletEvents": []
     }, 
@@ -1936,7 +1819,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 5500, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1946,7 +1829,7 @@
         60036
       ], 
       "enemyEvents": [
-        40006, 
+        40003, 
         70301
       ], 
       "bulletEvents": []
@@ -1959,7 +1842,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 6000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1969,7 +1852,7 @@
         60037
       ], 
       "enemyEvents": [
-        40007, 
+        40003, 
         70301
       ], 
       "bulletEvents": []
@@ -1982,7 +1865,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 6500, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -1992,7 +1875,7 @@
         60038
       ], 
       "enemyEvents": [
-        40008, 
+        40010, 
         70301
       ], 
       "bulletEvents": []
@@ -2005,7 +1888,7 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 7000, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
@@ -2015,7 +1898,7 @@
         60039
       ], 
       "enemyEvents": [
-        40009, 
+        40010, 
         70301
       ], 
       "bulletEvents": []
@@ -2028,14 +1911,15 @@
       "des": "", 
       "icon": "Icon/black-hole-128", 
       "category": "Aoe", 
-      "dmg": 10000, 
+      "dmg": 7500, 
       "dmgType": 4, 
       "bulletSpeed": 0.0, 
       "cd": 3.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
       "events": [
-        60040
+        60040, 
+        70600
       ], 
       "enemyEvents": [
         40010, 

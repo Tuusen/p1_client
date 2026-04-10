@@ -591,7 +591,7 @@ namespace GeometryTD
             bullet.Init(target, speed, damage, true, this, attackRange);
         }
 
-        public void SpawnSummon(Vector3 position, float duration, float attrRatio, int monsterId, bool homing)
+        public void SpawnSummon(Vector3 position, float duration, float attrRatio, int monsterId, bool homing, IBuffTarget caster = null)
         {
             if (gameEnded) return;
 
@@ -617,7 +617,7 @@ namespace GeometryTD
             SummonMonsterController controller = summonObj.GetComponent<SummonMonsterController>();
             if (controller == null)
                 controller = summonObj.AddComponent<SummonMonsterController>();
-            controller.Init(monsterConfig, attrRatio, duration, homing, this);
+            controller.Init(monsterConfig, attrRatio, duration, homing, this, caster);
         }
 
         // ===== 技能经验 =====

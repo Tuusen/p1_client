@@ -249,7 +249,7 @@ namespace GeometryTD
             if (state == null) return;
 
             var config = Cfg.Arcane.Get(state.arcaneId);
-            if (config == null || config.desList == null) return;
+            if (config == null) return;
 
             string[] runeNames = { "火", "冰", "雷", "风" };
             string runeTypeName = config.runeType >= 1 && config.runeType <= 4
@@ -265,7 +265,7 @@ namespace GeometryTD
 
             float lineHeight = 22f;
             float padding = 10f;
-            int lineCount = config.desList.Length + 3; // name + desList + cost + cd
+            int lineCount = 4; // name + des + cost + cd
             float totalHeight = lineCount * lineHeight + padding * 2;
             float tooltipWidth = 220f;
 
@@ -286,11 +286,8 @@ namespace GeometryTD
             CreateTooltipLine(activeTooltip, config.name, font, 16, FontStyle.Bold,
                 Color.white, tooltipWidth, ref yOffset, lineHeight);
 
-            for (int i = 0; i < config.desList.Length; i++)
-            {
-                CreateTooltipLine(activeTooltip, config.desList[i], font, 13, FontStyle.Normal,
-                    Color.white, tooltipWidth, ref yOffset, lineHeight);
-            }
+            CreateTooltipLine(activeTooltip, config.des, font, 13, FontStyle.Normal,
+                Color.white, tooltipWidth, ref yOffset, lineHeight); 
 
             CreateTooltipLine(activeTooltip, $"消耗: {config.runeCost} {runeTypeName}符能",
                 font, 13, FontStyle.Normal, new Color(0.6f, 0.8f, 1f),

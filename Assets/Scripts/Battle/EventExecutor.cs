@@ -225,7 +225,7 @@ namespace GeometryTD
                 Vector3 offset = new Vector3(
                     Random.Range(-1.5f, 1.5f), Random.Range(-2f, -0.5f), 0f);
                 ctx.battleManager.SpawnSummon(
-                    ctx.position + offset, duration, attrRatio, monsterId, false);
+                    ctx.position + offset, duration, attrRatio, monsterId, false, ctx.caster);
             }
         }
     }

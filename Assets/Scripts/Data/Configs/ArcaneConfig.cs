@@ -12,7 +12,7 @@ namespace GeometryTD
     {
         public int id;
         public string name;
-        public string[] desList;
+        public string des;
         public string icon;
         public int dmg;
         public int dmgType;

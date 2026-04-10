@@ -265,6 +265,126 @@
       ]
     }, 
     {
+      "id": 2010, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动11秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 11000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
+      "id": 2011, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动12秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 12000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
+      "id": 2012, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动13秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 13000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
+      "id": 2013, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动14秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 14000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
+      "id": 2014, 
+      "name": "冰冻", 
+      "icon": "", 
+      "desc": "无法移动15秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 15000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": [
+        {
+          "type": 103, 
+          "args": []
+        }
+      ]
+    }, 
+    {
       "id": 3000, 
       "name": "减速", 
       "icon": "", 
@@ -328,7 +448,7 @@
       "attribute": [], 
       "evtDmgRate": [], 
       "evtDamage": [
-        30001
+        10012
       ], 
       "evtWhenEnd": [], 
       "specialEvent": []
@@ -361,10 +481,10 @@
       "id": 6000, 
       "name": "易伤", 
       "icon": "", 
-      "desc": "受到的伤害增加50%持续3秒", 
+      "desc": "受到的伤害增加50%持续5秒", 
       "overlap": 1, 
       "probability": 10000, 
-      "lastTime": 3000, 
+      "lastTime": 5000, 
       "jumpTime": 0, 
       "persistJson": "", 
       "position": "", 
@@ -374,6 +494,30 @@
         {
           "id": 109, 
           "value": -5000
+        }
+      ], 
+      "evtDmgRate": [], 
+      "evtDamage": [], 
+      "evtWhenEnd": [], 
+      "specialEvent": []
+    }, 
+    {
+      "id": 6001, 
+      "name": "易伤", 
+      "icon": "", 
+      "desc": "受到的伤害增加30%持续10秒", 
+      "overlap": 1, 
+      "probability": 10000, 
+      "lastTime": 10000, 
+      "jumpTime": 0, 
+      "persistJson": "", 
+      "position": "", 
+      "type": 2, 
+      "dispel": 1, 
+      "attribute": [
+        {
+          "id": 109, 
+          "value": -3000
         }
       ], 
       "evtDmgRate": [], 

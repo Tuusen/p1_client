@@ -117,7 +117,7 @@ namespace GeometryTD
             descText.font = font;
             descText.fontSize = 18;
             descText.alignment = TextAnchor.MiddleLeft;
-            descText.text = poolConfig.desList != null && poolConfig.desList.Length > 0 ? poolConfig.desList[0] : "";
+            descText.text = poolConfig.des;
             descText.color = new Color(0.7f, 0.7f, 0.7f);
 
             return itemObj;

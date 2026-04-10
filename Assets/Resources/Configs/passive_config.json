@@ -4,7 +4,7 @@
       "id": 1001, 
       "name": "护盾破损", 
       "icon": "", 
-      "des": "", 
+      "des": "对所有敌人造成击退，并且恢复自身已损失生命值的50%", 
       "eventTarget": [], 
       "eventRemove": [], 
       "eventCond": [], 

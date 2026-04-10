@@ -246,9 +246,8 @@ namespace GeometryTD
             var state = skillManager.GetSlot(slotIndex);
             if (state == null) return;
 
-            // 获取 desList（从 skill pool 配置）
             var poolConfig = Cfg.SkillPool.Get(state.skillPoolId);
-            if (poolConfig == null || poolConfig.desList == null) return;
+            if (poolConfig == null) return;
 
             int currentLevel = state.level;
             float cd = 0f;
@@ -269,7 +268,7 @@ namespace GeometryTD
             // 内容容器
             float lineHeight = 22f;
             float padding = 10f;
-            int lineCount = poolConfig.desList.Length + 2; // name + desList + cd
+            int lineCount = poolConfig.levelDes.Length + 4; // name + des + cd
             float totalHeight = lineCount * lineHeight + padding * 2;
             float tooltipWidth = 220f;
 
@@ -293,18 +292,16 @@ namespace GeometryTD
             CreateTooltipText(activeTooltip, poolConfig.name, font, 16, FontStyle.Bold,
                 Color.white, tooltipWidth, ref yOffset, lineHeight);
 
-            // desList
-            for (int i = 0; i < poolConfig.desList.Length; i++)
+            // des
+            CreateTooltipText(activeTooltip, poolConfig.des, font, 13, FontStyle.Normal,
+                Color.white, tooltipWidth, ref yOffset, lineHeight);
+            CreateTooltipText(activeTooltip, $"[升级效果]{poolConfig.upDes}", font, 13, FontStyle.Normal,
+                Color.white, tooltipWidth, ref yOffset, lineHeight);
+            for (int i = 0; i < poolConfig.levelDes.Length; i++)
             {
-                Color textColor = Color.white;
-                if (i == 2)
-                    textColor = currentLevel >= 6
-                        ? new Color(0.2f, 0.9f, 0.2f) : new Color(0.5f, 0.5f, 0.5f);
-                else if (i == 3)
-                    textColor = currentLevel >= 10
-                        ? new Color(0.2f, 0.9f, 0.2f) : new Color(0.5f, 0.5f, 0.5f);
-
-                CreateTooltipText(activeTooltip, poolConfig.desList[i], font, 13, FontStyle.Normal,
+                var levelDes = poolConfig.levelDes[i];
+                Color textColor = currentLevel >= levelDes.level ? new Color(0.2f, 0.9f, 0.2f) : new Color(0.5f, 0.5f, 0.5f);
+                CreateTooltipText(activeTooltip, $"[{levelDes.level}级]{levelDes.des}", font, 13, FontStyle.Normal,
                     textColor, tooltipWidth, ref yOffset, lineHeight);
             }
 

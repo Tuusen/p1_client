@@ -22,6 +22,7 @@ namespace GeometryTD
         private float[] attackSkillTimers;
         private SkillConfig[] attackSkillConfigs;
         private bool isDead;
+        private IBuffTarget summoner;
 
         // IBuffTarget 实现
         public AttrComponent Attrs => attrs;
@@ -55,33 +56,45 @@ namespace GeometryTD
 
         public int GetShieldPercent() => 0;
 
-        public void Init(MonsterConfig config, float attrRatio, float dur, bool isHoming, BattleManager bm)
+        public void Init(MonsterConfig config, float attrRatio, float dur, bool isHoming, BattleManager bm, IBuffTarget caster = null)
         {
             battleManager = bm;
             duration = dur;
             homing = isHoming;
             isDead = false;
+            summoner = caster;
 
             // 初始化属性组件 + 继承逻辑
             attrs = GetComponent<AttrComponent>();
             if (attrs == null) attrs = gameObject.AddComponent<AttrComponent>();
             attrs.Init(config.attrs);
 
-            // 属性继承：type=1(基础) 按 attrRatio/10000 缩放，type=2(特殊) 完整继承
-            var allMetas = Cfg.Attribute.All;
-            if (allMetas != null)
+            // 对于config中没有的属性，从召唤者继承（乘以attrRatio）
+            if (summoner != null && summoner.Attrs != null)
             {
-                for (int i = 0; i < allMetas.Count; i++)
+                var allMetas = Cfg.Attribute.All;
+                if (allMetas != null)
                 {
-                    var meta = allMetas[i];
-                    if (meta.type == 1 && attrs.HasBase(meta.id))
+                    for (int i = 0; i < allMetas.Count; i++)
                     {
-                        int original = attrs.GetBase(meta.id);
-                        int scaled = (int)((long)original * attrRatio / 10000);
-                        if (meta.id == AttributeIds.HP && scaled <= 0) scaled = 1;
-                        attrs.SetBase(meta.id, scaled);
+                        var meta = allMetas[i];
+                        if (!attrs.HasBase(meta.id))
+                        {
+                            // config中没有这个属性，从召唤者继承
+                            int original = summoner.Attrs.GetBase(meta.id);
+                            if (meta.type == 1 && summoner.Attrs.HasBase(meta.id))
+                            {
+                                // type 1: 按 attrRatio 缩放
+                                int scaled = (int)((long)original * attrRatio / 10000);
+                                if (meta.id == AttributeIds.HP && scaled <= 0) scaled = 1;
+                                attrs.SetBase(meta.id, scaled);
+                            } else {
+                                // type 2: 保持原值
+                                attrs.SetBase(meta.id, original);
+                            }
+                        }
+                        // config中有的属性保持原值
                     }
-                    // type=2 保持原值
                 }
             }
 

@@ -10,9 +10,18 @@ namespace GeometryTD
     [Serializable]
     public class SkillPoolConfig
     {
+        [Serializable]
+        public class LevelDesItem
+        {
+            public int level;
+            public string des;
+        }
+
         public int id;
         public string name;
-        public string[] desList;
+        public string des;
+        public string upDes;
+        public LevelDesItem[] levelDes;
         public string icon;
         public string dragHint;
     }

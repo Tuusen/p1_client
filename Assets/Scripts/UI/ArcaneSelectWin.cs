@@ -118,7 +118,7 @@ namespace GeometryTD
             descText.font = font;
             descText.fontSize = 18;
             descText.alignment = TextAnchor.MiddleLeft;
-            descText.text = config.desList != null && config.desList.Length > 0 ? config.desList[0] : "";
+            descText.text = config.des;
             descText.color = new Color(0.7f, 0.7f, 0.7f);
 
             return itemObj;
