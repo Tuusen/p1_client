@@ -362,11 +362,22 @@ namespace GeometryTD
                             isTargetElite = false
                         };
                         var result = DamageCalculator.Calculate(ctx);
-                        if (!result.isMiss)
+                        if (result.isMiss)
+                        {
+                            // 英雄闪避 → 触发被动 1
+                            TriggerHeroPassive(hero, 1, caster);
+                        }
+                        else
                         {
                             hero.TakeDamage(result.finalDamage, caster);
-                            if (result.isCrit && battleManager != null)
-                                battleManager.ShowDamageText(target.position, result.finalDamage, true);
+                            if (result.isCrit)
+                            {
+                                if (battleManager != null)
+                                    battleManager.ShowDamageText(target.position, result.finalDamage, true);
+                                // 英雄被暴击 → 触发被动 602（仅存活时）
+                                if (!hero.IsDead)
+                                    TriggerHeroPassive(hero, 602, caster);
+                            }
                         }
                     }
                     else
@@ -418,15 +429,55 @@ namespace GeometryTD
 
                         if (result.isCrit && battleManager != null)
                             battleManager.ShowDamageText(target.position, result.finalDamage, true);
+
+                        // 英雄命中 → 触发被动 2
+                        IBuffTarget hitTarget = (IBuffTarget)monster ?? (IBuffTarget)boss;
+                        TriggerCasterPassive(2, hitTarget);
+
+                        // 英雄暴击 → 触发被动 601
+                        if (result.isCrit)
+                            TriggerCasterPassive(601, hitTarget);
                     }
                 }
                 else
                 {
-                    // 退回预计算伤害
-                    if (monster != null) { monster.TakeDamage(damage, caster); return; }
-                    if (boss != null) boss.TakeDamage(damage, caster);
+                    // 退回预计算伤害（无 DamageContext，无法判断命中/暴击）
+                    if (monster != null) { monster.TakeDamage(damage, caster); TriggerCasterPassive(2, monster); return; }
+                    if (boss != null) { boss.TakeDamage(damage, caster); TriggerCasterPassive(2, boss); }
                 }
             }
+        }
+
+        /// <summary>
+        /// 触发英雄（被击方）的被动
+        /// </summary>
+        private void TriggerHeroPassive(HeroController hero, int triggerCode, IBuffTarget attacker)
+        {
+            if (hero == null || hero.PassiveSystem == null) return;
+            var ctx = new EventContext
+            {
+                caster = hero,
+                target = attacker ?? (IBuffTarget)hero,
+                battleManager = battleManager,
+                position = hero.transform.position
+            };
+            hero.PassiveSystem.OnTrigger(triggerCode, ctx);
+        }
+
+        /// <summary>
+        /// 触发施法者（英雄）的被动
+        /// </summary>
+        private void TriggerCasterPassive(int triggerCode, IBuffTarget hitTarget)
+        {
+            if (caster == null || caster.PassiveSystem == null) return;
+            var ctx = new EventContext
+            {
+                caster = caster,
+                target = hitTarget ?? caster,
+                battleManager = battleManager,
+                position = caster.Position
+            };
+            caster.PassiveSystem.OnTrigger(triggerCode, ctx);
         }
 
         private void ExecuteHitEvents()

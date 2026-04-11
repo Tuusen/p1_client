@@ -23,6 +23,8 @@ namespace GeometryTD
         void AddShield(int value);
         bool IsDead { get; }
         Vector3 Position { get; }
+        float CurrentHp { get; }
+        float MaxHp { get; }
         int GetHpPercent();
         int GetShieldPercent();
     }

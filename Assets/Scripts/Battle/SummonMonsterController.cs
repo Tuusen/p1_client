@@ -30,6 +30,8 @@ namespace GeometryTD
         public PassiveSystem PassiveSystem => null;
         public bool IsDead => isDead;
         public Vector3 Position => transform.position;
+        public float CurrentHp => currentHp;
+        public float MaxHp => maxHp;
 
         public void OnBuffDamage(float dmg)
         {

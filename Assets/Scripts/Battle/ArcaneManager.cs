@@ -136,6 +136,19 @@ namespace GeometryTD
         {
             if (!CanCast(slotIndex)) return false;
 
+            // 被动：释放奥术前
+            if (hero != null && hero.PassiveSystem != null)
+            {
+                var ctx = new EventContext
+                {
+                    caster = hero,
+                    target = hero,
+                    battleManager = battleManager,
+                    position = worldPos
+                };
+                hero.PassiveSystem.OnTrigger(505, ctx);
+            }
+
             var slot = slots[slotIndex];
             var config = Cfg.Arcane.Get(slot.arcaneId);
 
@@ -160,6 +173,19 @@ namespace GeometryTD
             };
             activeArcanes.Add(active);
             OnArcanePlaced?.Invoke(slotIndex);
+
+            // 被动：释放奥术后
+            if (hero != null && hero.PassiveSystem != null)
+            {
+                var ctx = new EventContext
+                {
+                    caster = hero,
+                    target = hero,
+                    battleManager = battleManager,
+                    position = worldPos
+                };
+                hero.PassiveSystem.OnTrigger(506, ctx);
+            }
 
             return true;
         }

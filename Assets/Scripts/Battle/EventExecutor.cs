@@ -59,6 +59,9 @@ namespace GeometryTD
                 case EventType.Dispel:
                     HandleDispel(args, effectTarget);
                     break;
+                case EventType.LostHp:
+                    HandleLostHp(args, effectTarget, ctx);
+                    break;
                 default:
                     Debug.LogWarning($"[EventExecutor] 未知事件类型: {config.type}, eventId={eventId}");
                     break;
@@ -104,26 +107,35 @@ namespace GeometryTD
 
             if (dmgRate > 0)
             {
-                var dmgCtx = new DamageContext
-                {
-                    attackerAttrs = ctx.caster.Attrs,
-                    defenderAttrs = target.Attrs,
-                    skillDmgRatio = dmgRate,
-                    skillDmgType = dmgType,
-                    isTargetBoss = target is BossController,
-                    isTargetElite = (target as MonsterController)?.IsElite ?? false
-                };
-                var isMiss = DamageCalculator.checkMiss(dmgCtx);
-                if (!isMiss) {
-                    float maxHp = target.Attrs.GetMaxHp();
-                    float amount = maxHp * Mathf.Abs(dmgRate) / 10000f;
-                    target.OnBuffDamage(amount);
-                }
+                float maxHp = target.Attrs.GetMaxHp();
+                float amount = maxHp * Mathf.Abs(dmgRate) / 10000f;
+                target.OnBuffDamage(amount);
             }
             else if (dmgRate < 0)
             {
                 float maxHp = ctx.caster.Attrs.GetMaxHp();
                 float amount = maxHp * Mathf.Abs(dmgRate) / 10000f;
+                target.OnBuffHeal(amount);
+            }
+        }
+
+        private static void HandleLostHp(int[] args, IBuffTarget target, EventContext ctx) 
+        {
+            if (args == null || args.Length < 2 || target == null) return;
+            int dmgRate = args[0];
+            int dmgType = args[1];
+            if (ctx.caster == null || ctx.caster.Attrs == null) return;
+
+            if (dmgRate > 0)
+            {
+                float lostHp = target.Attrs.GetMaxHp() - target.CurrentHp;
+                float amount = lostHp * Mathf.Abs(dmgRate) / 10000f;
+                target.OnBuffDamage(amount);
+            }
+            else if (dmgRate < 0)
+            {
+                float lostHp = ctx.caster.Attrs.GetMaxHp() - ctx.caster.CurrentHp;
+                float amount = lostHp * Mathf.Abs(dmgRate) / 10000f;
                 target.OnBuffHeal(amount);
             }
         }

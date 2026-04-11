@@ -129,7 +129,9 @@
       "cd": 0.0, 
       "bulletStyleId": 0, 
       "attack_range": 0.0, 
-      "events": [], 
+      "events": [
+        110001
+      ], 
       "enemyEvents": [
         40003
       ], 

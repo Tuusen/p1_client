@@ -270,6 +270,19 @@ namespace GeometryTD
                 if (arcaneActiveIconUI != null)
                     arcaneActiveIconUI.SetArcaneManager(arcaneManager);
             }
+
+            // 被动：战斗开始后
+            if (heroController != null)
+            {
+                var ctx = new EventContext
+                {
+                    caster = heroController,
+                    target = heroController,
+                    battleManager = this,
+                    position = heroController.transform.position
+                };
+                heroController.PassiveSystem.OnTrigger(3, ctx);
+            }
         }
 
         // ===== 敌人查询 =====
@@ -660,6 +673,23 @@ namespace GeometryTD
                 if (coin > 0)
                     StoryManager.Instance.AddBattleGold(coin);
             }
+
+            // 被动：击败触发
+            if (heroController != null && !heroController.IsDead)
+            {
+                var ctx = new EventContext
+                {
+                    caster = heroController,
+                    target = monster,
+                    battleManager = this,
+                    position = monster.transform.position
+                };
+                heroController.PassiveSystem.OnTrigger(300, ctx);  // 击败任意
+                if (monster.IsElite)
+                    heroController.PassiveSystem.OnTrigger(302, ctx);  // 击败精英
+                else
+                    heroController.PassiveSystem.OnTrigger(301, ctx);  // 击败小怪
+            }
         }
 
         public void UpdateBossHpUI(float currentHp, float maxHp)
@@ -673,6 +703,20 @@ namespace GeometryTD
         public void OnBossKilled()
         {
             if (gameEnded) return;
+
+            // 被动：击败Boss（在 bossController 置空前触发）
+            if (heroController != null && !heroController.IsDead && bossController != null)
+            {
+                var ctx = new EventContext
+                {
+                    caster = heroController,
+                    target = bossController,
+                    battleManager = this,
+                    position = bossController.transform.position
+                };
+                heroController.PassiveSystem.OnTrigger(300, ctx);  // 击败任意
+                heroController.PassiveSystem.OnTrigger(303, ctx);  // 击败boss
+            }
 
             if (bossController != null)
             {

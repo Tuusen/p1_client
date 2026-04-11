@@ -45,10 +45,11 @@ namespace GeometryTD
         public PassiveSystem PassiveSystem => passiveSystem;
         public bool IsDead => currentHp <= 0;
         public Vector3 Position => transform.position;
+        public float CurrentHp => currentHp;
+        public float MaxHp => maxHp;
 
         public float AttackRange => attackRange;
         public float BaseAttack => attrs != null ? attrs.GetAttack() : 0;
-        public float MaxHp => maxHp;
 
         public void OnBuffDamage(float dmg)
         {
@@ -58,12 +59,17 @@ namespace GeometryTD
 
         public void OnBuffHeal(float heal)
         {
+            TriggerPassive(201);    // 被动：受治疗前
             currentHp = Mathf.Min(currentHp + heal, maxHp);
+            TriggerPassive(202);    // 被动：受治疗时
             UpdateBars();
+            TriggerPassive(203);    // 被动：受治疗后
         }
 
         public void AddShield(int value)
         {
+            if (value > 0)
+                TriggerPassive(204);    // 被动：获得护盾时
             currentShield += value;
             if (currentShield < 0) currentShield = 0;
             if (currentShield > maxHp) currentShield = maxHp;
@@ -241,6 +247,9 @@ namespace GeometryTD
                 transform.position, skillRange, targetCount);
             if (targets.Count == 0) return;
 
+            // 被动：释放普攻前
+            TriggerPassive(501);
+
             // 攻击时退出蓄力
             ExitCharge();
             lastAttackTime = Time.time;
@@ -278,12 +287,18 @@ namespace GeometryTD
 
             battleManager.OnHeroNormalAttack(transform.position);
             animator?.SetTrigger("Attack");
+
+            // 被动：释放普攻后
+            TriggerPassive(502);
         }
 
         // ===== 技能路由 =====
         public void UseSkill(SkillConfig config)
         {
             if (IsDead || battleManager == null || config == null) return;
+
+            // 被动：释放技能前
+            TriggerPassive(503);
 
             var category = SkillManager.ClassifySkill(config);
             switch (category)
@@ -294,6 +309,9 @@ namespace GeometryTD
                 case SkillCategory.Projectile: HandleProjectileSkill(config); break;
                 case SkillCategory.Aoe:        HandleAoeSkill(config);        break;
             }
+
+            // 被动：释放技能后
+            TriggerPassive(504);
         }
 
         // ===== 弹幕技能 =====
@@ -401,10 +419,27 @@ namespace GeometryTD
             EventExecutor.ExecuteEvents(config.events, ctx);
         }
 
+        // ===== 被动触发辅助 =====
+        private void TriggerPassive(int triggerCode, IBuffTarget target = null)
+        {
+            if (passiveSystem == null) return;
+            var ctx = new EventContext
+            {
+                caster = this,
+                target = target ?? (IBuffTarget)this,
+                battleManager = battleManager,
+                position = transform.position
+            };
+            passiveSystem.OnTrigger(triggerCode, ctx);
+        }
+
         // ===== 受伤 =====
         public void TakeDamage(float damage, IBuffTarget attacker = null)
         {
             if (IsDead) return;
+
+            // 被动：受伤害前
+            TriggerPassive(101, attacker);
 
             // 反击（在无敌判定前触发）
             BuffSystem.TryCounterAttack(this, attacker, buffSystem, battleManager);
@@ -418,6 +453,12 @@ namespace GeometryTD
             {
                 damage *= (1f - dmgReduce / 10000f);
             }
+
+            // 被动：受伤害时
+            TriggerPassive(102, attacker);
+
+            // 记录护盾状态用于判断 104/105
+            float shieldBefore = currentShield;
 
             if (currentShield > 0)
             {
@@ -438,11 +479,25 @@ namespace GeometryTD
             }
 
             currentHp = Mathf.Max(0, currentHp);
+
+            // 被动：护盾受伤后
+            if (shieldBefore > 0 && currentShield < shieldBefore)
+                TriggerPassive(104, attacker);
+
+            // 被动：护盾破碎后
+            if (shieldBefore > 0 && currentShield <= 0)
+                TriggerPassive(105, attacker);
+
+            // 被动：受伤害后
+            TriggerPassive(103, attacker);
+
             UpdateBars();
 
             if (currentHp <= 0)
             {
+                TriggerPassive(401, attacker);  // 被动：死亡前
                 battleManager.OnHeroDead();
+                TriggerPassive(402, attacker);  // 被动：死亡后
             }
         }
 

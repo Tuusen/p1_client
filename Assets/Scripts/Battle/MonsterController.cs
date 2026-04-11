@@ -36,6 +36,8 @@ namespace GeometryTD
         public bool IsDead => isDead;
         public bool IsElite => isElite;
         public Vector3 Position => transform.position;
+        public float CurrentHp => currentHp;
+        public float MaxHp => maxHp;
 
         public void OnBuffDamage(float dmg)
         {
