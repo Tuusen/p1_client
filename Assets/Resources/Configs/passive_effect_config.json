@@ -3,7 +3,7 @@
     {
       "id": 1, 
       "name": "虚空之心", 
-      "description": "生命值提升20%", 
+      "description": "最大生命上限提升20%", 
       "icon": "Icon/void_heart", 
       "rarity": 2, 
       "effectType": 1, 
@@ -29,7 +29,7 @@
     {
       "id": 3, 
       "name": "旅者的干粮", 
-      "description": "护盾值增加500", 
+      "description": "进入战斗获得最大生命值10%的护盾", 
       "icon": "Icon/traveler_food", 
       "rarity": 1, 
       "effectType": 1, 
@@ -42,7 +42,7 @@
     {
       "id": 4, 
       "name": "鹰眼透镜", 
-      "description": "攻击范围提升10%", 
+      "description": "暴击率提升30%", 
       "icon": "Icon/eagle_lens", 
       "rarity": 1, 
       "effectType": 1, 
@@ -55,7 +55,7 @@
     {
       "id": 5, 
       "name": "狂暴药剂", 
-      "description": "攻击力提升30%，生命值降低10%", 
+      "description": "遭遇boss时，获得50%的攻击力加成，但是每秒流失当前生命值的10%，持续10秒", 
       "icon": "Icon/rage_potion", 
       "rarity": 3, 
       "effectType": 1, 
@@ -68,7 +68,7 @@
     {
       "id": 6, 
       "name": "疾风之刃", 
-      "description": "攻击间隔缩短15%", 
+      "description": "攻击间隔缩短20%", 
       "icon": "Icon/swift_blade", 
       "rarity": 2, 
       "effectType": 1, 
@@ -81,7 +81,7 @@
     {
       "id": 7, 
       "name": "暗影护符", 
-      "description": "伤害提升10%", 
+      "description": "击杀敌人时有30%概率召唤一个暗影守卫，持续5秒，若该守卫已存在，则增加持续时间并得到强化，最多强化10次", 
       "icon": "Icon/shadow_amulet", 
       "rarity": 2, 
       "effectType": 1, 
@@ -94,7 +94,7 @@
     {
       "id": 8, 
       "name": "暗影之眼", 
-      "description": "攻击目标数+1", 
+      "description": "暗影守卫在场时，自身受到致命伤害时，会由暗影守卫代起承受死亡，并恢复自身30%生命值，整场战斗仅触发一次；", 
       "icon": "Icon/shadow_eye", 
       "rarity": 3, 
       "effectType": 1, 
@@ -107,7 +107,7 @@
     {
       "id": 9, 
       "name": "旅者的祝福", 
-      "description": "生命值提升10%", 
+      "description": "全元素伤害增加25%", 
       "icon": "Icon/traveler_bless", 
       "rarity": 1, 
       "effectType": 1, 
@@ -120,7 +120,7 @@
     {
       "id": 10, 
       "name": "虚空壁垒", 
-      "description": "护盾值增加1000", 
+      "description": "进入战斗获得最大生命值30%的护盾", 
       "icon": "Icon/void_barrier", 
       "rarity": 2, 
       "effectType": 1, 
@@ -198,7 +198,7 @@
     {
       "id": 16, 
       "name": "节能晶石", 
-      "description": "技能能量消耗减少10%", 
+      "description": "消耗能量时，随机返还5点能量", 
       "icon": "Icon/energy_crystal", 
       "rarity": 2, 
       "effectType": 2, 
@@ -224,7 +224,7 @@
     {
       "id": 18, 
       "name": "虚空之盾", 
-      "description": "进入关卡时额外获得800护盾", 
+      "description": "进入战斗获得最大生命值50%的护盾", 
       "icon": "Icon/void_shield", 
       "rarity": 2, 
       "effectType": 3, 
@@ -250,7 +250,7 @@
     {
       "id": 20, 
       "name": "致命直觉", 
-      "description": "10%概率造成暴击", 
+      "description": "未造成暴击时，暴击率提升5%，最多叠加20层，暴击后清除", 
       "icon": "Icon/critical_instinct", 
       "rarity": 3, 
       "effectType": 3, 
@@ -263,7 +263,7 @@
     {
       "id": 21, 
       "name": "毁灭之力", 
-      "description": "暴击时额外伤害+50%", 
+      "description": "暴击时额外造成100%的无属性伤害", 
       "icon": "Icon/destruction_power", 
       "rarity": 3, 
       "effectType": 3, 
