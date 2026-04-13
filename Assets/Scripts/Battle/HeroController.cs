@@ -64,6 +64,10 @@ namespace GeometryTD
             TriggerPassive(202);    // 被动：受治疗时
             UpdateBars();
             TriggerPassive(203);    // 被动：受治疗后
+
+            // 显示治疗飘字
+            if (battleManager != null)
+                battleManager.ShowDamageText(transform.position, heal, true);
         }
 
         public void AddShield(int value)
@@ -492,6 +496,10 @@ namespace GeometryTD
             TriggerPassive(103, attacker);
 
             UpdateBars();
+
+            // 显示飘字
+            if (battleManager != null)
+                battleManager.ShowDamageText(transform.position, damage, false);
 
             if (currentHp <= 0)
             {

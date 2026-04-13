@@ -462,9 +462,9 @@ def extract_user_code(file_path):
     with codecs.open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    pattern = r'// USER CODE START - (\w+)\s*\n(.*?)// USER CODE END - \1'
+    pattern = r'// USER CODE START - (\w+)\s*\n(.*?)\s*// USER CODE END - \1'
     for m in re.finditer(pattern, content, re.DOTALL):
-        sections[m.group(1)] = m.group(2)
+        sections[m.group(1)] = m.group(2)#.strip()
     return sections
 
 

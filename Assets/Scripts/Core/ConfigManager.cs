@@ -40,45 +40,6 @@ namespace GeometryTD
         private Dictionary<int, GameObject> bulletPrefabCache;
         private Dictionary<int, GameObject> effectPrefabCache;
         private Dictionary<int, GameObject> rolePrefabCache;
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         // USER CODE END - Fields
 
         private void Awake()
@@ -206,45 +167,6 @@ namespace GeometryTD
             PreloadBulletPrefabs();
             PreloadEffectPrefabs();
             PreloadRolePrefabs();
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             // USER CODE END - AfterLoad
         }
 
@@ -271,37 +193,6 @@ namespace GeometryTD
             return Cfg.Skill.Get(poolId * 100 + level);
         }
 
-        public MonsterConfig GetBossConfig()
-        {
-            foreach (var m in Cfg.Monster.All)
-            {
-                if (m.is_boss) return m;
-            }
-            Debug.LogError("[ConfigManager] 未找到Boss配置");
-            return null;
-        }
-
-        public List<MonsterConfig> GetNormalMonsterConfigs()
-        {
-            var normals = new List<MonsterConfig>();
-            foreach (var m in Cfg.Monster.All)
-            {
-                if (!m.is_boss) normals.Add(m);
-            }
-            return normals;
-        }
-
-        public List<StoryNodeConfig> GetNodesByCollection(int collectionId)
-        {
-            var result = new List<StoryNodeConfig>();
-            if (Cfg.StoryNode.All == null) return result;
-            foreach (var node in Cfg.StoryNode.All)
-            {
-                if (node.collectionId == collectionId)
-                    result.Add(node);
-            }
-            return result;
-        }
 
         public GameObject GetBulletPrefab(int styleId)
         {
@@ -368,46 +259,6 @@ namespace GeometryTD
                     Debug.LogWarning("[ConfigManager] 无法加载角色Prefab: " + role.prefabPath + " (id=" + role.id + ")");
             }
         }
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         // USER CODE END - CustomMethods
     }
 }

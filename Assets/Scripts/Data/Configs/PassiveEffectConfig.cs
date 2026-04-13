@@ -14,7 +14,6 @@ namespace GeometryTD
         public string name;
         public string description;
         public string icon;
-        public int rarity;
         public int effectType;
         public int targetAttrId;
         public int valueType;
