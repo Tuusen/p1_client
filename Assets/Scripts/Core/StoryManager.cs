@@ -367,72 +367,78 @@ namespace GeometryTD
         // ===== 藏品效果查询 =====
 
         /// <summary>
-        /// 获取属性加成总值（effectType=1）。
+        /// 获取属性加成总值（通过passive实现）。
         /// 返回 (百分比加成总和, 固定值加成总和)。
         /// </summary>
         public (float percentBonus, float flatBonus) GetAttributeBonus(int attrId)
         {
-            if (Runtime == null) return (0f, 0f);
-
-            float percent = 0f;
-            float flat = 0f;
-
-            for (int i = 0; i < Runtime.ownedEffectIds.Count; i++)
-            {
-                PassiveEffectConfig config = Cfg.PassiveEffect.Get(Runtime.ownedEffectIds[i]);
-                if (config == null) continue;
-                if (config.effectType != PassiveEffectType.AttributeBoost) continue;
-                if (config.targetAttrId != attrId) continue;
-
-                if (config.valueType == ValueType.Percentage)
-                    percent += config.value;
-                else if (config.valueType == ValueType.Flat)
-                    flat += config.value;
-            }
-
-            return (percent, flat);
+            // 属性加成现在由被动技能系统直接处理
+            // 此方法保留用于兼容，实际属性计算在被动技能激活时进行
+            return (0f, 0f);
         }
 
         /// <summary>
-        /// 获取技能增强总值（effectType=2）。
+        /// 获取技能增强总值（通过passive实现）。
         /// </summary>
         public float GetSkillEnhanceValue(int enhanceType)
         {
-            if (Runtime == null) return 0f;
-
-            float total = 0f;
-            for (int i = 0; i < Runtime.ownedEffectIds.Count; i++)
-            {
-                PassiveEffectConfig config = Cfg.PassiveEffect.Get(Runtime.ownedEffectIds[i]);
-                if (config == null) continue;
-                if (config.effectType != PassiveEffectType.SkillEnhance) continue;
-                if (config.targetAttrId != enhanceType) continue;
-                total += config.value;
-            }
-            return total;
+            // 技能增强现在由被动技能系统直接处理
+            return 0f;
         }
 
         /// <summary>
-        /// 获取特殊效果总值（effectType=3）。
+        /// 获取特殊效果总值（通过passive实现）。
         /// </summary>
         public float GetSpecialEffectValue(int specialType)
         {
-            if (Runtime == null) return 0f;
-
-            float total = 0f;
-            for (int i = 0; i < Runtime.ownedEffectIds.Count; i++)
-            {
-                PassiveEffectConfig config = Cfg.PassiveEffect.Get(Runtime.ownedEffectIds[i]);
-                if (config == null) continue;
-                if (config.effectType != PassiveEffectType.Special) continue;
-                if (config.targetAttrId != specialType) continue;
-                total += config.value;
-            }
-            return total;
+            // 特殊效果现在由被动技能系统直接处理
+            return 0f;
         }
 
         /// <summary>
-        /// 获取所有已拥有的藏品配置列表（用于UI展示）
+        /// 获取当前战斗生效的所有passive技能ID列表
+        /// </summary>
+        public List<int> GetActivePassiveIds()
+        {
+            List<int> result = new List<int>();
+            if (Runtime == null) return result;
+
+            List<PassiveEffectConfig> activeEffects = Runtime.GetActiveEffects();
+            for (int i = 0; i < activeEffects.Count; i++)
+            {
+                PassiveEffectConfig config = activeEffects[i];
+                if (config == null || config.passives == null) continue;
+
+                for (int j = 0; j < config.passives.Length; j++)
+                {
+                    if (config.passives[j] > 0 && !result.Contains(config.passives[j]))
+                    {
+                        result.Add(config.passives[j]);
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 获取当前战斗生效的金币加成(万分比)
+        /// </summary>
+        public int GetGoldBonus()
+        {
+            if (Runtime == null) return 0;
+
+            int totalBonus = 0;
+            List<PassiveEffectConfig> activeEffects = Runtime.GetActiveEffects();
+            for (int i = 0; i < activeEffects.Count; i++)
+            {
+                if (activeEffects[i] != null)
+                    totalBonus += activeEffects[i].addGold;
+            }
+            return totalBonus;
+        }
+
+        /// <summary>
+        /// 获取所有已拥有的藏品配置列表（用于UI展示，包含所有未筛选的藏品）
         /// </summary>
         public List<PassiveEffectConfig> GetOwnedEffects()
         {
@@ -446,6 +452,23 @@ namespace GeometryTD
                     result.Add(config);
             }
             return result;
+        }
+
+        /// <summary>
+        /// 获取当前战斗中生效的藏品配置列表（用于UI展示）
+        /// </summary>
+        public List<PassiveEffectConfig> GetActiveEffects()
+        {
+            if (Runtime == null) return new List<PassiveEffectConfig>();
+            return Runtime.GetActiveEffects();
+        }
+
+        /// <summary>
+        /// 获取所有已拥有藏品的数量
+        /// </summary>
+        public int GetOwnedEffectsCount()
+        {
+            return Runtime != null ? Runtime.ownedEffectIds.Count : 0;
         }
 
         /// <summary>

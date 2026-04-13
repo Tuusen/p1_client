@@ -12,13 +12,19 @@ namespace GeometryTD
     {
         public int id;
         public string name;
-        public string description;
+        public string des;
         public string icon;
-        public int effectType;
-        public int targetAttrId;
-        public int valueType;
-        public float value;
-        public bool stackable;
+        /// <summary>藏品品质(颜色)</summary>
+        public int color;
+        /// <summary>藏品等级</summary>
+        public int level;
+        /// <summary>进入关卡战斗后附加的被动技能ID列表</summary>
+        public int[] passives;
+        /// <summary>增加获得金币量(万分比)</summary>
+        public int addGold;
+        /// <summary>藏品类型(用于分组限制叠加)</summary>
+        public int stackType;
+        /// <summary>该类型藏品最多生效个数(达到上限时优先高color,相同则优先高level)</summary>
         public int maxStack;
     }
 

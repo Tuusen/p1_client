@@ -186,4 +186,28 @@ namespace GeometryTD
         public const int Percentage = 1;
         public const int Flat = 2;
     }
+
+    // ===== 窗口系统常量 =====
+
+    /// <summary>
+    /// 窗口类型
+    /// </summary>
+    public enum WinType
+    {
+        /// <summary>普通界面，可任意关闭</summary>
+        Normal = 1,
+        /// <summary>常驻界面，仅能通过特定方法关闭</summary>
+        Permanent = 2
+    }
+
+    /// <summary>
+    /// 窗口优先级，数值越大层级越高
+    /// </summary>
+    public enum WinPriority
+    {
+        /// <summary>普通优先级</summary>
+        Normal = 10,
+        /// <summary>弹窗优先级</summary>
+        Popup = 100
+    }
 }

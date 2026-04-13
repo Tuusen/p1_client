@@ -22,8 +22,10 @@ namespace GeometryTD
         }
 
         private readonly Dictionary<Type, BaseWin> winCache = new Dictionary<Type, BaseWin>();
+        private readonly Dictionary<Type, int> winOpenOrder = new Dictionary<Type, int>();
         private Transform winRoot;
-        private int baseSortOrder = 200;
+        private int baseSortOrder = 1000;
+        private int openSequenceCounter = 0;
 
         private void Awake()
         {
@@ -95,6 +97,7 @@ namespace GeometryTD
             }
 
             winCache[type] = win;
+            winOpenOrder[type] = ++openSequenceCounter;
             win.Init();
             win.Show();
             UpdateSortOrder(win);
@@ -116,6 +119,7 @@ namespace GeometryTD
             if (winCache.TryGetValue(type, out BaseWin win))
             {
                 winCache.Remove(type);
+                winOpenOrder.Remove(type);
                 if (win != null && win.gameObject != null)
                     Destroy(win.gameObject);
             }
@@ -152,6 +156,8 @@ namespace GeometryTD
                     Destroy(kvp.Value.gameObject);
             }
             winCache.Clear();
+            winOpenOrder.Clear();
+            openSequenceCounter = 0;
         }
 
         private void UpdateSortOrder(BaseWin win)
@@ -164,7 +170,11 @@ namespace GeometryTD
                 if (win.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
                     win.gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             }
-            winCanvas.sortingOrder = baseSortOrder + win.SortOrder;
+            // 计算层级：baseSortOrder(1000) + priority权重(10/100 * 100000) + sortOrder + 打开顺序
+            // 确保所有窗口层级(最小1000010)始终高于场景UI(通常为0-1000)
+            int priorityWeight = (int)win.Priority * 100000;
+            int openOrder = winOpenOrder.TryGetValue(win.GetType(), out int order) ? order : 0;
+            winCanvas.sortingOrder = baseSortOrder + priorityWeight + win.SortOrder + openOrder;
 
             // Ensure full-screen RectTransform to block click-through
             RectTransform rt = win.GetComponent<RectTransform>();

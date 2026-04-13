@@ -286,7 +286,7 @@ namespace GeometryTD
                 new Vector2(0f, 0f), new Vector2(1f, 0.5f),
                 new Vector2(15f, 5f), new Vector2(-150f, 0f),
                 18, new Color(0.7f, 0.7f, 0.7f), TextAnchor.MiddleLeft);
-            descText.text = effect.description ?? "";
+            descText.text = effect.des ?? "";
             descText.raycastTarget = false;
 
             // Price + Buy button (right side)

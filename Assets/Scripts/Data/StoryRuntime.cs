@@ -63,29 +63,120 @@ namespace GeometryTD
         {
             if (effectId <= 0) return;
 
-            PassiveEffectConfig config = Cfg.PassiveEffect.Get(effectId);
-            if (config == null) return;
+            PassiveEffectConfig newConfig = Cfg.PassiveEffect.Get(effectId);
+            if (newConfig == null) return;
 
-            if (!config.stackable)
+            // 获取同类型的所有藏品
+            List<int> sameTypeIndices = new List<int>();
+            for (int i = 0; i < ownedEffectIds.Count; i++)
             {
-                // 不可叠加：已有则跳过
-                if (ownedEffectIds.Contains(effectId))
-                    return;
-            }
-            else
-            {
-                // 可叠加：检查是否超过最大层数
-                int currentCount = 0;
-                for (int i = 0; i < ownedEffectIds.Count; i++)
+                PassiveEffectConfig existingConfig = Cfg.PassiveEffect.Get(ownedEffectIds[i]);
+                if (existingConfig != null && existingConfig.stackType == newConfig.stackType)
                 {
-                    if (ownedEffectIds[i] == effectId)
-                        currentCount++;
+                    sameTypeIndices.Add(i);
                 }
-                if (currentCount >= config.maxStack)
-                    return;
             }
 
-            ownedEffectIds.Add(effectId);
+            // 如果未达到maxStack限制，直接添加
+            if (sameTypeIndices.Count < newConfig.maxStack)
+            {
+                ownedEffectIds.Add(effectId);
+                return;
+            }
+
+            // 达到上限时，替换color和level最低的藏品
+            // 优先生效color高的，color相同判断level高的
+            int worstIndex = -1;
+            int worstScore = int.MinValue;
+
+            for (int i = 0; i < sameTypeIndices.Count; i++)
+            {
+                int index = sameTypeIndices[i];
+                PassiveEffectConfig existingConfig = Cfg.PassiveEffect.Get(ownedEffectIds[index]);
+                if (existingConfig == null) continue;
+
+                // 计算优先级分数: color * 100 + level，分数越高越优先
+                int score = existingConfig.color * 100 + existingConfig.level;
+                if (score < worstScore)
+                {
+                    worstScore = score;
+                    worstIndex = index;
+                }
+            }
+
+            // 替换最低优先级的藏品
+            if (worstIndex >= 0)
+            {
+                ownedEffectIds[worstIndex] = effectId;
+            }
+        }
+
+        /// <summary>
+        /// 获取当前生效的藏品列表(已根据maxStack过滤)
+        /// </summary>
+        public List<PassiveEffectConfig> GetActiveEffects()
+        {
+            List<PassiveEffectConfig> result = new List<PassiveEffectConfig>();
+            if (ownedEffectIds.Count == 0) return result;
+
+            // 按stackType分组处理
+            Dictionary<int, List<PassiveEffectEntry>> grouped = new Dictionary<int, List<PassiveEffectEntry>>();
+
+            for (int i = 0; i < ownedEffectIds.Count; i++)
+            {
+                PassiveEffectConfig config = Cfg.PassiveEffect.Get(ownedEffectIds[i]);
+                if (config == null) continue;
+
+                if (!grouped.ContainsKey(config.stackType))
+                    grouped[config.stackType] = new List<PassiveEffectEntry>();
+
+                grouped[config.stackType].Add(new PassiveEffectEntry
+                {
+                    index = i,
+                    config = config
+                });
+            }
+
+            // 对每个类型按优先级排序，保留前maxStack个
+            foreach (var kvp in grouped)
+            {
+                List<PassiveEffectEntry> entries = kvp.Value;
+                PassiveEffectConfig sampleConfig = entries[0].config;
+                int maxStack = sampleConfig.maxStack;
+
+                // 按color和level降序排序
+                entries.Sort((a, b) =>
+                {
+                    int scoreA = a.config.color * 100 + a.config.level;
+                    int scoreB = b.config.color * 100 + b.config.level;
+                    return scoreB.CompareTo(scoreA);
+                });
+
+                // 只保留前maxStack个
+                if (maxStack == -1)
+                {
+                    for (int i = 0; i < entries.Count; i++)
+                    {
+                        result.Add(entries[i].config);
+                    }
+                } else {
+                    for (int i = 0; i < entries.Count; i++)
+                    {
+                        if (i < maxStack)
+                        {
+                            result.Add(entries[i].config);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private class PassiveEffectEntry
+        {
+            public int index;
+            public PassiveEffectConfig config;
         }
 
         /// <summary>添加金币</summary>

@@ -503,7 +503,7 @@ namespace GeometryTD
 
             if (StoryManager.Instance.ContinueAdventure(selectedCollectionId))
             {
-                WinManager.Instance.CloseWin<StoryCollectionWin>();
+                WinManager.Instance.DestroyWin<StoryCollectionWin>();
                 StoryManager.Instance.EnterStoryScene();
             }
         }
@@ -529,7 +529,7 @@ namespace GeometryTD
             };
 
             StoryManager.Instance.StartNewAdventure(selectedCollectionId);
-            WinManager.Instance.CloseWin<StoryCollectionWin>();
+            WinManager.Instance.DestroyWin<StoryCollectionWin>();
             StoryManager.Instance.EnterStoryScene();
         }
 

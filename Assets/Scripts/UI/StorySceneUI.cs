@@ -22,6 +22,7 @@ namespace GeometryTD
 
         // Bottom
         private Text effectsCountText;
+        private Button collectionButton;
 
         // Animation
         private CanvasGroup interactionBlocker;
@@ -246,6 +247,15 @@ namespace GeometryTD
         {
             if (StoryManager.Instance != null)
                 StoryManager.Instance.BackToMainMenu();
+        }
+
+        private void OnCollectionButtonClicked()
+        {
+            CollectionBagWin win = GameHelper.OpenWin<CollectionBagWin>();
+            if (win != null)
+            {
+                win.Show();
+            }
         }
 
         // ===== Transition Animation =====
@@ -529,9 +539,16 @@ namespace GeometryTD
 
             // Effects count
             effectsCountText = CreateTextElement(rootRt, "EffectsCount",
-                new Vector2(0f, 0.08f), new Vector2(1f, 0.14f),
-                new Vector2(20f, 0f), new Vector2(-20f, 0f),
+                new Vector2(0f, 0.08f), new Vector2(0.5f, 0.14f),
+                new Vector2(20f, 0f), new Vector2(-10f, 0f),
                 20, new Color(0.7f, 0.85f, 1f), TextAnchor.MiddleCenter);
+
+            // Collection button
+            collectionButton = CreateTextButton(rootRt, "CollectionButton",
+                new Vector2(0.5f, 0.08f), new Vector2(0.5f, 0.14f),
+                new Vector2(10f, 0f), new Vector2(120f, 30f),
+                new Color(0.2f, 0.35f, 0.5f, 0.9f), 20, "Collections");
+            collectionButton.onClick.AddListener(OnCollectionButtonClicked);
         }
 
         private GameObject CreatePanel(RectTransform parent, string name,
