@@ -51,7 +51,7 @@ namespace GeometryTD
             // 加载已装备的奥术
             int[] equipped = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedArcanes()
-                : Cfg.Arcane.Meta.slot_ids;
+                : GameConsts.MetaConsts.ArcaneSlotIds;
             if (equipped != null)
             {
                 foreach (int id in equipped)
@@ -59,7 +59,7 @@ namespace GeometryTD
             }
 
             Font font = GameHelper.LoadFont();
-            int[] allArcaneIds = Cfg.Arcane.Meta.slot_ids;
+            int[] allArcaneIds = GameConsts.MetaConsts.ArcaneSlotIds;
             if (allArcaneIds == null) return;
 
             foreach (int arcaneId in allArcaneIds)

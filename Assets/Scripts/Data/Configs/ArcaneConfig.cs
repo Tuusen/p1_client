@@ -27,15 +27,8 @@ namespace GeometryTD
     }
 
     [Serializable]
-    public class ArcaneMeta
-    {
-        public int[] slot_ids;
-    }
-
-    [Serializable]
     public class ArcaneConfigData
     {
         public List<ArcaneConfig> items;
-        public ArcaneMeta meta;
     }
 }

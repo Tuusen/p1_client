@@ -153,7 +153,7 @@ namespace GeometryTD
             // 获取玩家选择的英雄
             int heroId = GameManager.Instance != null
                 ? GameManager.Instance.GetSelectedHeroId()
-                : Cfg.Hero.Meta.default_hero_id;
+                : GameConsts.MetaConsts.DefaultHeroId;
             HeroConfig heroConfig = Cfg.Hero.Get(heroId);
             if (heroConfig == null)
             {
@@ -213,7 +213,7 @@ namespace GeometryTD
             // 初始化技能管理器（使用玩家装备的技能）
             int[] equippedSkills = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedSkills()
-                : Cfg.Skill.Meta.slot_ids;
+                : GameConsts.MetaConsts.SkillSlotIds;
             if (equippedSkills != null && equippedSkills.Length > 0)
             {
                 skillManager = gameObject.AddComponent<SkillManager>();
@@ -238,7 +238,7 @@ namespace GeometryTD
             // 初始化奥术管理器（使用玩家装备的奥术）
             int[] equippedArcanes = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedArcanes()
-                : Cfg.Arcane.Meta.slot_ids;
+                : GameConsts.MetaConsts.ArcaneSlotIds;
             if (equippedArcanes != null && equippedArcanes.Length > 0)
             {
                 arcaneManager = gameObject.AddComponent<ArcaneManager>();

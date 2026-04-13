@@ -7,10 +7,10 @@
       "icon": "Icon/void_heart", 
       "color": 1, 
       "level": 0, 
-      "passives": [1], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 2, 
@@ -19,10 +19,10 @@
       "icon": "Icon/shadow_cloak", 
       "color": 1, 
       "level": 0, 
-      "passives": [2], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }, 
     {
       "id": 3, 
@@ -31,10 +31,10 @@
       "icon": "Icon/traveler_food", 
       "color": 1, 
       "level": 0, 
-      "passives": [3], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 1
+      "maxStack": -1
     }, 
     {
       "id": 4, 
@@ -43,10 +43,10 @@
       "icon": "Icon/eagle_lens", 
       "color": 1, 
       "level": 0, 
-      "passives": [4], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 5, 
@@ -55,10 +55,10 @@
       "icon": "Icon/rage_potion", 
       "color": 1, 
       "level": 0, 
-      "passives": [5], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 1
+      "maxStack": -1
     }, 
     {
       "id": 6, 
@@ -67,10 +67,10 @@
       "icon": "Icon/swift_blade", 
       "color": 1, 
       "level": 0, 
-      "passives": [6], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }, 
     {
       "id": 7, 
@@ -79,10 +79,10 @@
       "icon": "Icon/shadow_amulet", 
       "color": 1, 
       "level": 0, 
-      "passives": [7], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 8, 
@@ -91,10 +91,10 @@
       "icon": "Icon/shadow_eye", 
       "color": 1, 
       "level": 0, 
-      "passives": [8], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 9, 
@@ -103,10 +103,10 @@
       "icon": "Icon/traveler_bless", 
       "color": 1, 
       "level": 0, 
-      "passives": [9], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 5
+      "maxStack": -1
     }, 
     {
       "id": 10, 
@@ -115,10 +115,10 @@
       "icon": "Icon/void_barrier", 
       "color": 1, 
       "level": 0, 
-      "passives": [10], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 1
+      "maxStack": -1
     }, 
     {
       "id": 11, 
@@ -127,10 +127,10 @@
       "icon": "Icon/rift_power", 
       "color": 1, 
       "level": 0, 
-      "passives": [11], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }, 
     {
       "id": 12, 
@@ -139,10 +139,10 @@
       "icon": "Icon/blood_rune", 
       "color": 3, 
       "level": 0, 
-      "passives": [12], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 5
+      "maxStack": -1
     }, 
     {
       "id": 13, 
@@ -151,10 +151,10 @@
       "icon": "Icon/time_warp", 
       "color": 2, 
       "level": 0, 
-      "passives": [13], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }, 
     {
       "id": 14, 
@@ -164,9 +164,9 @@
       "color": 3, 
       "level": 0, 
       "passives": [], 
-      "addGold": 2500, 
+      "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 15, 
@@ -175,10 +175,10 @@
       "icon": "Icon/void_infusion", 
       "color": 2, 
       "level": 0, 
-      "passives": [15], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }, 
     {
       "id": 16, 
@@ -187,10 +187,10 @@
       "icon": "Icon/energy_crystal", 
       "color": 2, 
       "level": 0, 
-      "passives": [16], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 17, 
@@ -199,10 +199,10 @@
       "icon": "Icon/barrage_orb", 
       "color": 2, 
       "level": 0, 
-      "passives": [17], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }, 
     {
       "id": 18, 
@@ -211,10 +211,10 @@
       "icon": "Icon/void_shield", 
       "color": 3, 
       "level": 0, 
-      "passives": [18], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 19, 
@@ -223,10 +223,10 @@
       "icon": "Icon/slow_field", 
       "color": 3, 
       "level": 0, 
-      "passives": [19], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }, 
     {
       "id": 20, 
@@ -235,10 +235,10 @@
       "icon": "Icon/critical_instinct", 
       "color": 3, 
       "level": 0, 
-      "passives": [20], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 3
+      "maxStack": -1
     }, 
     {
       "id": 21, 
@@ -247,10 +247,10 @@
       "icon": "Icon/destruction_power", 
       "color": 3, 
       "level": 0, 
-      "passives": [21], 
+      "passives": [], 
       "addGold": 0, 
       "stackType": 0, 
-      "maxStack": 2
+      "maxStack": -1
     }
   ]
 }

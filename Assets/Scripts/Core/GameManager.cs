@@ -110,7 +110,7 @@ namespace GeometryTD
         {
             if (selectedHeroId > 0) return selectedHeroId;
             if (ConfigManager.Instance != null)
-                return Cfg.Hero.Meta.default_hero_id;
+                return GameConsts.MetaConsts.DefaultHeroId;
             return 1;
         }
 
@@ -127,7 +127,7 @@ namespace GeometryTD
             if (equippedSkillIds != null && equippedSkillIds.Length > 0)
                 return equippedSkillIds;
             if (ConfigManager.Instance != null)
-                return Cfg.Skill.Meta.slot_ids;
+                return GameConsts.MetaConsts.SkillSlotIds;
             return new int[0];
         }
 
@@ -150,7 +150,7 @@ namespace GeometryTD
             if (equippedArcaneIds != null && equippedArcaneIds.Length > 0)
                 return equippedArcaneIds;
             if (ConfigManager.Instance != null)
-                return Cfg.Arcane.Meta.slot_ids;
+                return GameConsts.MetaConsts.ArcaneSlotIds;
             return new int[0];
         }
 

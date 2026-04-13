@@ -8,15 +8,8 @@ using System.Collections.Generic;
 namespace GeometryTD
 {
     [Serializable]
-    public class GlobalMeta
-    {
-        public int kill_count_for_boss;
-        public float monster_spawn_interval;
-    }
-
-    [Serializable]
     public class GlobalConfigData
     {
-        public GlobalMeta meta;
+        // Global config is now handled via GameConsts.MetaConsts
     }
 }

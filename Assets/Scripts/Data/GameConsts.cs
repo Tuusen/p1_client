@@ -210,4 +210,42 @@ namespace GeometryTD
         /// <summary>弹窗优先级</summary>
         Popup = 100
     }
+
+    // ===== Meta配置常量 =====
+
+    public static class GameConsts
+    {
+        public static class MetaConsts
+        {
+            // Hero Meta
+            public const int DefaultHeroId = 1;
+
+            // Skill Meta
+            public static readonly int[] SkillSlotIds = new int[] { 
+            1001, 
+            1002, 
+            1003, 
+            1004, 
+            1005, 
+            1006, 
+            1007, 
+            1008
+            };
+
+            // Arcane Meta
+            public static readonly int[] ArcaneSlotIds = new int[] { 
+                4001, 
+                4002, 
+                4003, 
+                4004
+             };
+
+            // Monster Meta
+            public const int BossMonsterId = 100;
+
+            // Global Meta
+            public const int KillCountForBoss = 100;
+            public const float MonsterSpawnInterval = 1.0f;
+        }
+    }
 }

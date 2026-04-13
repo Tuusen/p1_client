@@ -30,15 +30,8 @@ namespace GeometryTD
     }
 
     [Serializable]
-    public class SkillMeta
-    {
-        public int[] slot_ids;
-    }
-
-    [Serializable]
     public class SkillConfigData
     {
         public List<SkillConfig> items;
-        public SkillMeta meta;
     }
 }

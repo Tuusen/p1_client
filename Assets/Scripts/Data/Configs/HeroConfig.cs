@@ -23,15 +23,8 @@ namespace GeometryTD
     }
 
     [Serializable]
-    public class HeroMeta
-    {
-        public int default_hero_id;
-    }
-
-    [Serializable]
     public class HeroConfigData
     {
         public List<HeroConfig> items;
-        public HeroMeta meta;
     }
 }

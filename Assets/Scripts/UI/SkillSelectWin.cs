@@ -50,7 +50,7 @@ namespace GeometryTD
 
             int[] equipped = GameManager.Instance != null
                 ? GameManager.Instance.GetEquippedSkills()
-                : Cfg.Skill.Meta.slot_ids;
+                : GameConsts.MetaConsts.SkillSlotIds;
             if (equipped != null)
             {
                 foreach (int id in equipped)
@@ -58,7 +58,7 @@ namespace GeometryTD
             }
 
             Font font = GameHelper.LoadFont();
-            int[] allSkillPoolIds = Cfg.Skill.Meta.slot_ids;
+            int[] allSkillPoolIds = GameConsts.MetaConsts.SkillSlotIds;
             if (allSkillPoolIds == null) return;
 
             foreach (int poolId in allSkillPoolIds)

@@ -13,7 +13,7 @@ namespace GeometryTD
         public static ConfigManager Instance { get; private set; }
 
         // --- AUTO-GENERATED TABLE FIELDS ---
-        public ConfigTable<ArcaneConfig, ArcaneMeta> arcaneTable;
+        public ConfigTable<ArcaneConfig> arcaneTable;
         public ConfigTable<AttributeConfig> attributeTable;
         public ConfigTable<BuffConfig> buffTable;
         public ConfigTable<BulletEventConfig> bulletEventTable;
@@ -24,14 +24,13 @@ namespace GeometryTD
         public ConfigTable<EventConfig> eventTable;
         public ConfigTable<EventEffectConfig> eventEffectTable;
         public ConfigTable<EventShopConfig> eventShopTable;
-        public ConfigMeta<GlobalMeta> globalTable;
-        public ConfigTable<HeroConfig, HeroMeta> heroTable;
+        public ConfigTable<HeroConfig> heroTable;
         public ConfigTable<LevelConfig> levelTable;
-        public ConfigTable<MonsterConfig, MonsterMeta> monsterTable;
+        public ConfigTable<MonsterConfig> monsterTable;
         public ConfigTable<PassiveConfig> passiveTable;
         public ConfigTable<PassiveEffectConfig> passiveEffectTable;
         public ConfigTable<RoleConfig> roleTable;
-        public ConfigTable<SkillConfig, SkillMeta> skillTable;
+        public ConfigTable<SkillConfig> skillTable;
         public ConfigTable<SkillPoolConfig> skillPoolTable;
         public ConfigTable<StoryCollectionConfig> storyCollectionTable;
         public ConfigTable<StoryNodeConfig> storyNodeTable;
@@ -54,8 +53,8 @@ namespace GeometryTD
         {
             {
                 var data = LoadConfig<ArcaneConfigData>("Configs/arcane_config");
-                arcaneTable = new ConfigTable<ArcaneConfig, ArcaneMeta>();
-                arcaneTable.Init(data.items, data.meta, c => c.id);
+                arcaneTable = new ConfigTable<ArcaneConfig>();
+                arcaneTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<AttributeConfigData>("Configs/attribute_config");
@@ -108,14 +107,9 @@ namespace GeometryTD
                 eventShopTable.Init(data.items, c => c.id);
             }
             {
-                var data = LoadConfig<GlobalConfigData>("Configs/global_config");
-                globalTable = new ConfigMeta<GlobalMeta>();
-                globalTable.Init(data.meta);
-            }
-            {
                 var data = LoadConfig<HeroConfigData>("Configs/hero_config");
-                heroTable = new ConfigTable<HeroConfig, HeroMeta>();
-                heroTable.Init(data.items, data.meta, c => c.id);
+                heroTable = new ConfigTable<HeroConfig>();
+                heroTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<LevelConfigData>("Configs/level_config");
@@ -124,8 +118,8 @@ namespace GeometryTD
             }
             {
                 var data = LoadConfig<MonsterConfigData>("Configs/monster_config");
-                monsterTable = new ConfigTable<MonsterConfig, MonsterMeta>();
-                monsterTable.Init(data.items, data.meta, c => c.id);
+                monsterTable = new ConfigTable<MonsterConfig>();
+                monsterTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<PassiveConfigData>("Configs/passive_config");
@@ -144,8 +138,8 @@ namespace GeometryTD
             }
             {
                 var data = LoadConfig<SkillConfigData>("Configs/skill_config");
-                skillTable = new ConfigTable<SkillConfig, SkillMeta>();
-                skillTable.Init(data.items, data.meta, c => c.id);
+                skillTable = new ConfigTable<SkillConfig>();
+                skillTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<SkillPoolConfigData>("Configs/skill_pool_config");

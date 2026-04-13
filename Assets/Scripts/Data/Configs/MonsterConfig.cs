@@ -22,15 +22,8 @@ namespace GeometryTD
     }
 
     [Serializable]
-    public class MonsterMeta
-    {
-        public int boss_monster_id;
-    }
-
-    [Serializable]
     public class MonsterConfigData
     {
         public List<MonsterConfig> items;
-        public MonsterMeta meta;
     }
 }
