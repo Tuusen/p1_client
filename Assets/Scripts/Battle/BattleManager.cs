@@ -514,7 +514,7 @@ namespace GeometryTD
 
         public void SpawnSkillBullet(Vector3 from, Transform target, float damage,
                                       float speed, BulletEventData bulletData, int bulletStyleId = 0,
-                                      float attackRange = 50f, IBuffTarget caster = null)
+                                      float attackRange = 50f, IBuffTarget caster = null, SkillConfig skill = null)
         {
             if (gameEnded) return;
 
@@ -528,12 +528,12 @@ namespace GeometryTD
 
             GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
-            bullet.InitSkillBullet(target, speed, damage, this, bulletData, attackRange, caster);
+            bullet.InitSkillBullet(target, speed, damage, this, bulletData, attackRange, caster, skill);
         }
 
         public void SpawnSkillBulletDirectional(Vector3 from, Vector3 direction, float damage,
                                                  float speed, BulletEventData bulletData, int bulletStyleId,
-                                                 float attackRange, IBuffTarget caster = null)
+                                                 float attackRange, IBuffTarget caster = null, SkillConfig skill = null)
         {
             if (gameEnded) return;
 
@@ -547,17 +547,17 @@ namespace GeometryTD
 
             GameObject bulletObj = Instantiate(prefab, from, Quaternion.identity);
             BulletController bullet = bulletObj.GetComponent<BulletController>();
-            bullet.InitSkillBullet(null, speed, damage, this, bulletData, attackRange, caster);
+            bullet.InitSkillBullet(null, speed, damage, this, bulletData, attackRange, caster, skill);
             bullet.SetDirectionalFlight(direction);
         }
 
         public void SpawnSkillBulletWithScatter(Vector3 from, Transform target, float damage,
                                                  float speed, BulletEventData bulletData, int bulletStyleId,
-                                                 float attackRange, IBuffTarget caster = null)
+                                                 float attackRange, IBuffTarget caster = null, SkillConfig skill = null)
         {
             if (gameEnded) return;
 
-            SpawnSkillBullet(from, target, damage, speed, bulletData.Clone(), bulletStyleId, attackRange, caster);
+            SpawnSkillBullet(from, target, damage, speed, bulletData.Clone(), bulletStyleId, attackRange, caster, skill);
 
             if (bulletData.scatterCount > 0 && bulletData.scatterAngle > 0)
             {
@@ -573,7 +573,7 @@ namespace GeometryTD
 
                     var data = bulletData.Clone();
                     data.scatterCount = 0;
-                    SpawnSkillBulletDirectional(from, scatterDir, damage, speed, data, bulletStyleId, attackRange, caster);
+                    SpawnSkillBulletDirectional(from, scatterDir, damage, speed, data, bulletStyleId, attackRange, caster, skill);
                 }
             }
         }

@@ -10,9 +10,16 @@ namespace GeometryTD
     [Serializable]
     public class EventEffectConfig
     {
+        [Serializable]
+        public class OffsetItem
+        {
+            public int x;
+            public int y;
+            public int z;
+        }
+
         public int eventType;
-        public float duration;
-        public string target;
+        public OffsetItem[] offset;
         public string prefabPath;
     }
 

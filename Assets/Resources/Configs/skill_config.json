@@ -18,7 +18,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         204010
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 1000101, 
@@ -36,7 +37,8 @@
       "attack_range": 50.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 1000201, 
@@ -54,7 +56,8 @@
       "attack_range": 50.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 1000202, 
@@ -74,7 +77,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         103000
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 1000203, 
@@ -95,7 +99,8 @@
       "bulletEvents": [
         103000, 
         101002
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 1000301, 
@@ -113,7 +118,8 @@
       "attack_range": 50.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 1000401, 
@@ -135,7 +141,8 @@
       "enemyEvents": [
         40003
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 2000001, 
@@ -153,7 +160,8 @@
       "attack_range": 15.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 1006101, 
@@ -173,7 +181,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         201003
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 1006102, 
@@ -193,7 +202,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         201010
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 1006103, 
@@ -214,7 +224,8 @@
       "bulletEvents": [
         201010, 
         101000
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100100, 
@@ -232,7 +243,8 @@
       "attack_range": 30.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100101, 
@@ -252,7 +264,8 @@
         60001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100102, 
@@ -272,7 +285,8 @@
         60002
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100103, 
@@ -294,7 +308,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         201004
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100104, 
@@ -316,7 +331,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         201004
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100105, 
@@ -338,7 +354,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         201008
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100106, 
@@ -360,7 +377,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         201008
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100107, 
@@ -382,7 +400,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         201008
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100108, 
@@ -406,7 +425,8 @@
       ], 
       "bulletEvents": [
         201008
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100109, 
@@ -430,7 +450,8 @@
       ], 
       "bulletEvents": [
         201008
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100110, 
@@ -455,7 +476,8 @@
       "bulletEvents": [
         201008, 
         102001
-      ]
+      ], 
+      "eventEffect": 4
     }, 
     {
       "id": 100200, 
@@ -473,7 +495,8 @@
       "attack_range": 0.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100201, 
@@ -494,7 +517,8 @@
         10001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100202, 
@@ -515,7 +539,8 @@
         10002
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100203, 
@@ -537,7 +562,8 @@
         30001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100204, 
@@ -559,7 +585,8 @@
         30001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100205, 
@@ -581,7 +608,8 @@
         30003
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100206, 
@@ -603,7 +631,8 @@
         30003
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100207, 
@@ -625,7 +654,8 @@
         30003
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100208, 
@@ -648,7 +678,8 @@
         70400
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100209, 
@@ -671,7 +702,8 @@
         70400
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100210, 
@@ -695,7 +727,8 @@
         80001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100300, 
@@ -713,7 +746,8 @@
       "attack_range": 30.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100301, 
@@ -735,7 +769,8 @@
       "enemyEvents": [
         70201
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100302, 
@@ -757,7 +792,8 @@
       "enemyEvents": [
         70201
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100303, 
@@ -781,7 +817,8 @@
       ], 
       "bulletEvents": [
         201005
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100304, 
@@ -805,7 +842,8 @@
       ], 
       "bulletEvents": [
         201005
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100305, 
@@ -829,7 +867,8 @@
       ], 
       "bulletEvents": [
         201005
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100306, 
@@ -853,7 +892,8 @@
       ], 
       "bulletEvents": [
         201005
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100307, 
@@ -877,7 +917,8 @@
       ], 
       "bulletEvents": [
         201005
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100308, 
@@ -902,7 +943,8 @@
       "bulletEvents": [
         201005, 
         101000
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100309, 
@@ -927,7 +969,8 @@
       "bulletEvents": [
         201005, 
         101000
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100310, 
@@ -953,7 +996,8 @@
         201005, 
         101000, 
         70601
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100400, 
@@ -971,7 +1015,8 @@
       "attack_range": 0.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100401, 
@@ -993,7 +1038,8 @@
         50001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100402, 
@@ -1015,7 +1061,8 @@
         50002
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100403, 
@@ -1037,7 +1084,8 @@
         50003
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100404, 
@@ -1059,7 +1107,8 @@
         50004
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100405, 
@@ -1081,7 +1130,8 @@
         50005
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100406, 
@@ -1103,7 +1153,8 @@
         50006
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100407, 
@@ -1125,7 +1176,8 @@
         50007
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100408, 
@@ -1146,7 +1198,8 @@
         50008
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100409, 
@@ -1167,7 +1220,8 @@
         50009
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100410, 
@@ -1188,7 +1242,8 @@
         50010
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100500, 
@@ -1206,7 +1261,8 @@
       "attack_range": 30.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100501, 
@@ -1228,7 +1284,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         202001
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100502, 
@@ -1250,7 +1307,8 @@
       "enemyEvents": [], 
       "bulletEvents": [
         202001
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100503, 
@@ -1274,7 +1332,8 @@
       ], 
       "bulletEvents": [
         202001
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100504, 
@@ -1298,7 +1357,8 @@
       ], 
       "bulletEvents": [
         202001
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100505, 
@@ -1322,7 +1382,8 @@
       ], 
       "bulletEvents": [
         202002
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100506, 
@@ -1346,7 +1407,8 @@
       ], 
       "bulletEvents": [
         202002
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100507, 
@@ -1370,7 +1432,8 @@
       ], 
       "bulletEvents": [
         202002
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100508, 
@@ -1394,7 +1457,8 @@
       ], 
       "bulletEvents": [
         202002
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100509, 
@@ -1418,7 +1482,8 @@
       ], 
       "bulletEvents": [
         202002
-      ]
+      ], 
+      "eventEffect": 0
     }, 
     {
       "id": 100510, 
@@ -1443,7 +1508,8 @@
       "bulletEvents": [
         202003, 
         102002
-      ]
+      ], 
+      "eventEffect": 16
     }, 
     {
       "id": 100600, 
@@ -1461,7 +1527,8 @@
       "attack_range": 0.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100601, 
@@ -1482,7 +1549,8 @@
         20001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100602, 
@@ -1503,7 +1571,8 @@
         20002
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100603, 
@@ -1525,7 +1594,8 @@
         70702
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100604, 
@@ -1547,7 +1617,8 @@
         70702
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100605, 
@@ -1569,7 +1640,8 @@
         70709
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100606, 
@@ -1591,7 +1663,8 @@
         70709
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100607, 
@@ -1613,7 +1686,8 @@
         70709
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100608, 
@@ -1635,7 +1709,8 @@
         70709
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100609, 
@@ -1657,7 +1732,8 @@
         70709
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100610, 
@@ -1680,7 +1756,8 @@
         80001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100700, 
@@ -1698,7 +1775,8 @@
       "attack_range": 0.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100701, 
@@ -1720,7 +1798,8 @@
       "enemyEvents": [
         40003
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100702, 
@@ -1742,7 +1821,8 @@
       "enemyEvents": [
         40003
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100703, 
@@ -1765,7 +1845,8 @@
         40003, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100704, 
@@ -1788,7 +1869,8 @@
         40003, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100705, 
@@ -1811,7 +1893,8 @@
         40003, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100706, 
@@ -1834,7 +1917,8 @@
         40003, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100707, 
@@ -1857,7 +1941,8 @@
         40003, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100708, 
@@ -1880,7 +1965,8 @@
         40010, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100709, 
@@ -1903,7 +1989,8 @@
         40010, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100710, 
@@ -1927,7 +2014,8 @@
         40010, 
         70301
       ], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100800, 
@@ -1945,7 +2033,8 @@
       "attack_range": 0.0, 
       "events": [], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100801, 
@@ -1966,7 +2055,8 @@
         90001
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100802, 
@@ -1987,7 +2077,8 @@
         90002
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100803, 
@@ -2008,7 +2099,8 @@
         90003
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100804, 
@@ -2029,7 +2121,8 @@
         90004
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100805, 
@@ -2050,7 +2143,8 @@
         90005
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100806, 
@@ -2071,7 +2165,8 @@
         90006
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100807, 
@@ -2092,7 +2187,8 @@
         90007
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100808, 
@@ -2113,7 +2209,8 @@
         90008
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100809, 
@@ -2134,7 +2231,8 @@
         90009
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }, 
     {
       "id": 100810, 
@@ -2155,7 +2253,8 @@
         90010
       ], 
       "enemyEvents": [], 
-      "bulletEvents": []
+      "bulletEvents": [], 
+      "eventEffect": 0
     }
   ], 
   "meta": {

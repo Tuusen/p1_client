@@ -21,6 +21,7 @@ namespace GeometryTD
         public string name;
         public string icon;
         public string des;
+        public int eventEffect;
         public int[] eventTarget;
         public int[] eventRemove;
         public EventCondItem[] eventCond;

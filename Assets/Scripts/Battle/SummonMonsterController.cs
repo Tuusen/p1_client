@@ -32,6 +32,8 @@ namespace GeometryTD
         public Vector3 Position => transform.position;
         public float CurrentHp => currentHp;
         public float MaxHp => maxHp;
+        public Transform CachedTransform => base.transform;
+        public BattleManager BattleManager => battleManager;
 
         public void OnBuffDamage(float dmg)
         {
@@ -213,17 +215,17 @@ namespace GeometryTD
 
             if (bulletData.burstCount > 1)
             {
-                StartCoroutine(BurstFireRoutine(target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range));
+                StartCoroutine(BurstFireRoutine(target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range, skillConfig));
             }
             else
             {
-                battleManager.SpawnSkillBulletWithScatter(transform.position, target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range);
+                battleManager.SpawnSkillBulletWithScatter(transform.position, target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range, this, skillConfig);
             }
 
             animator?.SetTrigger("Attack");
         }
 
-        private IEnumerator BurstFireRoutine(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange)
+        private IEnumerator BurstFireRoutine(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange, SkillConfig skill)
         {
             int burstCount = bulletData.burstCount;
             bulletData.burstCount = 0;
@@ -232,7 +234,7 @@ namespace GeometryTD
             {
                 if (isDead || battleManager == null) yield break;
                 if (target != null)
-                    battleManager.SpawnSkillBulletWithScatter(transform.position, target, damage, speed, bulletData, bulletStyleId, attackRange);
+                    battleManager.SpawnSkillBulletWithScatter(transform.position, target, damage, speed, bulletData, bulletStyleId, attackRange, this, skill);
                 if (b < burstCount - 1)
                     yield return new WaitForSeconds(0.05f);
             }

@@ -32,7 +32,7 @@ namespace GeometryTD
         public int probability;
         public int lastTime;
         public int jumpTime;
-        public string persistJson;
+        public int eventEffect;
         public string position;
         public int type;
         public int dispel;

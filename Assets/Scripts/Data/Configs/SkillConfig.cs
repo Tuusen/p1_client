@@ -26,6 +26,7 @@ namespace GeometryTD
         public int[] events;
         public int[] enemyEvents;
         public int[] bulletEvents;
+        public int eventEffect;
     }
 
     [Serializable]

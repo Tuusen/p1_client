@@ -32,6 +32,16 @@ namespace GeometryTD
                         return;
                 }
 
+                // 处理 eventEffect - 一次性特效
+                if (config.eventEffect > 0 && ctx.caster != null)
+                {
+                    var battleManager = ctx.caster.BattleManager;
+                    if (battleManager != null && battleManager.EventEffectManager != null)
+                    {
+                        battleManager.EventEffectManager.TriggerOneShotEffect(config.eventEffect, ctx.position);
+                    }
+                }
+
                 EventExecutor.ExecuteEvents(config.events, ctx);
 
                 // 释放技能
@@ -108,6 +118,16 @@ namespace GeometryTD
                     {
                         if (Random.Range(0, 10000) >= cfg.odds)
                             continue;
+                    }
+
+                    // 处理 eventEffect - 一次性特效（只在触发时播放一次）
+                    if (cfg.eventEffect > 0 && ctx.caster != null)
+                    {
+                        var battleManager = ctx.caster.BattleManager;
+                        if (battleManager != null && battleManager.EventEffectManager != null)
+                        {
+                            battleManager.EventEffectManager.TriggerOneShotEffect(cfg.eventEffect, ctx.position);
+                        }
                     }
 
                     // 执行事件

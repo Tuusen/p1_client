@@ -11,6 +11,7 @@ namespace GeometryTD
         public float remainingTime;   // 秒
         public float tickTimer;       // 跳伤计时（秒）
         public IBuffTarget caster;    // 施加者引用，用于 evtDmgRate 伤害计算
+        public GameObject attachedEffect; // 持续挂载的特效对象
     }
 
     public interface IBuffTarget
@@ -27,6 +28,8 @@ namespace GeometryTD
         float MaxHp { get; }
         int GetHpPercent();
         int GetShieldPercent();
+        Transform CachedTransform { get; }
+        BattleManager BattleManager { get; }
     }
 
     public class BuffSystem
@@ -80,9 +83,24 @@ namespace GeometryTD
                 stackCount = 1,
                 remainingTime = config.lastTime > 0 ? config.lastTime / 1000f : -1f,
                 tickTimer = 0f,
-                caster = caster
+                caster = caster,
+                attachedEffect = null
             };
             buffs.Add(entry);
+
+            // 处理 eventEffect - 持续挂载特效
+            if (config.eventEffect > 0 && target != null)
+            {
+                var battleManager = target.BattleManager;
+                if (battleManager != null && battleManager.EventEffectManager != null)
+                {
+                    battleManager.EventEffectManager.TriggerAttachedEffect(config.eventEffect, target.CachedTransform);
+                    // 记录到 BuffEntry 中以便后续移除
+                    // 注意：由于 TriggerAttachedEffect 创建了一个父对象，我们通过查找同名对象来追踪
+                    // 为了简化，这里通过事件类型来查找和管理
+                    entry.attachedEffect = target.CachedTransform.Find($"AttachedEffect_{config.eventEffect}")?.gameObject;
+                }
+            }
         }
 
         public void RemoveBuffByConfigId(int buffConfigId, int count)
@@ -92,6 +110,9 @@ namespace GeometryTD
             {
                 if (buffs[i].buffConfigId == buffConfigId)
                 {
+                    // 移除关联的特效
+                    RemoveAttachedEffect(buffs[i]);
+
                     buffs.RemoveAt(i);
                     removed++;
                     if (count > 0 && removed >= count) break;
@@ -106,10 +127,28 @@ namespace GeometryTD
             {
                 if (buffs[i].cachedConfig != null && buffs[i].cachedConfig.type == buffType)
                 {
+                    // 移除关联的特效
+                    RemoveAttachedEffect(buffs[i]);
+
                     buffs.RemoveAt(i);
                     removed++;
                     if (count > 0 && removed >= count) break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 移除Buff关联的持续挂载特效
+        /// </summary>
+        private void RemoveAttachedEffect(BuffEntry entry)
+        {
+            if (entry.attachedEffect != null)
+            {
+                // 特效由父级（target）销毁时自动清理
+                // 如果特效还在，单独销毁它
+                if (entry.attachedEffect != null)
+                    Object.Destroy(entry.attachedEffect);
+                entry.attachedEffect = null;
             }
         }
 
@@ -219,6 +258,9 @@ namespace GeometryTD
                             EventExecutor.ExecuteEvents(cfg.evtWhenEnd, endCtx);
                         }
 
+                        // 移除关联的特效
+                        RemoveAttachedEffect(buff);
+
                         buffs.RemoveAt(i);
                     }
                 }
@@ -251,6 +293,11 @@ namespace GeometryTD
 
         public void Clear()
         {
+            // 清除所有buff时也要清理特效
+            for (int i = 0; i < buffs.Count; i++)
+            {
+                RemoveAttachedEffect(buffs[i]);
+            }
             buffs.Clear();
         }
 
@@ -370,7 +417,7 @@ namespace GeometryTD
                         battleManager.SpawnSkillBulletWithScatter(
                             defenderMono.transform.position, attackerMono.transform,
                             actualDmg, skillConfig.bulletSpeed, bulletData,
-                            skillConfig.bulletStyleId, skillRange, defender);
+                            skillConfig.bulletStyleId, skillRange, defender, skillConfig);
                     }
                 }
             }

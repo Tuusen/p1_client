@@ -47,6 +47,8 @@ namespace GeometryTD
         public Vector3 Position => transform.position;
         public float CurrentHp => currentHp;
         public float MaxHp => maxHp;
+        public Transform CachedTransform => base.transform;
+        public BattleManager BattleManager => battleManager;
 
         public float AttackRange => attackRange;
         public float BaseAttack => attrs != null ? attrs.GetAttack() : 0;
@@ -531,7 +533,7 @@ namespace GeometryTD
             {
                 if (target == null) continue;
                 battleManager.SpawnSkillBulletWithScatter(transform.position, target, actualDmg,
-                    config.bulletSpeed, bulletData, config.bulletStyleId, skillRange, this);
+                    config.bulletSpeed, bulletData, config.bulletStyleId, skillRange, this, config);
             }
         }
 

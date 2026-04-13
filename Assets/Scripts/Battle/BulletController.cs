@@ -19,6 +19,7 @@ namespace GeometryTD
         private BattleManager battleManager;
         private BulletEventData bulletData;
         private IBuffTarget caster;
+        private SkillConfig skillConfig; // 存储来源技能，用于访问 eventEffect
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
 
         private bool isPiercing;
@@ -56,7 +57,7 @@ namespace GeometryTD
         // 技能子弹
         public void InitSkillBullet(Transform target, float speed, float damage,
                                      BattleManager bm, BulletEventData data, float attackRange,
-                                     IBuffTarget caster = null)
+                                     IBuffTarget caster = null, SkillConfig skill = null)
         {
             this.target = target;
             this.speed = speed;
@@ -65,6 +66,7 @@ namespace GeometryTD
             this.battleManager = bm;
             this.bulletData = data ?? new BulletEventData();
             this.caster = caster;
+            this.skillConfig = skill;
             this.hasTarget = target != null;
             this.maxAttackRange = attackRange;
             this.startPosition = transform.position;
@@ -483,6 +485,15 @@ namespace GeometryTD
         private void ExecuteHitEvents()
         {
             if (isEnemyBullet || target == null || bulletData == null) return;
+
+            // 处理 skill.eventEffect - 一次性特效（在子弹命中时播放一次后移除）
+            if (skillConfig != null && skillConfig.eventEffect > 0)
+            {
+                if (battleManager != null && battleManager.EventEffectManager != null)
+                {
+                    battleManager.EventEffectManager.TriggerOneShotEffect(skillConfig.eventEffect, target.position);
+                }
+            }
 
             // 对目标附加事件（冰冻、灼烧、减速等通过 buff 事件实现）
             if (bulletData.attachToTargetEventIds != null && bulletData.attachToTargetEventIds.Count > 0)
