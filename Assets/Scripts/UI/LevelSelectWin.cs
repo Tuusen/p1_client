@@ -6,31 +6,20 @@ namespace GeometryTD
 {
     public class LevelSelectWin : BaseWin
     {
-        [SerializeField] private Transform levelListContent;
-        [SerializeField] private GameObject detailPanel;
         [SerializeField] private Text detailNameText;
         [SerializeField] private Text detailDescText;
         [SerializeField] private Text detailEliteText;
         [SerializeField] private Text detailBossText;
         [SerializeField] private Text detailConditionText;
         [SerializeField] private Button challengeButton;
-        [SerializeField] private Button closeDetailButton;
         [SerializeField] private Button closePanelButton;
 
         private int selectedLevelId;
         private bool isStoryMode;
-        private List<GameObject> levelItems = new List<GameObject>();
 
         public override void Init()
         {
             base.Init();
-            if (closeDetailButton != null)
-                closeDetailButton.onClick.AddListener(() => {
-                    if (isStoryMode)
-                        WinManager.Instance.CloseWin<LevelSelectWin>();
-                    else
-                        detailPanel.SetActive(false);
-                });
             if (closePanelButton != null)
                 closePanelButton.onClick.AddListener(() => {
                     OnClose();
@@ -38,85 +27,12 @@ namespace GeometryTD
             if (challengeButton != null)
                 challengeButton.onClick.AddListener(OnChallengeClicked);
 
-            if (detailPanel != null)
-                detailPanel.SetActive(false);
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            RefreshLevelList();
         }
 
         public override void OnClose()
         {
             isStoryMode = false;
             base.OnClose();
-        }
-
-        private void RefreshLevelList()
-        {
-            foreach (var item in levelItems)
-            {
-                if (item != null) Destroy(item);
-            }
-            levelItems.Clear();
-
-            if (ConfigManager.Instance == null || Cfg.Level.All == null) return;
-
-            Font font = GameHelper.LoadFont();
-
-            foreach (LevelConfig level in Cfg.Level.All)
-            {
-                bool unlocked = GameManager.Instance != null && GameManager.Instance.IsLevelUnlocked(level.id);
-                bool completed = GameManager.Instance != null && GameManager.Instance.IsLevelCompleted(level.id);
-
-                GameObject itemObj = CreateLevelItem(level, unlocked, completed, font);
-                levelItems.Add(itemObj);
-            }
-        }
-
-        private GameObject CreateLevelItem(LevelConfig config, bool unlocked, bool completed, Font font)
-        {
-            GameObject itemObj = new GameObject($"LevelItem_{config.id}");
-            itemObj.transform.SetParent(levelListContent, false);
-
-            Image bg = itemObj.AddComponent<Image>();
-            if (completed)
-                bg.color = new Color(0.15f, 0.3f, 0.15f, 0.9f);
-            else if (unlocked)
-                bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
-            else
-                bg.color = new Color(0.1f, 0.1f, 0.1f, 0.7f);
-
-            Button btn = itemObj.AddComponent<Button>();
-            int levelId = config.id;
-            btn.onClick.AddListener(() => OnLevelItemClicked(levelId));
-
-            ColorBlock cb = btn.colors;
-            cb.normalColor = Color.white;
-            cb.highlightedColor = unlocked ? new Color(0.9f, 0.9f, 1f) : Color.white;
-            cb.pressedColor = unlocked ? new Color(0.7f, 0.7f, 0.9f) : Color.white;
-            cb.disabledColor = new Color(0.5f, 0.5f, 0.5f);
-            btn.colors = cb;
-
-            // 关卡编号
-            GameObject numObj = new GameObject("Number");
-            numObj.transform.SetParent(itemObj.transform, false);
-            RectTransform numRt = numObj.AddComponent<RectTransform>();
-            numRt.anchorMin = Vector2.zero;
-            numRt.anchorMax = Vector2.one;
-            numRt.offsetMin = Vector2.zero;
-            numRt.offsetMax = Vector2.zero;
-
-            Text numText = numObj.AddComponent<Text>();
-            numText.font = font;
-            numText.fontSize = 36;
-            numText.alignment = TextAnchor.MiddleCenter;
-            numText.text = config.id.ToString();
-            numText.color = unlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f);
-
-            return itemObj;
         }
 
         public void ShowForStoryNode(int levelId)
@@ -128,20 +44,12 @@ namespace GeometryTD
                 challengeButton.interactable = true;
         }
 
-        private void OnLevelItemClicked(int levelId)
-        {
-            selectedLevelId = levelId;
-            ShowDetail(levelId);
-        }
 
         private void ShowDetail(int levelId)
         {
-            if (detailPanel == null) return;
 
             LevelConfig config = Cfg.Level.Get(levelId);
             if (config == null) return;
-
-            detailPanel.SetActive(true);
 
             if (detailNameText != null)
                 detailNameText.text = $"第{config.id}关 - {config.name}";

@@ -67,6 +67,7 @@ namespace GeometryTD
 
         public T OpenWin<T>(string prefabPath) where T : BaseWin
         {
+            Debug.LogWarning($"[WinManager] 打开窗口: {prefabPath}");
             Type type = typeof(T);
 
             if (winCache.TryGetValue(type, out BaseWin cached))
