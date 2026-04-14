@@ -272,7 +272,7 @@ namespace GeometryTD
         /// </summary>
         /// <param name="choiceOptionIndex">选择的选项在选项组中的索引（1-based）</param>
         /// <param name="choiceOption">选中的选项配置</param>
-        public void ProcessChoice(int choiceOptionIndex, ChoiceGroupConfig.OptionsItem choiceOption)
+        public void ProcessChoice(int choiceOptionIndex, ChoiceConfig choiceOption)
         {
             if (Runtime == null || choiceOption == null) return;
 

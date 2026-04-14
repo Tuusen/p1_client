@@ -12,10 +12,10 @@ namespace GeometryTD
     {
         public int id;
         public string text;
-        public string description;
+        public string des;
+        public int goldReward;
         public int effectId;
         public bool triggerBattle;
-        public int goldReward;
     }
 
     [Serializable]

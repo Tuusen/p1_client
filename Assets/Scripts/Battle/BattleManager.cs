@@ -784,7 +784,7 @@ namespace GeometryTD
         private void ShowBossChoices(int choiceGroupId)
         {
             ChoiceGroupConfig config = Cfg.ChoiceGroup.Get(choiceGroupId);
-            if (config != null && config.options != null && config.options.Length > 0)
+            if (config != null && config.choices != null && config.choices.Length > 0)
             {
                 ChoiceWin win = GameHelper.OpenWin<ChoiceWin>();
                 win.ShowChoices(config, OnBossChoiceSelected);
@@ -794,7 +794,7 @@ namespace GeometryTD
             monsterSpawner.OnBossKilled();
         }
 
-        private void OnBossChoiceSelected(int index, ChoiceGroupConfig.OptionsItem option)
+        private void OnBossChoiceSelected(int index, ChoiceConfig option)
         {
             if (option != null && StoryManager.Instance != null)
                 StoryManager.Instance.ProcessChoice(index, option);

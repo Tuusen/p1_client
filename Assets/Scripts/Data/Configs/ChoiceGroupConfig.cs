@@ -10,20 +10,9 @@ namespace GeometryTD
     [Serializable]
     public class ChoiceGroupConfig
     {
-        [Serializable]
-        public class OptionsItem
-        {
-            public int id;
-            public string text;
-            public string description;
-            public int effectId;
-            public bool triggerBattle;
-            public int goldReward;
-        }
-
         public int id;
         public string title;
-        public OptionsItem[] options;
+        public int[] choices;
     }
 
     [Serializable]

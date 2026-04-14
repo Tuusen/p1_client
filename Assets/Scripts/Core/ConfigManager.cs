@@ -13,28 +13,28 @@ namespace GeometryTD
         public static ConfigManager Instance { get; private set; }
 
         // --- AUTO-GENERATED TABLE FIELDS ---
-        public ConfigTable<ArcaneConfig> arcaneTable;
-        public ConfigTable<AttributeConfig> attributeTable;
-        public ConfigTable<BuffConfig> buffTable;
-        public ConfigTable<BulletEventConfig> bulletEventTable;
-        public ConfigTable<BulletStyleConfig> bulletStyleTable;
-        public ConfigTable<ChoiceGroupConfig> choiceGroupTable;
-        public ConfigTable<ChoiceConfig> choiceTable;
-        public ConfigTable<ConditionConfig> conditionTable;
-        public ConfigTable<DialogueConfig> dialogueTable;
         public ConfigTable<EventConfig> eventTable;
-        public ConfigTable<EventEffectConfig> eventEffectTable;
-        public ConfigTable<EventShopConfig> eventShopTable;
-        public ConfigTable<HeroConfig> heroTable;
-        public ConfigTable<LevelConfig> levelTable;
-        public ConfigTable<MonsterConfig> monsterTable;
+        public ConfigTable<BulletEventConfig> bulletEventTable;
+        public ConfigTable<BuffConfig> buffTable;
         public ConfigTable<PassiveConfig> passiveTable;
-        public ConfigTable<PassiveEffectConfig> passiveEffectTable;
+        public ConfigTable<LevelConfig> levelTable;
+        public ConfigTable<ArcaneConfig> arcaneTable;
+        public ConfigTable<DialogueConfig> dialogueTable;
+        public ConfigTable<AttributeConfig> attributeTable;
         public ConfigTable<RoleConfig> roleTable;
-        public ConfigTable<SkillConfig> skillTable;
+        public ConfigTable<MonsterConfig> monsterTable;
         public ConfigTable<SkillPoolConfig> skillPoolTable;
+        public ConfigTable<SkillConfig> skillTable;
         public ConfigTable<StoryCollectionConfig> storyCollectionTable;
         public ConfigTable<StoryNodeConfig> storyNodeTable;
+        public ConfigTable<ChoiceGroupConfig> choiceGroupTable;
+        public ConfigTable<ChoiceConfig> choiceTable;
+        public ConfigTable<PassiveEffectConfig> passiveEffectTable;
+        public ConfigTable<EventShopConfig> eventShopTable;
+        public ConfigTable<ConditionConfig> conditionTable;
+        public ConfigTable<EventEffectConfig> eventEffectTable;
+        public ConfigTable<BulletStyleConfig> bulletStyleTable;
+        public ConfigTable<HeroConfig> heroTable;
 
         // USER CODE START - Fields
         private Dictionary<int, GameObject> bulletPrefabCache;
@@ -53,19 +53,9 @@ namespace GeometryTD
         private void LoadAllConfigs()
         {
             {
-                var data = LoadConfig<ArcaneConfigData>("Configs/arcane_config");
-                arcaneTable = new ConfigTable<ArcaneConfig>();
-                arcaneTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<AttributeConfigData>("Configs/attribute_config");
-                attributeTable = new ConfigTable<AttributeConfig>();
-                attributeTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<BuffConfigData>("Configs/buff_config");
-                buffTable = new ConfigTable<BuffConfig>();
-                buffTable.Init(data.items, c => c.id);
+                var data = LoadConfig<EventConfigData>("Configs/event_config");
+                eventTable = new ConfigTable<EventConfig>();
+                eventTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<BulletEventConfigData>("Configs/bullet_event_config");
@@ -73,9 +63,64 @@ namespace GeometryTD
                 bulletEventTable.Init(data.items, c => c.id);
             }
             {
-                var data = LoadConfig<BulletStyleConfigData>("Configs/bullet_style_config");
-                bulletStyleTable = new ConfigTable<BulletStyleConfig>();
-                bulletStyleTable.Init(data.items, c => c.id);
+                var data = LoadConfig<BuffConfigData>("Configs/buff_config");
+                buffTable = new ConfigTable<BuffConfig>();
+                buffTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<PassiveConfigData>("Configs/passive_config");
+                passiveTable = new ConfigTable<PassiveConfig>();
+                passiveTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<LevelConfigData>("Configs/level_config");
+                levelTable = new ConfigTable<LevelConfig>();
+                levelTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<ArcaneConfigData>("Configs/arcane_config");
+                arcaneTable = new ConfigTable<ArcaneConfig>();
+                arcaneTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<DialogueConfigData>("Configs/dialogue_config");
+                dialogueTable = new ConfigTable<DialogueConfig>();
+                dialogueTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<AttributeConfigData>("Configs/attribute_config");
+                attributeTable = new ConfigTable<AttributeConfig>();
+                attributeTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<RoleConfigData>("Configs/role_config");
+                roleTable = new ConfigTable<RoleConfig>();
+                roleTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<MonsterConfigData>("Configs/monster_config");
+                monsterTable = new ConfigTable<MonsterConfig>();
+                monsterTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<SkillPoolConfigData>("Configs/skill_pool_config");
+                skillPoolTable = new ConfigTable<SkillPoolConfig>();
+                skillPoolTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<SkillConfigData>("Configs/skill_config");
+                skillTable = new ConfigTable<SkillConfig>();
+                skillTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<StoryCollectionConfigData>("Configs/story_collection_config");
+                storyCollectionTable = new ConfigTable<StoryCollectionConfig>();
+                storyCollectionTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<StoryNodeConfigData>("Configs/story_node_config");
+                storyNodeTable = new ConfigTable<StoryNodeConfig>();
+                storyNodeTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<ChoiceGroupConfigData>("Configs/choice_group_config");
@@ -88,24 +133,9 @@ namespace GeometryTD
                 choiceTable.Init(data.items, c => c.id);
             }
             {
-                var data = LoadConfig<ConditionConfigData>("Configs/condition_config");
-                conditionTable = new ConfigTable<ConditionConfig>();
-                conditionTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<DialogueConfigData>("Configs/dialogue_config");
-                dialogueTable = new ConfigTable<DialogueConfig>();
-                dialogueTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<EventConfigData>("Configs/event_config");
-                eventTable = new ConfigTable<EventConfig>();
-                eventTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<EventEffectConfigData>("Configs/event_effect_config");
-                eventEffectTable = new ConfigTable<EventEffectConfig>();
-                eventEffectTable.Init(data.items, c => c.eventType);
+                var data = LoadConfig<PassiveEffectConfigData>("Configs/passive_effect_config");
+                passiveEffectTable = new ConfigTable<PassiveEffectConfig>();
+                passiveEffectTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<EventShopConfigData>("Configs/event_shop_config");
@@ -113,54 +143,24 @@ namespace GeometryTD
                 eventShopTable.Init(data.items, c => c.id);
             }
             {
+                var data = LoadConfig<ConditionConfigData>("Configs/condition_config");
+                conditionTable = new ConfigTable<ConditionConfig>();
+                conditionTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<EventEffectConfigData>("Configs/event_effect_config");
+                eventEffectTable = new ConfigTable<EventEffectConfig>();
+                eventEffectTable.Init(data.items, c => c.eventType);
+            }
+            {
+                var data = LoadConfig<BulletStyleConfigData>("Configs/bullet_style_config");
+                bulletStyleTable = new ConfigTable<BulletStyleConfig>();
+                bulletStyleTable.Init(data.items, c => c.id);
+            }
+            {
                 var data = LoadConfig<HeroConfigData>("Configs/hero_config");
                 heroTable = new ConfigTable<HeroConfig>();
                 heroTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<LevelConfigData>("Configs/level_config");
-                levelTable = new ConfigTable<LevelConfig>();
-                levelTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<MonsterConfigData>("Configs/monster_config");
-                monsterTable = new ConfigTable<MonsterConfig>();
-                monsterTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<PassiveConfigData>("Configs/passive_config");
-                passiveTable = new ConfigTable<PassiveConfig>();
-                passiveTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<PassiveEffectConfigData>("Configs/passive_effect_config");
-                passiveEffectTable = new ConfigTable<PassiveEffectConfig>();
-                passiveEffectTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<RoleConfigData>("Configs/role_config");
-                roleTable = new ConfigTable<RoleConfig>();
-                roleTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<SkillConfigData>("Configs/skill_config");
-                skillTable = new ConfigTable<SkillConfig>();
-                skillTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<SkillPoolConfigData>("Configs/skill_pool_config");
-                skillPoolTable = new ConfigTable<SkillPoolConfig>();
-                skillPoolTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<StoryCollectionConfigData>("Configs/story_collection_config");
-                storyCollectionTable = new ConfigTable<StoryCollectionConfig>();
-                storyCollectionTable.Init(data.items, c => c.id);
-            }
-            {
-                var data = LoadConfig<StoryNodeConfigData>("Configs/story_node_config");
-                storyNodeTable = new ConfigTable<StoryNodeConfig>();
-                storyNodeTable.Init(data.items, c => c.id);
             }
 
             // USER CODE START - AfterLoad

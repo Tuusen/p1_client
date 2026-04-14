@@ -99,7 +99,7 @@ namespace GeometryTD
             }
         }
 
-        private void OnEventChoicesComplete(int index, ChoiceGroupConfig.OptionsItem option)
+        private void OnEventChoicesComplete(int index, ChoiceConfig option)
         {
             if (option != null)
                 StoryManager.Instance.ProcessChoice(index, option);
@@ -508,10 +508,10 @@ namespace GeometryTD
             win.ShowDialogue(config, onComplete);
         }
 
-        private void ShowChoices(int choiceGroupId, System.Action<int, ChoiceGroupConfig.OptionsItem> onSelected)
+        private void ShowChoices(int choiceGroupId, System.Action<int, ChoiceConfig> onSelected)
         {
             ChoiceGroupConfig config = Cfg.ChoiceGroup.Get(choiceGroupId);
-            if (config == null || config.options == null || config.options.Length == 0)
+            if (config == null || config.choices == null || config.choices.Length == 0)
             {
                 onSelected?.Invoke(0, null);
                 return;

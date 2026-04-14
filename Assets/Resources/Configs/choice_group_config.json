@@ -3,295 +3,106 @@
     {
       "id": 1, 
       "title": "虚空领主留下了两条道路", 
-      "options": [
-        {
-          "id": 101, 
-          "text": "虚空之力", 
-          "description": "吸收虚空能量，获得生命值提升", 
-          "effectId": 1, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 102, 
-          "text": "暗影之路", 
-          "description": "走入暗影，获得攻击力提升", 
-          "effectId": 2, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 103, 
-          "text": "拒绝选择", 
-          "description": "放弃力量，获得大量金币", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 200
-        }
+      "choices": [
+        101, 
+        102, 
+        103
       ]
-    }, 
+    },
     {
       "id": 2, 
       "title": "深渊守卫倒下了", 
-      "options": [
-        {
-          "id": 201, 
-          "text": "吸收暗能量", 
-          "description": "护盾值增加500", 
-          "effectId": 3, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 202, 
-          "text": "放弃暗能量", 
-          "description": "获得少量金币", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 50
-        }
+      "choices": [
+        201, 
+        202
       ]
     }, 
     {
       "id": 3, 
       "title": "虚空暴君留下了力量的残渣", 
-      "options": [
-        {
-          "id": 301, 
-          "text": "净化残渣", 
-          "description": "获得攻击范围提升", 
-          "effectId": 4, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 302, 
-          "text": "吞噬残渣", 
-          "description": "获得攻击力大幅提升，但生命值降低", 
-          "effectId": 5, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }
+      "choices": [
+        301, 
+        302
       ]
-    }, 
+    },
     {
       "id": 4, 
       "title": "暗影通道的守卫被击败", 
-      "options": [
-        {
-          "id": 401, 
-          "text": "继承暗影", 
-          "description": "获得攻击间隔缩短", 
-          "effectId": 6, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 402, 
-          "text": "摧毁暗影", 
-          "description": "获得金币奖励", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 100
-        }
+      "choices": [
+        401, 
+        402
       ]
     }, 
     {
       "id": 5, 
       "title": "暗影的最终守护者倒下了", 
-      "options": [
-        {
-          "id": 501, 
-          "text": "探索密室", 
-          "description": "进入暗影密室", 
-          "effectId": 7, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 502, 
-          "text": "离开暗影", 
-          "description": "回到主线路径", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 50
-        }
+      "choices": [
+        501, 
+        502
       ]
     }, 
     {
       "id": 6, 
       "title": "沉默的道路尽头出现了光芒", 
-      "options": [
-        {
-          "id": 601, 
-          "text": "追随光芒", 
-          "description": "前往营地休息", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 602, 
-          "text": "拥抱黑暗", 
-          "description": "获得暗影之力，前往商店", 
-          "effectId": 8, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }
+      "choices": [
+        601, 
+        602
       ]
-    }, 
+    },
     {
       "id": 7, 
       "title": "旅者向你提出了请求", 
-      "options": [
-        {
-          "id": 701, 
-          "text": "帮助旅者", 
-          "description": "帮助旅者清除附近的怪物", 
-          "effectId": 9, 
-          "triggerBattle": true, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 702, 
-          "text": "婉言拒绝", 
-          "description": "继续赶路，获得少量补给", 
-          "effectId": 3, 
-          "triggerBattle": false, 
-          "goldReward": 50
-        }
+      "choices": [
+        701, 
+        702
       ]
-    }, 
+    },
     {
       "id": 8, 
       "title": "裂隙深处的最终守卫倒下了", 
-      "options": [
-        {
-          "id": 801, 
-          "text": "封印裂隙", 
-          "description": "获得护盾强化", 
-          "effectId": 10, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 802, 
-          "text": "扩大裂隙", 
-          "description": "获得攻击力强化", 
-          "effectId": 11, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }
+      "choices": [
+        801, 
+        802
       ]
     }, 
     {
       "id": 9, 
       "title": "暗影密室中发现了神秘的宝物", 
-      "options": [
-        {
-          "id": 901, 
-          "text": "取走宝物", 
-          "description": "获得嗜血符文", 
-          "effectId": 12, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 902, 
-          "text": "摧毁宝物", 
-          "description": "获得大量金币", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 300
-        }
+      "choices": [
+        901, 
+        902
       ]
     }, 
     {
       "id": 10, 
       "title": "第一道风暴已经平息", 
-      "options": [
-        {
-          "id": 1001, 
-          "text": "虚空共鸣", 
-          "description": "与虚空产生共鸣，生命值大幅提升", 
-          "effectId": 1, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 1002, 
-          "text": "暗影涌动", 
-          "description": "暗影力量涌入，攻击力提升", 
-          "effectId": 2, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }
+      "choices": [
+        1001, 
+        1002
       ]
-    }, 
+    },
     {
       "id": 11, 
       "title": "第二道风暴的守卫倒下了", 
-      "options": [
-        {
-          "id": 1101, 
-          "text": "凝聚力量", 
-          "description": "获得技能CD减少", 
-          "effectId": 13, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 1102, 
-          "text": "分散力量", 
-          "description": "获得金币", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 150
-        }
+      "choices": [
+        1101, 
+        1102
       ]
     }, 
     {
       "id": 12, 
       "title": "虚空暴君发出了最后的咆哮", 
-      "options": [
-        {
-          "id": 1201, 
-          "text": "终结虚空", 
-          "description": "以净化之力终结虚空的纪元", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 1202, 
-          "text": "融入虚空", 
-          "description": "接受虚空的力量，成为虚空的一部分", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }
+      "choices": [
+        1201, 
+        1202
       ]
-    }, 
+    },
     {
       "id": 13, 
       "title": "歧路上的最终选择", 
-      "options": [
-        {
-          "id": 1301, 
-          "text": "回归正道", 
-          "description": "选择光明的结局", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }, 
-        {
-          "id": 1302, 
-          "text": "继续歧路", 
-          "description": "走向未知的终点", 
-          "effectId": 0, 
-          "triggerBattle": false, 
-          "goldReward": 0
-        }
+      "choices": [
+        1301, 
+        1302
       ]
     }
   ]

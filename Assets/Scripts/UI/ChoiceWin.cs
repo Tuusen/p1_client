@@ -11,7 +11,7 @@ namespace GeometryTD
         [SerializeField] private Transform optionListContent;
 
         private ChoiceGroupConfig currentConfig;
-        private Action<int, ChoiceGroupConfig.OptionsItem> onSelected;
+        private Action<int, ChoiceConfig> onSelected;
         private List<GameObject> optionItems = new List<GameObject>();
 
         private float savedTimeScale;
@@ -39,19 +39,19 @@ namespace GeometryTD
                 RestoreTimeScale();
                 currentConfig = null;
 
-                Action<int, ChoiceGroupConfig.OptionsItem> callback = onSelected;
+                Action<int, ChoiceConfig> callback = onSelected;
                 onSelected = null;
                 callback?.Invoke(0, null);
             }
         }
 
         /// <summary>
-        /// 显示选项组。玩家选择后回调返回 (1-based索引, 选中的ChoiceGroupConfig.OptionsItem)。
+        /// 显示选项组。玩家选择后回调返回 (1-based索引, 选中的ChoiceConfig)。
         /// 外部关闭窗口时回调返回 (0, null)。
         /// </summary>
-        public void ShowChoices(ChoiceGroupConfig config, Action<int, ChoiceGroupConfig.OptionsItem> onSelected)
+        public void ShowChoices(ChoiceGroupConfig config, Action<int, ChoiceConfig> onSelected)
         {
-            if (config == null || config.options == null || config.options.Length == 0)
+            if (config == null || config.choices == null || config.choices.Length == 0)
             {
                 onSelected?.Invoke(0, null);
                 return;
@@ -76,18 +76,25 @@ namespace GeometryTD
 
             Font font = GameHelper.LoadFont();
 
-            for (int i = 0; i < currentConfig.options.Length; i++)
+            for (int i = 0; i < currentConfig.choices.Length; i++)
             {
-                ChoiceGroupConfig.OptionsItem option = currentConfig.options[i];
+                int choiceId = currentConfig.choices[i];
+                ChoiceConfig choice = Cfg.Choice.Get(choiceId);
+                if (choice == null)
+                {
+                    Debug.LogWarning($"[ChoiceWin] Choice config not found: id={choiceId}");
+                    continue;
+                }
+                
                 int optionIndex = i + 1; // 1-based
-                GameObject item = CreateOptionItem(option, optionIndex, font);
+                GameObject item = CreateOptionItem(choice, optionIndex, font);
                 optionItems.Add(item);
             }
         }
 
-        private GameObject CreateOptionItem(ChoiceGroupConfig.OptionsItem option, int optionIndex, Font font)
+        private GameObject CreateOptionItem(ChoiceConfig choice, int optionIndex, Font font)
         {
-            GameObject itemObj = new GameObject($"Option_{option.id}");
+            GameObject itemObj = new GameObject($"Option_{choice.id}");
             itemObj.transform.SetParent(optionListContent, false);
 
             // Background
@@ -104,9 +111,9 @@ namespace GeometryTD
             colors.pressedColor = new Color(0.2f, 0.4f, 0.2f, 0.95f);
             btn.colors = colors;
 
-            ChoiceGroupConfig.OptionsItem capturedOption = option;
+            ChoiceConfig capturedChoice = choice;
             int capturedIndex = optionIndex;
-            btn.onClick.AddListener(() => OnOptionClicked(capturedIndex, capturedOption));
+            btn.onClick.AddListener(() => OnOptionClicked(capturedIndex, capturedChoice));
 
             // Option text (top area)
             GameObject nameObj = new GameObject("Text");
@@ -120,12 +127,12 @@ namespace GeometryTD
             nameText.font = font;
             nameText.fontSize = 24;
             nameText.alignment = TextAnchor.MiddleLeft;
-            nameText.text = option.text ?? "";
+            nameText.text = choice.text ?? "";
             nameText.color = Color.white;
             nameText.raycastTarget = false;
 
             // Description (middle area)
-            if (!string.IsNullOrEmpty(option.description))
+            if (!string.IsNullOrEmpty(choice.des))
             {
                 GameObject descObj = new GameObject("Desc");
                 descObj.transform.SetParent(itemObj.transform, false);
@@ -138,13 +145,13 @@ namespace GeometryTD
                 descText.font = font;
                 descText.fontSize = 18;
                 descText.alignment = TextAnchor.MiddleLeft;
-                descText.text = option.description;
+                descText.text = choice.des;
                 descText.color = new Color(0.75f, 0.75f, 0.75f);
                 descText.raycastTarget = false;
             }
 
             // Reward hints (bottom-right area)
-            string rewardHint = BuildRewardHint(option);
+            string rewardHint = BuildRewardHint(choice);
             if (!string.IsNullOrEmpty(rewardHint))
             {
                 GameObject rewardObj = new GameObject("Reward");
@@ -166,38 +173,38 @@ namespace GeometryTD
             return itemObj;
         }
 
-        private string BuildRewardHint(ChoiceGroupConfig.OptionsItem option)
+        private string BuildRewardHint(ChoiceConfig choice)
         {
             List<string> hints = new List<string>();
 
-            if (option.effectId > 0)
+            if (choice.effectId > 0)
             {
-                PassiveEffectConfig effect = Cfg.PassiveEffect.Get(option.effectId);
+                PassiveEffectConfig effect = Cfg.PassiveEffect.Get(choice.effectId);
                 if (effect != null)
                     hints.Add(effect.name);
             }
 
-            if (option.goldReward > 0)
-                hints.Add($"+{option.goldReward} 金币");
+            if (choice.goldReward > 0)
+                hints.Add($"+{choice.goldReward} 金币");
 
-            if (option.triggerBattle)
+            if (choice.triggerBattle)
                 hints.Add("触发战斗");
 
             return hints.Count > 0 ? string.Join("  ", hints) : null;
         }
 
-        private void OnOptionClicked(int optionIndex, ChoiceGroupConfig.OptionsItem option)
+        private void OnOptionClicked(int optionIndex, ChoiceConfig choice)
         {
             if (currentConfig == null) return;
 
             RestoreTimeScale();
             currentConfig = null;
 
-            Action<int, ChoiceGroupConfig.OptionsItem> callback = onSelected;
+            Action<int, ChoiceConfig> callback = onSelected;
             onSelected = null;
 
             WinManager.Instance.CloseWin<ChoiceWin>();
-            callback?.Invoke(optionIndex, option);
+            callback?.Invoke(optionIndex, choice);
         }
 
         private void ClearOptionItems()

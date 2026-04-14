@@ -8,27 +8,27 @@ namespace GeometryTD
     {
         private static ConfigManager M { get { return ConfigManager.Instance; } }
 
-        public static ConfigTable<ArcaneConfig> Arcane { get { return M.arcaneTable; } }
-        public static ConfigTable<AttributeConfig> Attribute { get { return M.attributeTable; } }
-        public static ConfigTable<BuffConfig> Buff { get { return M.buffTable; } }
-        public static ConfigTable<BulletEventConfig> BulletEvent { get { return M.bulletEventTable; } }
-        public static ConfigTable<BulletStyleConfig> BulletStyle { get { return M.bulletStyleTable; } }
-        public static ConfigTable<ChoiceGroupConfig> ChoiceGroup { get { return M.choiceGroupTable; } }
-        public static ConfigTable<ChoiceConfig> Choice { get { return M.choiceTable; } }
-        public static ConfigTable<ConditionConfig> Condition { get { return M.conditionTable; } }
-        public static ConfigTable<DialogueConfig> Dialogue { get { return M.dialogueTable; } }
         public static ConfigTable<EventConfig> Event { get { return M.eventTable; } }
-        public static ConfigTable<EventEffectConfig> EventEffect { get { return M.eventEffectTable; } }
-        public static ConfigTable<EventShopConfig> EventShop { get { return M.eventShopTable; } }
-        public static ConfigTable<HeroConfig> Hero { get { return M.heroTable; } }
-        public static ConfigTable<LevelConfig> Level { get { return M.levelTable; } }
-        public static ConfigTable<MonsterConfig> Monster { get { return M.monsterTable; } }
+        public static ConfigTable<BulletEventConfig> BulletEvent { get { return M.bulletEventTable; } }
+        public static ConfigTable<BuffConfig> Buff { get { return M.buffTable; } }
         public static ConfigTable<PassiveConfig> Passive { get { return M.passiveTable; } }
-        public static ConfigTable<PassiveEffectConfig> PassiveEffect { get { return M.passiveEffectTable; } }
+        public static ConfigTable<LevelConfig> Level { get { return M.levelTable; } }
+        public static ConfigTable<ArcaneConfig> Arcane { get { return M.arcaneTable; } }
+        public static ConfigTable<DialogueConfig> Dialogue { get { return M.dialogueTable; } }
+        public static ConfigTable<AttributeConfig> Attribute { get { return M.attributeTable; } }
         public static ConfigTable<RoleConfig> Role { get { return M.roleTable; } }
-        public static ConfigTable<SkillConfig> Skill { get { return M.skillTable; } }
+        public static ConfigTable<MonsterConfig> Monster { get { return M.monsterTable; } }
         public static ConfigTable<SkillPoolConfig> SkillPool { get { return M.skillPoolTable; } }
+        public static ConfigTable<SkillConfig> Skill { get { return M.skillTable; } }
         public static ConfigTable<StoryCollectionConfig> StoryCollection { get { return M.storyCollectionTable; } }
         public static ConfigTable<StoryNodeConfig> StoryNode { get { return M.storyNodeTable; } }
+        public static ConfigTable<ChoiceGroupConfig> ChoiceGroup { get { return M.choiceGroupTable; } }
+        public static ConfigTable<ChoiceConfig> Choice { get { return M.choiceTable; } }
+        public static ConfigTable<PassiveEffectConfig> PassiveEffect { get { return M.passiveEffectTable; } }
+        public static ConfigTable<EventShopConfig> EventShop { get { return M.eventShopTable; } }
+        public static ConfigTable<ConditionConfig> Condition { get { return M.conditionTable; } }
+        public static ConfigTable<EventEffectConfig> EventEffect { get { return M.eventEffectTable; } }
+        public static ConfigTable<BulletStyleConfig> BulletStyle { get { return M.bulletStyleTable; } }
+        public static ConfigTable<HeroConfig> Hero { get { return M.heroTable; } }
     }
 }

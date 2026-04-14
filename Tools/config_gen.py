@@ -15,6 +15,11 @@ from collections import OrderedDict
 
 from openpyxl import load_workbook
 
+# Set default encoding to utf-8 for Python 2
+if sys.version_info[0] < 3:
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
 # ---------------------------------------------------------------------------
 # Type System
 # ---------------------------------------------------------------------------
@@ -249,7 +254,9 @@ def parse_excel(file_path, shared_types):
 
     for ws_name in wb.sheetnames:
         ws = wb[ws_name]
-        sn = ws_name.strip().lower()
+        # Remove Chinese characters from sheet name for processing
+        sn_clean = remove_chinese(ws_name).strip().lower()
+        sn = sn_clean
         
         # Skip meta sheets
         if sn.endswith('_meta') or sn == 'meta':
@@ -284,6 +291,11 @@ def parse_excel(file_path, shared_types):
 # ---------------------------------------------------------------------------
 # Name Helpers
 # ---------------------------------------------------------------------------
+
+def remove_chinese(text):
+    """Remove Chinese characters from text."""
+    # Chinese characters are in the range \u4e00-\u9fff
+    return re.sub(u'[\u4e00-\u9fff]', '', text)
 
 def to_pascal(snake):
     """hero_config -> HeroConfig, bullet_style -> BulletStyle"""
@@ -320,6 +332,10 @@ def generate_json(base_name, list_data, output_dir):
     if list_data is not None and len(list_data) > 0:
         json_obj['items'] = list_data
 
+    # Handle Unicode base_name for file path
+    if sys.version_info[0] < 3 and isinstance(base_name, unicode):
+        base_name = base_name.encode('utf-8')
+    
     path = os.path.join(output_dir, base_name + '.json')
     with codecs.open(path, 'w', encoding='utf-8') as f:
         json.dump(json_obj, f, ensure_ascii=False, indent=2, sort_keys=False)
@@ -394,6 +410,10 @@ def generate_config_cs(base_name, list_fields, output_dir):
     lines.append("}")
     lines.append("")
 
+    # Handle Unicode base_name for file path
+    if sys.version_info[0] < 3 and isinstance(base_name, unicode):
+        base_name = base_name.encode('utf-8')
+    
     path = os.path.join(output_dir, config_cls + '.cs')
     with codecs.open(path, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines))
