@@ -239,27 +239,46 @@ def parse_sheet(ws, shared_types):
 
 def parse_excel(file_path, shared_types):
     """Parse an xlsx file.
-    Returns: (base_name, list_fields, list_data, meta_fields, meta_data)
+    Returns: list of (base_name, list_fields, list_data, meta_fields, meta_data) - one per sheet
     """
     wb = load_workbook(file_path, read_only=True, data_only=True)
-    base_name = os.path.splitext(os.path.basename(file_path))[0]  # e.g. hero_config
-    short_name = base_name.replace('_config', '')  # e.g. hero
+    file_base_name = os.path.splitext(os.path.basename(file_path))[0]  # e.g. hero_config
+    file_short_name = file_base_name.replace('_config', '')  # e.g. hero
 
-    list_fields, list_data = [], []
-    meta_fields, meta_data = [], None
+    results = []
 
     for ws_name in wb.sheetnames:
         ws = wb[ws_name]
         sn = ws_name.strip().lower()
-        if sn == base_name or sn == short_name or sn == base_name.replace('_', '') or sn == 'list':
-            list_fields, list_data = parse_sheet(ws, shared_types)
-        elif sn.endswith('_meta') or sn == 'meta':
-            meta_fields, meta_rows = parse_sheet(ws, shared_types)
-            if meta_rows:
-                meta_data = meta_rows[0]
+        
+        # Skip meta sheets
+        if sn.endswith('_meta') or sn == 'meta':
+            continue
+            
+        # Determine base name from sheet name
+        # If sheet name looks like a config name (contains '_config' or is descriptive), use it
+        # Otherwise, use the file name
+        if sn and sn != 'list' and sn != file_short_name and sn != file_base_name and sn != file_base_name.replace('_', ''):
+            # Sheet name is descriptive, use it as config name
+            if sn.endswith('_config'):
+                base_name = sn
+            elif '_config' in sn:
+                # Handle cases like 'hero_config_sheet1' -> 'hero_config'
+                base_name = sn.split('_config')[0] + '_config'
+            else:
+                base_name = sn + '_config'
+        else:
+            # Sheet name is generic (like 'list' or matches file name), use file name
+            base_name = file_base_name
+            
+        list_fields, list_data = parse_sheet(ws, shared_types)
+        
+        # Only add if there's actual data or fields
+        if list_fields or list_data:
+            results.append((base_name, list_fields, list_data, [], None))
 
     wb.close()
-    return base_name, list_fields, list_data, meta_fields, meta_data
+    return results
 
 
 # ---------------------------------------------------------------------------
@@ -296,16 +315,10 @@ def get_class_names(base_name):
 # JSON Generation
 # ---------------------------------------------------------------------------
 
-def generate_json(base_name, list_data, meta_data, output_dir):
+def generate_json(base_name, list_data, output_dir):
     json_obj = OrderedDict()
     if list_data is not None and len(list_data) > 0:
         json_obj['items'] = list_data
-    if meta_data is not None:
-        json_obj['meta'] = meta_data
-
-    # If only meta and no items key, just write meta directly
-    if 'items' not in json_obj and 'meta' in json_obj:
-        json_obj = OrderedDict([('meta', json_obj['meta'])])
 
     path = os.path.join(output_dir, base_name + '.json')
     with codecs.open(path, 'w', encoding='utf-8') as f:
@@ -333,7 +346,7 @@ def csharp_type_str(ti):
     return "object"
 
 
-def generate_config_cs(base_name, list_fields, meta_fields, output_dir):
+def generate_config_cs(base_name, list_fields, output_dir):
     config_cls, meta_cls, data_cls, short, pascal, table_field = get_class_names(base_name)
     lines = [HEADER]
     lines.append("using System;")
@@ -343,7 +356,6 @@ def generate_config_cs(base_name, list_fields, meta_fields, output_dir):
     lines.append("{")
 
     has_list = len(list_fields) > 0
-    has_meta = len(meta_fields) > 0
 
     # Config class (list item)
     if has_list:
@@ -371,38 +383,12 @@ def generate_config_cs(base_name, list_fields, meta_fields, output_dir):
         lines.append("    }")
         lines.append("")
 
-    # Meta class
-    if has_meta:
-        # Collect anonymous struct types for meta
-        meta_inner = []
-        for fname, ti in meta_fields:
-            if isinstance(ti, StructArrayType) and ti.is_anonymous:
-                meta_inner.append((ti.struct_name, ti.fields))
-
-        lines.append("    [Serializable]")
-        lines.append("    public class %s" % meta_cls)
-        lines.append("    {")
-        for ic_name, ic_fields in meta_inner:
-            lines.append("        [Serializable]")
-            lines.append("        public class %s" % ic_name)
-            lines.append("        {")
-            for ft, fn in ic_fields:
-                lines.append("            public %s %s;" % (csharp_type_str(ft), fn))
-            lines.append("        }")
-            lines.append("")
-        for fname, ti in meta_fields:
-            lines.append("        public %s %s;" % (csharp_type_str(ti), fname))
-        lines.append("    }")
-        lines.append("")
-
     # Data wrapper
     lines.append("    [Serializable]")
     lines.append("    public class %s" % data_cls)
     lines.append("    {")
     if has_list:
         lines.append("        public List<%s> items;" % config_cls)
-    if has_meta:
-        lines.append("        public %s meta;" % meta_cls)
     lines.append("    }")
 
     lines.append("}")
@@ -428,17 +414,10 @@ def generate_cfg_cs(tables, output_dir):
     for t in tables:
         config_cls, meta_cls, data_cls, short, pascal, table_field = get_class_names(t['base_name'])
         has_list = t['has_list']
-        has_meta = t['has_meta']
 
-        if has_list and has_meta:
-            lines.append("        public static ConfigTable<%s, %s> %s { get { return M.%s; } }"
-                          % (config_cls, meta_cls, pascal, table_field))
-        elif has_list:
+        if has_list:
             lines.append("        public static ConfigTable<%s> %s { get { return M.%s; } }"
                           % (config_cls, pascal, table_field))
-        elif has_meta:
-            lines.append("        public static ConfigMeta<%s> %s { get { return M.%s; } }"
-                          % (meta_cls, pascal, table_field))
 
     lines.append("    }")
     lines.append("}")
@@ -490,14 +469,11 @@ def generate_config_manager_cs(tables, output_dir, existing_path=None):
     for t in tables:
         config_cls, meta_cls, data_cls, short, pascal, table_field = get_class_names(t['base_name'])
         has_list = t['has_list']
-        has_meta = t['has_meta']
+        key_field = t['key_field']
+        json_name = t['base_name']
 
-        if has_list and has_meta:
-            lines.append("        public ConfigTable<%s, %s> %s;" % (config_cls, meta_cls, table_field))
-        elif has_list:
+        if has_list:
             lines.append("        public ConfigTable<%s> %s;" % (config_cls, table_field))
-        elif has_meta:
-            lines.append("        public ConfigMeta<%s> %s;" % (meta_cls, table_field))
     lines.append("")
 
     # USER CODE - Fields
@@ -522,21 +498,14 @@ def generate_config_manager_cs(tables, output_dir, existing_path=None):
     for t in tables:
         config_cls, meta_cls, data_cls, short, pascal, table_field = get_class_names(t['base_name'])
         has_list = t['has_list']
-        has_meta = t['has_meta']
         key_field = t['key_field']
         json_name = t['base_name']
 
         lines.append("            {")
         lines.append('                var data = LoadConfig<%s>("Configs/%s");' % (data_cls, json_name))
-        if has_list and has_meta:
-            lines.append("                %s = new ConfigTable<%s, %s>();" % (table_field, config_cls, meta_cls))
-            lines.append("                %s.Init(data.items, data.meta, c => c.%s);" % (table_field, key_field))
-        elif has_list:
+        if has_list:
             lines.append("                %s = new ConfigTable<%s>();" % (table_field, config_cls))
             lines.append("                %s.Init(data.items, c => c.%s);" % (table_field, key_field))
-        elif has_meta:
-            lines.append("                %s = new ConfigMeta<%s>();" % (table_field, meta_cls))
-            lines.append("                %s.Init(data.meta);" % table_field)
         lines.append("            }")
 
     lines.append("")
@@ -645,23 +614,21 @@ def main():
     for xlsx_file in xlsx_files:
         fp = os.path.join(configs_dir, xlsx_file)
         print("Parsing %s ..." % xlsx_file)
-        base_name, list_fields, list_data, meta_fields, meta_data = parse_excel(fp, shared_types)
+        excel_results = parse_excel(fp, shared_types)
+        
+        for base_name, list_fields, list_data, meta_fields, meta_data in excel_results:
+            # Determine key field (first field of list, or empty)
+            key_field = ''
+            if list_fields:
+                key_field = list_fields[0][0]
 
-        # Determine key field (first field of list, or empty)
-        key_field = ''
-        if list_fields:
-            key_field = list_fields[0][0]
-
-        tables.append({
-            'base_name': base_name,
-            'list_fields': list_fields,
-            'list_data': list_data,
-            'meta_fields': meta_fields,
-            'meta_data': meta_data,
-            'has_list': len(list_data) > 0 or len(list_fields) > 0,
-            'has_meta': meta_data is not None or len(meta_fields) > 0,
-            'key_field': key_field,
-        })
+            tables.append({
+                'base_name': base_name,
+                'list_fields': list_fields,
+                'list_data': list_data,
+                'has_list': len(list_data) > 0 or len(list_fields) > 0,
+                'key_field': key_field,
+            })
 
     print("")
 
@@ -669,8 +636,8 @@ def main():
     for t in tables:
         base_name = t['base_name']
         print("Generating %s ..." % base_name)
-        generate_json(base_name, t['list_data'], t['meta_data'], json_dir)
-        generate_config_cs(base_name, t['list_fields'], t['meta_fields'], cs_config_dir)
+        generate_json(base_name, t['list_data'], json_dir)
+        generate_config_cs(base_name, t['list_fields'], cs_config_dir)
 
     print("")
     print("Generating Cfg.cs ...")

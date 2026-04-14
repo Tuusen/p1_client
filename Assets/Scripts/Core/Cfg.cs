@@ -14,6 +14,7 @@ namespace GeometryTD
         public static ConfigTable<BulletEventConfig> BulletEvent { get { return M.bulletEventTable; } }
         public static ConfigTable<BulletStyleConfig> BulletStyle { get { return M.bulletStyleTable; } }
         public static ConfigTable<ChoiceGroupConfig> ChoiceGroup { get { return M.choiceGroupTable; } }
+        public static ConfigTable<ChoiceConfig> Choice { get { return M.choiceTable; } }
         public static ConfigTable<ConditionConfig> Condition { get { return M.conditionTable; } }
         public static ConfigTable<DialogueConfig> Dialogue { get { return M.dialogueTable; } }
         public static ConfigTable<EventConfig> Event { get { return M.eventTable; } }

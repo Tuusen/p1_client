@@ -17,11 +17,11 @@
 
 ## 更新摘要
 **所做更改**
-- 更新了配置系统架构描述，反映现代化重构后的自动化配置表系统
-- 重新组织了核心组件分析，突出新的ConfigTable泛型架构
+- 标记旧配置系统为已废弃状态
+- 移除了关于数据缓存策略和临时日志增强功能的描述
+- 更新了架构描述以反映当前的现代化配置系统
+- 重新组织了核心组件分析，突出ConfigTable泛型架构
 - 更新了配置生成流程和加载机制的说明
-- 增强了性能优化和故障排除指南
-- 更新了所有相关的架构图和示例代码
 
 ## 目录
 1. [简介](#简介)
@@ -35,6 +35,8 @@
 9. [结论](#结论)
 
 ## 简介
+
+**重要说明：本配置系统已废弃**
 
 这是一个基于Unity引擎开发的现代化配置系统，采用自动化配置表系统实现。该系统通过Excel到JSON再到C#代码的完整转换流程，为游戏提供了灵活且可维护的配置管理机制。
 
@@ -93,7 +95,7 @@ Resources --> Manager
 **章节来源**
 - [Tools/config_gen.py:1-688](file://Tools/config_gen.py#L1-L688)
 - [Assets/Scripts/Core/Cfg.cs:1-35](file://Assets/Scripts/Core/Cfg.cs#L1-L35)
-- [Assets/Scripts/Core/ConfigManager.cs:1-318](file://Assets/Scripts/Core/ConfigManager.cs#L1-L318)
+- [Assets/Scripts/Core/ConfigManager.cs:1-265](file://Assets/Scripts/Core/ConfigManager.cs#L1-L265)
 
 ## 核心组件
 
@@ -141,7 +143,7 @@ Resources --> Manager
 **更新** 新版本提供了更强大的资源预加载机制和错误处理能力。
 
 **章节来源**
-- [Assets/Scripts/Core/ConfigManager.cs:11-318](file://Assets/Scripts/Core/ConfigManager.cs#L11-L318)
+- [Assets/Scripts/Core/ConfigManager.cs:11-265](file://Assets/Scripts/Core/ConfigManager.cs#L11-L265)
 
 ### 配置表 (ConfigTable.cs)
 
@@ -177,6 +179,7 @@ class ConfigManager {
 +GetSkillConfigByPool()
 +GetBulletPrefab()
 +GetEffectPrefab()
++GetRolePrefab()
 }
 class ConfigTable~TItem,TMeta~ {
 +TItem[] All
@@ -274,8 +277,8 @@ PreloadPrefabs --> Ready([配置系统就绪])
 **更新** 新版本的加载流程包含了更完善的错误处理和资源预加载机制。
 
 **图表来源**
-- [Assets/Scripts/Core/ConfigManager.cs:48-177](file://Assets/Scripts/Core/ConfigManager.cs#L48-L177)
-- [Assets/Scripts/Core/ConfigManager.cs:255-298](file://Assets/Scripts/Core/ConfigManager.cs#L255-L298)
+- [Assets/Scripts/Core/ConfigManager.cs:53-171](file://Assets/Scripts/Core/ConfigManager.cs#L53-L171)
+- [Assets/Scripts/Core/ConfigManager.cs:218-261](file://Assets/Scripts/Core/ConfigManager.cs#L218-L261)
 
 ### 数据类型系统
 
@@ -444,8 +447,8 @@ D --> H
 **更新** 新版本的缓存机制更加智能，支持条件加载和资源回收。
 
 **图表来源**
-- [Assets/Scripts/Core/ConfigManager.cs:48-54](file://Assets/Scripts/Core/ConfigManager.cs#L48-L54)
-- [Assets/Scripts/Core/ConfigManager.cs:255-298](file://Assets/Scripts/Core/ConfigManager.cs#L255-L298)
+- [Assets/Scripts/Core/ConfigManager.cs:45-51](file://Assets/Scripts/Core/ConfigManager.cs#L45-L51)
+- [Assets/Scripts/Core/ConfigManager.cs:218-261](file://Assets/Scripts/Core/ConfigManager.cs#L218-L261)
 
 ## 故障排除指南
 
@@ -469,8 +472,8 @@ D --> H
 **更新** 新版本增加了更详细的错误日志和调试信息，便于问题诊断。
 
 **章节来源**
-- [Assets/Scripts/Core/ConfigManager.cs:179-194](file://Assets/Scripts/Core/ConfigManager.cs#L179-L194)
-- [Assets/Scripts/Core/ConfigManager.cs:255-298](file://Assets/Scripts/Core/ConfigManager.cs#L255-L298)
+- [Assets/Scripts/Core/ConfigManager.cs:173-188](file://Assets/Scripts/Core/ConfigManager.cs#L173-L188)
+- [Assets/Scripts/Core/ConfigManager.cs:218-261](file://Assets/Scripts/Core/ConfigManager.cs#L218-L261)
 
 ## 结论
 
@@ -485,3 +488,9 @@ D --> H
 **更新** 新版本的配置系统在保持原有优势的基础上，进一步提升了系统的稳定性和可维护性，为游戏开发提供了更加可靠和高效的配置管理基础设施。
 
 该系统为游戏开发提供了稳定可靠的配置管理基础设施，支持复杂的配置数据结构和多样的使用场景。
+
+**重要声明：旧配置系统功能已废弃**
+- ConfigManager中的数据缓存策略已被移除
+- 临时日志增强功能不再可用
+- 建议使用新的ConfigTable泛型架构进行配置管理
+- 旧的配置访问方式不再推荐使用

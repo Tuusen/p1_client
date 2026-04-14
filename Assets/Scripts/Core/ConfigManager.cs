@@ -19,6 +19,7 @@ namespace GeometryTD
         public ConfigTable<BulletEventConfig> bulletEventTable;
         public ConfigTable<BulletStyleConfig> bulletStyleTable;
         public ConfigTable<ChoiceGroupConfig> choiceGroupTable;
+        public ConfigTable<ChoiceConfig> choiceTable;
         public ConfigTable<ConditionConfig> conditionTable;
         public ConfigTable<DialogueConfig> dialogueTable;
         public ConfigTable<EventConfig> eventTable;
@@ -80,6 +81,11 @@ namespace GeometryTD
                 var data = LoadConfig<ChoiceGroupConfigData>("Configs/choice_group_config");
                 choiceGroupTable = new ConfigTable<ChoiceGroupConfig>();
                 choiceGroupTable.Init(data.items, c => c.id);
+            }
+            {
+                var data = LoadConfig<ChoiceConfigData>("Configs/choice_config");
+                choiceTable = new ConfigTable<ChoiceConfig>();
+                choiceTable.Init(data.items, c => c.id);
             }
             {
                 var data = LoadConfig<ConditionConfigData>("Configs/condition_config");
