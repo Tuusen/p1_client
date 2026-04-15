@@ -23,8 +23,6 @@ namespace GeometryTD
         public int scatterCount;
         public int scatterAngle;
         public int bounceCount;
-        public int bounceRadius;
-        public int bounceMinDist;
         public int bounceDmgMod;
         public int burstCount;
         public int volleyCount;
@@ -42,8 +40,6 @@ namespace GeometryTD
                 scatterCount = scatterCount,
                 scatterAngle = scatterAngle,
                 bounceCount = bounceCount,
-                bounceRadius = bounceRadius,
-                bounceMinDist = bounceMinDist,
                 bounceDmgMod = bounceDmgMod,
                 burstCount = burstCount,
                 volleyCount = volleyCount,

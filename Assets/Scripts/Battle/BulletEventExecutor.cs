@@ -48,12 +48,10 @@ namespace GeometryTD
                         break;
 
                     case BulletEventType.Bounce:
-                        if (args != null && args.Length >= 4)
+                        if (args != null && args.Length >= 2)
                         {
                             data.bounceCount = args[0];
-                            data.bounceRadius = args[1];
-                            data.bounceMinDist = args[2];
-                            data.bounceDmgMod = args[3];
+                            data.bounceDmgMod = args[1];
                         }
                         break;
 

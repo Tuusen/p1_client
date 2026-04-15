@@ -10,7 +10,6 @@ namespace GeometryTD
         private float speed;
         private float damage;
         private bool isEnemyBullet;
-        private bool hasTarget;
         private float lifeTime = 5f;
 
         private float maxAttackRange = 50f;
@@ -22,8 +21,21 @@ namespace GeometryTD
         private SkillConfig skillConfig; // 存储来源技能，用于访问 eventEffect
         private HashSet<Transform> hitTargets = new HashSet<Transform>();
 
-        private bool isPiercing;
-        private Vector3 pierceDirection;
+        /// <summary>
+        /// 弹射状态：弹射后子弹沿直线飞行，不再追踪目标
+        /// </summary>
+        private bool isBouncing;
+
+        /// <summary>
+        /// 记录每个敌人被命中时子弹的位置，用于追踪穿刺子弹的重复命中冷却
+        /// </summary>
+        private Dictionary<Transform, Vector3> hitCooldownPositions = new Dictionary<Transform, Vector3>();
+        /// <summary>
+        /// 子弹离开命中点多远后才能再次命中同一敌人
+        /// </summary>
+        private const float REHIT_MIN_DISTANCE = 3f;
+
+        private Vector3 flyDirection; // 当前飞行方向（归一化）
 
         // 追踪弹弧线飞行相关
         private Vector3 currentVelocity; // 当前飞行方向（归一化）
@@ -43,14 +55,13 @@ namespace GeometryTD
             this.isEnemyBullet = isEnemyBullet;
             this.battleManager = bm;
             this.bulletData = new BulletEventData();
-            this.hasTarget = target != null;
             this.maxAttackRange = attackRange;
             this.startPosition = transform.position;
 
-            if (hasTarget)
+            if (target != null)
             {
                 lastTargetPos = target.position;
-                hitTargets.Add(target);
+                flyDirection = (target.position - transform.position).normalized;
             }
         }
 
@@ -67,14 +78,13 @@ namespace GeometryTD
             this.bulletData = data ?? new BulletEventData();
             this.caster = caster;
             this.skillConfig = skill;
-            this.hasTarget = target != null;
             this.maxAttackRange = attackRange;
             this.startPosition = transform.position;
 
-            if (hasTarget)
+            if (target != null)
             {
                 lastTargetPos = target.position;
-                hitTargets.Add(target);
+                flyDirection = (target.position - transform.position).normalized;
             }
         }
 
@@ -91,14 +101,14 @@ namespace GeometryTD
 
         public void SetDirectionalFlight(Vector3 direction)
         {
-            this.target = null;
-            this.hasTarget = false;
-            this.pierceDirection = direction.normalized;
-            this.lastTargetPos = transform.position + this.pierceDirection * maxAttackRange;
+            flyDirection = direction.normalized;
+            target = null;
+            lastTargetPos = transform.position + flyDirection * maxAttackRange;
         }
 
         private void Update()
         {
+            // 1. 生命/距离检查
             lifeTime -= Time.deltaTime;
             if (lifeTime <= 0f)
             {
@@ -106,7 +116,6 @@ namespace GeometryTD
                 return;
             }
 
-            // 检查是否超出攻击距离
             float traveledDist = Vector3.Distance(transform.position, startPosition);
             if (traveledDist > maxAttackRange)
             {
@@ -114,147 +123,89 @@ namespace GeometryTD
                 return;
             }
 
-            // 追踪：目标死亡后寻找新目标
-            if (bulletData != null && bulletData.homing && target == null && battleManager != null)
-            {
-                Transform newTarget = battleManager.GetNearestEnemyExcluding(
-                    transform.position, 50f, hitTargets);
-                if (newTarget != null)
-                {
-                    target = newTarget;
-                    lastTargetPos = target.position;
-                }
-            }
-
-            if (target != null)
-            {
-                lastTargetPos = target.position;
-            }
-
-            Vector3 direction;
             float step = speed * Time.deltaTime;
 
-            // 追踪弹弧线飞行逻辑
-            if (bulletData != null && bulletData.homing)
+            // 更新命中冷却（追踪穿刺子弹专用）
+            UpdateHitCooldowns();
+
+            // 2. 追踪逻辑（仅 homing 子弹，弹射状态下跳过追踪）
+            if (!isBouncing && bulletData != null && bulletData.homing)
             {
-                // 计算目标方向
-                Vector3 toTarget = (lastTargetPos - transform.position).normalized;
-                
-                // 初始化当前速度方向
-                if (currentVelocity.sqrMagnitude < 0.001f)
+                // 目标死亡时寻找新目标
+                if (target == null && battleManager != null)
                 {
-                    currentVelocity = toTarget;
+                    // 追踪+穿刺时，排除未冷却的敌人
+                    HashSet<Transform> exclude = GetCooldownExcludeSet();
+                    Transform newTarget = battleManager.GetNearestEnemyExcluding(
+                        transform.position, 50f, exclude);
+                    if (newTarget != null)
+                    {
+                        target = newTarget;
+                        lastTargetPos = target.position;
+                    }
                 }
 
-                // 使用 RotateTowards 平滑转向
+                if (target != null)
+                    lastTargetPos = target.position;
+
+                // 平滑转向
+                Vector3 toTarget = (lastTargetPos - transform.position).normalized;
+                if (currentVelocity.sqrMagnitude < 0.001f)
+                    currentVelocity = toTarget;
+
                 float maxRadiansDelta = turnSpeed * Time.deltaTime;
                 currentVelocity = Vector3.RotateTowards(currentVelocity, toTarget, maxRadiansDelta, 0f);
                 currentVelocity.Normalize();
-
-                direction = currentVelocity;
-                pierceDirection = direction;
+                flyDirection = currentVelocity;
             }
-            else
+            // 3. 非追踪子弹：flyDirection 不变，始终直线
+
+            // 4. 移动
+            Vector3 moveStart = transform.position;
+            Vector3 nextPos = transform.position + flyDirection * step;
+            transform.position = nextPos;
+
+            // 5. 统一碰撞检测
+            if (battleManager != null)
             {
-                // 非追踪弹：直线飞行
-                direction = (lastTargetPos - transform.position).normalized;
-                if (!isPiercing && direction.sqrMagnitude > 0.001f)
-                    pierceDirection = direction;
-            }
-
-            // 预计算本帧移动
-            Vector3 nextPos = transform.position + direction * step;
-
-            // 线段碰撞检测：检查从当前位置到移动后位置的路径是否经过目标
-            if (hasTarget && !isPiercing)
-            {
-                float segDist = PointToSegmentDistance(lastTargetPos, transform.position, nextPos);
-                if (segDist <= 0.5f)
-                {
-                    transform.position = lastTargetPos;
-                    OnArrival();
-                    return;
-                }
-            }
-
-            // 追踪弹弧线飞行途中碰撞检测（飞行途中撞到非主目标的敌人）
-            if (bulletData != null && bulletData.homing && battleManager != null)
-            {
-                Vector3 moveStart = transform.position;
-                transform.position = nextPos;
-
-                // 检测路径上的敌人
                 float searchRadius = step * 0.5f + 0.5f;
                 Vector3 searchCenter = (moveStart + nextPos) * 0.5f;
-                Transform nearby = battleManager.GetNearestEnemyExcluding(
-                    searchCenter, searchRadius, hitTargets);
-                
-                if (nearby != null)
-                {
-                    float segDist = PointToSegmentDistance(nearby.position, moveStart, nextPos);
-                    if (segDist <= 0.5f)
-                    {
-                        // 临时设置目标以复用 ApplyDamage 和 ExecuteHitEvents
-                        Transform originalTarget = target;
-                        target = nearby;
-                        ApplyDamage();
-                        ExecuteHitEvents();
-                        hitTargets.Add(nearby);
-                        
-                        // 消耗穿透次数，用尽则销毁
-                        bulletData.pierceCount--;
-                        if (bulletData.pierceCount <= 0)
-                        {
-                            Destroy(gameObject);
-                            return;
-                        }
-                        
-                        // 恢复目标（可能为 null，表示仍在寻找新目标）
-                        target = originalTarget;
-                    }
-                }
-            }
-            else
-            {
-                transform.position = nextPos;
 
-                // 穿刺模式：沿直线飞行，用线段检测路径上的敌人
-                if (isPiercing && bulletData != null && bulletData.pierceCount > 0 && battleManager != null)
+                // 对敌方子弹（isEnemyBullet），检测英雄碰撞用线段距离判断
+                if (isEnemyBullet)
                 {
-                    float searchRadius = step * 0.5f + 0.5f;
-                    Vector3 searchCenter = (transform.position - direction * step + nextPos) * 0.5f;
-                    Transform nearby = battleManager.GetNearestEnemyExcluding(
-                        searchCenter, searchRadius, hitTargets);
-                    if (nearby != null)
+                    // 敌方子弹的碰撞检测：检查是否接近英雄
+                    if (target != null)
                     {
-                        float segDist = PointToSegmentDistance(nearby.position, transform.position - direction * step, nextPos);
+                        float segDist = PointToSegmentDistance(target.position, moveStart, nextPos);
                         if (segDist <= 0.5f)
                         {
-                            target = nearby;
-                            ApplyDamage();
-                            ExecuteHitEvents();
-                            hitTargets.Add(nearby);
-                            target = null;
-                            bulletData.pierceCount--;
-                            if (bulletData.pierceCount <= 0)
-                            {
-                                Destroy(gameObject);
-                                return;
-                            }
+                            transform.position = target.position;
+                            OnHitEnemy(target);
+                            return;
                         }
                     }
                 }
-            }
-
-            // 只有本来就无目标的子弹才进入穿透模式
-            if (!hasTarget && target == null && bulletData != null)
-            {
-                isPiercing = true;
-                if (bulletData.pierceCount == 0)
+                else
                 {
-                    bulletData.pierceCount = 1;
+                    // 己方子弹：检测路径上的敌人
+                    // 追踪穿刺子弹需要排除未冷却的敌人
+                    HashSet<Transform> exclude = (bulletData != null && bulletData.homing && bulletData.pierceCount > 0)
+                        ? GetCooldownExcludeSet()
+                        : hitTargets;
+                    Transform hit = battleManager.GetNearestEnemyExcluding(
+                        searchCenter, searchRadius, exclude);
+
+                    if (hit != null)
+                    {
+                        float segDist = PointToSegmentDistance(hit.position, moveStart, nextPos);
+                        if (segDist <= 0.5f)
+                        {
+                            OnHitEnemy(hit);
+                            return;
+                        }
+                    }
                 }
-                lastTargetPos = transform.position + pierceDirection * 50f;
             }
         }
 
@@ -271,45 +222,40 @@ namespace GeometryTD
             return Vector3.Distance(point, closest);
         }
 
-        private void OnArrival()
+        private void OnHitEnemy(Transform enemy)
         {
-            if (target != null)
+            target = enemy;
+            ApplyDamage();
+            ExecuteHitEvents();
+
+            // 爆炸 AOE
+            if (bulletData != null && bulletData.explosionRadius > 0 && battleManager != null)
             {
-                ApplyDamage();
-                ExecuteHitEvents();
+                float explDmg = damage * bulletData.explosionDmgRate / 10000f;
+                battleManager.DealAoeDamage(transform.position, bulletData.explosionRadius, explDmg, caster);
 
-                // 爆炸
-                if (bulletData != null && bulletData.explosionRadius > 0 && battleManager != null)
+                // 对爆炸波及的目标施加事件效果（排除已直接命中的主目标）
+                if (bulletData.attachToTargetEventIds != null && bulletData.attachToTargetEventIds.Count > 0)
                 {
-                    float explDmg = damage * bulletData.explosionDmgRate / 10000f;
-                    battleManager.DealAoeDamage(transform.position, bulletData.explosionRadius, explDmg, caster);
-
-                    // 对爆炸波及的目标施加事件效果
-                    if (bulletData.attachToTargetEventIds != null && bulletData.attachToTargetEventIds.Count > 0)
+                    List<Transform> enemiesInRadius = battleManager.GetEnemiesInRadius(transform.position, bulletData.explosionRadius);
+                    for (int i = 0; i < enemiesInRadius.Count; i++)
                     {
-                        List<Transform> enemiesInRadius = battleManager.GetEnemiesInRadius(transform.position, bulletData.explosionRadius);
-                        for (int i = 0; i < enemiesInRadius.Count; i++)
+                        Transform e = enemiesInRadius[i];
+                        if (e == target) continue;
+                        IBuffTarget hitTarget = e.GetComponent<MonsterController>() as IBuffTarget;
+                        if (hitTarget == null)
+                            hitTarget = e.GetComponent<BossController>() as IBuffTarget;
+                        if (hitTarget != null)
                         {
-                            Transform enemy = enemiesInRadius[i];
-                            // 排除已经被直接命中的主目标（主目标的事件已经在 ExecuteHitEvents() 中处理过了）
-                            if (enemy == target) continue;
-
-                            IBuffTarget hitTarget = enemy.GetComponent<MonsterController>() as IBuffTarget;
-                            if (hitTarget == null)
-                                hitTarget = enemy.GetComponent<BossController>() as IBuffTarget;
-
-                            if (hitTarget != null)
+                            var ctx = new EventContext
                             {
-                                var ctx = new EventContext
-                                {
-                                    caster = caster,
-                                    target = hitTarget,
-                                    battleManager = battleManager,
-                                    position = enemy.position
-                                };
-                                for (int j = 0; j < bulletData.attachToTargetEventIds.Count; j++)
-                                    EventExecutor.ExecuteEvent(bulletData.attachToTargetEventIds[j], ctx);
-                            }
+                                caster = caster,
+                                target = hitTarget,
+                                battleManager = battleManager,
+                                position = e.position
+                            };
+                            for (int j = 0; j < bulletData.attachToTargetEventIds.Count; j++)
+                                EventExecutor.ExecuteEvent(bulletData.attachToTargetEventIds[j], ctx);
                         }
                     }
                 }
@@ -322,26 +268,61 @@ namespace GeometryTD
                 if (bulletData.bounceDmgMod > 0)
                     damage *= bulletData.bounceDmgMod / 10000f;
 
-                float bounceRange = bulletData.bounceRadius > 0 ? bulletData.bounceRadius : 10f;
-                Transform next = battleManager.GetNearestEnemyExcluding(
-                    transform.position, bounceRange, hitTargets);
-                if (next != null)
-                {
-                    target = next;
-                    lastTargetPos = target.position;
-                    hitTargets.Add(next);
-                    return;
-                }
-            }
-            // 穿刺：进入直线飞行模式，方向不变
-            else if (bulletData != null && bulletData.pierceCount > 0 && battleManager != null && !isEnemyBullet)
-            {
-                isPiercing = true;
+                // 进入弹射状态：沿直线飞行，不再追踪
+                isBouncing = true;
+                flyDirection = GetBounceDirection(transform.position, maxAttackRange, enemy);
                 target = null;
-                lastTargetPos = transform.position + pierceDirection * 50f;
+
+                // 从弹射点重新计算攻击距离
+                startPosition = transform.position;
+
+                // 仅排除当前敌人，防止连续命中同一敌人，但允许之后再次命中
+                hitTargets.Clear();
+                hitTargets.Add(enemy);
                 return;
             }
 
+            // 穿刺
+            if (bulletData != null && bulletData.pierceCount > 0)
+            {
+                bulletData.pierceCount--;
+
+                // 追踪穿刺子弹使用 hitCooldownPositions 管理（需要冷却才能再次命中）
+                // 非追踪穿刺子弹使用 hitTargets 管理（直线飞行不会回头）
+                if (bulletData.homing)
+                {
+                    hitCooldownPositions[enemy] = transform.position;
+                }
+                else
+                {
+                    hitTargets.Add(enemy);
+                }
+
+                if (bulletData.pierceCount <= 0)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+
+                // 追踪弹：寻找新目标继续追踪
+                if (bulletData.homing && battleManager != null)
+                {
+                    HashSet<Transform> cooldownExclude = GetCooldownExcludeSet();
+                    Transform newTarget = battleManager.GetNearestEnemyExcluding(
+                        transform.position, 50f, cooldownExclude);
+                    target = newTarget;
+                    if (target != null)
+                        lastTargetPos = target.position;
+                }
+                else
+                {
+                    // 非追踪弹：继续直线飞行，flyDirection 不变
+                    target = null;
+                }
+                return;
+            }
+
+            // 无弹射无穿刺 → 销毁
             Destroy(gameObject);
         }
 
@@ -491,7 +472,10 @@ namespace GeometryTD
             {
                 if (battleManager != null && battleManager.EventEffectManager != null)
                 {
-                    battleManager.EventEffectManager.TriggerOneShotEffect(skillConfig.eventEffect, target.position);
+                    float effectScale = (bulletData != null && bulletData.explosionRadius > 0)
+                        ? bulletData.explosionRadius
+                        : 1f;
+                    battleManager.EventEffectManager.TriggerOneShotEffect(skillConfig.eventEffect, target.position, effectScale);
                 }
             }
 
@@ -529,6 +513,78 @@ namespace GeometryTD
                 for (int i = 0; i < bulletData.attachToCasterEventIds.Count; i++)
                     EventExecutor.ExecuteEvent(bulletData.attachToCasterEventIds[i], ctx);
             }
+        }
+
+        /// <summary>
+        /// 每帧清理已满足冷却距离的命中记录
+        /// </summary>
+        private void UpdateHitCooldowns()
+        {
+            if (hitCooldownPositions.Count == 0) return;
+
+            // 收集已冷却的敌人
+            List<Transform> cooledDown = null;
+            foreach (var kvp in hitCooldownPositions)
+            {
+                if (kvp.Key == null || Vector3.Distance(transform.position, kvp.Value) >= REHIT_MIN_DISTANCE)
+                {
+                    if (cooledDown == null) cooledDown = new List<Transform>();
+                    cooledDown.Add(kvp.Key);
+                }
+            }
+            if (cooledDown != null)
+            {
+                for (int i = 0; i < cooledDown.Count; i++)
+                    hitCooldownPositions.Remove(cooledDown[i]);
+            }
+        }
+
+        /// <summary>
+        /// 获取当前需要排除的敌人集合（hitTargets + 未冷却的 hitCooldownPositions）
+        /// </summary>
+        private HashSet<Transform> GetCooldownExcludeSet()
+        {
+            HashSet<Transform> exclude = new HashSet<Transform>(hitTargets);
+            foreach (var kvp in hitCooldownPositions)
+            {
+                if (kvp.Key != null)
+                    exclude.Add(kvp.Key);
+            }
+            return exclude;
+        }
+
+        /// <summary>
+        /// 计算弹射方向：
+        /// 1. 有其他敌人时，随机选一个敌人，朝该敌人方向弹射
+        /// 2. 仅有一个敌人时，朝当前飞行方向的右侧随机方向弹射
+        /// </summary>
+        private Vector3 GetBounceDirection(Vector3 from, float maxRange, Transform currentEnemy)
+        {
+            List<Transform> candidates = battleManager.GetEnemiesInRadius(from, maxRange);
+
+            // 收集除当前命中敌人外的其他敌人
+            List<Transform> others = null;
+            if (candidates != null)
+            {
+                for (int i = 0; i < candidates.Count; i++)
+                {
+                    Transform e = candidates[i];
+                    if (e == null || e == currentEnemy) continue;
+                    if (others == null) others = new List<Transform>();
+                    others.Add(e);
+                }
+            }
+
+            if (others != null && others.Count > 0)
+            {
+                // 随机选一个敌人，朝其方向弹射
+                Transform picked = others[Random.Range(0, others.Count)];
+                return (picked.position - from).normalized;
+            }
+
+            // 仅有一个敌人：朝当前飞行方向的右侧随机偏转 30°~150°
+            float angle = Random.Range(30f, 150f);
+            return Quaternion.Euler(0, angle, 0) * flyDirection;
         }
     }
 }

@@ -14,11 +14,11 @@
       "attrs": [
         {
           "id": 1, 
-          "value": 500
+          "value": 2000
         }, 
         {
           "id": 2, 
-          "value": 10
+          "value": 100
         }, 
         {
           "id": 113, 
@@ -53,13 +53,13 @@
       "attack_skill_ids": [
         1000101
       ], 
-      "skill_xp_interval": 3.0, 
+      "skill_xp_interval": 1.0, 
       "skill_xp_min": 60, 
       "skill_xp_max": 100, 
       "attrs": [
         {
           "id": 1, 
-          "value": 500
+          "value": 2000
         }, 
         {
           "id": 2, 

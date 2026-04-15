@@ -14,7 +14,7 @@ namespace GeometryTD
         /// <summary>
         /// 触发一次性特效（播放后自动销毁）
         /// </summary>
-        public void TriggerOneShotEffect(int eventType, Vector3 position)
+        public void TriggerOneShotEffect(int eventType, Vector3 position, float scale = 1f)
         {
             if (eventType <= 0) return;
             var config = Cfg.EventEffect.Get(eventType);
@@ -24,13 +24,13 @@ namespace GeometryTD
                 return;
             }
 
-            StartCoroutine(SpawnOneShotEffectCoroutine(config, position));
+            StartCoroutine(SpawnOneShotEffectCoroutine(config, position, scale));
         }
 
         /// <summary>
         /// 触发特效并获取生成的 GameObject
         /// </summary>
-        private IEnumerator SpawnOneShotEffectCoroutine(EventEffectConfig config, Vector3 position)
+        private IEnumerator SpawnOneShotEffectCoroutine(EventEffectConfig config, Vector3 position, float scale = 1f)
         {
             GameObject prefab = ConfigManager.Instance.GetEffectPrefab(config.eventType);
             if (prefab == null)
@@ -40,6 +40,8 @@ namespace GeometryTD
             }
 
             GameObject effect = Instantiate(prefab, position, Quaternion.identity);
+            if (scale != 1f)
+                effect.transform.localScale = Vector3.one * scale;
 
             // 等待特效动画播放完成（如果有 Animation/Animator 组件）
             Animator animator = effect.GetComponent<Animator>();
