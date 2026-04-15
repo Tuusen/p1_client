@@ -1796,7 +1796,7 @@
         60031
       ], 
       "enemyEvents": [
-        40003
+        40005
       ], 
       "bulletEvents": [], 
       "eventEffect": 0
@@ -1819,7 +1819,7 @@
         60032
       ], 
       "enemyEvents": [
-        40003
+        40005
       ], 
       "bulletEvents": [], 
       "eventEffect": 0
@@ -1842,7 +1842,7 @@
         60033
       ], 
       "enemyEvents": [
-        40003, 
+        40005, 
         70301
       ], 
       "bulletEvents": [], 
@@ -1866,7 +1866,7 @@
         60034
       ], 
       "enemyEvents": [
-        40003, 
+        40005, 
         70301
       ], 
       "bulletEvents": [], 
@@ -1890,7 +1890,7 @@
         60035
       ], 
       "enemyEvents": [
-        40003, 
+        40005, 
         70301
       ], 
       "bulletEvents": [], 
@@ -1914,7 +1914,7 @@
         60036
       ], 
       "enemyEvents": [
-        40003, 
+        40005, 
         70301
       ], 
       "bulletEvents": [], 
@@ -1938,7 +1938,7 @@
         60037
       ], 
       "enemyEvents": [
-        40003, 
+        40005, 
         70301
       ], 
       "bulletEvents": [], 

@@ -12,6 +12,7 @@ namespace GeometryTD
     {
         public int id;
         public string name;
+        public string animator;
         public string prefabPath;
         public string portraitPath;
     }

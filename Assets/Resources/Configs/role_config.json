@@ -3,66 +3,77 @@
     {
       "id": 1, 
       "name": "星际守卫", 
+      "animator": "Characters/Hero/skull_man", 
       "prefabPath": "Prefabs/actors/Hero", 
       "portraitPath": ""
     }, 
     {
       "id": 101, 
       "name": "小型异形", 
+      "animator": "Characters/Monster/skull_goblin", 
       "prefabPath": "Prefabs/actors/Monster", 
       "portraitPath": ""
     }, 
     {
       "id": 102, 
       "name": "中型异形", 
+      "animator": "Characters/Monster/skull_goblin", 
       "prefabPath": "Prefabs/actors/Monster", 
       "portraitPath": ""
     }, 
     {
       "id": 103, 
       "name": "大型异形", 
+      "animator": "Characters/Monster/skull_goblin", 
       "prefabPath": "Prefabs/actors/Monster", 
       "portraitPath": ""
     }, 
     {
       "id": 110, 
       "name": "异形精锐", 
+      "animator": "Characters/Monster/skull_goblin", 
       "prefabPath": "Prefabs/actors/Monster", 
       "portraitPath": ""
     }, 
     {
       "id": 111, 
       "name": "虚空侍卫", 
+      "animator": "Characters/Monster/skull_goblin", 
       "prefabPath": "Prefabs/actors/Monster", 
       "portraitPath": ""
     }, 
     {
       "id": 200, 
       "name": "虚空领主", 
+      "animator": "Characters/Boss/skull_warrior", 
       "prefabPath": "Prefabs/actors/Boss", 
       "portraitPath": "Portrait/void_lord"
     }, 
     {
       "id": 201, 
       "name": "深渊守卫", 
+      "animator": "Characters/Boss/skull_warrior", 
       "prefabPath": "Prefabs/actors/Boss", 
       "portraitPath": "Portrait/abyss_guard"
     }, 
     {
       "id": 202, 
       "name": "虚空暴君", 
+      "animator": "Characters/Boss/skull_warrior", 
       "prefabPath": "Prefabs/actors/Boss", 
       "portraitPath": "Portrait/void_tyrant"
     }, 
     {
       "id": 1001, 
       "name": "风影守卫", 
+      "animator": "Characters/Summon/skull_slime", 
       "prefabPath": "Prefabs/actors/Summon", 
       "portraitPath": ""
     }, 
     {
       "id": 1002, 
       "name": "熔岩守卫", 
+      "animator": "Characters/Summon/skull_slime", 
       "prefabPath": "Prefabs/actors/Summon", 
       "portraitPath": ""
     }
