@@ -213,6 +213,34 @@ namespace GeometryTD
 
     // ===== Meta配置常量 =====
 
+    /// <summary>
+    /// 阵营枚举
+    /// </summary>
+    public enum UnitGroup
+    {
+        /// <summary>中立阵营</summary>
+        Neutral = 0,
+        /// <summary>玩家阵营（英雄、召唤物等）</summary>
+        Player = 1,
+        /// <summary>敌方阵营（怪物、Boss等）</summary>
+        Enemy = 2
+    }
+
+    /// <summary>
+    /// 单位类型枚举
+    /// </summary>
+    public enum UnitType
+    {
+        /// <summary>英雄</summary>
+        Hero = 1,
+        /// <summary>普通怪物</summary>
+        Monster = 2,
+        /// <summary>Boss</summary>
+        Boss = 3,
+        /// <summary>召唤物</summary>
+        Summon = 4
+    }
+
     public static class GameConsts
     {
         public static class MetaConsts

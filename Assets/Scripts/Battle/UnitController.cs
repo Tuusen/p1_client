@@ -19,6 +19,11 @@ namespace GeometryTD
         protected CharacterFacing facing;
         public BattleManager battleManager;
 
+        [Header("单位标识")]
+        [SerializeField] protected int uid;
+        [SerializeField] protected UnitGroup group;
+        [SerializeField] protected UnitType unitType;
+
         [Header("HP状态")]
         public int maxHp;
         public float currentHp;
@@ -44,6 +49,9 @@ namespace GeometryTD
         public float MaxHp => maxHp;
         public Transform CachedTransform => base.transform;
         public BattleManager BattleManager => battleManager;
+        public int Uid => uid;
+        public UnitGroup Group => group;
+        public UnitType UnitType => unitType;
 
         // ===== IBuffTarget 接口方法 =====
         public virtual void OnBuffDamage(float dmg)
@@ -68,7 +76,19 @@ namespace GeometryTD
 
         public virtual int GetShieldPercent() => 0;
 
+        // ===== 获取单位标识的方法 =====
+        public virtual int GetUid() => uid;
+        public virtual UnitGroup GetGroup() => group;
+        public virtual UnitType GetUnitType() => unitType;
+
         // ===== 初始化方法 =====
+        protected virtual void InitUnit(UnitGroup group, UnitType type)
+        {
+            this.uid = battleManager.GenerateUid();
+            this.group = group;
+            this.unitType = type;
+        }
+
         protected virtual void InitAttrs(AttrEntry[] configAttrs)
         {
             attrs = GetComponent<AttrComponent>();

@@ -47,6 +47,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3e761a722cf9348ab3cc0b1f02d245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hpBar: {fileID: 0}
+  attrs: {fileID: 0}
+  battleManager: {fileID: 0}
+  uid: 0
+  group: 0
+  unitType: 0
+  maxHp: 0
+  currentHp: 0
+  isDead: 0
+  attackSkillConfigs: []
+  attackRange: 0
 --- !u!114 &7218031741654553980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,7 +85,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_LocalScale.x
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_LocalScale.y
@@ -126,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_ConstrainProportionsScale
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 212798183564874916, guid: 40043ccaa83445c4ebae2e78b27a883e, type: 3}
       propertyPath: m_Color.b

@@ -622,8 +622,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6bf857fc45396a4d85db7062ab546fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shieldBar: {fileID: 1781561158979907137}
   hpBar: {fileID: 137418707973151778}
+  attrs: {fileID: 0}
+  battleManager: {fileID: 0}
+  uid: 0
+  group: 0
+  unitType: 0
+  maxHp: 0
+  currentHp: 0
+  isDead: 0
+  attackSkillConfigs: []
+  attackRange: 0
+  shieldBar: {fileID: 1781561158979907137}
 --- !u!114 &7811081807692846557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1000,7 +1010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 6877fb649746c674d8fbbcf60d41892b, type: 3}
       propertyPath: m_LocalScale.x
-      value: -1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4210157123753652, guid: 6877fb649746c674d8fbbcf60d41892b, type: 3}
       propertyPath: m_LocalPosition.x

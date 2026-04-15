@@ -34,6 +34,9 @@ namespace GeometryTD
             targetPosition = bossPosition;
             reachedPosition = false;
 
+            // 初始化uid和group
+            InitUnit(UnitGroup.Enemy, UnitType.Boss);
+
             // 初始化属性组件
             InitAttrs(config.attrs);
 

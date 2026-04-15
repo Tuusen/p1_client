@@ -57,6 +57,14 @@ namespace GeometryTD
             isDead = false;
             summoner = caster;
 
+            // 初始化group（召唤物的阵营取决于召唤者）
+            UnitGroup summonGroup = UnitGroup.Neutral; // 默认中立
+            if (caster is UnitController unitCaster)
+            {
+                summonGroup = unitCaster.Group;
+            }
+            InitUnit( summonGroup, UnitType.Summon);
+
             // 初始化属性组件 + 继承逻辑
             InitAttrs(config.attrs);
 

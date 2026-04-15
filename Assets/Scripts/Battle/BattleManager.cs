@@ -45,9 +45,20 @@ namespace GeometryTD
         private float hardMultiplier;
         private int currentLevelId;
 
+        // UID 生成器
+        private int nextUid = 1;
+
         public Transform HeroTransform => heroController != null ? heroController.transform : null;
         public ArcaneManager ArcaneManager => arcaneManager;
         public EventEffectManager EventEffectManager => eventEffectManager;
+
+        /// <summary>
+        /// 生成唯一的Unit ID
+        /// </summary>
+        public int GenerateUid()
+        {
+            return nextUid++;
+        }
 
         public void ShowDamageText(Vector3 worldPos, float amount, bool isHeal)
         {
