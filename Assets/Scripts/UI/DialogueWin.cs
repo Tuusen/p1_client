@@ -133,8 +133,8 @@ namespace GeometryTD
             if (line.roleId > 0)
             {
                 RoleConfig role = Cfg.Role.Get(line.roleId);
-                if (role != null && !string.IsNullOrEmpty(role.portraitPath))
-                    portrait = GameHelper.LoadSprite(role.portraitPath);
+                if (role != null && !string.IsNullOrEmpty(role.head))
+                    portrait = GameHelper.LoadSprite(role.head);
             }
 
             bool isLeft = line.portraitSide == 0;
