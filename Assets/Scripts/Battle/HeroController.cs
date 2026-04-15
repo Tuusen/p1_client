@@ -4,25 +4,13 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public class HeroController : MonoBehaviour, IBuffTarget
+    public class HeroController : UnitController
     {
-        private AttrComponent attrs;
-        private BuffSystem buffSystem = new BuffSystem();
         private PassiveSystem passiveSystem = new PassiveSystem();
 
-        [Header("配置")]
-        private float attackRange;
-        private int[] attackSkillIds;
-        private float[] attackSkillCds;
-        private float[] attackSkillTimers;
-        private SkillConfig[] attackSkillConfigs;
-
         [Header("运行时状态")]
-        private int maxHp;
-        private float currentHp;
         private int maxShield;
         private float currentShield;
-        private float attackTimer;
 
         // Charge 状态
         private int[] chargeBuffIds;
@@ -32,39 +20,25 @@ namespace GeometryTD
 
         [Header("引用")]
         [SerializeField] private HealthBarUI shieldBar;
-        [SerializeField] private HealthBarUI hpBar;
-
-        private BattleManager battleManager;
         private SkillConfig normalAttackConfig;
-        private Animator animator;
-        private CharacterFacing facing;
 
-        // IBuffTarget 实现
-        public AttrComponent Attrs => attrs;
-        public BuffSystem BuffSystem => buffSystem;
-        public PassiveSystem PassiveSystem => passiveSystem;
-        public bool IsDead => currentHp <= 0;
-        public Vector3 Position => transform.position;
-        public float CurrentHp => currentHp;
-        public float MaxHp => maxHp;
-        public Transform CachedTransform => base.transform;
-        public BattleManager BattleManager => battleManager;
+        public override PassiveSystem PassiveSystem => passiveSystem;
 
         public float AttackRange => attackRange;
         public float BaseAttack => attrs != null ? attrs.GetAttack() : 0;
 
-        public void OnBuffDamage(float dmg)
+        public override void OnBuffDamage(float dmg)
         {
             if (buffSystem.IsInvincible()) return;
             TakeDamage(dmg);
         }
 
-        public void OnBuffHeal(float heal)
+        public override void OnBuffHeal(float heal)
         {
             TriggerPassive(201);    // 被动：受治疗前
             currentHp = Mathf.Min(currentHp + heal, maxHp);
             TriggerPassive(202);    // 被动：受治疗时
-            UpdateBars();
+            UpdateBar();
             TriggerPassive(203);    // 被动：受治疗后
 
             // 显示治疗飘字
@@ -72,7 +46,7 @@ namespace GeometryTD
                 battleManager.ShowDamageText(transform.position, heal, true);
         }
 
-        public void AddShield(int value)
+        public override void AddShield(int value)
         {
             if (value > 0)
                 TriggerPassive(204);    // 被动：获得护盾时
@@ -82,26 +56,14 @@ namespace GeometryTD
             UpdateBars();
         }
 
-        public int GetHpPercent()
-        {
-            if (maxHp <= 0) return 0;
-            return Mathf.RoundToInt(currentHp / maxHp * 10000);
-        }
 
-        public int GetShieldPercent()
-        {
-            if (maxHp <= 0) return 0;
-            return Mathf.RoundToInt(currentShield / maxHp * 10000);
-        }
 
         public void Init(HeroConfig config, BattleManager manager)
         {
             battleManager = manager;
 
             // 初始化属性组件
-            attrs = GetComponent<AttrComponent>();
-            if (attrs == null) attrs = gameObject.AddComponent<AttrComponent>();
-            attrs.Init(config.attrs);
+            InitAttrs(config.attrs);
 
             maxHp = attrs.GetMaxHp();
             maxShield = attrs.GetFinal(AttributeIds.Shield);
@@ -114,37 +76,9 @@ namespace GeometryTD
             isCharging = false;
 
             // 初始化攻击技能
-            if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
-            {
-                attackSkillIds = new int[config.attack_skill_ids.Length];
-                attackSkillCds = new float[config.attack_skill_ids.Length];
-                attackSkillTimers = new float[config.attack_skill_ids.Length];
-                attackSkillConfigs = new SkillConfig[config.attack_skill_ids.Length];
+            InitSkills(config.attack_skill_ids);
 
-                for (int i = 0; i < config.attack_skill_ids.Length; i++)
-                {
-                    attackSkillIds[i] = config.attack_skill_ids[i];
-                    attackSkillConfigs[i] = Cfg.Skill.Get(attackSkillIds[i]);
-                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
-                    attackSkillTimers[i] = 0f;
-
-                    if (i == 0 && attackSkillConfigs[i] != null)
-                    {
-                        attackRange = attackSkillConfigs[i].attack_range;
-                    }
-                }
-            }
-            else
-            {
-                attackRange = 5f;
-            }
-
-            normalAttackConfig = attackSkillConfigs != null && attackSkillConfigs.Length > 0 ? attackSkillConfigs[0] : null;
-
-            animator = GetComponentInChildren<Animator>();
-            facing = GetComponent<CharacterFacing>();
-
-            buffSystem.Clear();
+            InitComponents();
             passiveSystem.Clear();
             UpdateBars();
         }
@@ -160,19 +94,12 @@ namespace GeometryTD
         {
             if (IsDead || battleManager == null) return;
 
-            // Buff 系统驱动
-            buffSystem.Tick(Time.deltaTime, this);
+            // 调用基类Update
+            UnitUpdate();
             if (IsDead) return;
 
             // Charge 状态检测
             UpdateChargeState();
-
-            // 技能冷却计时
-            if (attackSkillTimers != null)
-            {
-                for (int i = 0; i < attackSkillTimers.Length; i++)
-                    attackSkillTimers[i] += Time.deltaTime;
-            }
 
             // 攻击间隔计时器
             float atkInterval = attrs.GetAttackIntervalSec();
@@ -218,21 +145,10 @@ namespace GeometryTD
 
         private void TryAttack()
         {
-            if (attackSkillConfigs == null || attackSkillConfigs.Length == 0) return;
-
-            int skillIndex = -1;
-            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
-            {
-                if (attackSkillTimers[i] >= attackSkillCds[i])
-                {
-                    skillIndex = i;
-                    break;
-                }
-            }
-
+            int skillIndex = SelectSkillIndex();
             if (skillIndex < 0) return;
 
-            attackSkillTimers[skillIndex] = 0f;
+            ResetSkillTimer(skillIndex);
 
             var skillConfig = attackSkillConfigs[skillIndex];
             if (skillConfig == null) return;
@@ -260,25 +176,29 @@ namespace GeometryTD
             ExitCharge();
             lastAttackTime = Time.time;
 
-            facing?.FaceToward(targets[0].position);
+            FaceTarget(targets[0].position);
 
-            float atk = attrs.GetAttack();
-            float actualDmg = atk * skillConfig.dmg / 10000f;
-
-            // Type 1: buff技能伤害修饰
-            int dmgMod = buffSystem.GetSkillDmgModifier(skillConfig.id);
-            if (dmgMod != 0) actualDmg *= (1f + dmgMod / 10000f);
+            float actualDmg = CalculateDamage(skillConfig);
 
             // 合并 enemyEvents 到子弹的 attachToTargetEventIds
             MergeEnemyEvents(bulletData, skillConfig.enemyEvents);
 
             if (bulletData.burstCount > 1)
             {
-                StartCoroutine(BurstFireRoutine(targets, actualDmg, skillConfig, bulletData));
+                // Hero 需要遍历多个目标
+                foreach (var target in targets)
+                {
+                    if (target == null) continue;
+                    StartCoroutine(BurstFireRoutine(target, actualDmg, skillConfig.bulletSpeed, bulletData, skillConfig.bulletStyleId, skillRange, skillConfig));
+                }
             }
             else
             {
-                FireBullets(targets, actualDmg, skillConfig, bulletData);
+                foreach (var target in targets)
+                {
+                    if (target == null) continue;
+                    OnFireBullet(target, actualDmg, skillConfig.bulletSpeed, bulletData, skillConfig.bulletStyleId, skillRange, skillConfig);
+                }
             }
 
             // 执行自身事件
@@ -292,7 +212,7 @@ namespace GeometryTD
             EventExecutor.ExecuteEvents(skillConfig.events, ctx);
 
             battleManager.OnHeroNormalAttack(transform.position);
-            animator?.SetTrigger("Attack");
+            PlayAttackAnimation();
 
             // 被动：释放普攻后
             TriggerPassive(502);
@@ -323,12 +243,7 @@ namespace GeometryTD
         // ===== 弹幕技能 =====
         private void HandleProjectileSkill(SkillConfig config)
         {
-            float atk = attrs.GetAttack();
-            float actualDmg = atk * config.dmg / 10000f;
-
-            // Type 1: buff技能伤害修饰
-            int dmgMod = buffSystem.GetSkillDmgModifier(config.id);
-            if (dmgMod != 0) actualDmg *= (1f + dmgMod / 10000f);
+            float actualDmg = CalculateDamage(config);
 
             // Type 3: 合并buff附加的bulletEvent
             int[] allBulletEventIds = MergeBulletEventIds(config.bulletEvents, buffSystem.CollectExtraBulletEventIds(config.id));
@@ -344,11 +259,19 @@ namespace GeometryTD
 
             if (bulletData.burstCount > 1)
             {
-                StartCoroutine(BurstFireRoutine(targets, actualDmg, config, bulletData));
+                foreach (var target in targets)
+                {
+                    if (target == null) continue;
+                    StartCoroutine(BurstFireRoutine(target, actualDmg, config.bulletSpeed, bulletData, config.bulletStyleId, skillRange, config));
+                }
             }
             else
             {
-                FireBullets(targets, actualDmg, config, bulletData);
+                foreach (var target in targets)
+                {
+                    if (target == null) continue;
+                    OnFireBullet(target, actualDmg, config.bulletSpeed, bulletData, config.bulletStyleId, skillRange, config);
+                }
             }
 
             // 执行自身事件
@@ -391,12 +314,7 @@ namespace GeometryTD
         // ===== 全屏AoE技能 =====
         private void HandleAoeSkill(SkillConfig config)
         {
-            float atk = attrs.GetAttack();
-            float actualDmg = atk * config.dmg / 10000f;
-
-            // Type 1: buff技能伤害修饰
-            int dmgMod = buffSystem.GetSkillDmgModifier(config.id);
-            if (dmgMod != 0) actualDmg *= (1f + dmgMod / 10000f);
+            float actualDmg = CalculateDamage(config);
 
             // 执行自身事件
             var selfCtx = new EventContext
@@ -426,21 +344,10 @@ namespace GeometryTD
         }
 
         // ===== 被动触发辅助 =====
-        private void TriggerPassive(int triggerCode, IBuffTarget target = null)
-        {
-            if (passiveSystem == null) return;
-            var ctx = new EventContext
-            {
-                caster = this,
-                target = target ?? (IBuffTarget)this,
-                battleManager = battleManager,
-                position = transform.position
-            };
-            passiveSystem.OnTrigger(triggerCode, ctx);
-        }
+        // 已移至基类
 
         // ===== 受伤 =====
-        public void TakeDamage(float damage, IBuffTarget attacker = null)
+        public override void TakeDamage(float damage, IBuffTarget attacker = null)
         {
             if (IsDead) return;
 
@@ -518,37 +425,20 @@ namespace GeometryTD
                 float shieldMax = maxShield > 0 ? maxShield : maxHp;
                 shieldBar.SetValue(currentShield, shieldMax);
             }
-            if (hpBar != null)
-            {
-                hpBar.SetValue(currentHp, maxHp);
-            }
+            UpdateBar(); // 调用基类方法更新HP条
         }
 
         // ===== 工具方法 =====
 
-        private void FireBullets(List<Transform> targets, float actualDmg, SkillConfig config, BulletEventData bulletData)
+        protected override void OnFireBullet(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange, SkillConfig skill)
         {
-            float skillRange = config.attack_range > 0 ? config.attack_range : attackRange;
-            foreach (var target in targets)
-            {
-                if (target == null) continue;
-                battleManager.SpawnSkillBulletWithScatter(transform.position, target, actualDmg,
-                    config.bulletSpeed, bulletData, config.bulletStyleId, skillRange, this, config);
-            }
+            battleManager.SpawnSkillBulletWithScatter(transform.position, target, damage,
+                speed, bulletData, bulletStyleId, attackRange, this, skill);
         }
 
-        private IEnumerator BurstFireRoutine(List<Transform> targets, float actualDmg, SkillConfig config, BulletEventData bulletData)
+        protected override void OnDestroyed()
         {
-            int burstCount = bulletData.burstCount;
-            bulletData.burstCount = 0;
-
-            for (int b = 0; b < burstCount; b++)
-            {
-                if (IsDead || battleManager == null) yield break;
-                FireBullets(targets, actualDmg, config, bulletData);
-                if (b < burstCount - 1)
-                    yield return new WaitForSeconds(0.05f);
-            }
+            // Hero 死亡逻辑由 TakeDamage 中的 battleManager.OnHeroDead() 处理
         }
 
         /// <summary>
@@ -561,18 +451,6 @@ namespace GeometryTD
                 bulletData.attachToTargetEventIds = new List<int>();
             for (int i = 0; i < enemyEvents.Length; i++)
                 bulletData.attachToTargetEventIds.Add(enemyEvents[i]);
-        }
-
-        private static int[] MergeBulletEventIds(int[] baseIds, List<int> extraIds)
-        {
-            if (extraIds == null || extraIds.Count == 0) return baseIds;
-            int baseLen = baseIds != null ? baseIds.Length : 0;
-            int[] merged = new int[baseLen + extraIds.Count];
-            if (baseIds != null)
-                System.Array.Copy(baseIds, merged, baseLen);
-            for (int i = 0; i < extraIds.Count; i++)
-                merged[baseLen + i] = extraIds[i];
-            return merged;
         }
     }
 }

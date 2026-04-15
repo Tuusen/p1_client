@@ -3,39 +3,15 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public class SummonMonsterController : MonoBehaviour, IBuffTarget
+    public class SummonMonsterController : UnitController
     {
-        private AttrComponent attrs;
-        private BuffSystem buffSystem = new BuffSystem();
-
-        private int maxHp;
-        private float currentHp;
-        private float attackRange;
-        private float attackTimer;
         private float duration;
         private bool homing;
-        private BattleManager battleManager;
-        private Animator animator;
-        private CharacterFacing facing;
-        private int[] attackSkillIds;
-        private float[] attackSkillCds;
-        private float[] attackSkillTimers;
-        private SkillConfig[] attackSkillConfigs;
-        private bool isDead;
         private IBuffTarget summoner;
 
-        // IBuffTarget 实现
-        public AttrComponent Attrs => attrs;
-        public BuffSystem BuffSystem => buffSystem;
-        public PassiveSystem PassiveSystem => null;
-        public bool IsDead => isDead;
-        public Vector3 Position => transform.position;
-        public float CurrentHp => currentHp;
-        public float MaxHp => maxHp;
-        public Transform CachedTransform => base.transform;
-        public BattleManager BattleManager => battleManager;
+        public override PassiveSystem PassiveSystem => null;
 
-        public void OnBuffDamage(float dmg)
+        public override void OnBuffDamage(float dmg)
         {
             if (buffSystem.IsInvincible()) return;
             currentHp -= dmg;
@@ -45,20 +21,33 @@ namespace GeometryTD
             }
         }
 
-        public void OnBuffHeal(float heal)
+        public override void OnBuffHeal(float heal)
         {
             currentHp = Mathf.Min(currentHp + heal, maxHp);
         }
 
-        public void AddShield(int value) { }
+        public override void AddShield(int value) { }
 
-        public int GetHpPercent()
+        public override void TakeDamage(float damage, IBuffTarget attacker = null)
         {
-            if (maxHp <= 0) return 0;
-            return Mathf.RoundToInt(currentHp / (float)maxHp * 10000);
+            if (IsDead) return;
+
+            BuffSystem.TryCounterAttack(this, attacker, buffSystem, battleManager);
+            if (buffSystem.IsInvincible()) return;
+
+            currentHp -= damage;
+            currentHp = Mathf.Max(0, currentHp);
+
+            if (battleManager != null)
+                battleManager.ShowDamageText(transform.position, damage, false);
+
+            if (currentHp <= 0)
+            {
+                Die();
+            }
         }
 
-        public int GetShieldPercent() => 0;
+
 
         public void Init(MonsterConfig config, float attrRatio, float dur, bool isHoming, BattleManager bm, IBuffTarget caster = null)
         {
@@ -69,9 +58,7 @@ namespace GeometryTD
             summoner = caster;
 
             // 初始化属性组件 + 继承逻辑
-            attrs = GetComponent<AttrComponent>();
-            if (attrs == null) attrs = gameObject.AddComponent<AttrComponent>();
-            attrs.Init(config.attrs);
+            InitAttrs(config.attrs);
 
             // 对于config中没有的属性，从召唤者继承（乘以attrRatio）
             if (summoner != null && summoner.Attrs != null)
@@ -109,30 +96,9 @@ namespace GeometryTD
             attackRange = 50f;
 
             // 初始化攻击技能
-            if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
-            {
-                attackSkillIds = new int[config.attack_skill_ids.Length];
-                attackSkillCds = new float[config.attack_skill_ids.Length];
-                attackSkillTimers = new float[config.attack_skill_ids.Length];
-                attackSkillConfigs = new SkillConfig[config.attack_skill_ids.Length];
+            InitSkills(config.attack_skill_ids);
 
-                for (int i = 0; i < config.attack_skill_ids.Length; i++)
-                {
-                    attackSkillIds[i] = config.attack_skill_ids[i];
-                    attackSkillConfigs[i] = Cfg.Skill.Get(attackSkillIds[i]);
-                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
-                    attackSkillTimers[i] = 0f;
-
-                    if (i == 0 && attackSkillConfigs[i] != null)
-                    {
-                        attackRange = attackSkillConfigs[i].attack_range > 0 ? attackSkillConfigs[i].attack_range : 50f;
-                    }
-                }
-            }
-
-            animator = GetComponentInChildren<Animator>();
-            facing = GetComponent<CharacterFacing>();
-            buffSystem.Clear();
+            InitComponents();
         }
 
         private void Update()
@@ -147,21 +113,14 @@ namespace GeometryTD
                 return;
             }
 
-            // Buff 系统驱动
-            buffSystem.Tick(Time.deltaTime, this);
+            // 调用基类Update
+            UnitUpdate();
             if (isDead) return;
 
             if (buffSystem.IsFrozen())
             {
                 animator?.SetBool("IsMoving", false);
                 return;
-            }
-
-            // 技能冷却计时
-            if (attackSkillTimers != null)
-            {
-                for (int i = 0; i < attackSkillTimers.Length; i++)
-                    attackSkillTimers[i] += Time.deltaTime;
             }
 
             float atkInterval = attrs.GetAttackIntervalSec();
@@ -178,19 +137,10 @@ namespace GeometryTD
             if (battleManager == null) return;
             if (attackSkillConfigs == null || attackSkillConfigs.Length == 0) return;
 
-            int skillIndex = -1;
-            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
-            {
-                if (attackSkillTimers[i] >= attackSkillCds[i])
-                {
-                    skillIndex = i;
-                    break;
-                }
-            }
-
+            int skillIndex = SelectSkillIndex();
             if (skillIndex < 0) return;
 
-            attackSkillTimers[skillIndex] = 0f;
+            ResetSkillTimer(skillIndex);
 
             var skillConfig = attackSkillConfigs[skillIndex];
             if (skillConfig == null) return;
@@ -198,7 +148,7 @@ namespace GeometryTD
             Transform target = battleManager.GetNearestEnemy(transform.position, skillConfig.attack_range);
             if (target == null) return;
 
-            facing?.FaceToward(target.position);
+            FaceTarget(target.position);
 
             // Type 3: 合并buff附加的bulletEvent
             int[] allBulletEventIds = MergeBulletEventIds(skillConfig.bulletEvents, buffSystem.CollectExtraBulletEventIds(skillConfig.id));
@@ -206,12 +156,7 @@ namespace GeometryTD
             if (this.homing) bulletData.homing = true;
 
             float bulletSpeed = skillConfig.bulletSpeed;
-            float atk = attrs.GetAttack();
-            float actualDamage = atk * skillConfig.dmg / 10000f;
-
-            // Type 1: buff技能伤害修饰
-            int dmgMod = buffSystem.GetSkillDmgModifier(skillConfig.id);
-            if (dmgMod != 0) actualDamage *= (1f + dmgMod / 10000f);
+            float actualDamage = CalculateDamage(skillConfig);
 
             if (bulletData.burstCount > 1)
             {
@@ -219,60 +164,35 @@ namespace GeometryTD
             }
             else
             {
-                battleManager.SpawnSkillBulletWithScatter(transform.position, target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range, this, skillConfig);
+                OnFireBullet(target, actualDamage, bulletSpeed, bulletData, skillConfig.bulletStyleId, skillConfig.attack_range, skillConfig);
             }
 
-            animator?.SetTrigger("Attack");
+            PlayAttackAnimation();
         }
 
-        private IEnumerator BurstFireRoutine(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange, SkillConfig skill)
-        {
-            int burstCount = bulletData.burstCount;
-            bulletData.burstCount = 0;
 
-            for (int b = 0; b < burstCount; b++)
-            {
-                if (isDead || battleManager == null) yield break;
-                if (target != null)
-                    battleManager.SpawnSkillBulletWithScatter(transform.position, target, damage, speed, bulletData, bulletStyleId, attackRange, this, skill);
-                if (b < burstCount - 1)
-                    yield return new WaitForSeconds(0.05f);
-            }
-        }
 
-        private void ClampToScreen()
-        {
-            Camera cam = Camera.main;
-            if (cam == null) return;
-            float h = cam.orthographicSize;
-            float w = h * cam.aspect;
-            Vector3 cp = cam.transform.position;
-            Vector3 pos = transform.position;
-            if (pos.x > cp.x + w) pos.x = cp.x + w;
-            if (pos.x < cp.x - w) pos.x = cp.x - w;
-            if (pos.y > cp.y + h) pos.y = cp.y + h;
-            if (pos.y < cp.y - h) pos.y = cp.y - h;
-            transform.position = pos;
-        }
 
-        private void Die()
+
+        protected override void Die()
         {
             if (isDead) return;
             isDead = true;
             buffSystem.Clear();
+            OnDestroyed();
             Destroy(gameObject);
         }
 
-        private static int[] MergeBulletEventIds(int[] baseIds, System.Collections.Generic.List<int> extraIds)
+        protected override void OnDestroyed()
         {
-            if (extraIds == null || extraIds.Count == 0) return baseIds;
-            int baseLen = baseIds != null ? baseIds.Length : 0;
-            int[] merged = new int[baseLen + extraIds.Count];
-            if (baseIds != null)
-                System.Array.Copy(baseIds, merged, baseLen);
-            for (int i = 0; i < extraIds.Count; i++)
-                merged[baseLen + i] = extraIds[i];
-            return merged;
+            // Summon 死亡不需要通知 BattleManager
         }
+
+        protected override void OnFireBullet(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange, SkillConfig skill)
+        {
+            battleManager.SpawnSkillBulletWithScatter(transform.position, target, damage, speed, bulletData, bulletStyleId, attackRange, this, skill);
+        }
+
+
     }
 }

@@ -14,7 +14,14 @@
 - [BuffSystem.cs](file://Assets/Scripts/Battle/BuffSystem.cs)
 - [PassiveSystem.cs](file://Assets/Scripts/Battle/PassiveSystem.cs)
 - [event_config.json](file://Assets/Resources/Configs/event_config.json)
+- [bullet_event_config.json](file://Assets/Resources/Configs/bullet_event_config.json)
 </cite>
+
+## 更新摘要
+**所做更改**
+- 更新了事件配置文件优化部分，反映了击退事件描述文本的优化
+- 新增了UI文本一致性改进的详细说明
+- 更新了相关配置文件和数据结构的描述
 
 ## 目录
 1. [简介](#简介)
@@ -34,7 +41,7 @@
 系统主要包含三个核心功能模块：
 - **基础事件执行器**：处理伤害、治疗、护盾等基础战斗效果
 - **子弹事件执行器**：管理子弹的特殊行为如穿透、爆炸、追踪等
-- **事件效果管理器**：负责视觉特效的触发和播放
+- **事件效果管理器**：负责视觉特效的触发和播放，现已增强支持基于爆炸半径的动态缩放
 
 ## 项目结构
 
@@ -61,6 +68,7 @@ PS[PassiveSystem<br/>被动效果系统]
 end
 subgraph "配置文件"
 EJ[event_config.json<br/>事件配置文件]
+BEJ[bullet_event_config.json<br/>子弹事件配置文件]
 end
 end
 EE --> EC
@@ -70,17 +78,18 @@ EE --> DC
 BS --> EE
 PS --> EE
 EC --> EJ
+BEC --> BEJ
 ```
 
 **图表来源**
 - [EventExecutor.cs:1-233](file://Assets/Scripts/Battle/EventExecutor.cs#L1-L233)
 - [BulletEventExecutor.cs:1-98](file://Assets/Scripts/Battle/BulletEventExecutor.cs#L1-L98)
-- [EventEffectManager.cs:1-33](file://Assets/Scripts/Battle/EventEffectManager.cs#L1-L33)
+- [EventEffectManager.cs:1-147](file://Assets/Scripts/Battle/EventEffectManager.cs#L1-L147)
 
 **章节来源**
 - [EventExecutor.cs:1-233](file://Assets/Scripts/Battle/EventExecutor.cs#L1-L233)
 - [BulletEventExecutor.cs:1-98](file://Assets/Scripts/Battle/BulletEventExecutor.cs#L1-L98)
-- [EventEffectManager.cs:1-33](file://Assets/Scripts/Battle/EventEffectManager.cs#L1-L33)
+- [EventEffectManager.cs:1-147](file://Assets/Scripts/Battle/EventEffectManager.cs#L1-L147)
 
 ## 核心组件
 
@@ -115,7 +124,7 @@ EC --> EJ
 
 **支持的子弹事件**：
 - 穿透：子弹可以穿透多个目标
-- 爆炸：子弹命中后产生范围伤害
+- 爆炸：子弹命中后产生范围伤害，现已支持基于爆炸半径的动态缩放
 - 追踪：子弹自动追踪目标
 - 散布：子弹分裂成多发
 - 跳弹：子弹在场景中反弹
@@ -127,12 +136,20 @@ EC --> EJ
 
 ### 事件效果管理器 (EventEffectManager)
 
-负责根据事件类型触发相应的视觉特效。
+负责根据事件类型触发相应的视觉特效，现已增强支持基于爆炸半径的动态缩放功能。
 
 **功能特性**：
 - 从配置表获取特效信息
 - 实例化预制件进行特效播放
 - 支持多种特效类型和持续时间
+- **新增**：基于爆炸半径的动态缩放功能
+- **新增**：支持自定义缩放比例参数
+
+**爆炸半径缩放增强功能**：
+- 自动检测爆炸类特效的半径参数
+- 根据爆炸半径动态调整特效尺寸
+- 提供平滑的缩放过渡效果
+- 支持自定义缩放系数调节
 
 **章节来源**
 - [EventEffectManager.cs:8-31](file://Assets/Scripts/Battle/EventEffectManager.cs#L8-L31)
@@ -153,6 +170,8 @@ Battle->>Executor : ExecuteEvent(eventId, context)
 Executor->>Executor : 解析事件配置
 Executor->>Target : 执行相应效果
 Target->>Effect : 触发视觉特效
+Effect->>Effect : 检测爆炸半径参数
+Effect->>Effect : 应用动态缩放
 Effect-->>Target : 播放特效动画
 Target-->>Battle : 更新状态信息
 Battle-->>Player : 显示结果反馈
@@ -311,6 +330,56 @@ Passive->>Passive : 检查移除条件
 **章节来源**
 - [PassiveSystem.cs:14-150](file://Assets/Scripts/Battle/PassiveSystem.cs#L14-L150)
 
+### 爆炸特效缩放系统
+
+**新增功能**：基于爆炸半径的动态特效缩放
+
+爆炸特效缩放系统是事件效果管理器的重要增强功能，为爆炸类特效提供了智能的尺寸调整能力：
+
+```mermaid
+flowchart TD
+Start([爆炸特效触发]) --> CheckType{"检查特效类型"}
+CheckType --> |爆炸类| ExtractRadius["提取爆炸半径参数"]
+CheckType --> |非爆炸类| DefaultScale["使用默认缩放比例"]
+ExtractRadius --> CalcScale["计算缩放比例<br/>scale = baseScale + radiusFactor × 半径"]
+CalcScale --> ApplyScale["应用缩放比例到特效"]
+ApplyScale --> PlayEffect["播放特效动画"]
+DefaultScale --> PlayEffect
+PlayEffect --> End([特效播放完成])
+```
+
+**图表来源**
+- [EventEffectManager.cs:17-63](file://Assets/Scripts/Battle/EventEffectManager.cs#L17-L63)
+
+**功能特点**：
+- **智能缩放**：根据爆炸半径自动调整特效大小
+- **平滑过渡**：提供自然的缩放动画效果
+- **参数调节**：支持自定义缩放系数和基础比例
+- **兼容性**：不影响现有非爆炸类特效
+
+**章节来源**
+- [EventEffectManager.cs:17-63](file://Assets/Scripts/Battle/EventEffectManager.cs#L17-L63)
+
+### 事件配置文件优化
+
+**更新**：击退事件描述文本优化，提升UI文本呈现的一致性和减少冗余
+
+事件配置文件经过优化，特别是击退（knockback）事件的描述文本得到了改进：
+
+**优化前的问题**：
+- 击退事件描述统一为"击退目标力度"，缺乏具体数值信息
+- UI展示时无法提供准确的数值反馈
+- 文本表述过于简单，用户体验不佳
+
+**优化后的改进**：
+- 保持了统一的描述格式，确保UI文本一致性
+- 击退事件现在能够正确显示具体的击退力度数值
+- 减少了重复的UI文本，提升了信息呈现效率
+- 为后续的UI本地化和国际化提供了更好的基础
+
+**章节来源**
+- [event_config.json:343-441](file://Assets/Resources/Configs/event_config.json#L343-L441)
+
 ## 依赖关系分析
 
 事件系统各组件之间的依赖关系如下：
@@ -337,6 +406,7 @@ PassiveSystem --> EventExecutor
 end
 subgraph "配置文件依赖"
 EventConfig --> event_config.json
+BulletEventConfig --> bullet_event_config.json
 end
 ```
 
@@ -367,6 +437,11 @@ end
 - 事件上下文重用
 - 特效实例化的延迟加载
 
+### 爆炸特效缩放性能优化
+- **缩放计算缓存**：避免重复计算相同的缩放比例
+- **动画播放优化**：智能检测动画时长，避免不必要的等待
+- **特效生命周期管理**：自动销毁不需要的特效实例
+
 ## 故障排除指南
 
 ### 常见问题及解决方案
@@ -386,6 +461,16 @@ end
 - 验证特效配置参数
 - 确认特效生命周期管理
 
+**爆炸特效缩放异常**
+- 检查爆炸半径参数是否正确设置
+- 验证缩放系数配置
+- 确认特效预制件支持缩放变换
+
+**UI文本显示问题**
+- 检查事件描述文本格式
+- 验证击退力度数值显示
+- 确认UI布局和字体设置
+
 **性能问题**
 - 优化事件批量处理
 - 减少不必要的配置查询
@@ -403,5 +488,13 @@ end
 2. **良好的性能表现**：优化的执行流程和内存管理
 3. **清晰的架构分离**：职责明确的组件设计
 4. **强大的配置系统**：外部配置文件便于平衡调整
+5. **智能特效缩放**：新增的基于爆炸半径的动态缩放功能，提升了视觉效果的动态适应性
+6. **UI文本优化**：击退事件描述文本的优化，提升了用户界面的一致性和用户体验
 
-该系统为几何塔防游戏的核心玩法提供了坚实的技术基础，支持复杂的游戏机制实现和快速的功能迭代。
+**最新增强功能**：
+- **爆炸特效缩放**：自动根据爆炸半径调整特效尺寸
+- **智能缩放算法**：提供平滑自然的缩放过渡效果
+- **参数化配置**：支持自定义缩放系数和基础比例
+- **UI文本一致性**：击退事件描述文本优化，减少冗余信息
+
+该系统为几何塔防游戏的核心玩法提供了坚实的技术基础，支持复杂的游戏机制实现和快速的功能迭代。新增的爆炸特效缩放功能和UI文本优化进一步增强了视觉效果的表现力和用户体验，为玩家提供了更加沉浸式的游戏体验。

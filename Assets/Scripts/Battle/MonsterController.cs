@@ -2,66 +2,34 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public class MonsterController : MonoBehaviour, IBuffTarget
+    public class MonsterController : UnitController
     {
-        private AttrComponent attrs;
-        private BuffSystem buffSystem = new BuffSystem();
-
-        private int maxHp;
-        private float currentHp;
         private Transform heroTarget;
-        private BattleManager battleManager;
-        private bool isDead;
-        private Animator animator;
-        private CharacterFacing facing;
-
         private bool isElite;
 
         // 技能攻击相关
         private bool hasSkill;
         private float skillAttackRange;
-        private float attackTimer;
-        private int[] attackSkillIds;
-        private float[] attackSkillCds;
-        private float[] attackSkillTimers;
-        private SkillConfig[] attackSkillConfigs;
         private const float DefaultSkillAttackRange = 15f;
 
-        [SerializeField] private HealthBarUI hpBar;
-
-        // IBuffTarget 实现
-        public AttrComponent Attrs => attrs;
-        public BuffSystem BuffSystem => buffSystem;
-        public PassiveSystem PassiveSystem => null;
-        public bool IsDead => isDead;
+        public override PassiveSystem PassiveSystem => null;
         public bool IsElite => isElite;
-        public Vector3 Position => transform.position;
-        public float CurrentHp => currentHp;
-        public float MaxHp => maxHp;
-        public Transform CachedTransform => base.transform;
-        public BattleManager BattleManager => battleManager;
 
-        public void OnBuffDamage(float dmg)
+        public override void OnBuffDamage(float dmg)
         {
             if (buffSystem.IsInvincible()) return;
             TakeDamage(dmg);
         }
 
-        public void OnBuffHeal(float heal)
+        public override void OnBuffHeal(float heal)
         {
             currentHp = Mathf.Min(currentHp + heal, maxHp);
             UpdateBar();
         }
 
-        public void AddShield(int value) { }
+        public override void AddShield(int value) { }
 
-        public int GetHpPercent()
-        {
-            if (maxHp <= 0) return 0;
-            return Mathf.RoundToInt(currentHp / (float)maxHp * 10000);
-        }
 
-        public int GetShieldPercent() => 0;
 
         public void Init(MonsterConfig config, Transform hero, BattleManager manager, float hardMultiplier = 1f)
         {
@@ -70,9 +38,7 @@ namespace GeometryTD
             isElite = config.is_elite;
 
             // 初始化属性组件
-            attrs = GetComponent<AttrComponent>();
-            if (attrs == null) attrs = gameObject.AddComponent<AttrComponent>();
-            attrs.Init(config.attrs);
+            InitAttrs(config.attrs);
 
             // 应用难度乘数到基础属性
             if (hardMultiplier != 1f)
@@ -84,24 +50,11 @@ namespace GeometryTD
             maxHp = attrs.GetMaxHp();
             currentHp = maxHp;
 
-            animator = GetComponentInChildren<Animator>();
-            facing = GetComponent<CharacterFacing>();
-
             // 初始化技能攻击
             hasSkill = false;
             if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
             {
-                attackSkillIds = config.attack_skill_ids;
-                attackSkillCds = new float[attackSkillIds.Length];
-                attackSkillTimers = new float[attackSkillIds.Length];
-                attackSkillConfigs = new SkillConfig[attackSkillIds.Length];
-
-                for (int i = 0; i < attackSkillIds.Length; i++)
-                {
-                    attackSkillConfigs[i] = Cfg.Skill.Get(attackSkillIds[i]);
-                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
-                    attackSkillTimers[i] = 0f;
-                }
+                InitSkills(config.attack_skill_ids);
 
                 if (attackSkillConfigs[0] != null)
                 {
@@ -119,8 +72,7 @@ namespace GeometryTD
                 skillAttackRange = 0.5f; // 默认近战距离
             }
 
-            buffSystem.Clear();
-            UpdateBar();
+            InitComponents();
         }
 
         public void SetBar(HealthBarUI bar)
@@ -133,8 +85,8 @@ namespace GeometryTD
         {
             if (IsDead || heroTarget == null) return;
 
-            // Buff 系统驱动
-            buffSystem.Tick(Time.deltaTime, this);
+            // 调用基类Update
+            UnitUpdate();
             if (IsDead) return;
 
             // 冰冻中只停止移动
@@ -146,13 +98,6 @@ namespace GeometryTD
 
             // 移速（AttrComponent 已含 buff 加成）
             float currentSpeed = attrs.GetMoveSpeed();
-
-            // 技能冷却计时
-            if (hasSkill)
-            {
-                for (int i = 0; i < attackSkillTimers.Length; i++)
-                    attackSkillTimers[i] += Time.deltaTime;
-            }
 
             float dist = Vector3.Distance(transform.position, heroTarget.position);
 
@@ -205,19 +150,10 @@ namespace GeometryTD
         {
             if (battleManager == null) return;
 
-            int skillIndex = -1;
-            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
-            {
-                if (attackSkillTimers[i] >= attackSkillCds[i])
-                {
-                    skillIndex = i;
-                    break;
-                }
-            }
-
+            int skillIndex = SelectSkillIndex();
             if (skillIndex < 0) return;
 
-            attackSkillTimers[skillIndex] = 0f;
+            ResetSkillTimer(skillIndex);
 
             float atk = attrs.GetAttack();
             var skillConfig = attackSkillConfigs[skillIndex];
@@ -231,10 +167,10 @@ namespace GeometryTD
                 battleManager.SpawnMonsterBullet(transform.position, heroTarget, atk, 8f);
             }
 
-            animator?.SetTrigger("Attack");
+            PlayAttackAnimation();
         }
 
-        public void TakeDamage(float dmg, IBuffTarget attacker = null)
+        public override void TakeDamage(float dmg, IBuffTarget attacker = null)
         {
             if (IsDead) return;
 
@@ -254,22 +190,9 @@ namespace GeometryTD
             }
         }
 
-        private void ClampToScreen()
-        {
-            Camera cam = Camera.main;
-            if (cam == null) return;
-            float h = cam.orthographicSize;
-            float w = h * cam.aspect;
-            Vector3 cp = cam.transform.position;
-            Vector3 pos = transform.position;
-            if (pos.x > cp.x + w) pos.x = cp.x + w;
-            if (pos.x < cp.x - w) pos.x = cp.x - w;
-            if (pos.y > cp.y + h) pos.y = cp.y + h;
-            if (pos.y < cp.y - h) pos.y = cp.y - h;
-            transform.position = pos;
-        }
 
-        private void Die()
+
+        protected override void Die()
         {
             if (isDead) return;
             isDead = true;
@@ -282,12 +205,16 @@ namespace GeometryTD
             Destroy(gameObject);
         }
 
-        private void UpdateBar()
+        protected override void OnDestroyed()
         {
-            if (hpBar != null)
-            {
-                hpBar.SetValue(currentHp, maxHp);
-            }
+            // Monster 死亡逻辑已在上层 Die() 中处理
         }
+
+        protected override void OnFireBullet(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange, SkillConfig skill)
+        {
+            battleManager.SpawnMonsterBullet(transform.position, target, damage, speed);
+        }
+
+
     }
 }

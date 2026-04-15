@@ -2,64 +2,30 @@ using UnityEngine;
 
 namespace GeometryTD
 {
-    public class BossController : MonoBehaviour, IBuffTarget
+    public class BossController : UnitController
     {
-        private AttrComponent attrs;
-        private BuffSystem buffSystem = new BuffSystem();
-
-        private int maxHp;
-        private float currentHp;
-        private float attackRange;
-        private int[] attackSkillIds;
-        private float[] attackSkillCds;
-        private float[] attackSkillTimers;
-        private SkillConfig[] attackSkillConfigs;
-
         private Transform heroTarget;
-        private BattleManager battleManager;
         private Vector3 targetPosition;
         private bool reachedPosition;
-        private float attackTimer;
         private SkillConfig skillConfig;
-        private Animator animator;
-        private CharacterFacing facing;
 
-        [SerializeField] private HealthBarUI hpBar;
+        public override PassiveSystem PassiveSystem => null;
 
-        private bool isDead;
-
-        // IBuffTarget 实现
-        public AttrComponent Attrs => attrs;
-        public BuffSystem BuffSystem => buffSystem;
-        public PassiveSystem PassiveSystem => null;
-        public bool IsDead => isDead;
-        public Vector3 Position => transform.position;
-        public float CurrentHp => currentHp;
-        public float MaxHp => maxHp;
-        public Transform CachedTransform => base.transform;
-        public BattleManager BattleManager => battleManager;
-
-        public void OnBuffDamage(float dmg)
+        public override void OnBuffDamage(float dmg)
         {
             if (buffSystem.IsInvincible()) return;
             TakeDamage(dmg);
         }
 
-        public void OnBuffHeal(float heal)
+        public override void OnBuffHeal(float heal)
         {
             currentHp = Mathf.Min(currentHp + heal, maxHp);
             UpdateBar();
         }
 
-        public void AddShield(int value) { }
+        public override void AddShield(int value) { }
 
-        public int GetHpPercent()
-        {
-            if (maxHp <= 0) return 0;
-            return Mathf.RoundToInt(currentHp / (float)maxHp * 10000);
-        }
 
-        public int GetShieldPercent() => 0;
 
         public void Init(MonsterConfig config, Transform hero, BattleManager manager, Vector3 bossPosition, float hardMultiplier = 1f)
         {
@@ -69,9 +35,7 @@ namespace GeometryTD
             reachedPosition = false;
 
             // 初始化属性组件
-            attrs = GetComponent<AttrComponent>();
-            if (attrs == null) attrs = gameObject.AddComponent<AttrComponent>();
-            attrs.Init(config.attrs);
+            InitAttrs(config.attrs);
 
             if (hardMultiplier != 1f)
             {
@@ -84,38 +48,11 @@ namespace GeometryTD
             attackTimer = 0f;
 
             // 初始化攻击技能
-            if (config.attack_skill_ids != null && config.attack_skill_ids.Length > 0)
-            {
-                attackSkillIds = new int[config.attack_skill_ids.Length];
-                attackSkillCds = new float[config.attack_skill_ids.Length];
-                attackSkillTimers = new float[config.attack_skill_ids.Length];
-                attackSkillConfigs = new SkillConfig[config.attack_skill_ids.Length];
-
-                for (int i = 0; i < config.attack_skill_ids.Length; i++)
-                {
-                    attackSkillIds[i] = config.attack_skill_ids[i];
-                    attackSkillConfigs[i] = Cfg.Skill.Get(attackSkillIds[i]);
-                    attackSkillCds[i] = attackSkillConfigs[i] != null ? attackSkillConfigs[i].cd : 1f;
-                    attackSkillTimers[i] = 0f;
-
-                    if (i == 0 && attackSkillConfigs[i] != null)
-                    {
-                        attackRange = attackSkillConfigs[i].attack_range;
-                    }
-                }
-            }
-            else
-            {
-                attackRange = 15.0f;
-            }
+            InitSkills(config.attack_skill_ids);
 
             skillConfig = attackSkillConfigs != null && attackSkillConfigs.Length > 0 ? attackSkillConfigs[0] : null;
 
-            animator = GetComponentInChildren<Animator>();
-            facing = GetComponent<CharacterFacing>();
-
-            buffSystem.Clear();
-            UpdateBar();
+            InitComponents();
         }
 
         public void SetBar(HealthBarUI bar)
@@ -128,8 +65,8 @@ namespace GeometryTD
         {
             if (IsDead || heroTarget == null) return;
 
-            // Buff 系统驱动
-            buffSystem.Tick(Time.deltaTime, this);
+            // 调用基类Update
+            UnitUpdate();
             if (IsDead) return;
 
             // 被击退后检查是否需要回到目标位置
@@ -148,13 +85,6 @@ namespace GeometryTD
             }
 
             float currentSpeed = attrs.GetMoveSpeed();
-
-            // 技能冷却计时
-            if (attackSkillTimers != null)
-            {
-                for (int i = 0; i < attackSkillTimers.Length; i++)
-                    attackSkillTimers[i] += Time.deltaTime;
-            }
 
             if (!reachedPosition)
             {
@@ -188,33 +118,23 @@ namespace GeometryTD
             if (attackSkillConfigs == null || attackSkillConfigs.Length == 0) return;
             if (heroTarget == null) return;
 
-            int skillIndex = -1;
-            for (int i = attackSkillConfigs.Length - 1; i >= 0; i--)
-            {
-                if (attackSkillTimers[i] >= attackSkillCds[i])
-                {
-                    skillIndex = i;
-                    break;
-                }
-            }
-
+            int skillIndex = SelectSkillIndex();
             if (skillIndex < 0) return;
 
-            attackSkillTimers[skillIndex] = 0f;
+            ResetSkillTimer(skillIndex);
 
             var skillConfig = attackSkillConfigs[skillIndex];
             if (skillConfig == null) return;
 
-            facing?.FaceToward(heroTarget.position);
+            FaceTarget(heroTarget.position);
 
-            float atk = attrs.GetAttack();
-            float actualDmg = atk * skillConfig.dmg / 10000f;
+            float actualDmg = CalculateDamage(skillConfig);
             battleManager.SpawnBossBullet(transform.position, heroTarget, actualDmg, skillConfig.bulletSpeed);
 
-            animator?.SetTrigger("Attack");
+            PlayAttackAnimation();
         }
 
-        public void TakeDamage(float dmg, IBuffTarget attacker = null)
+        public override void TakeDamage(float dmg, IBuffTarget attacker = null)
         {
             if (IsDead) return;
 
@@ -239,22 +159,9 @@ namespace GeometryTD
             }
         }
 
-        private void ClampToScreen()
-        {
-            Camera cam = Camera.main;
-            if (cam == null) return;
-            float h = cam.orthographicSize;
-            float w = h * cam.aspect;
-            Vector3 cp = cam.transform.position;
-            Vector3 pos = transform.position;
-            if (pos.x > cp.x + w) pos.x = cp.x + w;
-            if (pos.x < cp.x - w) pos.x = cp.x - w;
-            if (pos.y > cp.y + h) pos.y = cp.y + h;
-            if (pos.y < cp.y - h) pos.y = cp.y - h;
-            transform.position = pos;
-        }
 
-        private void Die()
+
+        protected override void Die()
         {
             if (isDead) return;
             isDead = true;
@@ -267,12 +174,16 @@ namespace GeometryTD
             Destroy(gameObject);
         }
 
-        private void UpdateBar()
+        protected override void OnDestroyed()
         {
-            if (hpBar != null)
-            {
-                hpBar.SetValue(currentHp, maxHp);
-            }
+            // Boss 死亡逻辑已在上层 Die() 中处理
         }
+
+        protected override void OnFireBullet(Transform target, float damage, float speed, BulletEventData bulletData, int bulletStyleId, float attackRange, SkillConfig skill)
+        {
+            battleManager.SpawnBossBullet(transform.position, target, damage, speed);
+        }
+
+
     }
 }
