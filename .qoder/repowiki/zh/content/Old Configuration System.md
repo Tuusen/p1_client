@@ -9,19 +9,23 @@
 - [Assets/Scripts/Data/Configs/ArcaneConfig.cs](file://Assets/Scripts/Data/Configs/ArcaneConfig.cs)
 - [Assets/Scripts/Data/Configs/HeroConfig.cs](file://Assets/Scripts/Data/Configs/HeroConfig.cs)
 - [Assets/Scripts/Data/Configs/SkillConfig.cs](file://Assets/Scripts/Data/Configs/SkillConfig.cs)
+- [Assets/Scripts/Data/Configs/RoleConfig.cs](file://Assets/Scripts/Data/Configs/RoleConfig.cs)
+- [Assets/Scripts/Battle/VisualLoader.cs](file://Assets/Scripts/Battle/VisualLoader.cs)
+- [Assets/Scripts/Battle/VisualLoader_Usage.md](file://Assets/Scripts/Battle/VisualLoader_Usage.md)
 - [Assets/Resources/Configs/arcane_config.json](file://Assets/Resources/Configs/arcane_config.json)
 - [Assets/Resources/Configs/hero_config.json](file://Assets/Resources/Configs/hero_config.json)
+- [Assets/Resources/Configs/role_config.json](file://Assets/Resources/Configs/role_config.json)
 - [Assets/Resources/Configs/global_config.json](file://Assets/Resources/Configs/global_config.json)
 - [Tools/config_gen.py](file://Tools/config_gen.py)
 </cite>
 
 ## 更新摘要
 **所做更改**
-- 标记旧配置系统为已废弃状态
-- 移除了关于数据缓存策略和临时日志增强功能的描述
-- 更新了架构描述以反映当前的现代化配置系统
-- 重新组织了核心组件分析，突出ConfigTable泛型架构
-- 更新了配置生成流程和加载机制的说明
+- 标记旧的单独角色预制体系统为废弃状态
+- 新增废弃系统说明和迁移指南
+- 更新了角色配置和视觉加载器的相关内容
+- 强调新的统一配置系统已取代旧的预制体管理方式
+- 添加了从旧系统迁移到新系统的指导
 
 ## 目录
 1. [简介](#简介)
@@ -29,10 +33,11 @@
 3. [核心组件](#核心组件)
 4. [架构概览](#架构概览)
 5. [详细组件分析](#详细组件分析)
-6. [依赖关系分析](#依赖关系分析)
-7. [性能考虑](#性能考虑)
-8. [故障排除指南](#故障排除指南)
-9. [结论](#结论)
+6. [废弃系统说明](#废弃系统说明)
+7. [依赖关系分析](#依赖关系分析)
+8. [性能考虑](#性能考虑)
+9. [故障排除指南](#故障排除指南)
+10. [结论](#结论)
 
 ## 简介
 
@@ -41,6 +46,8 @@
 这是一个基于Unity引擎开发的现代化配置系统，采用自动化配置表系统实现。该系统通过Excel到JSON再到C#代码的完整转换流程，为游戏提供了灵活且可维护的配置管理机制。
 
 **更新** 系统已完全重构为现代化的自动化配置表系统，替代了原有的手动配置管理方式。新系统提供了更强的类型安全性和更好的性能表现。
+
+**废弃说明** 旧的单独角色预制体系统已被标记为废弃状态，新的统一配置系统已完全取代了原有的角色预制体管理方式。该废弃系统曾经支持基于RoleConfig的动态角色外观切换，但现在已不再推荐使用。
 
 系统的核心特点包括：
 - 自动化配置生成工具链
@@ -74,6 +81,7 @@ end
 subgraph "资源系统"
 Resources[Resources/Configs]
 Prefabs[预制体缓存]
+VisualLoader[视觉加载器]
 end
 Excel --> Generator
 JSON --> Resources
@@ -85,6 +93,7 @@ Manager --> Tables
 Manager --> Resources
 Manager --> Prefabs
 Resources --> Manager
+VisualLoader --> RoleConfig[角色配置]
 ```
 
 **图表来源**
@@ -191,15 +200,17 @@ class ConfigMeta~TMeta~ {
 +TMeta Meta
 +Init(meta)
 }
-class ArcaneConfig {
+class RoleConfig {
 +int id
 +string name
-+int[] events
++string prefabPath
++string animatorPath
++Sprite_setItem[] sprite_set
 }
-class HeroConfig {
-+int id
-+string name
-+AttrEntry[] attrs
+class VisualLoader {
++LoadVisual(RoleConfig config)
++RegisterSlot(int slotType, SpriteRenderer renderer)
++ClearSlots()
 }
 class GameTypes {
 <<static>>
@@ -209,10 +220,10 @@ class GameTypes {
 }
 Cfg --> ConfigManager : "静态入口"
 ConfigManager --> ConfigTable : "管理多个表"
-ConfigTable --> ArcaneConfig : "存储配置项"
-ConfigTable --> HeroConfig : "存储配置项"
+ConfigTable --> RoleConfig : "存储配置项"
 ConfigTable --> GameTypes : "使用类型定义"
 ConfigMeta --> GameTypes : "使用类型定义"
+VisualLoader --> RoleConfig : "使用配置"
 ```
 
 **图表来源**
@@ -220,6 +231,7 @@ ConfigMeta --> GameTypes : "使用类型定义"
 - [Assets/Scripts/Core/ConfigManager.cs:11-37](file://Assets/Scripts/Core/ConfigManager.cs#L11-L37)
 - [Assets/Scripts/Core/ConfigTable.cs:11-73](file://Assets/Scripts/Core/ConfigTable.cs#L11-L73)
 - [Assets/Scripts/Data/GameTypes.cs:8-82](file://Assets/Scripts/Data/GameTypes.cs#L8-L82)
+- [Assets/Scripts/Battle/VisualLoader.cs:10-205](file://Assets/Scripts/Battle/VisualLoader.cs#L10-L205)
 
 ## 详细组件分析
 
@@ -258,18 +270,22 @@ LoadManager --> LoadAllConfigs[调用LoadAllConfigs]
 LoadAllConfigs --> LoadArcane[加载arcane_config.json]
 LoadAllConfigs --> LoadAttribute[加载attribute_config.json]
 LoadAllConfigs --> LoadHero[加载hero_config.json]
+LoadAllConfigs --> LoadRole[加载role_config.json]
 LoadAllConfigs --> LoadOther[加载其他配置文件]
 LoadArcane --> ParseArcane[解析ArcaneConfigData]
 LoadAttribute --> ParseAttribute[解析AttributeConfigData]
 LoadHero --> ParseHero[解析HeroConfigData]
+LoadRole --> ParseRole[解析RoleConfigData]
 LoadOther --> ParseOther[解析其他配置数据]
 ParseArcane --> InitArcaneTable[初始化Arcane配置表]
 ParseAttribute --> InitAttributeTable[初始化Attribute配置表]
 ParseHero --> InitHeroTable[初始化Hero配置表]
+ParseRole --> InitRoleTable[初始化Role配置表]
 ParseOther --> InitOtherTables[初始化其他配置表]
 InitArcaneTable --> PreloadPrefabs[预加载预制体]
 InitAttributeTable --> PreloadPrefabs
 InitHeroTable --> PreloadPrefabs
+InitRoleTable --> PreloadPrefabs
 InitOtherTables --> PreloadPrefabs
 PreloadPrefabs --> Ready([配置系统就绪])
 ```
@@ -316,8 +332,16 @@ class BulletEventData {
 +int[] attachToTargetEventIds
 +Clone() BulletEventData
 }
+class RoleConfig {
++int id
++string name
++string prefabPath
++string animatorPath
++Sprite_setItem[] sprite_set
+}
 TypeInfo --> AttrEntry : "使用"
 TypeInfo --> BulletEventData : "使用"
+TypeInfo --> RoleConfig : "使用"
 ```
 
 **更新** 新版本增强了对复杂嵌套结构的支持，包括匿名结构体和共享类型定义。
@@ -325,10 +349,12 @@ TypeInfo --> BulletEventData : "使用"
 **图表来源**
 - [Tools/config_gen.py:22-94](file://Tools/config_gen.py#L22-L94)
 - [Assets/Scripts/Data/GameTypes.cs:8-56](file://Assets/Scripts/Data/GameTypes.cs#L8-L56)
+- [Assets/Scripts/Data/Configs/RoleConfig.cs:10-33](file://Assets/Scripts/Data/Configs/RoleConfig.cs#L10-L33)
 
 **章节来源**
 - [Tools/config_gen.py:18-94](file://Tools/config_gen.py#L18-L94)
 - [Assets/Scripts/Data/GameTypes.cs:8-82](file://Assets/Scripts/Data/GameTypes.cs#L8-L82)
+- [Assets/Scripts/Data/Configs/RoleConfig.cs:10-33](file://Assets/Scripts/Data/Configs/RoleConfig.cs#L10-L33)
 
 ### 配置表访问模式
 
@@ -358,6 +384,72 @@ Note over Client,Lookup : O(1)时间复杂度查找
 - [Assets/Scripts/Core/Cfg.cs:11-32](file://Assets/Scripts/Core/Cfg.cs#L11-L32)
 - [Assets/Scripts/Core/ConfigTable.cs:26-32](file://Assets/Scripts/Core/ConfigTable.cs#L26-L32)
 
+## 废弃系统说明
+
+### 角色预制体系统（已废弃）
+
+**重要声明：旧的角色预制体系统已被废弃**
+
+旧的单独角色预制体系统曾经是游戏视觉表现的重要组成部分，但现在已被新的统一配置系统完全取代。该系统的主要功能包括：
+
+#### 系统功能概述
+
+1. **动态角色外观切换**
+   - 基于RoleConfig配置动态替换角色槽位Sprite
+   - 支持自定义AnimatorController加载
+   - 提供资源兜底机制
+
+2. **槽位管理系统**
+   - 自动识别和收集槽位节点
+   - 支持手动注册和清理槽位
+   - 统一的槽位类型管理
+
+3. **资源加载机制**
+   - 基于配置路径的资源加载
+   - 错误处理和日志记录
+   - 资源缓存和预加载
+
+#### 废弃原因
+
+1. **统一配置系统替代**
+   - 新的ConfigTable架构提供了更好的类型安全性
+   - 统一的配置管理减少了重复代码
+   - 更好的性能和内存使用
+
+2. **架构简化**
+   - 减少了系统间的耦合关系
+   - 简化了配置数据结构
+   - 统一了资源加载方式
+
+3. **维护成本考虑**
+   - 废弃系统增加了维护复杂度
+   - 新系统提供了更好的扩展性
+   - 减少了潜在的bug来源
+
+#### 迁移指南
+
+**从旧系统迁移到新系统：**
+
+1. **配置数据迁移**
+   - 将RoleConfig中的prefabPath字段迁移到新的统一配置系统
+   - 更新sprite_set配置到新的视觉管理系统
+   - 移除废弃的animatorPath配置
+
+2. **代码重构**
+   - 移除VisualLoader组件的使用
+   - 更新角色初始化逻辑
+   - 采用新的ConfigTable访问方式
+
+3. **资源路径更新**
+   - 更新所有资源路径到新的统一结构
+   - 移除旧的预制体依赖
+   - 采用新的资源加载方式
+
+**章节来源**
+- [Assets/Scripts/Battle/VisualLoader.cs:6-205](file://Assets/Scripts/Battle/VisualLoader.cs#L6-L205)
+- [Assets/Scripts/Battle/VisualLoader_Usage.md:1-165](file://Assets/Scripts/Battle/VisualLoader_Usage.md#L1-L165)
+- [Assets/Scripts/Data/Configs/RoleConfig.cs:10-33](file://Assets/Scripts/Data/Configs/RoleConfig.cs#L10-L33)
+
 ## 依赖关系分析
 
 ```mermaid
@@ -370,30 +462,37 @@ subgraph "配置定义层"
 ArcaneConfig.cs[ArcaneConfig.cs]
 HeroConfig.cs[HeroConfig.cs]
 SkillConfig.cs[SkillConfig.cs]
+RoleConfig.cs[RoleConfig.cs]
 GameTypes.cs[GameTypes.cs]
 end
 subgraph "运行时层"
 Cfg.cs[Cfg.cs]
 ConfigManager.cs[ConfigManager.cs]
 ConfigTable.cs[ConfigTable.cs]
+VisualLoader.cs[VisualLoader.cs]
 end
 subgraph "配置数据层"
 arcane_config.json[arcane_config.json]
 hero_config.json[hero_config.json]
+role_config.json[role_config.json]
 global_config.json[global_config.json]
 end
 config_gen.py --> ArcaneConfig.cs
 config_gen.py --> HeroConfig.cs
 config_gen.py --> SkillConfig.cs
+config_gen.py --> RoleConfig.cs
 config_gen.py --> GameTypes.cs
 ArcaneConfig.cs --> ConfigManager.cs
 HeroConfig.cs --> ConfigManager.cs
 SkillConfig.cs --> ConfigManager.cs
+RoleConfig.cs --> ConfigManager.cs
 GameTypes.cs --> ConfigManager.cs
 Cfg.cs --> ConfigManager.cs
 ConfigManager.cs --> arcane_config.json
 ConfigManager.cs --> hero_config.json
+ConfigManager.cs --> role_config.json
 ConfigManager.cs --> global_config.json
+VisualLoader.cs -.-> RoleConfig.cs
 ```
 
 **更新** 新版本的依赖关系更加清晰，减少了循环依赖的可能性。
@@ -469,6 +568,11 @@ D --> H
 - 检查配置表的键值唯一性
 - 验证预制体路径的有效性
 
+**废弃系统相关问题**
+- **VisualLoader组件失效**：该组件已被废弃，应移除使用
+- **RoleConfig配置不再生效**：新的统一配置系统已替代此功能
+- **角色外观切换失败**：需要迁移到新的视觉管理系统
+
 **更新** 新版本增加了更详细的错误日志和调试信息，便于问题诊断。
 
 **章节来源**
@@ -487,6 +591,9 @@ D --> H
 
 **更新** 新版本的配置系统在保持原有优势的基础上，进一步提升了系统的稳定性和可维护性，为游戏开发提供了更加可靠和高效的配置管理基础设施。
 
+**废弃系统总结**
+旧的单独角色预制体系统虽然已被废弃，但它为新系统的开发提供了宝贵的经验和参考。新的统一配置系统在继承其优点的同时，解决了其存在的问题，提供了更好的架构设计和用户体验。
+
 该系统为游戏开发提供了稳定可靠的配置管理基础设施，支持复杂的配置数据结构和多样的使用场景。
 
 **重要声明：旧配置系统功能已废弃**
@@ -494,3 +601,5 @@ D --> H
 - 临时日志增强功能不再可用
 - 建议使用新的ConfigTable泛型架构进行配置管理
 - 旧的配置访问方式不再推荐使用
+- 角色预制体系统已被新的统一配置系统完全取代
+- VisualLoader组件和RoleConfig配置已废弃，需要迁移至新系统
