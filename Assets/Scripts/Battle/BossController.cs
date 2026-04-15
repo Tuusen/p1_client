@@ -56,6 +56,7 @@ namespace GeometryTD
             skillConfig = attackSkillConfigs != null && attackSkillConfigs.Length > 0 ? attackSkillConfigs[0] : null;
 
             InitComponents();
+            InitVisual(config.role);  // 初始化视觉表现
         }
 
         public void SetBar(HealthBarUI bar)

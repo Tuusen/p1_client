@@ -107,6 +107,7 @@ namespace GeometryTD
             InitSkills(config.attack_skill_ids);
 
             InitComponents();
+            InitVisual(config.role);  // 初始化视觉表现
         }
 
         private void Update()

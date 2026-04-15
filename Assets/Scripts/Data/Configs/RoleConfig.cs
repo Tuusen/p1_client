@@ -10,9 +10,18 @@ namespace GeometryTD
     [Serializable]
     public class RoleConfig
     {
+        [Serializable]
+        public class Sprite_setItem
+        {
+            public int slotType;
+            public string spritePath;
+        }
+
         public int id;
         public string name;
         public string prefabPath;
+        public string animatorPath;
+        public Sprite_setItem[] sprite_set;
         public string head;
     }
 

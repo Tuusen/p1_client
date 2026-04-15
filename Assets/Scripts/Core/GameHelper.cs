@@ -10,7 +10,7 @@ namespace GeometryTD
     {
         private static Font cachedFont;
 
-        public static Sprite LoadSprite(string path)
+        public static Sprite LoadSprite(string path, string assetPath = "Resources")
         {
             if (string.IsNullOrEmpty(path)) return null;
 
@@ -20,7 +20,7 @@ namespace GeometryTD
 
 #if UNITY_EDITOR
             // Fallback: load by asset path for assets outside Resources/
-            sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Resources/{path}.png");
+            sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/{assetPath}/{path}.png");
             if (sprite != null) return sprite;
 #endif
 
@@ -55,6 +55,24 @@ namespace GeometryTD
             if (cachedFont == null)
                 cachedFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
             return cachedFont;
+        }
+
+        public static RuntimeAnimatorController LoadAnimator(string path, string assetPath = "Resources")
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+
+            // Try Resources.Load first (for assets in Resources/ folders)
+            RuntimeAnimatorController animator = Resources.Load<RuntimeAnimatorController>(path);
+            if (animator != null) return animator;
+
+#if UNITY_EDITOR
+            // Fallback: load by asset path for assets outside Resources/
+            animator = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"Assets/{assetPath}/{path}.controller");
+            if (animator != null) return animator;
+#endif
+
+            Debug.LogWarning($"[GameHelper] AnimatorController not found: {path}");
+            return null;
         }
 
         public static T OpenWin<T>() where T : BaseWin

@@ -17,6 +17,7 @@ namespace GeometryTD
         public BuffSystem buffSystem = new BuffSystem();
         protected Animator animator;
         protected CharacterFacing facing;
+        protected VisualLoader visualLoader;
         public BattleManager battleManager;
 
         [Header("单位标识")]
@@ -130,8 +131,31 @@ namespace GeometryTD
         {
             animator = GetComponentInChildren<Animator>();
             facing = GetComponent<CharacterFacing>();
+            visualLoader = GetComponentInChildren<VisualLoader>();
             buffSystem.Clear();
             UpdateBar();
+        }
+
+        /// <summary>
+        /// 初始化视觉表现（根据 RoleConfig）
+        /// </summary>
+        protected virtual void InitVisual(int roleId)
+        {
+            RoleConfig config = Cfg.Role.Get(roleId);
+            if (config == null)
+            {
+                Debug.LogWarning($"[UnitController] 找不到 RoleConfig: roleId={roleId}");
+                return;
+            }
+
+            if (visualLoader != null)
+            {
+                visualLoader.LoadVisual(config);
+            }
+            else
+            {
+                Debug.LogWarning("[UnitController] 未找到 VisualLoader 组件");
+            }
         }
 
         // ===== Update 循环 =====
