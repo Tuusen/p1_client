@@ -6,8 +6,8 @@ namespace GeometryTD
     {
         private static readonly Dictionary<string, string> pathMap = new Dictionary<string, string>
         {
-            { "SkillSelectWin", "UI/SkillSelectWin" },
-            { "HeroSelectWin", "UI/HeroSelectWin" },
+            { "SkillSelectWin", "UI/Windows/SkillSelectWin" },
+            { "HeroSelectWin", "UI/Windows/HeroSelectWin" },
         };
 
         /// <summary>
@@ -20,13 +20,13 @@ namespace GeometryTD
 
         /// <summary>
         /// 根据窗口名获取预制体路径。
-        /// 优先查找已注册的映射，未找到则回退到默认路径 "UI/{winName}"。
+        /// 优先查找已注册的映射，未找到则回退到默认路径 "UI/Windows/{winName}"。
         /// </summary>
         public static string GetPath(string winName)
         {
             if (pathMap.TryGetValue(winName, out string path))
                 return path;
-            return $"UI/{winName}";
+            return $"UI/Windows/{winName}";
         }
     }
 }
