@@ -241,6 +241,25 @@ namespace GeometryTD
         Summon = 4
     }
 
+    /// <summary>
+    /// 动画状态枚举
+    /// </summary>
+    public enum AnimState
+    {
+        /// <summary>待机</summary>
+        Idle = 0,
+        /// <summary>移动</summary>
+        Move = 1,
+        /// <summary>攻击</summary>
+        Attack = 2,
+        /// <summary>死亡</summary>
+        Die = 3,
+        /// <summary>冰冻（无法移动和攻击）</summary>
+        Freeze = 4,
+        /// <summary>蓄力</summary>
+        Charge = 5
+    }
+
     public static class GameConsts
     {
         public static class MetaConsts

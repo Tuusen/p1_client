@@ -23,5 +23,13 @@ namespace GeometryTD
             s.x = faceLeft ? Mathf.Abs(s.x) : -Mathf.Abs(s.x);
             visualRoot.localScale = s;
         }
+
+        public void FaceRight()
+        {
+            if (visualRoot == null) return;
+            Vector3 s = visualRoot.localScale;
+            s.x = -Mathf.Abs(s.x);
+            visualRoot.localScale = s;
+        }
     }
 }

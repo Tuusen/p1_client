@@ -63,7 +63,7 @@ namespace GeometryTD
             {
                 summonGroup = unitCaster.Group;
             }
-            InitUnit( summonGroup, UnitType.Summon);
+            InitUnit(summonGroup, UnitType.Summon);
 
             // 初始化属性组件 + 继承逻辑
             InitAttrs(config.attrs);
@@ -108,6 +108,11 @@ namespace GeometryTD
 
             InitComponents();
             InitVisual(config.role);  // 初始化视觉表现
+            if (this.group == UnitGroup.Player)
+            {
+                // 进入战斗时朝向右边
+                facing?.FaceRight();
+            }
         }
 
         private void Update()

@@ -85,6 +85,9 @@ namespace GeometryTD
             InitVisual(config.role);  // 初始化视觉表现
             passiveSystem.Clear();
             UpdateBars();
+            
+            // 进入战斗时朝向右边
+            facing?.FaceRight();
         }
 
         public void SetBars(HealthBarUI shield, HealthBarUI hp)
