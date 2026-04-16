@@ -228,11 +228,11 @@ namespace GeometryTD
             ApplyDamage();
             ExecuteHitEvents();
 
-            // 爆炸 AOE
+            // 爆炸 AOE（使用溅射飘字效果）
             if (bulletData != null && bulletData.explosionRadius > 0 && battleManager != null)
             {
                 float explDmg = damage * bulletData.explosionDmgRate / 10000f;
-                battleManager.DealAoeDamage(transform.position, bulletData.explosionRadius, explDmg, caster);
+                battleManager.DealAoeDamageSplash(transform.position, bulletData.explosionRadius, explDmg, caster);
 
                 // 对爆炸波及的目标施加事件效果（排除已直接命中的主目标）
                 if (bulletData.attachToTargetEventIds != null && bulletData.attachToTargetEventIds.Count > 0)

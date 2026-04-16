@@ -60,17 +60,44 @@ namespace GeometryTD
             return nextUid++;
         }
 
-        public void ShowDamageText(Vector3 worldPos, float amount, bool isHeal)
+        /// <summary>
+        /// 显示伤害/治疗飘字
+        /// </summary>
+        /// <param name="worldPos">世界坐标</param>
+        /// <param name="amount">数值</param>
+        /// <param name="isHeal">是否为治疗</param>
+        /// <param name="textType">飘字类型（Normal=普通飘过，Splash=爆炸溅射位置+缩放）</param>
+        public void ShowDamageText(Vector3 worldPos, float amount, bool isHeal, DamageTextType textType = DamageTextType.Normal)
         {
             if (floatingTextUI == null) return;
             int display = Mathf.RoundToInt(amount);
             if (display <= 0) return;
             string text = isHeal ? $"+{display}" : display.ToString();
-            Color color = isHeal
-                ? new Color(0.2f, 0.9f, 0.3f)
-                : new Color(1f, 0.4f, 0.1f);
-            Vector3 offset = new Vector3(Random.Range(-0.3f, 0.3f), 0.3f, 0f);
-            floatingTextUI.Show(text, worldPos + offset, color);
+            Color color;
+            if (isHeal)
+            {
+                // 治疗：绿色
+                color = new Color(0.2f, 0.9f, 0.3f);
+            }
+            else if (textType == DamageTextType.Splash)
+            {
+                // 爆炸溅射伤害：浅红色
+                color = new Color(1f, 0.6f, 0.6f);
+            }
+            else
+            {
+                // 普通伤害：浅黄色
+                color = new Color(1f, 0.95f, 0.5f);
+            }
+            floatingTextUI.Show(text, worldPos, color, textType);
+        }
+
+        /// <summary>
+        /// 显示爆炸溅射伤害飘字（随机位置+缩放效果）
+        /// </summary>
+        public void ShowSplashDamageText(Vector3 worldPos, float amount)
+        {
+            ShowDamageText(worldPos, amount, false, DamageTextType.Splash);
         }
 
         private void Start()
@@ -419,6 +446,23 @@ namespace GeometryTD
         // ===== AoE 伤害 =====
         public void DealAoeDamage(Vector3 center, float radius, float damage, IBuffTarget caster = null)
         {
+            DealAoeDamageInternal(center, radius, damage, caster, false);
+        }
+
+        /// <summary>
+        /// 带有溅射飘字效果的AOE伤害（用于爆炸子弹）
+        /// </summary>
+        public void DealAoeDamageSplash(Vector3 center, float radius, float damage, IBuffTarget caster = null)
+        {
+            DealAoeDamageInternal(center, radius, damage, caster, true);
+        }
+
+        /// <summary>
+        /// 内部AOE伤害处理方法
+        /// </summary>
+        /// <param name="showSplash">是否显示溅射飘字效果</param>
+        private void DealAoeDamageInternal(Vector3 center, float radius, float damage, IBuffTarget caster, bool showSplash)
+        {
             for (int i = aliveEnemies.Count - 1; i >= 0; i--)
             {
                 if (aliveEnemies[i] == null)
@@ -429,6 +473,12 @@ namespace GeometryTD
                 float dist = Vector3.Distance(center, aliveEnemies[i].position);
                 if (dist <= radius)
                 {
+                    // 显示溅射飘字效果（如果启用）
+                    if (showSplash)
+                    {
+                        ShowSplashDamageText(aliveEnemies[i].position, damage);
+                    }
+
                     MonsterController mc = aliveEnemies[i].GetComponent<MonsterController>();
                     if (mc != null) { mc.TakeDamage(damage, caster); continue; }
 
