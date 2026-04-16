@@ -16,7 +16,8 @@
       "enemyEvents": [
         70010
       ], 
-      "bulletEvents": []
+      "bulletEvents": [],
+      "dragHint": "拖拽到目标区域释放陨石"
     }, 
     {
       "id": 4002, 
@@ -34,7 +35,8 @@
       "enemyEvents": [
         70201
       ], 
-      "bulletEvents": []
+      "bulletEvents": [],
+      "dragHint": "拖拽到目标区域释放寒冰"
     }, 
     {
       "id": 4003, 
@@ -52,8 +54,9 @@
       "enemyEvents": [], 
       "bulletEvents": [
         202003
-      ]
-    }, 
+      ],
+      "dragHint": "拖拽到目标区域释放闪电网"
+    },
     {
       "id": 4004, 
       "name": "风之诗", 
@@ -70,7 +73,8 @@
       "enemyEvents": [
         40002
       ], 
-      "bulletEvents": []
+      "bulletEvents": [],
+      "dragHint": "拖拽到任意位置释放风暴"
     }
   ]
 }

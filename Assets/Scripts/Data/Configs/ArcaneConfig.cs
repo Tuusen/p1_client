@@ -24,6 +24,7 @@ namespace GeometryTD
         public int[] events;
         public int[] enemyEvents;
         public int[] bulletEvents;
+        public string dragHint;
     }
 
     [Serializable]

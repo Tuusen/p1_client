@@ -21,6 +21,7 @@ namespace GeometryTD
 
         private GameObject dragGhost;
         private bool isDragging;
+        private DragVisualManager dragVisualManager;
 
         // Range circle shown during drag
         private GameObject rangeCircle;
@@ -44,6 +45,8 @@ namespace GeometryTD
             barRect = transform.parent != null
                 ? transform.parent.GetComponent<RectTransform>()
                 : null;
+
+            dragVisualManager = Object.FindObjectOfType<DragVisualManager>();
         }
 
         public void UpdateSlot(ArcaneSlotState state)
@@ -111,6 +114,13 @@ namespace GeometryTD
             var config = Cfg.Arcane.Get(state.arcaneId);
             arcaneRadius = config != null ? config.radius : 3f;
 
+            // Get drag hint from config
+            string hintText = config != null ? config.dragHint : "";
+
+            // Start drag visual effects with slow-motion
+            if (dragVisualManager != null)
+                dragVisualManager.BeginDrag(SkillCategory.Aoe, hintText);
+
             CreateDragGhost(eventData.position);
 
             if (arcaneRadius > 0)
@@ -125,6 +135,10 @@ namespace GeometryTD
             if (!isDragging || dragGhost == null) return;
             dragGhost.transform.position = eventData.position;
 
+            // Update drag visuals
+            if (dragVisualManager != null)
+                dragVisualManager.UpdateDrag(SkillCategory.Aoe);
+
             if (rangeCircle != null)
             {
                 Vector3 worldPos = ScreenToWorldZ0(eventData.position);
@@ -136,6 +150,10 @@ namespace GeometryTD
         {
             if (!isDragging) return;
             isDragging = false;
+
+            // End drag visual effects and restore time scale
+            if (dragVisualManager != null)
+                dragVisualManager.EndDrag();
 
             DestroyDragGhost();
             DestroyRangeCircle();
