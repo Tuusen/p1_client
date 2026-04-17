@@ -188,6 +188,8 @@ namespace GeometryTD
                 return;
             }
 
+            GameManager.Instance.ResetTimeScale();
+
             // 获取玩家选择的英雄
             int heroId = GameManager.Instance != null
                 ? GameManager.Instance.GetSelectedHeroId()
@@ -815,8 +817,11 @@ namespace GeometryTD
                 DialogueConfig config = Cfg.Dialogue.Get(bossEvent.dialogueId);
                 if (config != null && config.lines != null && config.lines.Length > 0)
                 {
-                    DialogueWin win = GameHelper.OpenWin<DialogueWin>();
-                    win.ShowDialogue(config, () => OnBossDialogueComplete(bossEvent));
+                    GameHelper.OpenWin<DialogueWin>(param: new DialogueWinParam
+                    {
+                        dialogueId = bossEvent.dialogueId,
+                        onComplete = () => OnBossDialogueComplete(bossEvent)
+                    });
                     return;
                 }
             }
@@ -847,8 +852,11 @@ namespace GeometryTD
             ChoiceGroupConfig config = Cfg.ChoiceGroup.Get(choiceGroupId);
             if (config != null && config.choices != null && config.choices.Length > 0)
             {
-                ChoiceWin win = GameHelper.OpenWin<ChoiceWin>();
-                win.ShowChoices(config, OnBossChoiceSelected);
+                GameHelper.OpenWin<ChoiceWin>(param: new ChoiceWinParam
+                {
+                    config = config,
+                    onSelected = OnBossChoiceSelected
+                });
                 return;
             }
 
@@ -881,7 +889,7 @@ namespace GeometryTD
                 GameManager.Instance.MarkLevelCompleted(currentLevelId);
             }
 
-            Time.timeScale = 0f;
+            GameManager.Instance.PauseGame();
             if (battleUI != null)
             {
                 battleUI.ShowResult(true);
@@ -897,7 +905,7 @@ namespace GeometryTD
             if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)
                 StoryManager.Instance.HandleBattleFailed();
 
-            Time.timeScale = 0f;
+            GameManager.Instance.PauseGame();
             if (battleUI != null)
             {
                 battleUI.ShowResult(false);

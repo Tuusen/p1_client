@@ -4,8 +4,17 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// ArcaneSelectWin 的参数类
+    /// </summary>
+    public class ArcaneSelectWinParam
+    {
+    }
+
     public class ArcaneSelectWin : BaseWin
     {
+        private ArcaneSelectWinParam data => Data as ArcaneSelectWinParam;
+
         [SerializeField] private Transform arcaneListContent;
         [SerializeField] private Button confirmButton;
         [SerializeField] private Button closeButton;
@@ -16,24 +25,17 @@ namespace GeometryTD
         private List<GameObject> arcaneItems = new List<GameObject>();
         private Dictionary<int, Image> itemBgMap = new Dictionary<int, Image>();
 
-        public override void Init()
+        public override void load()
         {
-            base.Init();
             if (closeButton != null)
-                closeButton.onClick.AddListener(() => WinManager.Instance.CloseWin<ArcaneSelectWin>());
+                closeButton.onClick.AddListener(() => OnClose());
             if (confirmButton != null)
                 confirmButton.onClick.AddListener(OnConfirmClicked);
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
             RefreshList();
-        }
-
-        public override void OnClose()
-        {
-            base.OnClose();
         }
 
         private void RefreshList()
@@ -154,7 +156,7 @@ namespace GeometryTD
             if (GameManager.Instance != null)
                 GameManager.Instance.SetEquippedArcanes(ids.ToArray());
 
-            Hide();
+            OnClose();
         }
     }
 }

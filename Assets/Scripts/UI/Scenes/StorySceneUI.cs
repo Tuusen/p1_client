@@ -233,9 +233,10 @@ namespace GeometryTD
 
             if (node.type == StoryNodeType.Battle)
             {
-                LevelSelectWin win = GameHelper.OpenWin<LevelSelectWin>();
-                if (win != null)
-                    win.ShowForStoryNode(node.levelId);
+                GameHelper.OpenWin<LevelSelectWin>(param: new LevelSelectWinParam
+                {
+                    levelId = node.levelId,
+                });
             }
             else
             {

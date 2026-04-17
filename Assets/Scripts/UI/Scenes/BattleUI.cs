@@ -14,8 +14,15 @@ namespace GeometryTD
         [SerializeField] private Text resultTitleText;
         [SerializeField] private Button backButton;
 
+        [Header("倍速按钮")]
+        [SerializeField] private ToggleGroup speedToggleGroup;
+        [SerializeField] private Toggle speedToggle05x;
+        [SerializeField] private Toggle speedToggle1x;
+        [SerializeField] private Toggle speedToggle15x;
+
         private bool isBossMode;
         private bool lastResultIsVictory;
+        private BattleManager battleManager;
 
         private void Start()
         {
@@ -27,6 +34,55 @@ namespace GeometryTD
             if (backButton != null)
             {
                 backButton.onClick.AddListener(OnBackButtonClicked);
+            }
+
+            // 查找BattleManager
+            battleManager = FindObjectOfType<BattleManager>();
+
+            // 绑定倍速按钮
+            speedToggle05x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameSpeed.speed1));
+            speedToggle1x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameSpeed.speed2));
+            speedToggle15x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameSpeed.speed3));
+           
+            // 通过GameManager获取当前选择的倍速
+            float selectedSpeed = GameManager.Instance.getSelectedTimeScale();
+            speedToggle05x.isOn = Mathf.Approximately(selectedSpeed, GameSpeed.speed1);
+            speedToggle1x.isOn = Mathf.Approximately(selectedSpeed, GameSpeed.speed2);
+            speedToggle15x.isOn = Mathf.Approximately(selectedSpeed, GameSpeed.speed3);
+
+            RefreshSpeedToggleVisual();
+        }
+
+        /// <summary>
+        /// 刷新倍速Toggle的视觉状态（防止拖拽操作导致状态丢失）
+        /// </summary>
+        private void RefreshSpeedToggleVisual()
+        {
+            float selectedSpeed = GameManager.Instance.getSelectedTimeScale();
+            
+            // 使用isOn赋值确保触发完整的视觉更新
+            bool should05x = Mathf.Approximately(selectedSpeed, GameSpeed.speed1);
+            bool should1x = Mathf.Approximately(selectedSpeed, GameSpeed.speed2);
+            bool should15x = Mathf.Approximately(selectedSpeed, GameSpeed.speed3);
+            
+            if (should05x)
+            {
+                speedToggle05x.isOn = true;
+            } else if (should1x)
+            {
+                speedToggle1x.isOn = true;
+            } else if (should15x)
+            {
+                speedToggle15x.isOn = true;
+            }
+        }
+
+
+        private void OnSpeedToggleChanged(bool isOn, float speed)
+        {
+            if (isOn)
+            {
+                GameManager.Instance.SetTimeScale(speed);
             }
         }
 

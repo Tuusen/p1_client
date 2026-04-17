@@ -20,6 +20,11 @@ namespace GeometryTD
         private int[] equippedSkillIds;
         private int[] equippedArcaneIds;
 
+        // 倍速管理
+        private float selectedTimeScale; // 玩家选择的倍速
+
+        private bool isPaused = false;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -31,6 +36,10 @@ namespace GeometryTD
             DontDestroyOnLoad(gameObject);
             LoadCompletedLevels();
             LoadPlayerSelections();
+            
+            // 初始化倍速
+            selectedTimeScale = GameSpeed.speed1;
+            isPaused = false;
         }
 
         public void SelectLevel(int levelId)
@@ -45,7 +54,7 @@ namespace GeometryTD
 
         public void StartSelectedLevel()
         {
-            Time.timeScale = 1f;
+            ResetTimeScale();
             SceneManager.LoadScene("Battle");
         }
 
@@ -58,7 +67,7 @@ namespace GeometryTD
 
         public void BackToMainMenu()
         {
-            Time.timeScale = 1f;
+            ResetTimeScale();
             SceneManager.LoadScene("MainMenu");
         }
 
@@ -233,6 +242,83 @@ namespace GeometryTD
             string data = string.Join(",", ids);
             PlayerPrefs.SetString(SaveKeyCompletedLevels, data);
             PlayerPrefs.Save();
+        }
+
+        // ===== 倍速管理 =====
+        /// <summary>
+        /// 内部统一设置 Time.timeScale（禁止外部直接调用 Time.timeScale）
+        /// </summary>
+        private void SetTimeScaleInternal(float timeScale)
+        {
+            if (isPaused) {
+                if (timeScale == GameSpeed.stop)
+                {
+                    Time.timeScale = GameSpeed.stop;
+                }
+                // 暂停状态下不允许修改倍速,除非是改为0
+                return;
+            } else {
+                Time.timeScale = timeScale;
+            }; 
+        }
+
+        /// <summary>
+        /// 设置游戏倍速
+        /// </summary>
+        public void SetTimeScale(float timeScale)
+        {
+            selectedTimeScale = timeScale;
+            SetTimeScaleInternal(timeScale);
+        }
+
+        /// <summary>
+        /// 暂停游戏（倍速设为0）
+        /// </summary>
+        public void PauseGame()
+        {
+            isPaused = true;
+            SetTimeScaleInternal(GameSpeed.stop);
+        }
+
+        /// <summary>
+        /// 拖拽慢放（固定0.3倍速）
+        /// </summary>
+        public void StartDragSlowMotion()
+        {
+            SetTimeScaleInternal(GameSpeed.drag);
+        }
+
+        /// <summary>
+        /// 结束拖拽慢放（恢复到选择的倍速）
+        /// </summary>
+        public void EndDragSlowMotion()
+        {
+            if (isPaused) return;
+            ResetTimeScale();
+        }
+
+        /// <summary>
+        /// 重置 TimeScale 为 1（场景切换时调用）
+        /// </summary>
+        public void ResetTimeScale()
+        {
+            isPaused = false;
+            // 根据当前场景决定恢复的倍速
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (currentSceneName == "Battle")
+            {
+                // 战斗场景：恢复到玩家选择的倍速
+                SetTimeScaleInternal(selectedTimeScale);
+            }
+            else
+            {
+                // 其他场景：恢复到默认速度1
+                SetTimeScaleInternal(GameSpeed.normal);
+            }
+        }
+
+        public float getSelectedTimeScale() {
+            return selectedTimeScale;
         }
     }
 }

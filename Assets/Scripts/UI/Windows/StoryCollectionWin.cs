@@ -4,8 +4,16 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// StoryCollectionWin 的参数类
+    /// </summary>
+    public class StoryCollectionWinParam
+    {
+    }
+
     public class StoryCollectionWin : BaseWin
     {
+        private StoryCollectionWinParam data => Data as StoryCollectionWinParam;
         // List panel
         private Transform listContent;
         private readonly List<GameObject> listItems = new List<GameObject>();
@@ -27,25 +35,19 @@ namespace GeometryTD
         private Font cachedFont;
         private int selectedCollectionId;
 
-        public override void Init()
+        public override void load()
         {
-            base.Init();
             cachedFont = GameHelper.LoadFont();
             BuildUI();
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
             if (confirmOverlay != null)
                 confirmOverlay.SetActive(false);
             RefreshList();
         }
 
-        public override void OnClose()
-        {
-            base.OnClose();
-        }
 
         // ===== UI Construction =====
 
@@ -75,7 +77,7 @@ namespace GeometryTD
                 new Vector2(1f, 0f), Vector2.one,
                 new Vector2(-50f, 2f), new Vector2(-5f, -2f),
                 new Color(0.5f, 0.2f, 0.2f, 0.9f), 22, "X",
-                () => WinManager.Instance.CloseWin<StoryCollectionWin>());
+                () => OnClose());
 
             // Title
             Text titleText = CreateText(headerRt, "Title",

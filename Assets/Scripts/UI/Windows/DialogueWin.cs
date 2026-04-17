@@ -4,8 +4,18 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// DialogueWin 的参数类
+    /// </summary>
+    public class DialogueWinParam
+    {
+        public int dialogueId;
+        public Action onComplete;
+    }
+
     public class DialogueWin : BaseWin
     {
+        private DialogueWinParam data => Data as DialogueWinParam;
         [SerializeField] private Text speakerText;
         [SerializeField] private Text dialogueText;
         [SerializeField] private Image leftPortrait;
@@ -30,13 +40,8 @@ namespace GeometryTD
         private bool isAutoMode;
         private const float AutoDelay = 1.5f;
         private float autoTimer;
-
-        private float savedTimeScale;
-        private bool hasPausedTime;
-
-        public override void Init()
+        public override void load()
         {
-            base.Init();
 
             if (speakerText == null)
                 BuildUI();
@@ -49,15 +54,26 @@ namespace GeometryTD
                 clickArea.onClick.AddListener(OnClickAreaPressed);
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
+            if (data.dialogueId <= 0)
+            {
+                CompleteDialogue();
+                return;
+            }
+
+            DialogueConfig config = Cfg.Dialogue.Get(data.dialogueId);
+            if (config == null || config.lines == null || config.lines.Length == 0)
+            {
+                CompleteDialogue();
+                return;
+            }
+
+            ShowDialogue(config,data.onComplete);
         }
 
-        public override void OnClose()
+        public override void closeWin()
         {
-            base.OnClose();
-
             // If dialogue is still active when closed externally, treat as skip
             if (currentConfig != null)
             {
@@ -73,7 +89,7 @@ namespace GeometryTD
         /// <summary>
         /// 显示对话序列。对话完成或跳过时调用 onComplete。
         /// </summary>
-        public void ShowDialogue(DialogueConfig config, Action onComplete)
+        private void ShowDialogue(DialogueConfig config, Action onComplete)
         {
             if (config == null || config.lines == null || config.lines.Length == 0)
             {
@@ -87,9 +103,7 @@ namespace GeometryTD
             isAutoMode = false;
             autoTimer = 0f;
 
-            savedTimeScale = Time.timeScale;
-            Time.timeScale = 0f;
-            hasPausedTime = true;
+            GameManager.Instance.PauseGame();
 
             if (leftPortrait != null)
                 leftPortrait.gameObject.SetActive(false);
@@ -248,17 +262,13 @@ namespace GeometryTD
             Action callback = onComplete;
             onComplete = null;
 
-            WinManager.Instance.CloseWin<DialogueWin>();
             callback?.Invoke();
+            OnClose();
         }
 
         private void RestoreTimeScale()
         {
-            if (hasPausedTime)
-            {
-                Time.timeScale = savedTimeScale;
-                hasPausedTime = false;
-            }
+            GameManager.Instance.ResetTimeScale();
         }
 
         // ===== Dynamic UI Build (fallback when prefab has no bindings) =====

@@ -31,7 +31,9 @@ namespace GeometryTD
             if (isDragging) EndDrag();
             isDragging = true;
 
-            Time.timeScale = 0.3f;
+            // 使用BattleManager的拖拽慢放功能
+            GameManager.Instance.StartDragSlowMotion();
+
             CreateDimOverlay();
 
             // Show drag hint
@@ -89,7 +91,9 @@ namespace GeometryTD
             if (!isDragging) return;
             isDragging = false;
 
-            Time.timeScale = 1f;
+            // 使用BattleManager结束拖拽慢放
+            GameManager.Instance.EndDragSlowMotion();
+            // 注意：不再有 Fallback 直接设置 Time.timeScale，必须通过 BattleManager 管理
 
             // Restore hero color
             if (heroSR != null)

@@ -5,8 +5,19 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// ChoiceWin 的参数类
+    /// </summary>
+    public class ChoiceWinParam
+    {
+        public ChoiceGroupConfig config;
+        public Action<int, ChoiceConfig> onSelected;
+    }
+
     public class ChoiceWin : BaseWin
     {
+        private ChoiceWinParam data => Data as ChoiceWinParam;
+
         [SerializeField] private Text titleText;
         [SerializeField] private Transform optionListContent;
 
@@ -14,34 +25,27 @@ namespace GeometryTD
         private Action<int, ChoiceConfig> onSelected;
         private List<GameObject> optionItems = new List<GameObject>();
 
-        private float savedTimeScale;
-        private bool hasPausedTime;
-
-        public override void Init()
+        public override void load()
         {
-            base.Init();
 
             if (titleText == null)
                 BuildUI();
+
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
+            ShowChoices(data.config, data.onSelected);
         }
 
-        public override void OnClose()
+        public override void closeWin()
         {
-            base.OnClose();
-
+            // 如果关闭界面时候没有选，就帮他选第一个
             if (currentConfig != null)
             {
                 RestoreTimeScale();
                 currentConfig = null;
-
-                Action<int, ChoiceConfig> callback = onSelected;
-                onSelected = null;
-                callback?.Invoke(0, null);
+                onSelected?.Invoke(0, null);
             }
         }
 
@@ -53,6 +57,7 @@ namespace GeometryTD
         {
             if (config == null || config.choices == null || config.choices.Length == 0)
             {
+                RestoreTimeScale();
                 onSelected?.Invoke(0, null);
                 return;
             }
@@ -60,9 +65,8 @@ namespace GeometryTD
             currentConfig = config;
             this.onSelected = onSelected;
 
-            savedTimeScale = Time.timeScale;
-            Time.timeScale = 0f;
-            hasPausedTime = true;
+            // 通过 GameManager 统一管理 TimeScale
+            GameManager.Instance.PauseGame();
 
             RefreshOptions();
         }
@@ -82,7 +86,6 @@ namespace GeometryTD
                 ChoiceConfig choice = Cfg.Choice.Get(choiceId);
                 if (choice == null)
                 {
-                    Debug.LogWarning($"[ChoiceWin] Choice config not found: id={choiceId}");
                     continue;
                 }
                 
@@ -197,14 +200,12 @@ namespace GeometryTD
         {
             if (currentConfig == null) return;
 
+            // 已经选择了
             RestoreTimeScale();
             currentConfig = null;
+            onSelected?.Invoke(optionIndex, choice);
 
-            Action<int, ChoiceConfig> callback = onSelected;
-            onSelected = null;
-
-            WinManager.Instance.CloseWin<ChoiceWin>();
-            callback?.Invoke(optionIndex, choice);
+            OnClose();
         }
 
         private void ClearOptionItems()
@@ -219,11 +220,7 @@ namespace GeometryTD
 
         private void RestoreTimeScale()
         {
-            if (hasPausedTime)
-            {
-                Time.timeScale = savedTimeScale;
-                hasPausedTime = false;
-            }
+            GameManager.Instance.ResetTimeScale();
         }
 
         // ===== Dynamic UI Build =====

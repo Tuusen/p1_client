@@ -4,8 +4,17 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// LevelSelectWin 的参数类
+    /// </summary>
+    public class LevelSelectWinParam
+    {
+        public int levelId;
+    }
+
     public class LevelSelectWin : BaseWin
     {
+        private LevelSelectWinParam data => Data as LevelSelectWinParam;
         [SerializeField] private Text detailNameText;
         [SerializeField] private Text detailDescText;
         [SerializeField] private Text detailEliteText;
@@ -17,9 +26,8 @@ namespace GeometryTD
         private int selectedLevelId;
         private bool isStoryMode;
 
-        public override void Init()
+        public override void load()
         {
-            base.Init();
             if (closePanelButton != null)
                 closePanelButton.onClick.AddListener(() => {
                     OnClose();
@@ -28,12 +36,11 @@ namespace GeometryTD
                 challengeButton.onClick.AddListener(OnChallengeClicked);
 
         }
-
-        public override void OnClose()
+        public override void start()
         {
-            isStoryMode = false;
-            base.OnClose();
+            ShowForStoryNode(data.levelId);
         }
+
 
         public void ShowForStoryNode(int levelId)
         {
@@ -138,9 +145,12 @@ namespace GeometryTD
         {
             if (isStoryMode)
             {
-                WinManager.Instance.CloseWin<LevelSelectWin>();
                 if (StoryManager.Instance != null)
+                {
+                    
                     StoryManager.Instance.ExecuteCurrentNode();
+                }
+                OnClose();
                 return;
             }
 

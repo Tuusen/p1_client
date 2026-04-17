@@ -504,8 +504,11 @@ namespace GeometryTD
                 return;
             }
 
-            DialogueWin win = GameHelper.OpenWin<DialogueWin>();
-            win.ShowDialogue(config, onComplete);
+            GameHelper.OpenWin<DialogueWin>(param: new DialogueWinParam
+            {
+                dialogueId = dialogueId,
+                onComplete = onComplete
+            });
         }
 
         private void ShowChoices(int choiceGroupId, System.Action<int, ChoiceConfig> onSelected)
@@ -517,8 +520,11 @@ namespace GeometryTD
                 return;
             }
 
-            ChoiceWin win = GameHelper.OpenWin<ChoiceWin>();
-            win.ShowChoices(config, onSelected);
+            GameHelper.OpenWin<ChoiceWin>(param: new ChoiceWinParam
+            {
+                config = config,
+                onSelected = onSelected
+            });
         }
 
         private string GetEndingTypeLabel(int type)

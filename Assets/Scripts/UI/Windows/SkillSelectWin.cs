@@ -4,8 +4,16 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// SkillSelectWin 的参数类
+    /// </summary>
+    public class SkillSelectWinParam
+    {
+    }
+
     public class SkillSelectWin : BaseWin
     {
+        private SkillSelectWinParam data => Data as SkillSelectWinParam;
         [SerializeField] private Transform skillListContent;
         [SerializeField] private Button confirmButton;
         [SerializeField] private Button closeButton;
@@ -16,25 +24,19 @@ namespace GeometryTD
         private List<GameObject> skillItems = new List<GameObject>();
         private Dictionary<int, Image> itemBgMap = new Dictionary<int, Image>();
 
-        public override void Init()
+        public override void load()
         {
-            base.Init();
             if (closeButton != null)
-                closeButton.onClick.AddListener(() => WinManager.Instance.CloseWin<SkillSelectWin>());
+                closeButton.onClick.AddListener(() => OnClose());
             if (confirmButton != null)
                 confirmButton.onClick.AddListener(OnConfirmClicked);
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
             RefreshList();
         }
 
-        public override void OnClose()
-        {
-            base.OnClose();
-        }
 
         private void RefreshList()
         {
@@ -75,6 +77,10 @@ namespace GeometryTD
         private GameObject CreateSkillItem(SkillPoolConfig poolConfig, Font font)
         {
             GameObject itemObj = new GameObject($"SkillItem_{poolConfig.id}");
+            
+            // 必须添加 RectTransform 才能作为 LayoutGroup 的子对象
+            RectTransform rectTransform = itemObj.AddComponent<RectTransform>();
+            
             itemObj.transform.SetParent(skillListContent, false);
 
             Image bg = itemObj.AddComponent<Image>();
@@ -83,6 +89,7 @@ namespace GeometryTD
 
             LayoutElement le = itemObj.AddComponent<LayoutElement>();
             le.preferredHeight = 70;
+            le.flexibleWidth = 0; // 禁止宽度弹性扩展
 
             Button btn = itemObj.AddComponent<Button>();
             int poolId = poolConfig.id;
@@ -158,7 +165,7 @@ namespace GeometryTD
             if (GameManager.Instance != null)
                 GameManager.Instance.SetEquippedSkills(ids.ToArray());
 
-            WinManager.Instance.CloseWin<SkillSelectWin>();
+            OnClose();
         }
     }
 }

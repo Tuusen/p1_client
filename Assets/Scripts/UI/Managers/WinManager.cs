@@ -60,23 +60,31 @@ namespace GeometryTD
             winRoot = canvas.transform;
         }
 
-        public T OpenWin<T>() where T : BaseWin
+        public T OpenWin<T>(string winName = null, object param = null) where T : BaseWin
         {
-            return OpenWin<T>(ViewPathManager.GetPath(typeof(T).Name));
-        }
-
-        public T OpenWin<T>(string prefabPath) where T : BaseWin
-        {
-            Debug.LogWarning($"[WinManager] 打开窗口: {prefabPath}");
             Type type = typeof(T);
+            string prefabPath = !string.IsNullOrEmpty(winName) 
+                ? ViewPathManager.GetPath(winName) 
+                : ViewPathManager.GetPath(type.Name);
 
+            Debug.LogWarning($"[WinManager] 打开窗口: {prefabPath}");
+
+            // 如果窗口已存在，则重置参数并提升到最上层
             if (winCache.TryGetValue(type, out BaseWin cached))
             {
+                // 传递参数给ResetOpen方法
+                cached.ResetOpen(param);
+                
+                // 更新打开顺序，确保在同优先级中处于最上层
+                winOpenOrder[type] = ++openSequenceCounter;
+                
+                // 显示窗口并更新层级
                 cached.Show();
                 UpdateSortOrder(cached);
                 return (T)cached;
             }
 
+            // 创建新窗口
             GameObject prefab = GameHelper.LoadPrefab(prefabPath);
             if (prefab == null)
             {
@@ -99,18 +107,27 @@ namespace GeometryTD
 
             winCache[type] = win;
             winOpenOrder[type] = ++openSequenceCounter;
-            win.Init();
+            win.Init(param);
             win.Show();
             UpdateSortOrder(win);
             return win;
         }
 
-        public void CloseWin<T>() where T : BaseWin
+        /// <summary>
+        /// 根据窗口名称关闭窗口
+        /// </summary>
+        /// <param name="winName">窗口名称（GameObject.name）</param>
+        public void CloseWin(string winName)
         {
-            Type type = typeof(T);
-            if (winCache.TryGetValue(type, out BaseWin win))
+            if (string.IsNullOrEmpty(winName)) return;
+
+            foreach (var kvp in winCache)
             {
-                win.OnClose();
+                if (kvp.Value != null && kvp.Value.gameObject.name == winName)
+                {
+                    kvp.Value.gameObject.SetActive(false);
+                    break;
+                }
             }
         }
 

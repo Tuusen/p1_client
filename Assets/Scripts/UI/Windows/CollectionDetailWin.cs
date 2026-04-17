@@ -4,8 +4,19 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// CollectionDetailWin 的参数类
+    /// </summary>
+    public class CollectionDetailWinParam
+    {
+        public PassiveEffectConfig config;
+    }
+
     public class CollectionDetailWin : BaseWin
     {
+        // 通过属性访问基类的 data 字段
+        private CollectionDetailWinParam data => Data as CollectionDetailWinParam;
+
         [SerializeField] private Text titleText;
         [SerializeField] private Image iconImage;
         [SerializeField] private Text qualityText;
@@ -20,22 +31,19 @@ namespace GeometryTD
         private PassiveEffectConfig currentConfig;
         private Font cachedFont;
 
-        public override void Init()
+        public override void load()
         {
-            base.Init();
-
             if (titleText == null)
                 BuildUI();
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
+            ShowDetail(data.config);
         }
 
-        public override void OnClose()
+        public override void closeWin()
         {
-            base.OnClose();
             currentConfig = null;
         }
 
@@ -414,7 +422,7 @@ namespace GeometryTD
 
         private void OnCloseClicked()
         {
-            WinManager.Instance.CloseWin<CollectionDetailWin>();
+            OnClose();
         }
     }
 }

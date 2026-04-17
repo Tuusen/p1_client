@@ -487,22 +487,22 @@ namespace GeometryTD
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.SelectLevel(levelId);
+                GameManager.Instance.ResetTimeScale();
             }
-            Time.timeScale = 1f;
             SceneManager.LoadScene("Battle");
         }
 
         /// <summary>加载事件场景（结局/商店/休息节点共用）</summary>
         public void EnterEventScene()
         {
-            Time.timeScale = 1f;
+            GameManager.Instance.ResetTimeScale();
             SceneManager.LoadScene("Event");
         }
 
         /// <summary>返回故事集场景</summary>
         public void EnterStoryScene()
         {
-            Time.timeScale = 1f;
+            GameManager.Instance.ResetTimeScale();
             SceneManager.LoadScene("Story");
         }
 
@@ -513,7 +513,7 @@ namespace GeometryTD
             {
                 AbandonAdventure();
             }
-            Time.timeScale = 1f;
+            GameManager.Instance.ResetTimeScale();
             SceneManager.LoadScene("MainMenu");
         }
 

@@ -4,8 +4,16 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// HeroSelectWin 的参数类
+    /// </summary>
+    public class HeroSelectWinParam
+    {
+    }
+
     public class HeroSelectWin : BaseWin
     {
+        private HeroSelectWinParam data => Data as HeroSelectWinParam;
         [SerializeField] private Transform heroListContent;
         [SerializeField] private Button closeButton;
 
@@ -13,23 +21,17 @@ namespace GeometryTD
         private List<GameObject> heroItems = new List<GameObject>();
         private Dictionary<int, Image> itemBgMap = new Dictionary<int, Image>();
 
-        public override void Init()
+        public override void load()
         {
-            base.Init();
             if (closeButton != null)
-                closeButton.onClick.AddListener(() => WinManager.Instance.CloseWin<HeroSelectWin>());
+                closeButton.onClick.AddListener(() => OnClose());
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
             RefreshList();
         }
 
-        public override void OnClose()
-        {
-            base.OnClose();
-        }
 
         private void RefreshList()
         {

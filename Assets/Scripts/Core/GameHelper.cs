@@ -75,26 +75,18 @@ namespace GeometryTD
             return null;
         }
 
-        public static T OpenWin<T>() where T : BaseWin
+        public static T OpenWin<T>(string winName = null, object param = null) where T : BaseWin
         {
-            return WinManager.Instance.OpenWin<T>();
-        }
-
-        public static T OpenWin<T>(string prefabPath) where T : BaseWin
-        {
-            return WinManager.Instance.OpenWin<T>(prefabPath);
-        }
-
-        public static void CloseWin<T>() where T : BaseWin
-        {
-            WinManager.Instance.CloseWin<T>();
+            // 直接调用 WinManager 的统一 OpenWin 方法
+            return WinManager.Instance.OpenWin<T>(winName, param);
         }
 
         // ===== 场景管理 =====
 
         public static void LoadScene(string sceneName)
         {
-            Time.timeScale = 1f;
+            // 通过 GameManager 统一管理 TimeScale 重置
+            GameManager.Instance.ResetTimeScale();
             SceneManager.LoadScene(sceneName);
         }
     }

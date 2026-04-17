@@ -260,6 +260,17 @@ namespace GeometryTD
         Charge = 5
     }
 
+    public static class GameSpeed
+    {
+        public const float stop = 0f;
+        public const float drag = 0.3f;
+        public const float normal = 1f;
+
+        public const float speed1 = 0.5f;
+        public const float speed2 = 1f;
+        public const float speed3 = 1.5f;
+    }
+
     public static class GameConsts
     {
         public static class MetaConsts

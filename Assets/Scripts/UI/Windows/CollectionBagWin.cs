@@ -5,8 +5,16 @@ using UnityEngine.UI;
 
 namespace GeometryTD
 {
+    /// <summary>
+    /// CollectionBagWin 的参数类
+    /// </summary>
+    public class CollectionBagWinParam
+    {
+    }
+
     public class CollectionBagWin : BaseWin
     {
+        private CollectionBagWinParam data => Data as CollectionBagWinParam;
         [SerializeField] private Text titleText;
         [SerializeField] private Transform itemListContent;
         [SerializeField] private Button closeButton;
@@ -15,23 +23,20 @@ namespace GeometryTD
         private List<GameObject> itemObjects = new List<GameObject>();
         private Font cachedFont;
 
-        public override void Init()
+        public override void load()
         {
-            base.Init();
 
             if (titleText == null)
                 BuildUI();
         }
 
-        public override void Show()
+        public override void start()
         {
-            base.Show();
             RefreshItems();
         }
 
-        public override void OnClose()
+        public override void closeWin()
         {
-            base.OnClose();
             ClearItems();
         }
 
@@ -158,11 +163,10 @@ namespace GeometryTD
         {
             if (config == null) return;
 
-            CollectionDetailWin detailWin = GameHelper.OpenWin<CollectionDetailWin>();
-            if (detailWin != null)
+            GameHelper.OpenWin<CollectionDetailWin>(param: new CollectionDetailWinParam
             {
-                detailWin.ShowDetail(config);
-            }
+                config = config,
+            });
         }
 
         private void ClearItems()
@@ -346,7 +350,7 @@ namespace GeometryTD
 
         private void OnCloseClicked()
         {
-            WinManager.Instance.CloseWin<CollectionBagWin>();
+            OnClose();
         }
     }
 }
