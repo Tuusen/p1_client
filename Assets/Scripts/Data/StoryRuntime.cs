@@ -77,8 +77,9 @@ namespace GeometryTD
                 }
             }
 
-            // 如果未达到maxStack限制，直接添加
-            if (sameTypeIndices.Count < newConfig.maxStack)
+            // 如果未达到maxStack限制,直接添加
+            // maxStack == -1 表示无限制
+            if (newConfig.maxStack == -1 || sameTypeIndices.Count < newConfig.maxStack)
             {
                 ownedEffectIds.Add(effectId);
                 return;

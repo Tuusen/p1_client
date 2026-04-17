@@ -119,27 +119,25 @@ namespace GeometryTD
         /// <param name="winName">窗口名称（GameObject.name）</param>
         public void CloseWin(string winName)
         {
+            DestroyWin(winName);
+        }
+
+        public void DestroyWin(string winName)
+        {
             if (string.IsNullOrEmpty(winName)) return;
 
             foreach (var kvp in winCache)
             {
                 if (kvp.Value != null && kvp.Value.gameObject.name == winName)
                 {
-                    kvp.Value.gameObject.SetActive(false);
+                    // 从缓存中移除
+                    winCache.Remove(kvp.Key);
+                    winOpenOrder.Remove(kvp.Key);
+                    // 销毁窗口对象
+                    if (kvp.Value.gameObject != null)
+                        Destroy(kvp.Value.gameObject);
                     break;
                 }
-            }
-        }
-
-        public void DestroyWin<T>() where T : BaseWin
-        {
-            Type type = typeof(T);
-            if (winCache.TryGetValue(type, out BaseWin win))
-            {
-                winCache.Remove(type);
-                winOpenOrder.Remove(type);
-                if (win != null && win.gameObject != null)
-                    Destroy(win.gameObject);
             }
         }
 

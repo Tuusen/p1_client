@@ -15,20 +15,12 @@ namespace GeometryTD
     public class CollectionBagWin : BaseWin
     {
         private CollectionBagWinParam data => Data as CollectionBagWinParam;
-        [SerializeField] private Text titleText;
-        [SerializeField] private Transform itemListContent;
-        [SerializeField] private Button closeButton;
-        [SerializeField] private Text countText;
+        private Text txt_title;
+        private Transform node_content;
+        private Button btn_close;
+        private Text txt_count;
 
         private List<GameObject> itemObjects = new List<GameObject>();
-        private Font cachedFont;
-
-        public override void load()
-        {
-
-            if (titleText == null)
-                BuildUI();
-        }
 
         public override void start()
         {
@@ -44,15 +36,11 @@ namespace GeometryTD
         {
             ClearItems();
 
-            if (titleText != null)
-                titleText.text = "Collections";
+            txt_title.text = "Collections";
 
-            List<PassiveEffectConfig> ownedEffects = StoryManager.Instance != null
-                ? StoryManager.Instance.GetOwnedEffects()
-                : new List<PassiveEffectConfig>();
+            List<PassiveEffectConfig> ownedEffects = StoryManager.Instance.GetOwnedEffects();
 
-            if (countText != null)
-                countText.text = $"Total: {ownedEffects.Count}";
+            txt_count.text = $"Total: {ownedEffects.Count}";
 
             for (int i = 0; i < ownedEffects.Count; i++)
             {
@@ -62,10 +50,11 @@ namespace GeometryTD
 
         private void CreateCollectionItem(PassiveEffectConfig config, int index)
         {
+            Font cachedFont = GameHelper.LoadFont();
             if (config == null) return;
 
             GameObject itemObj = new GameObject($"CollectionItem_{config.id}");
-            itemObj.transform.SetParent(itemListContent, false);
+            itemObj.transform.SetParent(node_content, false);
 
             // Background with color border based on quality
             Image bg = itemObj.AddComponent<Image>();
@@ -147,6 +136,7 @@ namespace GeometryTD
 
             // Click to open detail
             Button itemBtn = itemObj.AddComponent<Button>();
+            itemBtn.name = $"btn_item_{config.id}"; // Set button name for event handling
             ColorBlock colors = itemBtn.colors;
             colors.highlightedColor = new Color(1f, 1f, 1f, 0.1f);
             colors.pressedColor = new Color(1f, 1f, 1f, 0.15f);
@@ -204,153 +194,6 @@ namespace GeometryTD
                     if (color >= 4) return new Color(1f, 0.9f, 0.5f); // Gold
                     return Color.white;
             }
-        }
-
-        private void BuildUI()
-        {
-            cachedFont = GameHelper.LoadFont();
-            RectTransform root = GetComponent<RectTransform>();
-            if (root == null) root = gameObject.AddComponent<RectTransform>();
-            root.anchorMin = Vector2.zero;
-            root.anchorMax = Vector2.one;
-            root.offsetMin = Vector2.zero;
-            root.offsetMax = Vector2.zero;
-
-            // Dim background
-            Image dimBg = gameObject.GetComponent<Image>();
-            if (dimBg == null)
-                dimBg = gameObject.AddComponent<Image>();
-            dimBg.color = new Color(0f, 0f, 0f, 0.6f);
-            dimBg.raycastTarget = true;
-
-            // Center panel
-            GameObject panelObj = new GameObject("Panel");
-            panelObj.transform.SetParent(root, false);
-            RectTransform panelRt = panelObj.AddComponent<RectTransform>();
-            panelRt.anchorMin = new Vector2(0.1f, 0.1f);
-            panelRt.anchorMax = new Vector2(0.9f, 0.9f);
-            panelRt.offsetMin = Vector2.zero;
-            panelRt.offsetMax = Vector2.zero;
-            Image panelBg = panelObj.AddComponent<Image>();
-            panelBg.color = new Color(0.05f, 0.05f, 0.12f, 0.98f);
-
-            // Header
-            GameObject headerObj = new GameObject("Header");
-            headerObj.transform.SetParent(panelRt, false);
-            RectTransform headerRt = headerObj.AddComponent<RectTransform>();
-            headerRt.anchorMin = new Vector2(0f, 1f);
-            headerRt.anchorMax = Vector2.one;
-            headerRt.offsetMin = new Vector2(0f, -60f);
-            headerRt.offsetMax = Vector2.zero;
-            Image headerBg = headerObj.AddComponent<Image>();
-            headerBg.color = new Color(0f, 0f, 0f, 0.4f);
-
-            // Title
-            GameObject titleObj = new GameObject("Title");
-            titleObj.transform.SetParent(headerRt, false);
-            RectTransform titleRt2 = titleObj.AddComponent<RectTransform>();
-            titleRt2.anchorMin = new Vector2(0f, 0f);
-            titleRt2.anchorMax = new Vector2(0.7f, 1f);
-            titleRt2.offsetMin = Vector2.zero;
-            titleRt2.offsetMax = Vector2.zero;
-            titleText = titleObj.AddComponent<Text>();
-            titleText.font = cachedFont;
-            titleText.fontSize = 28;
-            titleText.alignment = TextAnchor.MiddleLeft;
-            titleText.text = "Collections";
-            titleText.color = Color.white;
-
-            // Count text
-            GameObject countObj = new GameObject("Count");
-            countObj.transform.SetParent(headerRt, false);
-            RectTransform countRt = countObj.AddComponent<RectTransform>();
-            countRt.anchorMin = new Vector2(0.7f, 0f);
-            countRt.anchorMax = new Vector2(0.85f, 1f);
-            countRt.offsetMin = Vector2.zero;
-            countRt.offsetMax = Vector2.zero;
-            countText = countObj.AddComponent<Text>();
-            countText.font = cachedFont;
-            countText.fontSize = 18;
-            countText.alignment = TextAnchor.MiddleCenter;
-            countText.text = "Total: 0";
-            countText.color = new Color(0.7f, 0.85f, 1f);
-
-            // Close button
-            GameObject closeObj = new GameObject("CloseButton");
-            closeObj.transform.SetParent(headerRt, false);
-            RectTransform closeRt = closeObj.AddComponent<RectTransform>();
-            closeRt.anchorMin = new Vector2(0.9f, 0.1f);
-            closeRt.anchorMax = new Vector2(1f, 0.9f);
-            closeRt.offsetMin = Vector2.zero;
-            closeRt.offsetMax = Vector2.zero;
-            Image closeImg = closeObj.AddComponent<Image>();
-            closeImg.color = new Color(0.6f, 0.2f, 0.2f, 0.9f);
-            closeButton = closeObj.AddComponent<Button>();
-            closeButton.onClick.AddListener(OnCloseClicked);
-
-            GameObject closeTextObj = new GameObject("Text");
-            closeTextObj.transform.SetParent(closeRt, false);
-            RectTransform closeTextRt = closeTextObj.AddComponent<RectTransform>();
-            closeTextRt.anchorMin = Vector2.zero;
-            closeTextRt.anchorMax = Vector2.one;
-            closeTextRt.offsetMin = Vector2.zero;
-            closeTextRt.offsetMax = Vector2.zero;
-            Text closeText = closeTextObj.AddComponent<Text>();
-            closeText.font = cachedFont;
-            closeText.fontSize = 16;
-            closeText.alignment = TextAnchor.MiddleCenter;
-            closeText.text = "X";
-            closeText.color = Color.white;
-
-            // Scroll area for items
-            GameObject scrollObj = new GameObject("ItemList");
-            scrollObj.transform.SetParent(panelRt, false);
-            RectTransform scrollRt = scrollObj.AddComponent<RectTransform>();
-            scrollRt.anchorMin = Vector2.zero;
-            scrollRt.anchorMax = Vector2.one;
-            scrollRt.offsetMin = new Vector2(15f, 15f);
-            scrollRt.offsetMax = new Vector2(-15f, -70f);
-
-            // Content container with vertical layout
-            GameObject contentObj = new GameObject("Content");
-            contentObj.transform.SetParent(scrollRt, false);
-            RectTransform contentRt = contentObj.AddComponent<RectTransform>();
-            contentRt.anchorMin = new Vector2(0f, 1f);
-            contentRt.anchorMax = Vector2.one;
-            contentRt.pivot = new Vector2(0.5f, 1f);
-            contentRt.offsetMin = Vector2.zero;
-            contentRt.offsetMax = Vector2.zero;
-
-            VerticalLayoutGroup vlg = contentObj.AddComponent<VerticalLayoutGroup>();
-            vlg.spacing = 10f;
-            vlg.childForceExpandWidth = true;
-            vlg.childForceExpandHeight = false;
-            vlg.childControlWidth = true;
-            vlg.childControlHeight = false;
-            vlg.padding = new RectOffset(0, 0, 0, 0);
-
-            ContentSizeFitter csf = contentObj.AddComponent<ContentSizeFitter>();
-            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            itemListContent = contentRt;
-
-            // Scroll rect
-            ScrollRect scrollRect = scrollObj.AddComponent<ScrollRect>();
-            scrollRect.content = contentRt;
-            scrollRect.vertical = true;
-            scrollRect.horizontal = false;
-            scrollRect.scrollSensitivity = 30f;
-
-            Mask scrollMask = scrollObj.AddComponent<Mask>();
-            scrollMask.showMaskGraphic = false;
-
-            Image scrollBg = scrollObj.AddComponent<Image>();
-            scrollBg.color = new Color(0f, 0f, 0f, 0.2f);
-        }
-
-        private void OnCloseClicked()
-        {
-            OnClose();
         }
     }
 }

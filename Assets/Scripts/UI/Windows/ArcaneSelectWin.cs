@@ -15,27 +15,35 @@ namespace GeometryTD
     {
         private ArcaneSelectWinParam data => Data as ArcaneSelectWinParam;
 
-        [SerializeField] private Transform arcaneListContent;
-        [SerializeField] private Button confirmButton;
-        [SerializeField] private Button closeButton;
-        [SerializeField] private Text countText;
+        /*[SerializeField]*/ private Transform node_list;
+        /*[SerializeField]*/ private Button btn_enter;
+        /*[SerializeField]*/ private Button btn_close;
+        /*[SerializeField]*/ private Text txt_count;
 
         private const int MaxCount = 4;
         private HashSet<int> selectedIds = new HashSet<int>();
         private List<GameObject> arcaneItems = new List<GameObject>();
         private Dictionary<int, Image> itemBgMap = new Dictionary<int, Image>();
 
-        public override void load()
-        {
-            if (closeButton != null)
-                closeButton.onClick.AddListener(() => OnClose());
-            if (confirmButton != null)
-                confirmButton.onClick.AddListener(OnConfirmClicked);
-        }
-
         public override void start()
         {
             RefreshList();
+        }
+
+        public override void onBtnClick(Button btn,object param)
+        {
+            string name = btn.name;
+            switch (name)
+            {
+                case "btn_close":
+                    OnClose();
+                    break;
+                case "btn_enter":
+                    OnConfirmClicked();
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void RefreshList()
@@ -78,7 +86,7 @@ namespace GeometryTD
         private GameObject CreateArcaneItem(ArcaneConfig config, Font font)
         {
             GameObject itemObj = new GameObject($"ArcaneItem_{config.id}");
-            itemObj.transform.SetParent(arcaneListContent, false);
+            itemObj.transform.SetParent(node_list, false);
 
             Image bg = itemObj.AddComponent<Image>();
             bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
@@ -145,8 +153,8 @@ namespace GeometryTD
                     : new Color(0.15f, 0.15f, 0.3f, 0.9f);
             }
 
-            if (countText != null)
-                countText.text = $"已选 {selectedIds.Count}/{MaxCount}";
+            if (txt_count != null)
+                txt_count.text = $"已选 {selectedIds.Count}/{MaxCount}";
         }
 
         private void OnConfirmClicked()

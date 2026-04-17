@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 8252193004498825958}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: CountText
+  m_Name: txt_count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -185,7 +185,7 @@ GameObject:
   - component: {fileID: 5338856641527268890}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: ConfirmButton
+  m_Name: btn_enter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -735,6 +735,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05331b7fa6a490d478acf00ec90c3613, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sortOrder: 0
+  winType: 1
+  priority: 10
   arcaneListContent: {fileID: 7650376577928043227}
   confirmButton: {fileID: 5338856641527268890}
   closeButton: {fileID: 9126434572041983305}
@@ -753,7 +756,7 @@ GameObject:
   - component: {fileID: 9126434572041983305}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: CloseButton
+  m_Name: btn_close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -874,7 +877,7 @@ GameObject:
   - component: {fileID: 6501764483085707655}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: Content
+  m_Name: node_list
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

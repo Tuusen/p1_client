@@ -18,20 +18,12 @@ namespace GeometryTD
     {
         private ChoiceWinParam data => Data as ChoiceWinParam;
 
-        [SerializeField] private Text titleText;
-        [SerializeField] private Transform optionListContent;
+        private Text txt_title;
+        private Transform node_content;
 
         private ChoiceGroupConfig currentConfig;
         private Action<int, ChoiceConfig> onSelected;
         private List<GameObject> optionItems = new List<GameObject>();
-
-        public override void load()
-        {
-
-            if (titleText == null)
-                BuildUI();
-
-        }
 
         public override void start()
         {
@@ -75,8 +67,7 @@ namespace GeometryTD
         {
             ClearOptionItems();
 
-            if (titleText != null)
-                titleText.text = currentConfig.title ?? "";
+            txt_title.text = currentConfig.title ?? "";
 
             Font font = GameHelper.LoadFont();
 
@@ -97,8 +88,8 @@ namespace GeometryTD
 
         private GameObject CreateOptionItem(ChoiceConfig choice, int optionIndex, Font font)
         {
-            GameObject itemObj = new GameObject($"Option_{choice.id}");
-            itemObj.transform.SetParent(optionListContent, false);
+            GameObject itemObj = new GameObject($"node_option_{choice.id}");
+            itemObj.transform.SetParent(node_content, false);
 
             // Background
             Image bg = itemObj.AddComponent<Image>();
@@ -109,6 +100,7 @@ namespace GeometryTD
 
             // Button
             Button btn = itemObj.AddComponent<Button>();
+            btn.name = $"btn_option_{choice.id}"; // Set button name for event handling
             ColorBlock colors = btn.colors;
             colors.highlightedColor = new Color(0.25f, 0.35f, 0.25f, 0.95f);
             colors.pressedColor = new Color(0.2f, 0.4f, 0.2f, 0.95f);
@@ -119,7 +111,7 @@ namespace GeometryTD
             btn.onClick.AddListener(() => OnOptionClicked(capturedIndex, capturedChoice));
 
             // Option text (top area)
-            GameObject nameObj = new GameObject("Text");
+            GameObject nameObj = new GameObject("txt_optionText");
             nameObj.transform.SetParent(itemObj.transform, false);
             RectTransform nameRt = nameObj.AddComponent<RectTransform>();
             nameRt.anchorMin = new Vector2(0f, 0.55f);
@@ -137,7 +129,7 @@ namespace GeometryTD
             // Description (middle area)
             if (!string.IsNullOrEmpty(choice.des))
             {
-                GameObject descObj = new GameObject("Desc");
+                GameObject descObj = new GameObject("txt_optionDesc");
                 descObj.transform.SetParent(itemObj.transform, false);
                 RectTransform descRt = descObj.AddComponent<RectTransform>();
                 descRt.anchorMin = new Vector2(0f, 0.1f);
@@ -157,7 +149,7 @@ namespace GeometryTD
             string rewardHint = BuildRewardHint(choice);
             if (!string.IsNullOrEmpty(rewardHint))
             {
-                GameObject rewardObj = new GameObject("Reward");
+                GameObject rewardObj = new GameObject("txt_optionReward");
                 rewardObj.transform.SetParent(itemObj.transform, false);
                 RectTransform rewardRt = rewardObj.AddComponent<RectTransform>();
                 rewardRt.anchorMin = new Vector2(0.5f, 0f);
@@ -221,82 +213,6 @@ namespace GeometryTD
         private void RestoreTimeScale()
         {
             GameManager.Instance.ResetTimeScale();
-        }
-
-        // ===== Dynamic UI Build =====
-
-        private void BuildUI()
-        {
-            Font font = GameHelper.LoadFont();
-            RectTransform root = GetComponent<RectTransform>();
-            if (root == null) root = gameObject.AddComponent<RectTransform>();
-            root.anchorMin = Vector2.zero;
-            root.anchorMax = Vector2.one;
-            root.offsetMin = Vector2.zero;
-            root.offsetMax = Vector2.zero;
-
-            // Dim background
-            Image dimBg = gameObject.GetComponent<Image>();
-            if (dimBg == null)
-                dimBg = gameObject.AddComponent<Image>();
-            dimBg.color = new Color(0f, 0f, 0f, 0.5f);
-
-            // Center panel
-            GameObject panelObj = new GameObject("Panel");
-            panelObj.transform.SetParent(root, false);
-            RectTransform panelRt = panelObj.AddComponent<RectTransform>();
-            panelRt.anchorMin = new Vector2(0.15f, 0.15f);
-            panelRt.anchorMax = new Vector2(0.85f, 0.85f);
-            panelRt.offsetMin = Vector2.zero;
-            panelRt.offsetMax = Vector2.zero;
-            Image panelBg = panelObj.AddComponent<Image>();
-            panelBg.color = new Color(0.08f, 0.08f, 0.15f, 0.95f);
-
-            // Title
-            GameObject titleObj = new GameObject("Title");
-            titleObj.transform.SetParent(panelRt, false);
-            RectTransform titleRt = titleObj.AddComponent<RectTransform>();
-            titleRt.anchorMin = new Vector2(0f, 1f);
-            titleRt.anchorMax = Vector2.one;
-            titleRt.offsetMin = new Vector2(20f, -60f);
-            titleRt.offsetMax = new Vector2(-20f, -10f);
-            titleText = titleObj.AddComponent<Text>();
-            titleText.font = font;
-            titleText.fontSize = 28;
-            titleText.alignment = TextAnchor.MiddleCenter;
-            titleText.color = Color.white;
-
-            // Scroll area for options
-            GameObject scrollObj = new GameObject("OptionList");
-            scrollObj.transform.SetParent(panelRt, false);
-            RectTransform scrollRt = scrollObj.AddComponent<RectTransform>();
-            scrollRt.anchorMin = Vector2.zero;
-            scrollRt.anchorMax = Vector2.one;
-            scrollRt.offsetMin = new Vector2(15f, 15f);
-            scrollRt.offsetMax = new Vector2(-15f, -70f);
-
-            // Content container with vertical layout
-            GameObject contentObj = new GameObject("Content");
-            contentObj.transform.SetParent(scrollRt, false);
-            RectTransform contentRt = contentObj.AddComponent<RectTransform>();
-            contentRt.anchorMin = new Vector2(0f, 1f);
-            contentRt.anchorMax = Vector2.one;
-            contentRt.pivot = new Vector2(0.5f, 1f);
-            contentRt.offsetMin = new Vector2(0f, 0f);
-            contentRt.offsetMax = Vector2.zero;
-
-            VerticalLayoutGroup vlg = contentObj.AddComponent<VerticalLayoutGroup>();
-            vlg.spacing = 8f;
-            vlg.childForceExpandWidth = true;
-            vlg.childForceExpandHeight = false;
-            vlg.childControlWidth = true;
-            vlg.childControlHeight = false;
-            vlg.padding = new RectOffset(0, 0, 0, 0);
-
-            ContentSizeFitter csf = contentObj.AddComponent<ContentSizeFitter>();
-            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            optionListContent = contentRt;
         }
     }
 }

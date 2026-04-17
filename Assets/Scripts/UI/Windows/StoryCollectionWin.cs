@@ -505,8 +505,8 @@ namespace GeometryTD
 
             if (StoryManager.Instance.ContinueAdventure(selectedCollectionId))
             {
-                WinManager.Instance.DestroyWin<StoryCollectionWin>();
                 StoryManager.Instance.EnterStoryScene();
+                OnClose();
             }
         }
 
@@ -531,8 +531,8 @@ namespace GeometryTD
             };
 
             StoryManager.Instance.StartNewAdventure(selectedCollectionId);
-            WinManager.Instance.DestroyWin<StoryCollectionWin>();
             StoryManager.Instance.EnterStoryScene();
+            OnClose();
         }
 
         // ===== UI Builders =====
