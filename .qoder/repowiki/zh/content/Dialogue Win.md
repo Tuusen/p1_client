@@ -88,7 +88,7 @@ GH --> WM
 ```
 
 **图表来源**
-- [DialogueWin.cs:1-443](file://Assets/Scripts/UI/Windows/DialogueWin.cs#L1-L443)
+- [DialogueWin.cs:1-277](file://Assets/Scripts/UI/Windows/DialogueWin.cs#L1-L277)
 - [BaseWin.cs:1-175](file://Assets/Scripts/UI/Windows/BaseWin.cs#L1-L175)
 - [WinManager.cs:1-221](file://Assets/Scripts/UI/Managers/WinManager.cs#L1-L221)
 
@@ -122,7 +122,7 @@ DialogueWin是对话系统的核心组件，继承自BaseWin基类，提供完�
 - `skipButton/autoButton/clickArea`: 用户交互按钮
 
 **章节来源**
-- [DialogueWin.cs:7-443](file://Assets/Scripts/UI/Windows/DialogueWin.cs#L7-L443)
+- [DialogueWin.cs:7-277](file://Assets/Scripts/UI/Windows/DialogueWin.cs#L7-L277)
 
 ### 参数类（DialogueWinParam）
 
