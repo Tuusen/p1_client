@@ -158,7 +158,31 @@ namespace GeometryTD
             {
                 Vector3 dir = (target.Position - ctx.caster.Position).normalized;
                 mono.transform.position += dir * distance;
+                
+                // 击退后立即进行屏幕边界限制，防止怪物被击退至屏幕外
+                ClampToScreen(mono.transform);
             }
+        }
+
+        private static void ClampToScreen(Transform transform)
+        {
+            Camera cam = Camera.main;
+            if (cam == null) return;
+            
+            float h = cam.orthographicSize;
+            float w = h * cam.aspect;
+            Vector3 cp = cam.transform.position;
+            Vector3 pos = transform.position;
+            
+            // 考虑物体的大小，留出一定的边距
+            float margin = 0.5f;
+            
+            if (pos.x > cp.x + w - margin) pos.x = cp.x + w - margin;
+            if (pos.x < cp.x - w + margin) pos.x = cp.x - w + margin;
+            if (pos.y > cp.y + h - margin) pos.y = cp.y + h - margin;
+            if (pos.y < cp.y - h + margin) pos.y = cp.y - h + margin;
+            
+            transform.position = pos;
         }
 
         private static void HandleGrantXp(int[] args, EventContext ctx)

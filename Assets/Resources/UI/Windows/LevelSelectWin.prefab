@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7439209827303417365}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: BossText
+  m_Name: txt_boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -174,7 +174,7 @@ GameObject:
   - component: {fileID: 3988118482174357132}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: CloseButton
+  m_Name: btn_close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -375,7 +375,7 @@ GameObject:
   - component: {fileID: 2915020907322646656}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: ConditionText
+  m_Name: txt_condition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -455,7 +455,7 @@ GameObject:
   - component: {fileID: 9080994236999564875}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: NameText
+  m_Name: txt_name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -615,7 +615,7 @@ GameObject:
   - component: {fileID: 7967761824597536085}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: EliteText
+  m_Name: txt_elite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -776,7 +776,7 @@ GameObject:
   - component: {fileID: 1670478583332170561}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: ChallengeButton
+  m_Name: btn_challenge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1082,7 +1082,7 @@ GameObject:
   - component: {fileID: 1299738078053891949}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: DescText
+  m_Name: txt_desc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

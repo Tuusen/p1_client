@@ -14,29 +14,35 @@ namespace GeometryTD
     public class SkillSelectWin : BaseWin
     {
         private SkillSelectWinParam data => Data as SkillSelectWinParam;
-        [SerializeField] private Transform skillListContent;
-        [SerializeField] private Button confirmButton;
-        [SerializeField] private Button closeButton;
-        [SerializeField] private Text countText;
+        private Transform node_content;
+        private Button btn_enter;
+        private Text txt_count;
 
         private const int RequiredCount = 8;
         private HashSet<int> selectedIds = new HashSet<int>();
         private List<GameObject> skillItems = new List<GameObject>();
         private Dictionary<int, Image> itemBgMap = new Dictionary<int, Image>();
 
-        public override void load()
-        {
-            if (closeButton != null)
-                closeButton.onClick.AddListener(() => OnClose());
-            if (confirmButton != null)
-                confirmButton.onClick.AddListener(OnConfirmClicked);
-        }
-
         public override void start()
         {
             RefreshList();
         }
 
+        public override void onBtnClick(Button btn, object param)
+        {
+            string name = btn.name;
+            switch (name)
+            {
+                case "btn_close":
+                    OnClose();
+                    break;
+                case "btn_enter":
+                    OnConfirmClicked();
+                    break;
+                default:
+                    break;
+            }
+        }
 
         private void RefreshList()
         {
@@ -81,7 +87,7 @@ namespace GeometryTD
             // 必须添加 RectTransform 才能作为 LayoutGroup 的子对象
             RectTransform rectTransform = itemObj.AddComponent<RectTransform>();
             
-            itemObj.transform.SetParent(skillListContent, false);
+            itemObj.transform.SetParent(node_content, false);
 
             Image bg = itemObj.AddComponent<Image>();
             bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
@@ -149,11 +155,9 @@ namespace GeometryTD
                     : new Color(0.15f, 0.15f, 0.3f, 0.9f);
             }
 
-            if (countText != null)
-                countText.text = $"\u5df2\u9009 {selectedIds.Count}/{RequiredCount}";
+            txt_count.text = $"\u5df2\u9009 {selectedIds.Count}/{RequiredCount}";
 
-            if (confirmButton != null)
-                confirmButton.interactable = selectedIds.Count == RequiredCount;
+            btn_enter.interactable = selectedIds.Count == RequiredCount;
         }
 
         private void OnConfirmClicked()

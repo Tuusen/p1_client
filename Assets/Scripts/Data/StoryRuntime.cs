@@ -35,6 +35,9 @@ namespace GeometryTD
         /// <summary>上一个节点 ID（用于过渡动画，0表示无）</summary>
         public int previousNodeId;
 
+        /// <summary>战斗失败前的节点 ID（用于重启游戏后重试功能）</summary>
+        public int failedAtNodeId;
+
         // ===== 运行时辅助方法（不序列化） =====
 
         /// <summary>记录某节点的一次选项选择</summary>

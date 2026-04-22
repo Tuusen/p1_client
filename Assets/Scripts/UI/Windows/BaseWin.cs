@@ -19,78 +19,67 @@ namespace GeometryTD
 
         /// <summary>
         /// 自动根据命名规则绑定UI组件
-        /// 命名规则：txt_xx代表文本，btn_xx代表按钮，toggle_xx代表复选框，node_xx代表节点等
-        /// 字段名需与GameObject名一致（支持带前缀或不带前缀）
+        /// 命名规则：txt_xx代表文本，btn_xx代表按钮，toggle_xx代表复选框，sp_xx代表图片，node_xx代表节点等
+        /// 字段名需与GameObject名一致（必须包含下划线前缀）
         /// </summary>
         private void AutoBindUIComponents()
         {
-            // 获取当前类的所有字段（包括私有和公共）
-            FieldInfo[] fields = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            
             // 获取所有子对象
             Transform[] allChildren = GetComponentsInChildren<Transform>(true);
             
-            foreach (FieldInfo field in fields)
+            foreach (Transform child in allChildren)
             {
-                string fieldName = field.Name;
-                Transform match = null;
+                // 只处理名称中包含下划线的字段
+                if (!child.name.Contains("_")) continue;
                 
-                // 查找匹配的子对象
-                foreach (Transform child in allChildren)
+                // 根据字段前缀尝试获取对应类型的组件
+                string prefix = child.name.Substring(0, child.name.IndexOf('_') + 1);
+                FieldInfo field = GetType().GetField(child.name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                switch (prefix)
                 {
-                    if (child == transform) continue;
-                    
-                    string _childName = child.name;
-                    
-                    // 匹配规则：
-                    // 1. 完全匹配
-                    // 2. 字段名匹配去掉前缀后的名称（如 btn_close 匹配 btn_close 或 close）
-                    string strippedName = fieldName
-                        .Replace("node_", "")
-                        .Replace("btn_", "")
-                        .Replace("txt_", "")
-                        .Replace("sp_", "")
-                        .Replace("toggle_", "");
-                    
-                    if (_childName == fieldName || _childName == strippedName || _childName.EndsWith("_" + fieldName))
-                    {
-                        match = child;
+                    case "txt_":
+                        if (child.TryGetComponent<Text>(out Text txt))
+                        {
+                            if (field != null){
+                                field.SetValue(this, txt);
+                            }
+                        }
                         break;
-                    }
-                }
-                
-                if (match == null) continue;
-                
-                // 根据字段类型进行绑定
-                string childName = match.name;
-                
-                if (field.FieldType == typeof(Transform))
-                {
-                    field.SetValue(this, match);
-                }
-                else if (field.FieldType == typeof(Button) && match.TryGetComponent<Button>(out Button btn))
-                {
-                    field.SetValue(this, btn);
-                    if (childName.StartsWith("btn_"))
-                    {
-                        btn.onClick.AddListener(() => onBtnClick(btn, null));
-                    }
-                }
-                else if (field.FieldType == typeof(Toggle) && match.TryGetComponent<Toggle>(out Toggle toggle))
-                {
-                    field.SetValue(this, toggle);
-                    if (childName.StartsWith("toggle_"))
-                    {
-                        toggle.onValueChanged.AddListener((isOn) => onToggleClick(toggle, isOn));
-                    }
-                }
-                else if (field.FieldType == typeof(Text) && match.TryGetComponent<Text>(out Text txt))
-                {
-                    field.SetValue(this, txt);
-                }
-                else if (field.FieldType == typeof(Image) && match.TryGetComponent<Image>(out Image img))
-                {
-                    field.SetValue(this, img);
+                        
+                    case "btn_":
+                        if (child.TryGetComponent<Button>(out Button btn))
+                        {
+                            if (field != null){
+                                field.SetValue(this, btn);
+                            }
+                            btn.onClick.AddListener(() => onBtnClick(btn, null));
+                        }
+                        break;
+                        
+                    case "toggle_":
+                        if (child.TryGetComponent<Toggle>(out Toggle toggle))
+                        {
+                            if (field != null){
+                                field.SetValue(this, toggle);
+                            }
+                            toggle.onValueChanged.AddListener((isOn) => onToggleClick(toggle, isOn));
+                        }
+                        break;
+                        
+                    case "sp_":
+                        if (child.TryGetComponent<Image>(out Image img))
+                        {
+                            if (field != null){
+                                field.SetValue(this, img);
+                            }
+                        }
+                        break;
+                        
+                    case "node_":
+                        if (field != null){
+                            field.SetValue(this, child);
+                        }
+                        break;
                 }
             }
         }

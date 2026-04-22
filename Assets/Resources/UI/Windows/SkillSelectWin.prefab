@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 4636562431276909564}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: ConfirmButton
+  m_Name: btn_enter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 6117861002928645288}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: CountText
+  m_Name: txt_count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -468,10 +468,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sortOrder: 0
-  skillListContent: {fileID: 197985623077626171}
-  confirmButton: {fileID: 4636562431276909564}
-  closeButton: {fileID: 5687639908281508317}
-  countText: {fileID: 6117861002928645288}
+  winType: 1
+  priority: 10
 --- !u!1 &6530108533711042557
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,7 +564,7 @@ GameObject:
   - component: {fileID: 5687639908281508317}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: CloseButton
+  m_Name: btn_close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -795,7 +793,7 @@ GameObject:
   - component: {fileID: 9018336582123668273}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: Content
+  m_Name: node_content
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

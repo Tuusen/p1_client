@@ -46,10 +46,10 @@ namespace GeometryTD
         // - btn_xxxButton: Button组件（自动绑定点击事件）
         // - toggle_xxxToggle: Toggle组件（自动绑定值变化事件）
         // - node_xxx: Transform节点
-        [SerializeField] private Image sp_iconImage;
-        [SerializeField] private Text txt_nameText;
-        [SerializeField] private Text txt_descText;
-        [SerializeField] private Button btn_closeButton;
+        private Image sp_icon;
+        private Text txt_name;
+        private Text txt_desc;
+        private Button btn_close;
 
         public override void load()
         {
@@ -66,10 +66,10 @@ namespace GeometryTD
                 return;
             }
             
-            RefreshContent();
+            updateView();
         }
 
-        private void RefreshContent()
+        private void updateView()
         {
             // 根据data刷新UI
         }
@@ -172,7 +172,7 @@ namespace GeometryTD
         private void BuildUIHierarchy(Transform parent, XxxWin winComponent)
         {
             // 背景（用于点击关闭）
-            GameObject bgObj = new GameObject("sp_backgroundImage");
+            GameObject bgObj = new GameObject("sp_background");
             bgObj.transform.SetParent(parent, false);
             RectTransform bgRt = bgObj.AddComponent<RectTransform>();
             bgRt.anchorMin = Vector2.zero;
@@ -185,7 +185,7 @@ namespace GeometryTD
             backgroundImage.raycastTarget = true;
 
             // 设置私有字段
-            SetPrivateField(winComponent, "sp_backgroundImage", backgroundImage);
+            SetPrivateField(winComponent, "sp_background", backgroundImage);
 
             // 主面板
             GameObject panelObj = new GameObject("Panel");
@@ -274,11 +274,11 @@ namespace GeometryTD
 
 | 前缀 | 组件类型 | 示例 |
 |------|----------|------|
-| `sp_` | Image | `sp_iconImage`, `sp_backgroundImage` |
-| `txt_` | Text | `txt_nameText`, `txt_descText` |
-| `btn_` | Button | `btn_closeButton`, `btn_confirmButton` |
-| `toggle_` | Toggle | `toggle_muteToggle`, `toggle_fullscreenToggle` |
-| `node_` | Transform | `node_contentNode`, `node_listNode` |
+| `sp_` | Image | `sp_icon`, `sp_background` |
+| `txt_` | Text | `txt_name`, `txt_desc` |
+| `btn_` | Button | `btn_close`, `btn_confirm` |
+| `toggle_` | Toggle | `toggle_mute`, `toggle_fullscreen` |
+| `node_` | Transform | `node_content`, `node_list` |
 
 **重要：**
 - Button命名必须以`btn_`开头，会自动绑定到`onBtnClick`方法

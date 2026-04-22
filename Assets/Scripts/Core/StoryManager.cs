@@ -125,7 +125,8 @@ namespace GeometryTD
 
             Runtime = saveData.runtime;
             currentBossEventIndex = 0;
-            failedAtNodeId = 0;
+            // 从Runtime中恢复failedAtNodeId状态
+            failedAtNodeId = Runtime.failedAtNodeId;
             return true;
         }
 
@@ -199,6 +200,8 @@ namespace GeometryTD
 
             StoryNodeConfig currentNode = CurrentNode;
             failedAtNodeId = Runtime.currentNodeId;
+            // 保存到Runtime中以便持久化
+            Runtime.failedAtNodeId = failedAtNodeId;
 
             int failNodeId = 0;
             if (currentNode != null && currentNode.failNodeId > 0)
@@ -222,7 +225,12 @@ namespace GeometryTD
         /// </summary>
         public bool RetryFromFailure()
         {
-            if (Runtime == null || failedAtNodeId <= 0) return false;
+            // 优先从Runtime中读取，支持重启游戏后的重试
+            int failNodeId = Runtime != null && Runtime.failedAtNodeId > 0 
+                ? Runtime.failedAtNodeId 
+                : failedAtNodeId;
+            
+            if (Runtime == null || failNodeId <= 0) return false;
 
             // 移除失败节点的访问记录
             StoryNodeConfig failNode = CurrentNode;
@@ -232,12 +240,16 @@ namespace GeometryTD
             }
 
             // 回到失败前的节点，清除该节点的选择记录以便重新挑战
-            ClearNodeChoices(failedAtNodeId);
-            Runtime.currentNodeId = failedAtNodeId;
+            ClearNodeChoices(failNodeId);
+            Runtime.currentNodeId = failNodeId;
             currentBossEventIndex = 0;
 
             StorySaveManager.Instance.SaveRuntime(Runtime);
+            
+            // 清除失败状态
             failedAtNodeId = 0;
+            Runtime.failedAtNodeId = 0;
+            
             return true;
         }
 

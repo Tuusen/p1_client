@@ -14,18 +14,11 @@ namespace GeometryTD
     public class HeroSelectWin : BaseWin
     {
         private HeroSelectWinParam data => Data as HeroSelectWinParam;
-        [SerializeField] private Transform heroListContent;
-        [SerializeField] private Button closeButton;
+        private Transform node_content;
 
         private int selectedHeroId;
         private List<GameObject> heroItems = new List<GameObject>();
         private Dictionary<int, Image> itemBgMap = new Dictionary<int, Image>();
-
-        public override void load()
-        {
-            if (closeButton != null)
-                closeButton.onClick.AddListener(() => OnClose());
-        }
 
         public override void start()
         {
@@ -62,7 +55,7 @@ namespace GeometryTD
         private GameObject CreateHeroItem(HeroConfig config, Font font)
         {
             GameObject itemObj = new GameObject($"HeroItem_{config.id}");
-            itemObj.transform.SetParent(heroListContent, false);
+            itemObj.transform.SetParent(node_content, false);
 
             Image bg = itemObj.AddComponent<Image>();
             bg.color = new Color(0.15f, 0.15f, 0.3f, 0.9f);
@@ -113,8 +106,7 @@ namespace GeometryTD
         private void OnHeroItemClicked(int heroId)
         {
             selectedHeroId = heroId;
-            if (GameManager.Instance != null)
-                GameManager.Instance.SelectHero(heroId);
+            GameManager.Instance.SelectHero(heroId);
             UpdateSelection();
         }
 

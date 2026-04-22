@@ -29,7 +29,6 @@ namespace GeometryTD
         [SerializeField] private Text txt_descText;
         [SerializeField] private Text txt_energyText;
         [SerializeField] private Text txt_cdText;
-        [SerializeField] private Text txt_closeHintText;
         [SerializeField] private Image sp_backgroundImage;
 
         // 属性类型颜色映射
@@ -170,12 +169,6 @@ namespace GeometryTD
                 float cd = skillConfig != null ? skillConfig.cd : 0f;
                 txt_cdText.text = cd > 0 ? $"<color=#B0B0FF>冷却时间:</color> {cd:F1}s" : "<color=#B0B0FF>冷却时间:</color> -";
             }
-
-            // 关闭提示
-            if (txt_closeHintText != null)
-            {
-                txt_closeHintText.text = "点击任意区域关闭";
-            }
         }
 
         /// <summary>
@@ -221,8 +214,12 @@ namespace GeometryTD
             }
 
             // 能量消耗信息
-            if (txt_energyText != null)
+            if (this.data.isSkill)
             {
+                txt_energyText.gameObject.SetActive(false);
+            } else
+            {
+                txt_energyText.gameObject.SetActive(true);
                 string energyTypeName = config.runeType >= 1 && config.runeType <= 4
                     ? AttributeNames[config.runeType]
                     : "未知";
@@ -235,12 +232,6 @@ namespace GeometryTD
             if (txt_cdText != null)
             {
                 txt_cdText.text = $"<color=#B0B0FF>冷却时间:</color> {config.cd:F1}s";
-            }
-
-            // 关闭提示
-            if (txt_closeHintText != null)
-            {
-                txt_closeHintText.text = "点击任意区域关闭";
             }
         }
 
