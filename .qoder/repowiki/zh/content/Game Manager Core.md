@@ -17,7 +17,14 @@
 - [level_config.json](file://Assets/Resources/Configs/level_config.json)
 - [hero_config.json](file://Assets/Resources/Configs/hero_config.json)
 - [skill_config.json](file://Assets/Resources/Configs/skill_config.json)
+- [BattleUI.cs](file://Assets/Scripts/UI/Scenes/BattleUI.cs)
 </cite>
+
+## 更新摘要
+**变更内容**
+- 更新了GameManager类中对GameConsts引用的说明，从`GameConsts.MetaConsts`更新为直接引用`GameConsts`
+- 更新了时间缩放常量引用，从`GameConsts.MetaConsts.GameSpeed`更新为`GameConsts.GameSpeed`
+- 更新了相关的时间控制机制说明和代码示例
 
 ## 目录
 1. [简介](#简介)
@@ -100,6 +107,8 @@ GameManager是整个游戏的核心控制器，采用单例模式确保全局唯
 - 支持多种游戏倍速（0.3x、0.5x、1x、1.5x）
 - 暂停功能支持
 - 关卡解锁条件验证
+
+**更新** GameManager现在直接引用GameConsts类，而非通过GameConsts.MetaConsts进行访问，简化了常量访问方式。
 
 **章节来源**
 - [GameManager.cs:7-325](file://Assets/Scripts/Core/GameManager.cs#L7-L325)
@@ -241,6 +250,14 @@ GM->>TS : SetTimeScale(0.3)
 Player->>GM : 结束拖拽
 GM->>TS : SetTimeScale(selectedTimeScale)
 ```
+
+**更新** 时间缩放常量现在通过`GameConsts.GameSpeed`直接访问，包括：
+- `GameConsts.GameSpeed.stop` (0f) - 停止状态
+- `GameConsts.GameSpeed.drag` (0.3f) - 拖拽慢放
+- `GameConsts.GameSpeed.normal` (1f) - 正常速度
+- `GameConsts.GameSpeed.speed1` (0.5f) - 0.5倍速
+- `GameConsts.GameSpeed.speed2` (1f) - 1倍速
+- `GameConsts.GameSpeed.speed3` (1.5f) - 1.5倍速
 
 **图表来源**
 - [GameManager.cs:247-322](file://Assets/Scripts/Core/GameManager.cs#L247-L322)
@@ -428,6 +445,14 @@ GM --> SKC
 - 验证暂停状态判断条件
 - 确认场景切换时的重置逻辑
 
+**更新** 如果遇到时间缩放相关问题，请确认使用的是正确的GameConsts.GameSpeed常量：
+- `GameConsts.GameSpeed.stop` - 停止状态
+- `GameConsts.GameSpeed.drag` - 拖拽慢放 (0.3f)
+- `GameConsts.GameSpeed.normal` - 正常速度 (1f)
+- `GameConsts.GameSpeed.speed1` - 0.5倍速
+- `GameConsts.GameSpeed.speed2` - 1倍速  
+- `GameConsts.GameSpeed.speed3` - 1.5倍速
+
 **章节来源**
 - [ConfigManager.cs:173-188](file://Assets/Scripts/Core/ConfigManager.cs#L173-L188)
 - [StorySaveManager.cs:34-60](file://Assets/Scripts/Core/StorySaveManager.cs#L34-L60)
@@ -442,5 +467,7 @@ GM --> SKC
 3. **灵活的存档机制**：支持多种存档状态和恢复能力
 4. **统一的时间控制**：确保游戏体验的一致性
 5. **高效的资源管理**：通过缓存和预加载优化性能
+
+**更新** 最近的代码重构进一步简化了常量访问方式，GameManager现在直接引用GameConsts类，时间缩放常量也通过`GameConsts.GameSpeed`直接访问，提高了代码的可读性和维护性。
 
 该系统为后续的功能扩展提供了良好的基础，开发者可以在保持现有架构稳定性的前提下，安全地添加新的功能模块。
