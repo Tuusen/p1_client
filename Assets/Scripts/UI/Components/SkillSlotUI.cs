@@ -235,83 +235,28 @@ namespace GeometryTD
 
         private void ShowTooltip()
         {
-            // 销毁已有
+            // 销毁已有tooltip（如果有）
             if (activeTooltip != null)
             {
                 Destroy(activeTooltip);
                 activeTooltip = null;
             }
-
-            if (skillManager == null || rootCanvas == null) return;
+        
+            if (skillManager == null) return;
             var state = skillManager.GetSlot(slotIndex);
             if (state == null) return;
-
+        
             var poolConfig = Cfg.SkillPool.Get(state.skillPoolId);
             if (poolConfig == null) return;
-
-            int currentLevel = state.level;
-            float cd = 0f;
-            var lvConfig = currentLevel > 0
-                ? ConfigManager.Instance.GetSkillConfigByPool(state.skillPoolId, currentLevel)
-                : null;
-            if (lvConfig != null) cd = lvConfig.cd;
-
-            // 创建 tooltip
-            activeTooltip = new GameObject("SkillTooltip");
-            activeTooltip.transform.SetParent(rootCanvas.transform, false);
-            activeTooltip.transform.SetAsLastSibling();
-
-            RectTransform tooltipRT = activeTooltip.AddComponent<RectTransform>();
-            Image bgImg = activeTooltip.AddComponent<Image>();
-            bgImg.color = new Color(0.05f, 0.05f, 0.15f, 0.92f);
-
-            // 内容容器
-            float lineHeight = 22f;
-            float padding = 10f;
-            int lineCount = poolConfig.levelDes.Length + 4; // name + des + cd
-            float totalHeight = lineCount * lineHeight + padding * 2;
-            float tooltipWidth = 220f;
-
-            tooltipRT.sizeDelta = new Vector2(tooltipWidth, totalHeight);
-
-            // 定位到槽位上方
-            RectTransform slotRT = GetComponent<RectTransform>();
-            Vector3 tooltipPos = slotRT.position + new Vector3(0, slotRT.rect.height / 2f + totalHeight / 2f + 10f, 0);
-            // 转到Canvas坐标
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                rootCanvas.GetComponent<RectTransform>(),
-                RectTransformUtility.WorldToScreenPoint(null, tooltipPos),
-                null, out Vector2 localPos);
-            tooltipRT.anchoredPosition = localPos;
-
-            Font font = GameHelper.LoadFont();
-
-            float yOffset = totalHeight / 2f - padding;
-
-            // 技能名
-            CreateTooltipText(activeTooltip, poolConfig.name, font, 16, FontStyle.Bold,
-                Color.white, tooltipWidth, ref yOffset, lineHeight);
-
-            // des
-            CreateTooltipText(activeTooltip, poolConfig.des, font, 13, FontStyle.Normal,
-                Color.white, tooltipWidth, ref yOffset, lineHeight);
-            CreateTooltipText(activeTooltip, $"[升级效果]{poolConfig.upDes}", font, 13, FontStyle.Normal,
-                Color.white, tooltipWidth, ref yOffset, lineHeight);
-            for (int i = 0; i < poolConfig.levelDes.Length; i++)
+        
+            // 打开详情窗口
+            var param = new SkillArcaneDetailWinParam
             {
-                var levelDes = poolConfig.levelDes[i];
-                Color textColor = currentLevel >= levelDes.level ? new Color(0.2f, 0.9f, 0.2f) : new Color(0.5f, 0.5f, 0.5f);
-                CreateTooltipText(activeTooltip, $"[{levelDes.level}级]{levelDes.des}", font, 13, FontStyle.Normal,
-                    textColor, tooltipWidth, ref yOffset, lineHeight);
-            }
-
-            // 冷却时间
-            string cdText = cd > 0 ? $"冷却: {cd:F1}s" : "冷却: -";
-            CreateTooltipText(activeTooltip, cdText, font, 13, FontStyle.Normal,
-                new Color(0.7f, 0.7f, 0.9f), tooltipWidth, ref yOffset, lineHeight);
-
-            // 5秒后自动销毁
-            StartCoroutine(DestroyTooltipAfter(5f));
+                id = state.skillPoolId,
+                isSkill = true,
+                currentLevel = state.level
+            };
+            GameHelper.OpenWin<SkillArcaneDetailWin>(param: param);
         }
 
         private void CreateTooltipText(GameObject parent, string content, Font font,

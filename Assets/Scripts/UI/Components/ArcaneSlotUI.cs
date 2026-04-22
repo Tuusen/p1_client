@@ -256,66 +256,28 @@ namespace GeometryTD
 
         private void ShowTooltip()
         {
+            // 销毁已有tooltip（如果有）
             if (activeTooltip != null)
             {
                 Destroy(activeTooltip);
                 activeTooltip = null;
             }
 
-            if (arcaneManager == null || rootCanvas == null) return;
+            if (arcaneManager == null) return;
             var state = arcaneManager.GetSlot(slotIndex);
             if (state == null) return;
 
             var config = Cfg.Arcane.Get(state.arcaneId);
             if (config == null) return;
 
-            string[] runeNames = { "火", "冰", "雷", "风" };
-            string runeTypeName = config.runeType >= 1 && config.runeType <= 4
-                ? runeNames[config.runeType - 1] : "?";
-
-            activeTooltip = new GameObject("ArcaneTooltip");
-            activeTooltip.transform.SetParent(rootCanvas.transform, false);
-            activeTooltip.transform.SetAsLastSibling();
-
-            RectTransform tooltipRT = activeTooltip.AddComponent<RectTransform>();
-            Image bgImg = activeTooltip.AddComponent<Image>();
-            bgImg.color = new Color(0.05f, 0.05f, 0.15f, 0.92f);
-
-            float lineHeight = 22f;
-            float padding = 10f;
-            int lineCount = 4; // name + des + cost + cd
-            float totalHeight = lineCount * lineHeight + padding * 2;
-            float tooltipWidth = 220f;
-
-            tooltipRT.sizeDelta = new Vector2(tooltipWidth, totalHeight);
-
-            RectTransform slotRT = GetComponent<RectTransform>();
-            Vector3 tooltipPos = slotRT.position + new Vector3(0, slotRT.rect.height / 2f + totalHeight / 2f + 10f, 0);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                rootCanvas.GetComponent<RectTransform>(),
-                RectTransformUtility.WorldToScreenPoint(null, tooltipPos),
-                null, out Vector2 localPos);
-            tooltipRT.anchoredPosition = localPos;
-
-            Font font = GameHelper.LoadFont();
-
-            float yOffset = totalHeight / 2f - padding;
-
-            CreateTooltipLine(activeTooltip, config.name, font, 16, FontStyle.Bold,
-                Color.white, tooltipWidth, ref yOffset, lineHeight);
-
-            CreateTooltipLine(activeTooltip, config.des, font, 13, FontStyle.Normal,
-                Color.white, tooltipWidth, ref yOffset, lineHeight); 
-
-            CreateTooltipLine(activeTooltip, $"消耗: {config.runeCost} {runeTypeName}符能",
-                font, 13, FontStyle.Normal, new Color(0.6f, 0.8f, 1f),
-                tooltipWidth, ref yOffset, lineHeight);
-
-            CreateTooltipLine(activeTooltip, $"冷却: {config.cd:F1}s",
-                font, 13, FontStyle.Normal, new Color(0.7f, 0.7f, 0.9f),
-                tooltipWidth, ref yOffset, lineHeight);
-
-            StartCoroutine(DestroyTooltipAfter(5f));
+            // 打开详情窗口
+            var param = new SkillArcaneDetailWinParam
+            {
+                id = state.arcaneId,
+                isSkill = false,
+                currentLevel = 0
+            };
+            GameHelper.OpenWin<SkillArcaneDetailWin>(param: param);
         }
 
         private void CreateTooltipLine(GameObject parent, string content, Font font,
