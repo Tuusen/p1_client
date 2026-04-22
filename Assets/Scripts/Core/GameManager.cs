@@ -38,7 +38,7 @@ namespace GeometryTD
             LoadPlayerSelections();
             
             // 初始化倍速
-            selectedTimeScale = GameSpeed.speed1;
+            selectedTimeScale = GameConsts.GameSpeed.speed1;
             isPaused = false;
         }
 
@@ -119,7 +119,7 @@ namespace GeometryTD
         {
             if (selectedHeroId > 0) return selectedHeroId;
             if (ConfigManager.Instance != null)
-                return GameConsts.MetaConsts.DefaultHeroId;
+                return GameConsts.DefaultHeroId;
             return 1;
         }
 
@@ -136,7 +136,7 @@ namespace GeometryTD
             if (equippedSkillIds != null && equippedSkillIds.Length > 0)
                 return equippedSkillIds;
             if (ConfigManager.Instance != null)
-                return GameConsts.MetaConsts.SkillSlotIds;
+                return GameConsts.SkillSlotIds;
             return new int[0];
         }
 
@@ -159,7 +159,7 @@ namespace GeometryTD
             if (equippedArcaneIds != null && equippedArcaneIds.Length > 0)
                 return equippedArcaneIds;
             if (ConfigManager.Instance != null)
-                return GameConsts.MetaConsts.ArcaneSlotIds;
+                return GameConsts.ArcaneSlotIds;
             return new int[0];
         }
 
@@ -251,9 +251,9 @@ namespace GeometryTD
         private void SetTimeScaleInternal(float timeScale)
         {
             if (isPaused) {
-                if (timeScale == GameSpeed.stop)
+                if (timeScale == GameConsts.GameSpeed.stop)
                 {
-                    Time.timeScale = GameSpeed.stop;
+                    Time.timeScale = GameConsts.GameSpeed.stop;
                 }
                 // 暂停状态下不允许修改倍速,除非是改为0
                 return;
@@ -277,7 +277,7 @@ namespace GeometryTD
         public void PauseGame()
         {
             isPaused = true;
-            SetTimeScaleInternal(GameSpeed.stop);
+            SetTimeScaleInternal(GameConsts.GameSpeed.stop);
         }
 
         /// <summary>
@@ -285,7 +285,7 @@ namespace GeometryTD
         /// </summary>
         public void StartDragSlowMotion()
         {
-            SetTimeScaleInternal(GameSpeed.drag);
+            SetTimeScaleInternal(GameConsts.GameSpeed.drag);
         }
 
         /// <summary>
@@ -313,7 +313,7 @@ namespace GeometryTD
             else
             {
                 // 其他场景：恢复到默认速度1
-                SetTimeScaleInternal(GameSpeed.normal);
+                SetTimeScaleInternal(GameConsts.GameSpeed.normal);
             }
         }
 

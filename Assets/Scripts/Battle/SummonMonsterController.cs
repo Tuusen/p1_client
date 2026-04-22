@@ -58,12 +58,12 @@ namespace GeometryTD
             summoner = caster;
 
             // 初始化group（召唤物的阵营取决于召唤者）
-            UnitGroup summonGroup = UnitGroup.Neutral; // 默认中立
+            GameConsts.UnitGroup summonGroup = GameConsts.UnitGroup.Neutral; // 默认中立
             if (caster is UnitController unitCaster)
             {
                 summonGroup = unitCaster.Group;
             }
-            InitUnit(summonGroup, UnitType.Summon);
+            InitUnit(summonGroup, GameConsts.UnitType.Summon);
 
             // 初始化属性组件 + 继承逻辑
             InitAttrs(config.attrs);
@@ -108,7 +108,7 @@ namespace GeometryTD
 
             InitComponents();
             InitVisual(config.role);  // 初始化视觉表现
-            if (this.group == UnitGroup.Player)
+            if (this.group == GameConsts.UnitGroup.Player)
             {
                 // 进入战斗时朝向右边
                 facing?.FaceRight();

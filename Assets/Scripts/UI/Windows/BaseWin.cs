@@ -9,12 +9,12 @@ namespace GeometryTD
     {
         public object Data = null;
         [SerializeField] private int sortOrder = 0;
-        [SerializeField] private WinType winType = WinType.Normal;
-        [SerializeField] private WinPriority priority = WinPriority.Normal;
+        [SerializeField] private GameConsts.WinType winType = GameConsts.WinType.Normal;
+        [SerializeField] private GameConsts.WinPriority priority = GameConsts.WinPriority.Normal;
 
         public int SortOrder => sortOrder;
-        public WinType WinType => winType;
-        public WinPriority Priority => priority;
+        public GameConsts.WinType WinType => winType;
+        public GameConsts.WinPriority Priority => priority;
         public bool IsVisible => gameObject.activeSelf;
 
         /// <summary>

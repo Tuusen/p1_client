@@ -63,7 +63,7 @@ namespace GeometryTD
             battleManager = manager;
 
             // 初始化uid和group
-            InitUnit(UnitGroup.Player, UnitType.Hero);
+            InitUnit(GameConsts.UnitGroup.Player, GameConsts.UnitType.Hero);
 
             // 初始化属性组件
             InitAttrs(config.attrs);

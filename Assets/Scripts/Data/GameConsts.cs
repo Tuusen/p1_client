@@ -1,7 +1,8 @@
 namespace GeometryTD
 {
     // dmgType: 0=无属性, 1=火, 2=冰, 3=电, 4=风
-
+    
+    // ===== 战斗系统常量 =====
     public static class AttributeIds
     {
         // 基础属性 (type=1)
@@ -138,7 +139,6 @@ namespace GeometryTD
     }
 
     // ===== 故事集系统常量 =====
-
     public static class StoryNodeType
     {
         public const int Battle = 1;
@@ -181,129 +181,108 @@ namespace GeometryTD
         public const int CritDamage = 6;
     }
 
-    public static class ValueType
-    {
-        public const int Percentage = 1;
-        public const int Flat = 2;
-    }
-
-    // ===== 窗口系统常量 =====
-
-    /// <summary>
-    /// 窗口类型
-    /// </summary>
-    public enum WinType
-    {
-        /// <summary>普通界面，可任意关闭</summary>
-        Normal = 1,
-        /// <summary>常驻界面，仅能通过特定方法关闭</summary>
-        Permanent = 2
-    }
-
-    /// <summary>
-    /// 窗口优先级，数值越大层级越高
-    /// </summary>
-    public enum WinPriority
-    {
-        /// <summary>普通优先级</summary>
-        Normal = 10,
-        /// <summary>弹窗优先级</summary>
-        Popup = 100
-    }
-
-    // ===== Meta配置常量 =====
-
-    /// <summary>
-    /// 阵营枚举
-    /// </summary>
-    public enum UnitGroup
-    {
-        /// <summary>中立阵营</summary>
-        Neutral = 0,
-        /// <summary>玩家阵营（英雄、召唤物等）</summary>
-        Player = 1,
-        /// <summary>敌方阵营（怪物、Boss等）</summary>
-        Enemy = 2
-    }
-
-    /// <summary>
-    /// 单位类型枚举
-    /// </summary>
-    public enum UnitType
-    {
-        /// <summary>英雄</summary>
-        Hero = 1,
-        /// <summary>普通怪物</summary>
-        Monster = 2,
-        /// <summary>Boss</summary>
-        Boss = 3,
-        /// <summary>召唤物</summary>
-        Summon = 4
-    }
-
-    /// <summary>
-    /// 动画状态枚举
-    /// </summary>
-    public enum AnimState
-    {
-        /// <summary>待机</summary>
-        Idle = 0,
-        /// <summary>移动</summary>
-        Move = 1,
-        /// <summary>攻击</summary>
-        Attack = 2,
-        /// <summary>死亡</summary>
-        Die = 3,
-        /// <summary>冰冻（无法移动和攻击）</summary>
-        Freeze = 4,
-        /// <summary>蓄力</summary>
-        Charge = 5
-    }
-
-    public static class GameSpeed
-    {
-        public const float stop = 0f;
-        public const float drag = 0.3f;
-        public const float normal = 1f;
-
-        public const float speed1 = 0.5f;
-        public const float speed2 = 1f;
-        public const float speed3 = 1.5f;
-    }
 
     public static class GameConsts
     {
-        public static class MetaConsts
+        /// 阵营枚举
+        public enum UnitGroup
         {
-            // Hero Meta
-            public const int DefaultHeroId = 1;
+            /// <summary>中立阵营</summary>
+            Neutral = 0,
+            /// <summary>玩家阵营（英雄、召唤物等）</summary>
+            Player = 1,
+            /// <summary>敌方阵营（怪物、Boss等）</summary>
+            Enemy = 2
+        }
 
-            // Skill Meta
-            public static readonly int[] SkillSlotIds = new int[] { 
-            1001, 
-            1002, 
-            1003, 
-            1004, 
-            1005, 
-            1006, 
-            1007, 
-            1008
+        /// 单位类型枚举
+        public enum UnitType
+        {
+            /// <summary>英雄</summary>
+            Hero = 1,
+            /// <summary>普通怪物</summary>
+            Monster = 2,
+            /// <summary>Boss</summary>
+            Boss = 3,
+            /// <summary>召唤物</summary>
+            Summon = 4
+        }
+
+        /// 动画状态枚举
+        public enum AnimState
+        {
+            /// <summary>待机</summary>
+            Idle = 0,
+            /// <summary>移动</summary>
+            Move = 1,
+            /// <summary>攻击</summary>
+            Attack = 2,
+            /// <summary>死亡</summary>
+            Die = 3,
+            /// <summary>冰冻（无法移动和攻击）</summary>
+            Freeze = 4,
+            /// <summary>蓄力</summary>
+            Charge = 5
+        }
+
+        public static class GameSpeed
+        {
+            public const float stop = 0f;
+            public const float drag = 0.3f;
+            public const float normal = 1f;
+
+            public const float speed1 = 0.5f;
+            public const float speed2 = 1f;
+            public const float speed3 = 1.5f;
+        }
+
+
+        /// 窗口类型
+        public enum WinType
+        {
+            /// <summary>普通界面，可任意关闭</summary>
+            Normal = 1,
+            /// <summary>常驻界面，仅能通过特定方法关闭</summary>
+            Permanent = 2
+        }
+
+        /// 窗口优先级，数值越大层级越高
+        public enum WinPriority
+        {
+            /// <summary>普通优先级</summary>
+            Normal = 10,
+            /// <summary>弹窗优先级</summary>
+            Popup = 100
+        }
+
+        // Hero Meta
+        public const int DefaultHeroId = 1;
+
+        // Skill Meta
+        public static readonly int[] SkillSlotIds = new int[] { 
+        1001, 
+        1002, 
+        1003, 
+        1004, 
+        1005, 
+        1006, 
+        1007, 
+        1008
+        };
+
+        // Arcane Meta
+        public static readonly int[] ArcaneSlotIds = new int[] { 
+            4001, 
+            4002, 
+            4003, 
+            4004
             };
 
-            // Arcane Meta
-            public static readonly int[] ArcaneSlotIds = new int[] { 
-                4001, 
-                4002, 
-                4003, 
-                4004
-             };
+        // Monster Meta
+        public const int BossMonsterId = 100;
 
-            // Monster Meta
-            public const int BossMonsterId = 100;
-
-            // Global Meta
-            public const int KillCountForBoss = 100;
-            public const float MonsterSpawnInterval = 1.0f;
-        }
+        // Global Meta
+        public const int KillCountForBoss = 100;
+        public const float MonsterSpawnInterval = 1.0f;
     }
 }

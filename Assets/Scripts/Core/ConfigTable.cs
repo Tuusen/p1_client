@@ -7,7 +7,7 @@ namespace GeometryTD
     /// <summary>
     /// Generic config table with list items only.
     /// Usage: Cfg.Hero.Get(id), Cfg.Hero.All
-    /// Meta values are now in MetaConsts.MetaConsts
+    /// Meta values are now in MetaConsts
     /// </summary>
     public class ConfigTable<TItem, TMeta>
     {

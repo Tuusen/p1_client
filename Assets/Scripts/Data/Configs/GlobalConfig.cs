@@ -10,6 +10,6 @@ namespace GeometryTD
     [Serializable]
     public class GlobalConfigData
     {
-        // Global config is now handled via GameConsts.MetaConsts
+        // Global config is now handled via GameConsts
     }
 }

@@ -22,8 +22,8 @@ namespace GeometryTD
 
         [Header("单位标识")]
         [SerializeField] protected int uid;
-        [SerializeField] protected UnitGroup group;
-        [SerializeField] protected UnitType unitType;
+        [SerializeField] protected GameConsts.UnitGroup group;
+        [SerializeField] protected GameConsts.UnitType unitType;
 
         [Header("HP状态")]
         public int maxHp;
@@ -51,8 +51,8 @@ namespace GeometryTD
         public Transform CachedTransform => base.transform;
         public BattleManager BattleManager => battleManager;
         public int Uid => uid;
-        public UnitGroup Group => group;
-        public UnitType UnitType => unitType;
+        public GameConsts.UnitGroup Group => group;
+        public GameConsts.UnitType UnitType => unitType;
 
         // ===== IBuffTarget 接口方法 =====
         public virtual void OnBuffDamage(float dmg)
@@ -79,11 +79,11 @@ namespace GeometryTD
 
         // ===== 获取单位标识的方法 =====
         public virtual int GetUid() => uid;
-        public virtual UnitGroup GetGroup() => group;
-        public virtual UnitType GetUnitType() => unitType;
+        public virtual GameConsts.UnitGroup GetGroup() => group;
+        public virtual GameConsts.UnitType GetUnitType() => unitType;
 
         // ===== 初始化方法 =====
-        protected virtual void InitUnit(UnitGroup group, UnitType type)
+        protected virtual void InitUnit(GameConsts.UnitGroup group, GameConsts.UnitType type)
         {
             this.uid = battleManager.GenerateUid();
             this.group = group;

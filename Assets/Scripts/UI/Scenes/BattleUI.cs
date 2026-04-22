@@ -40,15 +40,15 @@ namespace GeometryTD
             battleManager = FindObjectOfType<BattleManager>();
 
             // 绑定倍速按钮
-            speedToggle05x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameSpeed.speed1));
-            speedToggle1x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameSpeed.speed2));
-            speedToggle15x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameSpeed.speed3));
+            speedToggle05x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameConsts.GameSpeed.speed1));
+            speedToggle1x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameConsts.GameSpeed.speed2));
+            speedToggle15x.onValueChanged.AddListener((isOn) => OnSpeedToggleChanged(isOn, GameConsts.GameSpeed.speed3));
            
             // 通过GameManager获取当前选择的倍速
             float selectedSpeed = GameManager.Instance.getSelectedTimeScale();
-            speedToggle05x.isOn = Mathf.Approximately(selectedSpeed, GameSpeed.speed1);
-            speedToggle1x.isOn = Mathf.Approximately(selectedSpeed, GameSpeed.speed2);
-            speedToggle15x.isOn = Mathf.Approximately(selectedSpeed, GameSpeed.speed3);
+            speedToggle05x.isOn = Mathf.Approximately(selectedSpeed, GameConsts.GameSpeed.speed1);
+            speedToggle1x.isOn = Mathf.Approximately(selectedSpeed, GameConsts.GameSpeed.speed2);
+            speedToggle15x.isOn = Mathf.Approximately(selectedSpeed, GameConsts.GameSpeed.speed3);
 
             RefreshSpeedToggleVisual();
         }
@@ -61,9 +61,9 @@ namespace GeometryTD
             float selectedSpeed = GameManager.Instance.getSelectedTimeScale();
             
             // 使用isOn赋值确保触发完整的视觉更新
-            bool should05x = Mathf.Approximately(selectedSpeed, GameSpeed.speed1);
-            bool should1x = Mathf.Approximately(selectedSpeed, GameSpeed.speed2);
-            bool should15x = Mathf.Approximately(selectedSpeed, GameSpeed.speed3);
+            bool should05x = Mathf.Approximately(selectedSpeed, GameConsts.GameSpeed.speed1);
+            bool should1x = Mathf.Approximately(selectedSpeed, GameConsts.GameSpeed.speed2);
+            bool should15x = Mathf.Approximately(selectedSpeed, GameConsts.GameSpeed.speed3);
             
             if (should05x)
             {
