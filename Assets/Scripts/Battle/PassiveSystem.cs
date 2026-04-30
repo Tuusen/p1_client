@@ -9,6 +9,8 @@ namespace GeometryTD
         public PassiveConfig cachedConfig;
         public int triggerCount;
         public bool isActive;
+        public int sourceArcaneId;  // 来源奥术ID，0=非奥术来源
+        public bool isProtected;    // 受保护不可被移除（奥术被动）
     }
 
     public class PassiveSystem
@@ -17,7 +19,7 @@ namespace GeometryTD
         private int triggerDepth = 0;
         private const int MaxTriggerDepth = 5;
 
-        public void RegisterPassive(int passiveConfigId, EventContext ctx)
+        public void RegisterPassive(int passiveConfigId, EventContext ctx, int sourceArcaneId = 0, bool isProtected = false)
         {
             var config = Cfg.Passive.Get(passiveConfigId);
             if (config == null) return;
@@ -63,7 +65,7 @@ namespace GeometryTD
                 if (config.passives != null && config.passives.Length > 0)
                 {
                     for (int j = 0; j < config.passives.Length; j++)
-                        RegisterPassive(config.passives[j], ctx);
+                        RegisterPassive(config.passives[j], ctx, sourceArcaneId, isProtected);
                 }
                 return;
             }
@@ -74,7 +76,9 @@ namespace GeometryTD
                 passiveConfigId = passiveConfigId,
                 cachedConfig = config,
                 triggerCount = 0,
-                isActive = true
+                isActive = true,
+                sourceArcaneId = sourceArcaneId,
+                isProtected = isProtected
             };
             passives.Add(passive);
         }
@@ -152,7 +156,7 @@ namespace GeometryTD
                     if (cfg.passives != null && cfg.passives.Length > 0)
                     {
                         for (int j = 0; j < cfg.passives.Length; j++)
-                            RegisterPassive(cfg.passives[j], ctx);
+                            RegisterPassive(cfg.passives[j], ctx, p.sourceArcaneId, p.isProtected);
                     }
 
                     p.triggerCount++;
@@ -222,6 +226,8 @@ namespace GeometryTD
 
         private bool ShouldRemove(ActivePassive p, int triggerCode)
         {
+            if (p.isProtected) return false;
+
             var removeCodes = p.cachedConfig.eventRemove;
             if (removeCodes == null || removeCodes.Length == 0) return false;
 
@@ -246,7 +252,25 @@ namespace GeometryTD
 
         public void Clear()
         {
+            for (int i = passives.Count - 1; i >= 0; i--)
+            {
+                if (!passives[i].isProtected)
+                    passives.RemoveAt(i);
+            }
+        }
+
+        public void ClearAll()
+        {
             passives.Clear();
+        }
+
+        public void RemoveBySource(int sourceArcaneId)
+        {
+            for (int i = passives.Count - 1; i >= 0; i--)
+            {
+                if (passives[i].sourceArcaneId == sourceArcaneId)
+                    passives.RemoveAt(i);
+            }
         }
     }
 }

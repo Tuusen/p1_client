@@ -2,79 +2,128 @@
   "items": [
     {
       "id": 4001, 
-      "name": "陨石术", 
-      "des": "召唤陨石轰击指定区域，持续造成火焰伤害", 
+      "name": "狂热过载", 
       "icon": "Icon/silver-ore-64", 
-      "dmg": 20000, 
+      "des": "每次攻击有10%概率额外连射5枚过载弹，每颗造成20%火伤，该技能冷却1秒。", 
+      "upDes": "提升10%火伤", 
+      "levelDes": [
+        {
+          "level": 5, 
+          "des": "连射子弹变为10颗"
+        }, 
+        {
+          "level": 10, 
+          "des": "触发概率提升至20%"
+        }, 
+        {
+          "level": 20, 
+          "des": "连射的子弹会发生2次散射"
+        }
+      ], 
+      "dmg": 2000, 
+      "upDmg": 1000, 
       "dmgType": 1, 
-      "radius": 3.0, 
-      "tickInterval": 10.0, 
-      "cd": 30.0, 
       "runeCost": 2, 
       "runeType": 1, 
-      "events": [], 
-      "enemyEvents": [
-        70010
-      ], 
-      "bulletEvents": [],
-      "dragHint": "拖拽到目标区域释放陨石"
+      "passives": [
+        {
+          "level": 1, 
+          "id": 4011
+        }, 
+        {
+          "level": 5, 
+          "id": 4012
+        }, 
+        {
+          "level": 10, 
+          "id": 4013
+        }, 
+        {
+          "level": 20, 
+          "id": 4014
+        }
+      ]
     }, 
     {
       "id": 4002, 
-      "name": "寒冰术", 
-      "des": "在指定区域释放寒冰，造成冰霜伤害并冻结敌人2秒", 
-      "icon": "Icon/sword-2-64", 
-      "dmg": 20000, 
+      "name": "缤纷雪球", 
+      "icon": "Icon/silver-ore-64", 
+      "des": "子弹造成冰冻时，从该位置随机方向发射1颗雪球，每颗造成10%冰伤，并且有10%概率造成冰冻，持续1秒，该技能冷却1秒。", 
+      "upDes": "提升10%冰伤", 
+      "levelDes": [
+        {
+          "level": 5, 
+          "des": "随机发射3颗雪球"
+        }, 
+        {
+          "level": 10, 
+          "des": "冰冻概率提升至30%"
+        }, 
+        {
+          "level": 20, 
+          "des": "雪球命中时会发生小范围爆炸，造成10%冰伤，10%概率造成冰冻，持续1秒"
+        }
+      ], 
+      "dmg": 1000, 
+      "upDmg": 1000, 
       "dmgType": 2, 
-      "radius": 3.0, 
-      "tickInterval": 10.0, 
-      "cd": 30.0, 
       "runeCost": 2, 
       "runeType": 2, 
-      "events": [], 
-      "enemyEvents": [
-        70201
-      ], 
-      "bulletEvents": [],
-      "dragHint": "拖拽到目标区域释放寒冰"
+      "passives": []
     }, 
     {
       "id": 4003, 
-      "name": "闪电网", 
-      "des": "在指定区域展开闪电网，造成雷电伤害并弹射3次", 
-      "icon": "Icon/black-hole-64", 
-      "dmg": 5000, 
+      "name": "霹雳弹闪", 
+      "icon": "Icon/silver-ore-64", 
+      "des": "子弹造成伤害时，从该位置弹射出一枚闪电子弹攻击另一名敌人（如果没有找到敌人则弹射向随机位置），造成10%电伤，该技能冷却1秒。", 
+      "upDes": "提升10%电伤", 
+      "levelDes": [
+        {
+          "level": 5, 
+          "des": "闪电子弹增加3次弹射次数"
+        }, 
+        {
+          "level": 10, 
+          "des": "发射5枚闪电子弹"
+        }, 
+        {
+          "level": 20, 
+          "des": "每弹射一次伤害增加100%"
+        }
+      ], 
+      "dmg": 1000, 
+      "upDmg": 1000, 
       "dmgType": 3, 
-      "radius": 3.0, 
-      "tickInterval": 10.0, 
-      "cd": 30.0, 
       "runeCost": 2, 
       "runeType": 3, 
-      "events": [], 
-      "enemyEvents": [], 
-      "bulletEvents": [
-        202003
-      ],
-      "dragHint": "拖拽到目标区域释放闪电网"
-    },
+      "passives": []
+    }, 
     {
       "id": 4004, 
-      "name": "风之诗", 
-      "des": "唤起全屏风暴，造成风属性伤害并击退敌人", 
-      "icon": "Icon/plant-64", 
-      "dmg": 5000, 
+      "name": "风车之刃", 
+      "icon": "Icon/silver-ore-64", 
+      "des": "自身100码内有敌人时，向前发射3枚跟踪风弹，每枚风弹造成10%风伤，并造成小距离击退，该技能冷却1秒。", 
+      "upDes": "提升10%风伤", 
+      "levelDes": [
+        {
+          "level": 5, 
+          "des": "向前发射10枚风弹"
+        }, 
+        {
+          "level": 10, 
+          "des": "风弹命中后有50%概率分裂为两个更小的追踪风弹，造成一半的伤害"
+        }, 
+        {
+          "level": 20, 
+          "des": "分裂风弹命中后会继续分裂两个更小的追踪风弹，造成一半的伤害"
+        }
+      ], 
+      "dmg": 1000, 
+      "upDmg": 1000, 
       "dmgType": 4, 
-      "radius": -1.0, 
-      "tickInterval": 10.0, 
-      "cd": 30.0, 
       "runeCost": 2, 
       "runeType": 4, 
-      "events": [], 
-      "enemyEvents": [
-        40002
-      ], 
-      "bulletEvents": [],
-      "dragHint": "拖拽到任意位置释放风暴"
+      "passives": []
     }
   ]
 }

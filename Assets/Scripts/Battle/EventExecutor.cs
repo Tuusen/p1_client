@@ -8,6 +8,7 @@ namespace GeometryTD
         public IBuffTarget target;
         public BattleManager battleManager;
         public Vector3 position;
+        public int arcaneDmgRatio;  // 奥术伤害系数（万分比），0=非奥术上下文
     }
 
     public static class EventExecutor
@@ -61,6 +62,9 @@ namespace GeometryTD
                     break;
                 case EventType.LostHp:
                     HandleLostHp(args, effectTarget, ctx);
+                    break;
+                case EventType.ArcaneDamage:
+                    HandleArcaneDamage(args, effectTarget, ctx);
                     break;
                 default:
                     Debug.LogWarning($"[EventExecutor] 未知事件类型: {config.type}, eventId={eventId}");
@@ -228,6 +232,27 @@ namespace GeometryTD
             int passiveId = args[0];
             if (target.PassiveSystem != null)
                 target.PassiveSystem.RegisterPassive(passiveId, ctx);
+        }
+
+        private static void HandleArcaneDamage(int[] args, IBuffTarget target, EventContext ctx)
+        {
+            if (target == null || ctx.caster == null || ctx.caster.Attrs == null) return;
+            if (ctx.arcaneDmgRatio <= 0) return;
+
+            int dmgType = (args != null && args.Length >= 1) ? args[0] : 0;
+
+            var dmgCtx = new DamageContext
+            {
+                attackerAttrs = ctx.caster.Attrs,
+                defenderAttrs = target.Attrs,
+                skillDmgRatio = ctx.arcaneDmgRatio,
+                skillDmgType = dmgType,
+                isTargetBoss = target is BossController,
+                isTargetElite = (target as MonsterController)?.IsElite ?? false
+            };
+            var result = DamageCalculator.Calculate(dmgCtx);
+            if (!result.isMiss && result.finalDamage > 0)
+                target.OnBuffDamage(result.finalDamage);
         }
 
         private static void HandleDispel(int[] args, IBuffTarget target)

@@ -2255,6 +2255,70 @@
       "enemyEvents": [], 
       "bulletEvents": [], 
       "eventEffect": 0
+    }, 
+    {
+      "id": 4001001, 
+      "poolId": 40010, 
+      "level": 1, 
+      "name": "过载弹 I", 
+      "des": "连射5枚过载弹，每颗造成20%火伤", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 2000, 
+      "dmgType": 1, 
+      "bulletSpeed": 12.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 101, 
+      "attack_range": 30.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        203005
+      ], 
+      "eventEffect": 0
+    }, 
+    {
+      "id": 4001002, 
+      "poolId": 40010, 
+      "level": 2, 
+      "name": "过载弹 II", 
+      "des": "连射10枚过载弹，每颗造成20%火伤", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 2000, 
+      "dmgType": 1, 
+      "bulletSpeed": 12.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 101, 
+      "attack_range": 30.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        203010
+      ], 
+      "eventEffect": 0
+    }, 
+    {
+      "id": 4001003, 
+      "poolId": 40010, 
+      "level": 3, 
+      "name": "过载弹 III", 
+      "des": "连射10枚过载弹，每颗造成20%火伤，命中后发生2次散射", 
+      "icon": "", 
+      "category": "Projectile", 
+      "dmg": 2000, 
+      "dmgType": 1, 
+      "bulletSpeed": 12.0, 
+      "cd": 0.0, 
+      "bulletStyleId": 101, 
+      "attack_range": 30.0, 
+      "events": [], 
+      "enemyEvents": [], 
+      "bulletEvents": [
+        203010, 
+        201002
+      ], 
+      "eventEffect": 0
     }
   ]
 }

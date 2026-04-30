@@ -10,21 +10,32 @@ namespace GeometryTD
     [Serializable]
     public class ArcaneConfig
     {
+        [Serializable]
+        public class LevelDesItem
+        {
+            public int level;
+            public string des;
+        }
+
+        [Serializable]
+        public class PassivesItem
+        {
+            public int level;
+            public int id;
+        }
+
         public int id;
         public string name;
-        public string des;
         public string icon;
+        public string des;
+        public string upDes;
+        public LevelDesItem[] levelDes;
         public int dmg;
+        public int upDmg;
         public int dmgType;
-        public float radius;
-        public float tickInterval;
-        public float cd;
         public int runeCost;
         public int runeType;
-        public int[] events;
-        public int[] enemyEvents;
-        public int[] bulletEvents;
-        public string dragHint;
+        public PassivesItem[] passives;
     }
 
     [Serializable]

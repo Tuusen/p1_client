@@ -19,6 +19,78 @@
         1000401
       ], 
       "passives": []
+    }, 
+    {
+      "id": 4011, 
+      "name": "狂热过载 I", 
+      "icon": "", 
+      "des": "攻击时有10%概率连射5枚过载弹，每颗造成20%火伤", 
+      "eventEffect": 0, 
+      "eventTarget": [
+        502
+      ], 
+      "eventRemove": [], 
+      "eventCond": [], 
+      "odds": 1000, 
+      "events": [], 
+      "skills": [
+        4001001
+      ], 
+      "passives": []
+    }, 
+    {
+      "id": 4012, 
+      "name": "狂热过载 II", 
+      "icon": "", 
+      "des": "攻击时有10%概率连射10枚过载弹，每颗造成20%火伤", 
+      "eventEffect": 0, 
+      "eventTarget": [
+        502
+      ], 
+      "eventRemove": [], 
+      "eventCond": [], 
+      "odds": 1000, 
+      "events": [], 
+      "skills": [
+        4001002
+      ], 
+      "passives": []
+    }, 
+    {
+      "id": 4013, 
+      "name": "狂热过载 III", 
+      "icon": "", 
+      "des": "攻击时有20%概率连射10枚过载弹，每颗造成20%火伤", 
+      "eventEffect": 0, 
+      "eventTarget": [
+        502
+      ], 
+      "eventRemove": [], 
+      "eventCond": [], 
+      "odds": 2000, 
+      "events": [], 
+      "skills": [
+        4001002
+      ], 
+      "passives": []
+    }, 
+    {
+      "id": 4014, 
+      "name": "狂热过载 IV", 
+      "icon": "", 
+      "des": "攻击时有20%概率连射10枚过载弹，每颗造成20%火伤，命中后发生2次散射", 
+      "eventEffect": 0, 
+      "eventTarget": [
+        502
+      ], 
+      "eventRemove": [], 
+      "eventCond": [], 
+      "odds": 2000, 
+      "events": [], 
+      "skills": [
+        4001003
+      ], 
+      "passives": []
     }
   ]
 }

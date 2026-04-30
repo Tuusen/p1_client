@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GeometryTD
@@ -7,17 +6,8 @@ namespace GeometryTD
     {
         public int arcaneId;
         public string arcaneName;
-        public float cooldownRemaining;
-        public float maxCooldown;
-    }
-
-    public class ActiveArcane
-    {
-        public int arcaneId;
-        public Vector3 position;
-        public float tickInterval;
-        public float tickTimer;
-        public ArcaneConfig config;
+        public int level;                   // 当前等级，0=未解锁
+        public ArcaneConfig cachedConfig;   // 缓存配置引用
     }
 
     public class ArcaneManager : MonoBehaviour
@@ -25,14 +15,12 @@ namespace GeometryTD
         private ArcaneSlotState[] slots;
         private int[] runes = new int[4];   // index 0=fire,1=ice,2=electric,3=wind
         private int[] energy = new int[4];  // 0-9, 10 converts to 1 rune
-        private List<ActiveArcane> activeArcanes = new List<ActiveArcane>();
 
         private BattleManager battleManager;
         private HeroController hero;
 
         public System.Action OnRunesChanged;
-        public System.Action<int> OnArcanePlaced;
-        public System.Action<int> OnArcaneCooldownDone;
+        public System.Action<int> OnArcaneUpgraded;
 
         public int SlotCount => slots != null ? slots.Length : 0;
 
@@ -49,8 +37,8 @@ namespace GeometryTD
                 {
                     arcaneId = arcaneSlotIds[i],
                     arcaneName = config != null ? config.name : "",
-                    cooldownRemaining = 0f,
-                    maxCooldown = 0f
+                    level = 0,
+                    cachedConfig = config
                 };
             }
         }
@@ -75,7 +63,11 @@ namespace GeometryTD
             return energy[idx];
         }
 
-        public List<ActiveArcane> GetActiveArcanes() => activeArcanes;
+        public int GetArcaneLevel(int slotIndex)
+        {
+            if (slots == null || slotIndex < 0 || slotIndex >= slots.Length) return 0;
+            return slots[slotIndex].level;
+        }
 
         // Called by SkillManager after a skill is used
         public void AddEnergy(int mpType, int amount)
@@ -116,13 +108,12 @@ namespace GeometryTD
             return cost;
         }
 
-        public bool CanCast(int slotIndex)
+        public bool CanUpgrade(int slotIndex)
         {
             if (slots == null || slotIndex < 0 || slotIndex >= slots.Length) return false;
             var slot = slots[slotIndex];
-            if (slot.cooldownRemaining > 0f) return false;
 
-            var config = Cfg.Arcane.Get(slot.arcaneId);
+            var config = slot.cachedConfig;
             if (config == null) return false;
 
             int runeIdx = config.runeType - 1;
@@ -132,192 +123,89 @@ namespace GeometryTD
             return runes[runeIdx] >= modifiedCost;
         }
 
-        public bool TryCastArcane(int slotIndex, Vector3 worldPos)
+        public bool TryUpgradeArcane(int slotIndex)
         {
-            if (!CanCast(slotIndex)) return false;
-
-            // 被动：释放奥术前
-            if (hero != null && hero.PassiveSystem != null)
-            {
-                var ctx = new EventContext
-                {
-                    caster = hero,
-                    target = hero,
-                    battleManager = battleManager,
-                    position = worldPos
-                };
-                hero.PassiveSystem.OnTrigger(505, ctx);
-            }
+            if (!CanUpgrade(slotIndex)) return false;
 
             var slot = slots[slotIndex];
-            var config = Cfg.Arcane.Get(slot.arcaneId);
+            var config = slot.cachedConfig;
 
-            // Consume runes (with buff modifier)
+            // 扣除符能
             int runeIdx = config.runeType - 1;
             int modifiedCost = GetModifiedCost(config);
             runes[runeIdx] -= modifiedCost;
+
+            // 升级
+            slot.level++;
+
+            // 刷新被动
+            RefreshArcanePassives(slotIndex);
+
+            OnArcaneUpgraded?.Invoke(slotIndex);
             OnRunesChanged?.Invoke();
-
-            // Start cooldown
-            slot.cooldownRemaining = config.cd;
-            slot.maxCooldown = config.cd;
-
-            // Create active arcane
-            var active = new ActiveArcane
-            {
-                arcaneId = slot.arcaneId,
-                position = worldPos,
-                tickInterval = config.tickInterval,
-                tickTimer = 0f, // tick immediately on first frame
-                config = config
-            };
-            activeArcanes.Add(active);
-            OnArcanePlaced?.Invoke(slotIndex);
-
-            // 被动：释放奥术后
-            if (hero != null && hero.PassiveSystem != null)
-            {
-                var ctx = new EventContext
-                {
-                    caster = hero,
-                    target = hero,
-                    battleManager = battleManager,
-                    position = worldPos
-                };
-                hero.PassiveSystem.OnTrigger(506, ctx);
-            }
 
             return true;
         }
 
-        private void Update()
+        private void RefreshArcanePassives(int slotIndex)
+        {
+            if (hero == null || hero.PassiveSystem == null) return;
+
+            var slot = slots[slotIndex];
+            var config = slot.cachedConfig;
+            if (config == null) return;
+
+            // 清除该奥术的旧被动
+            hero.PassiveSystem.RemoveBySource(slot.arcaneId);
+
+            if (config.passives == null || config.passives.Length == 0) return;
+
+            // 计算奥术伤害系数: dmg + upDmg * (level - 1)
+            int arcaneDmgRatio = config.dmg + config.upDmg * (slot.level - 1);
+
+            // 找到 <= slot.level 的最大等级阈值
+            int maxThreshold = -1;
+            for (int i = 0; i < config.passives.Length; i++)
+            {
+                int lvl = config.passives[i].level;
+                if (lvl <= slot.level && lvl > maxThreshold)
+                    maxThreshold = lvl;
+            }
+
+            if (maxThreshold < 0) return;
+
+            // 构造EventContext
+            var ctx = new EventContext
+            {
+                caster = hero,
+                target = hero,
+                battleManager = battleManager,
+                position = hero.Position,
+                arcaneDmgRatio = arcaneDmgRatio
+            };
+
+            // 注册该阈值下的所有被动
+            for (int i = 0; i < config.passives.Length; i++)
+            {
+                if (config.passives[i].level == maxThreshold)
+                {
+                    hero.PassiveSystem.RegisterPassive(
+                        config.passives[i].id, ctx,
+                        sourceArcaneId: slot.arcaneId,
+                        isProtected: true);
+                }
+            }
+        }
+
+        public void ResetAllLevels()
         {
             if (slots == null) return;
-
-            // Update slot cooldowns
             for (int i = 0; i < slots.Length; i++)
             {
-                if (slots[i].cooldownRemaining > 0f)
-                {
-                    slots[i].cooldownRemaining -= Time.deltaTime;
-                    if (slots[i].cooldownRemaining <= 0f)
-                    {
-                        slots[i].cooldownRemaining = 0f;
-                        OnArcaneCooldownDone?.Invoke(i);
-                    }
-                }
+                if (hero != null && hero.PassiveSystem != null)
+                    hero.PassiveSystem.RemoveBySource(slots[i].arcaneId);
+                slots[i].level = 0;
             }
-
-            // Tick active arcanes
-            for (int i = activeArcanes.Count - 1; i >= 0; i--)
-            {
-                var a = activeArcanes[i];
-                a.tickTimer -= Time.deltaTime;
-                if (a.tickTimer <= 0f)
-                {
-                    a.tickTimer += a.tickInterval;
-                    TickArcane(a);
-                }
-            }
-        }
-
-        private void TickArcane(ActiveArcane a)
-        {
-            if (battleManager == null || hero == null) return;
-
-            var config = a.config;
-            float actualDmg = hero.BaseAttack * config.dmg / 10000f;
-            bool fullScreen = config.radius < 0f;
-
-            if (fullScreen)
-            {
-                battleManager.DealFullScreenAoe(a.position, actualDmg, config.enemyEvents, hero);
-                SpawnTickVfx(a.position, 20f, config.dmgType);
-            }
-            else
-            {
-                // 对范围内敌人造成伤害 + 执行敌方事件
-                var enemies = battleManager.GetEnemiesInRadius(a.position, config.radius);
-                foreach (var enemy in enemies)
-                {
-                    if (enemy == null) continue;
-
-                    IBuffTarget target = enemy.GetComponent<MonsterController>() as IBuffTarget;
-                    if (target == null)
-                        target = enemy.GetComponent<BossController>() as IBuffTarget;
-
-                    if (target != null)
-                    {
-                        target.OnBuffDamage(actualDmg);
-
-                        if (config.enemyEvents != null && config.enemyEvents.Length > 0)
-                        {
-                            var ctx = new EventContext
-                            {
-                                caster = hero,
-                                target = target,
-                                battleManager = battleManager,
-                                position = enemy.position
-                            };
-                            EventExecutor.ExecuteEvents(config.enemyEvents, ctx);
-                        }
-                    }
-                }
-
-                SpawnTickVfx(a.position, config.radius, config.dmgType);
-            }
-
-            // 执行自身事件（对英雄）
-            if (config.events != null && config.events.Length > 0)
-            {
-                var selfCtx = new EventContext
-                {
-                    caster = hero,
-                    target = hero,
-                    battleManager = battleManager,
-                    position = hero.Position
-                };
-                EventExecutor.ExecuteEvents(config.events, selfCtx);
-            }
-        }
-
-        // Spawn a brief expanding circle VFX at arcane tick position
-        private void SpawnTickVfx(Vector3 center, float radius, int dmgType)
-        {
-            Color vfxColor;
-            switch (dmgType)
-            {
-                case 1: vfxColor = new Color(1f, 0.4f, 0.1f, 0.5f); break;  // fire
-                case 2: vfxColor = new Color(0.3f, 0.7f, 1f, 0.5f); break;  // ice
-                case 3: vfxColor = new Color(0.9f, 0.9f, 0.2f, 0.5f); break; // electric
-                case 4: vfxColor = new Color(0.3f, 0.9f, 0.5f, 0.5f); break; // wind
-                default: vfxColor = new Color(1f, 1f, 1f, 0.4f); break;
-            }
-
-            GameObject vfx = new GameObject("ArcaneTickVfx");
-            vfx.transform.position = center;
-            var sr = vfx.AddComponent<SpriteRenderer>();
-            sr.sortingOrder = 80;
-            sr.color = vfxColor;
-
-            int texSize = 64;
-            Texture2D tex = new Texture2D(texSize, texSize, TextureFormat.RGBA32, false);
-            float c = texSize / 2f;
-            float rSq = c * c;
-            for (int x = 0; x < texSize; x++)
-            {
-                for (int y = 0; y < texSize; y++)
-                {
-                    float dx = x - c;
-                    float dy = y - c;
-                    tex.SetPixel(x, y, dx * dx + dy * dy <= rSq ? Color.white : Color.clear);
-                }
-            }
-            tex.Apply();
-            sr.sprite = Sprite.Create(tex, new Rect(0, 0, texSize, texSize),
-                new Vector2(0.5f, 0.5f), texSize / (radius * 2f));
-
-            Destroy(vfx, 0.5f);
         }
     }
 }

@@ -83,7 +83,7 @@ namespace GeometryTD
 
             InitComponents();
             InitVisual(config.role);  // 初始化视觉表现
-            passiveSystem.Clear();
+            passiveSystem.ClearAll();
             UpdateBars();
             
             // 进入战斗时朝向右边

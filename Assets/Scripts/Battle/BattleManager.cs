@@ -20,7 +20,6 @@ namespace GeometryTD
         [SerializeField] private FloatingTextUI floatingTextUI;
         [SerializeField] private ArcaneBarUI arcaneBarUI;
         [SerializeField] private RuneBarUI runeBarUI;
-        [SerializeField] private ArcaneActiveIconUI arcaneActiveIconUI;
         [SerializeField] private SkillXpTimerUI skillXpTimerUI;
 
         [Header("生成点")]
@@ -307,8 +306,6 @@ namespace GeometryTD
                 }
                 if (runeBarUI != null)
                     runeBarUI.SetArcaneManager(arcaneManager);
-                if (arcaneActiveIconUI != null)
-                    arcaneActiveIconUI.SetArcaneManager(arcaneManager);
             }
 
             // 被动：战斗开始后
@@ -884,6 +881,9 @@ namespace GeometryTD
             if (gameEnded) return;
             gameEnded = true;
 
+            if (arcaneManager != null)
+                arcaneManager.ResetAllLevels();
+
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.MarkLevelCompleted(currentLevelId);
@@ -900,6 +900,9 @@ namespace GeometryTD
         {
             if (gameEnded) return;
             gameEnded = true;
+
+            if (arcaneManager != null)
+                arcaneManager.ResetAllLevels();
 
             // Story: handle battle failure before showing UI
             if (StoryManager.Instance != null && StoryManager.Instance.IsInAdventure)

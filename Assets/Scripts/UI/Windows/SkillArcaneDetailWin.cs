@@ -11,7 +11,7 @@ namespace GeometryTD
     {
         public int id;                    // 技能poolId或奥术id
         public bool isSkill;              // true=技能, false=奥术
-        public int currentLevel;          // 技能当前等级（仅技能需要）
+        public int currentLevel;          // 当前等级（技能和奥术共用）
     }
 
     /// <summary>
@@ -184,6 +184,8 @@ namespace GeometryTD
                 return;
             }
 
+            int level = data.currentLevel;
+
             // 图标
             if (sp_iconImage != null && !string.IsNullOrEmpty(config.icon))
             {
@@ -200,24 +202,80 @@ namespace GeometryTD
                 }
             }
 
-            // 名称
+            // 名称 + 等级
             if (txt_nameText != null)
             {
-                txt_nameText.text = config.name;
+                txt_nameText.text = level > 0
+                    ? $"{config.name} <color=#FFFF00>Lv.{level}</color>"
+                    : $"{config.name} <color=#808080>(未解锁)</color>";
             }
 
-            // 描述（支持多行和换行符）
+            // 描述
             if (txt_descText != null)
             {
                 txt_descText.supportRichText = true;
-                txt_descText.text = config.des ?? "";
+                string desc = config.des ?? "";
+
+                // 伤害系数
+                if (level > 0)
+                {
+                    int dmgRatio = config.dmg + config.upDmg * (level - 1);
+                    desc += $"\n\n<color=#FF8080>伤害系数:</color> {dmgRatio / 100f:F1}%";
+                }
+
+                // 升级描述
+                if (!string.IsNullOrEmpty(config.upDes))
+                {
+                    desc += $"\n\n<color=#FFFF00>[升级效果]</color>{config.upDes}";
+                }
+
+                // 等级描述
+                if (config.levelDes != null && config.levelDes.Length > 0)
+                {
+                    desc += "\n";
+                    foreach (var levelDes in config.levelDes)
+                    {
+                        bool unlocked = level >= levelDes.level;
+                        string colorTag = unlocked ? "<color=#00FF00>" : "<color=#808080>";
+                        desc += $"\n{colorTag}[{levelDes.level}级]</color>{levelDes.des}";
+                    }
+                }
+
+                // 当前被动效果
+                if (config.passives != null && config.passives.Length > 0 && level > 0)
+                {
+                    int maxThreshold = -1;
+                    for (int i = 0; i < config.passives.Length; i++)
+                    {
+                        int lvl = config.passives[i].level;
+                        if (lvl <= level && lvl > maxThreshold)
+                            maxThreshold = lvl;
+                    }
+
+                    if (maxThreshold >= 0)
+                    {
+                        desc += "\n\n<color=#00BFFF>[当前被动]</color>";
+                        for (int i = 0; i < config.passives.Length; i++)
+                        {
+                            if (config.passives[i].level == maxThreshold)
+                            {
+                                var passiveCfg = Cfg.Passive.Get(config.passives[i].id);
+                                if (passiveCfg != null)
+                                {
+                                    string pName = !string.IsNullOrEmpty(passiveCfg.name) ? passiveCfg.name : $"#{config.passives[i].id}";
+                                    string pDes = !string.IsNullOrEmpty(passiveCfg.des) ? $" - {passiveCfg.des}" : "";
+                                    desc += $"\n<color=#87CEEB>  {pName}</color>{pDes}";
+                                }
+                            }
+                        }
+                    }
+                }
+
+                txt_descText.text = desc;
             }
 
-            // 能量消耗信息
-            if (this.data.isSkill)
-            {
-                txt_energyText.gameObject.SetActive(false);
-            } else
+            // 升级消耗信息
+            if (txt_energyText != null)
             {
                 txt_energyText.gameObject.SetActive(true);
                 string energyTypeName = config.runeType >= 1 && config.runeType <= 4
@@ -225,13 +283,13 @@ namespace GeometryTD
                     : "未知";
                 Color energyColor = GetAttributeColor(config.runeType);
                 string colorHex = ColorUtility.ToHtmlStringRGB(energyColor);
-                txt_energyText.text = $"<color={colorHex}>消耗能量:</color> {config.runeCost} {energyTypeName}符能";
+                txt_energyText.text = $"<color=#{colorHex}>升级消耗:</color> {config.runeCost} {energyTypeName}符能";
             }
 
-            // 冷却时间
+            // 隐藏冷却时间（奥术无冷却）
             if (txt_cdText != null)
             {
-                txt_cdText.text = $"<color=#B0B0FF>冷却时间:</color> {config.cd:F1}s";
+                txt_cdText.gameObject.SetActive(false);
             }
         }
 

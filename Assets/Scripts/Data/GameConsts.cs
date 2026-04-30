@@ -94,6 +94,7 @@ namespace GeometryTD
         public const int Summon = 9;
         public const int Dispel = 10;
         public const int LostHp = 11;
+        public const int ArcaneDamage = 12;  // 使用ctx.arcaneDmgRatio作为伤害系数
     }
 
     // 101：穿透 [穿透数量]：子弹变为穿透效果，
