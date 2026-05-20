@@ -1,0 +1,50 @@
+{
+    "player": {
+        "maxHp": 200,
+        "maxShield": 100,
+        "attackDamage": 25,
+        "attackInterval": 1.0,
+        "bulletSpeed": 12.0
+    },
+    "enemies": [
+        {
+            "id": 1,
+            "name": "Scout",
+            "level": 1,
+            "maxHp": 50,
+            "damage": 10,
+            "moveSpeed": 2.0
+        },
+        {
+            "id": 2,
+            "name": "Soldier",
+            "level": 2,
+            "maxHp": 80,
+            "damage": 15,
+            "moveSpeed": 1.5
+        },
+        {
+            "id": 3,
+            "name": "Tank",
+            "level": 3,
+            "maxHp": 150,
+            "damage": 25,
+            "moveSpeed": 1.0
+        }
+    ],
+    "boss": {
+        "id": 100,
+        "name": "Overlord",
+        "level": 10,
+        "maxHp": 2000,
+        "damage": 30,
+        "attackInterval": 1.0,
+        "bulletSpeed": 8.0
+    },
+    "spawn": {
+        "killTarget": 100,
+        "spawnInterval": 1.5,
+        "minSpawnInterval": 0.5,
+        "spawnAcceleration": 0.02
+    }
+}
